@@ -1,0 +1,1510 @@
+// SONARE CRM — Schema do banco de dados
+// Convenções:
+//  - PKs: UUID v7
+//  - Dinheiro: Decimal(14,2) — NUNCA float
+//  - Percentuais/quantidades: Decimal(9,4)
+//  - Exclusão lógica: deletedAt
+//  - Auditoria: createdAt/updatedAt/createdById/updatedById (ids sem FK para reduzir acoplamento)
+//  - companyId em todas as entidades de negócio (preparação multiempresa)
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+  runtime  = "nodejs"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ============================================================
+// NÚCLEO / SEGURANÇA
+// ============================================================
+
+model Company {
+  id                 String    @id @default(uuid(7))
+  legalName          String
+  tradeName          String?
+  cnpj               String?   @unique
+  stateRegistration  String?
+  cityRegistration   String?
+  email              String?
+  phone              String?
+  whatsapp           String?
+  website            String?
+  addressStreet      String?
+  addressNumber      String?
+  addressComplement  String?
+  addressDistrict    String?
+  zipCode            String?
+  city               String?
+  state              String?
+  country            String?   @default("Brasil")
+  logoAttachmentId   String?
+  bankInfo           Json?     // dados bancários e chave Pix
+  crea               String?
+  /// Razão social usada nas minutas de contrato, quando difere da fiscal
+  contractLegalName  String?
+  /// Sócios/representantes que assinam contratos:
+  /// [{ name, nationality, maritalStatus, profession, rg, cpf, role }]
+  legalRepresentatives Json?
+  timezone           String    @default("America/Cuiaba")
+  currency           String    @default("BRL")
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+}
+
+model User {
+  id                  String    @id @default(uuid(7))
+  companyId           String
+  name                String
+  email               String    @unique
+  passwordHash        String
+  active              Boolean   @default(true)
+  mfaEnabled          Boolean   @default(false)
+  mfaSecret           String?
+  passwordChangedAt   DateTime?
+  lastLoginAt         DateTime?
+  hourlyCost          Decimal?  @db.Decimal(14, 2) // custo/hora p/ rentabilidade
+  hourlyRate          Decimal?  @db.Decimal(14, 2) // valor/hora faturável
+  creaCau             String?   // registro profissional, quando aplicável
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+  createdById         String?
+  updatedById         String?
+  deletedAt           DateTime?
+
+  sessions                 Session[]
+  passwordResetTokens      PasswordResetToken[]
+  roles                    UserRole[]
+  extraPermissions         UserPermission[]
+  auditLogs                AuditLog[]
+  clientsOwned             Client[]                  @relation("ClientCommercialOwner")
+  opportunitiesCommercial  Opportunity[]             @relation("OppCommercialOwner")
+  opportunitiesTechnical   Opportunity[]             @relation("OppTechnicalOwner")
+  activities               OpportunityActivity[]
+  budgetsCommercial        Budget[]                  @relation("BudgetCommercialOwner")
+  budgetsTechnical         Budget[]                  @relation("BudgetTechnicalOwner")
+  approvalsRequested       BudgetApproval[]          @relation("ApprovalRequestedBy")
+  approvalsDecided         BudgetApproval[]          @relation("ApprovalDecidedBy")
+  projectsLed              Project[]                 @relation("ProjectTechnicalLead")
+  projectsCoordinated      Project[]                 @relation("ProjectCoordinator")
+  projectMemberships       ProjectMember[]
+  tasksAssigned            Task[]                    @relation("TaskAssignee")
+  timeEntries              TimeEntry[]
+  technicalResponsibilities TechnicalResponsibility[]
+  comments                 Comment[]
+  notifications            Notification[]
+
+  @@index([companyId])
+}
+
+model Role {
+  id          String   @id @default(uuid(7))
+  companyId   String
+  code        String   // ADMIN, COMERCIAL, ENGENHARIA, FINANCEIRO, DIRETORIA, EXTERNO, CLIENTE
+  name        String
+  description String?
+  isSystem    Boolean  @default(false) // papéis do sistema não podem ser excluídos
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  permissions RolePermission[]
+  users       UserRole[]
+
+  @@unique([companyId, code])
+}
+
+model Permission {
+  id          String  @id @default(uuid(7))
+  code        String  @unique // formato recurso:ação — ex.: client:read, budget:approve
+  description String?
+
+  roles RolePermission[]
+  users UserPermission[]
+}
+
+model RolePermission {
+  roleId       String
+  permissionId String
+  role         Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@id([roleId, permissionId])
+}
+
+model UserRole {
+  userId String
+  roleId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role   Role   @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@id([userId, roleId])
+}
+
+model UserPermission {
+  userId       String
+  permissionId String
+  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@id([userId, permissionId])
+}
+
+model Session {
+  id         String   @id @default(uuid(7))
+  userId     String
+  tokenHash  String   @unique // SHA-256 do token; o token em si só existe no cookie
+  expiresAt  DateTime
+  ip         String?
+  userAgent  String?
+  revokedAt  DateTime?
+  createdAt  DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model PasswordResetToken {
+  id        String    @id @default(uuid(7))
+  userId    String
+  tokenHash String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model AuditLog {
+  id         String   @id @default(uuid(7))
+  companyId  String
+  userId     String?
+  action     String   // create | update | delete | login | approve | ...
+  entityType String
+  entityId   String?
+  before     Json?
+  after      Json?
+  ip         String?
+  createdAt  DateTime @default(now())
+  user       User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([companyId, entityType, entityId])
+  @@index([createdAt])
+}
+
+model SystemSetting {
+  id        String   @id @default(uuid(7))
+  companyId String
+  key       String
+  value     Json
+  updatedAt DateTime @updatedAt
+  updatedById String?
+
+  @@unique([companyId, key])
+}
+
+model DocumentSequence {
+  id        String @id @default(uuid(7))
+  companyId String
+  type      String // OPP, ORC, PROP, CTR, PRJ, PARC...
+  year      Int
+  nextValue Int    @default(1)
+
+  @@unique([companyId, type, year])
+}
+
+enum CustomFieldType {
+  TEXT
+  NUMBER
+  CURRENCY
+  DATE
+  SELECT
+  MULTI_SELECT
+  BOOLEAN
+  EMAIL
+  PHONE
+  URL
+  LONG_TEXT
+}
+
+model CustomField {
+  id         String          @id @default(uuid(7))
+  companyId  String
+  entityType String          // client | opportunity | budget | contract | project | task | invoice
+  name       String
+  fieldType  CustomFieldType
+  options    Json?           // para SELECT/MULTI_SELECT
+  required   Boolean         @default(false)
+  active     Boolean         @default(true)
+  sortOrder  Int             @default(0)
+  createdAt  DateTime        @default(now())
+  updatedAt  DateTime        @updatedAt
+
+  values CustomFieldValue[]
+
+  @@index([companyId, entityType])
+}
+
+model CustomFieldValue {
+  id            String      @id @default(uuid(7))
+  customFieldId String
+  entityId      String
+  value         Json
+  updatedAt     DateTime    @updatedAt
+  customField   CustomField @relation(fields: [customFieldId], references: [id], onDelete: Cascade)
+
+  @@unique([customFieldId, entityId])
+}
+
+// ============================================================
+// CLIENTES
+// ============================================================
+
+enum PersonType {
+  FISICA
+  JURIDICA
+}
+
+enum ClientStatus {
+  ATIVO
+  INATIVO
+  BLOQUEADO
+}
+
+model Client {
+  id                 String       @id @default(uuid(7))
+  companyId          String
+  code               String?      // código interno opcional
+  personType         PersonType
+  legalName          String       // razão social ou nome completo
+  tradeName          String?
+  cpf                String?
+  cnpj               String?
+  stateRegistration  String?
+  cityRegistration   String?
+  email              String?
+  phone              String?
+  whatsapp           String?
+  website            String?
+  addressStreet      String?
+  addressNumber      String?
+  addressComplement  String?
+  addressDistrict    String?
+  zipCode            String?
+  city               String?
+  state              String?
+  country            String?      @default("Brasil")
+  notes              String?
+  status             ClientStatus @default(ATIVO)
+  leadSourceId       String?
+  segment            String?
+  firstContactAt     DateTime?
+  commercialOwnerId  String?
+  tags               String[]     @default([])
+  createdAt          DateTime     @default(now())
+  updatedAt          DateTime     @updatedAt
+  createdById        String?
+  updatedById        String?
+  deletedAt          DateTime?
+
+  leadSource      LeadSource?   @relation(fields: [leadSourceId], references: [id], onDelete: SetNull)
+  commercialOwner User?         @relation("ClientCommercialOwner", fields: [commercialOwnerId], references: [id], onDelete: SetNull)
+  contacts        ClientContact[]
+  units           ClientUnit[]
+  opportunities   Opportunity[]
+  budgets         Budget[]
+  contracts       Contract[]
+  projects        Project[]
+  receivables     Receivable[]
+  invoices        Invoice[]
+  activities      OpportunityActivity[]
+
+  @@index([companyId, status])
+  @@index([companyId, cnpj])
+  @@index([companyId, cpf])
+}
+
+model ClientContact {
+  id            String   @id @default(uuid(7))
+  clientId      String
+  name          String
+  position      String?
+  email         String?
+  phone         String?
+  whatsapp      String?
+  department    String?
+  decisionMaker Boolean  @default(false)
+  isPrimary     Boolean  @default(false)
+  isFinancial   Boolean  @default(false)
+  isTechnical   Boolean  @default(false)
+  isContractual Boolean  @default(false)
+  notes         String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  deletedAt     DateTime?
+
+  client        Client        @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  opportunities Opportunity[]
+
+  @@index([clientId])
+}
+
+model ClientUnit {
+  id          String   @id @default(uuid(7))
+  clientId    String
+  name        String
+  unitType    String?  // obra, fazenda, usina, filial, condomínio, UC, centro de custo...
+  consumerUnit String? // nº da unidade consumidora, quando aplicável
+  addressStreet String?
+  addressNumber String?
+  addressDistrict String?
+  zipCode     String?
+  city        String?
+  state       String?
+  notes       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  deletedAt   DateTime?
+
+  client        Client        @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  opportunities Opportunity[]
+  budgets       Budget[]
+  contracts     Contract[]
+  projects      Project[]
+
+  @@index([clientId])
+}
+
+model LeadSource {
+  id        String   @id @default(uuid(7))
+  companyId String
+  name      String
+  active    Boolean  @default(true)
+  sortOrder Int      @default(0)
+
+  clients       Client[]
+  opportunities Opportunity[]
+
+  @@unique([companyId, name])
+}
+
+// ============================================================
+// CRM / PIPELINE
+// ============================================================
+
+enum StageKind {
+  ABERTA
+  GANHA
+  PERDIDA
+  SUSPENSA
+}
+
+model OpportunityStage {
+  id        String    @id @default(uuid(7))
+  companyId String
+  name      String
+  kind      StageKind @default(ABERTA)
+  color     String?
+  sortOrder Int       @default(0)
+  active    Boolean   @default(true)
+
+  opportunities Opportunity[]
+
+  @@unique([companyId, name])
+}
+
+enum PriorityLevel {
+  BAIXA
+  MEDIA
+  ALTA
+  URGENTE
+}
+
+model Opportunity {
+  id                  String        @id @default(uuid(7))
+  companyId           String
+  code                String        // OPP-AAAA-NNN
+  title               String
+  clientId            String
+  clientUnitId        String?
+  primaryContactId    String?
+  description         String?
+  serviceCatalogId    String?
+  discipline          String?
+  commercialOwnerId   String?
+  technicalOwnerId    String?
+  leadSourceId        String?
+  estimatedValue      Decimal?      @db.Decimal(14, 2)
+  probability         Decimal?      @db.Decimal(9, 4) // 0–100
+  expectedCloseDate   DateTime?
+  estimatedDuration   String?
+  priority            PriorityLevel @default(MEDIA)
+  competitors         String?
+  hiringReason        String?
+  clientNeed          String?
+  nextAction          String?
+  nextActionDate      DateTime?
+  tags                String[]      @default([])
+  notes               String?
+  checklist           Json?         // checklist de informações necessárias
+  stageId             String
+  boardPosition       Int           @default(0)
+  lossReasonId        String?
+  lossNotes           String?
+  closedAt            DateTime?
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
+  createdById         String?
+  updatedById         String?
+  deletedAt           DateTime?
+
+  client          Client            @relation(fields: [clientId], references: [id])
+  clientUnit      ClientUnit?       @relation(fields: [clientUnitId], references: [id], onDelete: SetNull)
+  primaryContact  ClientContact?    @relation(fields: [primaryContactId], references: [id], onDelete: SetNull)
+  serviceCatalog  ServiceCatalog?   @relation(fields: [serviceCatalogId], references: [id], onDelete: SetNull)
+  commercialOwner User?             @relation("OppCommercialOwner", fields: [commercialOwnerId], references: [id], onDelete: SetNull)
+  technicalOwner  User?             @relation("OppTechnicalOwner", fields: [technicalOwnerId], references: [id], onDelete: SetNull)
+  leadSource      LeadSource?       @relation(fields: [leadSourceId], references: [id], onDelete: SetNull)
+  stage           OpportunityStage  @relation(fields: [stageId], references: [id])
+  lossReason      LossReason?       @relation(fields: [lossReasonId], references: [id], onDelete: SetNull)
+  activities      OpportunityActivity[]
+  budgets         Budget[]
+
+  @@unique([companyId, code])
+  @@index([companyId, stageId])
+  @@index([clientId])
+}
+
+enum ActivityType {
+  LIGACAO
+  REUNIAO
+  VISITA_TECNICA
+  MENSAGEM
+  EMAIL
+  TAREFA
+  LEMBRETE
+  ENVIO_DOCUMENTO
+  FOLLOW_UP
+  NEGOCIACAO
+  DECISAO
+}
+
+enum ActivityStatus {
+  PENDENTE
+  CONCLUIDA
+  CANCELADA
+}
+
+model OpportunityActivity {
+  id            String         @id @default(uuid(7))
+  companyId     String
+  opportunityId String?
+  clientId      String?
+  activityType  ActivityType
+  title         String
+  notes         String?
+  responsibleId String?
+  dueAt         DateTime?
+  completedAt   DateTime?
+  status        ActivityStatus @default(PENDENTE)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  createdById   String?
+  deletedAt     DateTime?
+
+  opportunity Opportunity? @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
+  client      Client?      @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  responsible User?        @relation(fields: [responsibleId], references: [id], onDelete: SetNull)
+
+  @@index([companyId, status, dueAt])
+  @@index([opportunityId])
+}
+
+model LossReason {
+  id        String  @id @default(uuid(7))
+  companyId String
+  name      String
+  active    Boolean @default(true)
+  sortOrder Int     @default(0)
+
+  opportunities Opportunity[]
+
+  @@unique([companyId, name])
+}
+
+model ServiceCatalog {
+  id               String   @id @default(uuid(7))
+  companyId        String
+  code             String
+  name             String
+  category         String?
+  description      String?
+  discipline       String?
+  unit             String?  // un, m², h, vb...
+  defaultPrice     Decimal? @db.Decimal(14, 2)
+  estimatedCost    Decimal? @db.Decimal(14, 2)
+  estimatedHours   Decimal? @db.Decimal(9, 4)
+  scopeTemplate    String?
+  premisesTemplate String?
+  exclusionsTemplate String?
+  deliverables     Json?    // entregáveis associados
+  active           Boolean  @default(true)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  deletedAt        DateTime?
+
+  opportunities Opportunity[]
+  budgetItems   BudgetItem[]
+
+  @@unique([companyId, code])
+}
+
+// ============================================================
+// ORÇAMENTOS E PROPOSTAS
+// ============================================================
+
+enum BudgetStatus {
+  RASCUNHO
+  EM_REVISAO
+  APROVACAO_INTERNA
+  APROVADO
+  RECUSADO
+  EXPIRADO
+  CANCELADO
+}
+
+model Budget {
+  id                String       @id @default(uuid(7))
+  companyId         String
+  code              String       // ORC-AAAA-NNN
+  opportunityId     String?
+  clientId          String
+  clientUnitId      String?
+  commercialOwnerId String?
+  technicalOwnerId  String?
+  status            BudgetStatus @default(RASCUNHO)
+  currentVersionId  String?      @unique
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+  createdById       String?
+  updatedById       String?
+  deletedAt         DateTime?
+
+  opportunity     Opportunity?    @relation(fields: [opportunityId], references: [id], onDelete: SetNull)
+  client          Client          @relation(fields: [clientId], references: [id])
+  clientUnit      ClientUnit?     @relation(fields: [clientUnitId], references: [id], onDelete: SetNull)
+  commercialOwner User?           @relation("BudgetCommercialOwner", fields: [commercialOwnerId], references: [id], onDelete: SetNull)
+  technicalOwner  User?           @relation("BudgetTechnicalOwner", fields: [technicalOwnerId], references: [id], onDelete: SetNull)
+  currentVersion  BudgetVersion?  @relation("CurrentVersion", fields: [currentVersionId], references: [id], onDelete: SetNull)
+  versions        BudgetVersion[] @relation("BudgetVersions")
+  approvals       BudgetApproval[]
+  contracts       Contract[]
+  projects        Project[]
+
+  @@unique([companyId, code])
+  @@index([clientId])
+}
+
+model BudgetVersion {
+  id                 String    @id @default(uuid(7))
+  budgetId           String
+  versionNumber      Int       // 1, 2, 3... exibido como V01, V02
+  validUntil         DateTime?
+  serviceType        String?
+  scope              String?
+  premises           String?
+  exclusions         String?
+  referenceDocuments String?
+  executionDeadline  String?
+  deliveryMethod     String?
+  paymentTerms       String?   // descrição textual da forma de pagamento
+  paymentSchedule    Json?     // estrutura de parcelas p/ gerar cronograma
+  subtotal           Decimal   @default(0) @db.Decimal(14, 2)
+  discount           Decimal   @default(0) @db.Decimal(14, 2)
+  surcharge          Decimal   @default(0) @db.Decimal(14, 2)
+  taxes              Decimal   @default(0) @db.Decimal(14, 2)
+  estimatedRetentions Decimal  @default(0) @db.Decimal(14, 2)
+  totalCost          Decimal   @default(0) @db.Decimal(14, 2)
+  grossMargin        Decimal   @default(0) @db.Decimal(14, 2)
+  marginPercent      Decimal   @default(0) @db.Decimal(9, 4)
+  total              Decimal   @default(0) @db.Decimal(14, 2)
+  internalNotes      String?
+  clientNotes        String?
+  changeReason       String?   // justificativa da versão
+  immutable          Boolean   @default(false) // true após envio/aprovação
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+  createdById        String?
+
+  budget          Budget       @relation("BudgetVersions", fields: [budgetId], references: [id], onDelete: Cascade)
+  currentOfBudget Budget?      @relation("CurrentVersion")
+  items           BudgetItem[]
+  proposals       Proposal[]
+
+  @@unique([budgetId, versionNumber])
+}
+
+model BudgetItem {
+  id               String   @id @default(uuid(7))
+  budgetVersionId  String
+  serviceCatalogId String?
+  description      String
+  discipline       String?
+  stage            String?
+  itemType         String?  // serviço, hora técnica, despesa, deslocamento, ART/RRT, terceirização...
+  unit             String?
+  quantity         Decimal  @default(1) @db.Decimal(9, 4)
+  unitPrice        Decimal  @default(0) @db.Decimal(14, 2)
+  unitCost         Decimal  @default(0) @db.Decimal(14, 2)
+  discount         Decimal  @default(0) @db.Decimal(14, 2)
+  total            Decimal  @default(0) @db.Decimal(14, 2)
+  sortOrder        Int      @default(0)
+
+  budgetVersion  BudgetVersion   @relation(fields: [budgetVersionId], references: [id], onDelete: Cascade)
+  serviceCatalog ServiceCatalog? @relation(fields: [serviceCatalogId], references: [id], onDelete: SetNull)
+
+  @@index([budgetVersionId])
+}
+
+enum ApprovalStatus {
+  PENDENTE
+  APROVADA
+  RECUSADA
+}
+
+model BudgetApproval {
+  id            String         @id @default(uuid(7))
+  budgetId      String
+  ruleTriggered String         // ex.: desconto_acima_maximo, margem_abaixo_minima, valor_acima_limite
+  requestedById String?
+  decidedById   String?
+  status        ApprovalStatus @default(PENDENTE)
+  comment       String?
+  decidedAt     DateTime?
+  createdAt     DateTime       @default(now())
+
+  budget      Budget @relation(fields: [budgetId], references: [id], onDelete: Cascade)
+  requestedBy User?  @relation("ApprovalRequestedBy", fields: [requestedById], references: [id], onDelete: SetNull)
+  decidedBy   User?  @relation("ApprovalDecidedBy", fields: [decidedById], references: [id], onDelete: SetNull)
+}
+
+enum ProposalType {
+  COMERCIAL
+  TECNICA
+  UNIFICADA
+}
+
+enum ProposalStatus {
+  RASCUNHO
+  ENVIADA
+  VISUALIZADA
+  ACEITA
+  RECUSADA
+  EXPIRADA
+}
+
+model Proposal {
+  id               String         @id @default(uuid(7))
+  companyId        String
+  code             String         // PROP-AAAA-NNN
+  budgetVersionId  String
+  templateId       String?
+  proposalType     ProposalType   @default(UNIFICADA)
+  status           ProposalStatus @default(RASCUNHO)
+  pdfAttachmentId  String?
+  // Assinatura eletrônica (MP 2.200-2 art. 10 §2º): código público de conferência
+  // + hash do PDF emitido. Para ICP-Brasil (PAdES) ver docs/ARQUITETURA.md.
+  verificationCode   String?      @unique
+  signedElectronicallyAt DateTime?
+  signerName         String?
+  signerRegistration String?
+  documentHash       String?      // SHA-256 do PDF emitido
+  sentAt           DateTime?
+  sentVia          String?
+  recipients       String?
+  viewedAt         DateTime?
+  acceptedAt       DateTime?
+  rejectedAt       DateTime?
+  rejectionReason  String?
+  negotiationNotes String?
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  createdById      String?
+  deletedAt        DateTime?
+
+  budgetVersion BudgetVersion     @relation(fields: [budgetVersionId], references: [id])
+  template      ProposalTemplate? @relation(fields: [templateId], references: [id], onDelete: SetNull)
+  contracts     Contract[]
+
+  @@unique([companyId, code])
+}
+
+model ProposalTemplate {
+  id           String       @id @default(uuid(7))
+  companyId    String
+  name         String
+  proposalType ProposalType @default(UNIFICADA)
+  html         String       // template com variáveis {{...}}
+  active       Boolean      @default(true)
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
+  proposals Proposal[]
+
+  @@unique([companyId, name])
+}
+
+// ============================================================
+// CONTRATOS
+// ============================================================
+
+enum ContractStatus {
+  MINUTA
+  EM_REVISAO_INTERNA
+  AGUARDANDO_APROVACAO
+  ENVIADO_AO_CLIENTE
+  EM_NEGOCIACAO
+  AGUARDANDO_ASSINATURA
+  ASSINADO
+  VIGENTE
+  SUSPENSO
+  ENCERRADO
+  RESCINDIDO
+  CANCELADO
+}
+
+model Contract {
+  id               String         @id @default(uuid(7))
+  companyId        String
+  code             String         // CTR-AAAA-NNN
+  contractNumber   String?        // numeração externa, se houver
+  clientId         String
+  clientUnitId     String?
+  proposalId       String?
+  budgetId         String?
+  subject          String         // objeto
+  scope            String?
+  totalValue       Decimal        @db.Decimal(14, 2)
+  startDate        DateTime?
+  endDate          DateTime?
+  durationDays     Int?
+  paymentTerms     String?
+  paymentSchedule  Json?          // estrutura das parcelas (herdada do orçamento, editável)
+  adjustmentIndex  String?        // índice de reajuste
+  baseDate         DateTime?
+  penalties        String?
+  guarantees       String?
+  retentions       String?
+  obligations      String?
+  terminationTerms String?
+  jurisdiction     String?        // foro
+  witnesses        Json?          // [{ name, cpf }] — testemunhas do instrumento
+  /// Variáveis específicas da minuta (prazo, formatos de entrega, revisões inclusas…)
+  templateVariables Json?
+  status           ContractStatus @default(MINUTA)
+  templateId       String?
+  signedAt         DateTime?
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  createdById      String?
+  updatedById      String?
+  deletedAt        DateTime?
+
+  client     Client              @relation(fields: [clientId], references: [id])
+  clientUnit ClientUnit?         @relation(fields: [clientUnitId], references: [id], onDelete: SetNull)
+  proposal   Proposal?           @relation(fields: [proposalId], references: [id], onDelete: SetNull)
+  budget     Budget?             @relation(fields: [budgetId], references: [id], onDelete: SetNull)
+  template   ContractTemplate?   @relation(fields: [templateId], references: [id], onDelete: SetNull)
+  versions   ContractVersion[]
+  amendments ContractAmendment[]
+  signatures ContractSignature[]
+  projects   Project[]
+  receivables Receivable[]
+  invoices   Invoice[]
+
+  @@unique([companyId, code])
+  @@index([clientId, status])
+}
+
+model ContractVersion {
+  id              String   @id @default(uuid(7))
+  contractId      String
+  versionNumber   Int
+  pdfAttachmentId String?
+  variables       Json?    // variáveis resolvidas no momento da geração
+  notes           String?
+  // Assinatura eletrônica da minuta (mesmo esquema da proposta)
+  verificationCode String? @unique
+  documentHash     String?
+  createdAt       DateTime @default(now())
+  createdById      String?
+
+  contract Contract @relation(fields: [contractId], references: [id], onDelete: Cascade)
+
+  @@unique([contractId, versionNumber])
+}
+
+enum AmendmentType {
+  VALOR
+  PRAZO
+  ESCOPO
+  FORMA_PAGAMENTO
+  RESPONSABILIDADE
+  SUSPENSAO
+  RETOMADA
+  RESCISAO
+}
+
+model ContractAmendment {
+  id              String        @id @default(uuid(7))
+  contractId      String
+  number          Int
+  amendmentType   AmendmentType
+  description     String
+  valueDelta      Decimal?      @db.Decimal(14, 2)
+  newEndDate      DateTime?
+  pdfAttachmentId String?
+  status          ContractStatus @default(MINUTA)
+  signedAt        DateTime?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  createdById     String?
+  deletedAt       DateTime?
+
+  contract Contract @relation(fields: [contractId], references: [id], onDelete: Cascade)
+
+  @@unique([contractId, number])
+}
+
+model ContractSignature {
+  id               String    @id @default(uuid(7))
+  contractId       String
+  signerName       String
+  signerRole       String?   // contratante, contratada, testemunha
+  signerEmail      String?
+  signedAt         DateTime?
+  signedFileId     String?   // Attachment com o contrato assinado
+  status           String    @default("pendente")
+  createdAt        DateTime  @default(now())
+
+  contract Contract @relation(fields: [contractId], references: [id], onDelete: Cascade)
+}
+
+model ContractTemplate {
+  id          String   @id @default(uuid(7))
+  companyId   String
+  name        String
+  /// PROJETO | LAUDO | EMPREITADA | OUTRO — define o texto base
+  kind        String   @default("OUTRO")
+  serviceType String?
+  /// Cláusulas em JSON: [{ title, paragraphs: [...] }] com variáveis {{...}}.
+  /// A numeração (Cláusula Primeira, 1.1, 1.2…) é gerada automaticamente.
+  clauses     Json
+  /// Texto de abertura ("As partes contraentes têm entre si…")
+  preamble    String?
+  isSystem    Boolean  @default(false)
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  contracts Contract[]
+
+  @@unique([companyId, name])
+}
+
+// ============================================================
+// PROJETOS
+// ============================================================
+
+enum ProjectStatus {
+  AGUARDANDO_INICIO
+  EM_MOBILIZACAO
+  AGUARDANDO_DOCUMENTOS
+  EM_LEVANTAMENTO
+  EM_DESENVOLVIMENTO
+  EM_REVISAO_INTERNA
+  ENVIADO_AO_CLIENTE
+  AGUARDANDO_APROVACAO
+  EM_REVISAO_DO_CLIENTE
+  EM_APROVACAO_EXTERNA
+  AGUARDANDO_CONCESSIONARIA
+  AGUARDANDO_ORGAO_PUBLICO
+  SUSPENSO
+  CONCLUIDO
+  ENCERRADO
+  CANCELADO
+}
+
+model Project {
+  id                  String        @id @default(uuid(7))
+  companyId           String
+  code                String        // PRJ-AAAA-NNN
+  name                String
+  clientId            String
+  clientUnitId        String?
+  contractId          String?
+  budgetId            String?
+  technicalLeadId     String?
+  coordinatorId       String?
+  disciplines         String[]      @default([])
+  startDate           DateTime?
+  contractualDeadline DateTime?
+  expectedEndDate     DateTime?
+  actualEndDate       DateTime?
+  contractValue       Decimal?      @db.Decimal(14, 2)
+  status              ProjectStatus @default(AGUARDANDO_INICIO)
+  priority            PriorityLevel @default(MEDIA)
+  progressPercent     Decimal       @default(0) @db.Decimal(9, 4)
+  risks               String?
+  notes               String?
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
+  createdById         String?
+  updatedById         String?
+  deletedAt           DateTime?
+
+  client        Client          @relation(fields: [clientId], references: [id])
+  clientUnit    ClientUnit?     @relation(fields: [clientUnitId], references: [id], onDelete: SetNull)
+  contract      Contract?       @relation(fields: [contractId], references: [id], onDelete: SetNull)
+  budget        Budget?         @relation(fields: [budgetId], references: [id], onDelete: SetNull)
+  technicalLead User?           @relation("ProjectTechnicalLead", fields: [technicalLeadId], references: [id], onDelete: SetNull)
+  coordinator   User?           @relation("ProjectCoordinator", fields: [coordinatorId], references: [id], onDelete: SetNull)
+  stages        ProjectStage[]
+  members       ProjectMember[]
+  tasks         Task[]
+  deliverables  Deliverable[]
+  timeEntries   TimeEntry[]
+  technicalResponsibilities TechnicalResponsibility[]
+  pendencies    ClientPendency[]
+  receivables   Receivable[]
+  invoices      Invoice[]
+
+  @@unique([companyId, code])
+  @@index([clientId, status])
+}
+
+enum StageStatus {
+  PENDENTE
+  EM_ANDAMENTO
+  CONCLUIDA
+  CANCELADA
+}
+
+model ProjectStage {
+  id          String      @id @default(uuid(7))
+  projectId   String
+  name        String
+  sortOrder   Int         @default(0)
+  status      StageStatus @default(PENDENTE)
+  startedAt   DateTime?
+  completedAt DateTime?
+  dueAt       DateTime?
+  notes       String?
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  tasks   Task[]
+  deliverables Deliverable[]
+
+  @@index([projectId])
+}
+
+model ProjectMember {
+  projectId String
+  userId    String
+  roleInProject String? // projetista, revisor, coordenador...
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([projectId, userId])
+}
+
+enum TaskStatus {
+  A_FAZER
+  EM_ANDAMENTO
+  EM_REVISAO
+  BLOQUEADA
+  CONCLUIDA
+  CANCELADA
+}
+
+model Task {
+  id             String        @id @default(uuid(7))
+  companyId      String
+  projectId      String?
+  stageId        String?
+  deliverableId  String?
+  title          String
+  description    String?
+  assigneeId     String?
+  collaborators  String[]      @default([]) // ids de usuários
+  priority       PriorityLevel @default(MEDIA)
+  startDate      DateTime?
+  dueAt          DateTime?
+  completedAt    DateTime?
+  status         TaskStatus    @default(A_FAZER)
+  estimatedHours Decimal?      @db.Decimal(9, 4)
+  labels         String[]      @default([])
+  dependsOnIds   String[]      @default([])
+  boardPosition  Int           @default(0)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  createdById    String?
+  updatedById    String?
+  deletedAt      DateTime?
+
+  project     Project?      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  stage       ProjectStage? @relation(fields: [stageId], references: [id], onDelete: SetNull)
+  deliverable Deliverable?  @relation(fields: [deliverableId], references: [id], onDelete: SetNull)
+  assignee    User?         @relation("TaskAssignee", fields: [assigneeId], references: [id], onDelete: SetNull)
+  checklist   TaskChecklistItem[]
+  timeEntries TimeEntry[]
+
+  @@index([companyId, status, dueAt])
+  @@index([projectId])
+}
+
+model TaskChecklistItem {
+  id        String   @id @default(uuid(7))
+  taskId    String
+  title     String
+  done      Boolean  @default(false)
+  sortOrder Int      @default(0)
+
+  task Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
+}
+
+enum DeliverableStatus {
+  PENDENTE
+  EM_ELABORACAO
+  EM_REVISAO
+  EMITIDO
+  APROVADO
+  REPROVADO
+  CANCELADO
+}
+
+model Deliverable {
+  id             String            @id @default(uuid(7))
+  projectId      String
+  stageId        String?
+  code           String?
+  name           String
+  discipline     String?
+  description    String?
+  responsibleId  String?           // id de usuário (sem FK p/ simplificar)
+  dueAt          DateTime?
+  status         DeliverableStatus @default(PENDENTE)
+  currentRevision String?          // R00, R01...
+  issuedAt       DateTime?
+  approvedAt     DateTime?
+  dependsOnIds   String[]          @default([])
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+  deletedAt      DateTime?
+
+  project   Project              @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  stage     ProjectStage?        @relation(fields: [stageId], references: [id], onDelete: SetNull)
+  revisions DeliverableRevision[]
+  tasks     Task[]
+
+  @@index([projectId])
+}
+
+enum RevisionStatus {
+  EM_ELABORACAO
+  EMITIDA
+  APROVADA
+  REPROVADA
+  SUBSTITUIDA
+}
+
+model DeliverableRevision {
+  id            String         @id @default(uuid(7))
+  deliverableId String
+  revisionCode  String         // R00, R01, ..., AS_BUILT, FINAL
+  revisionDate  DateTime       @default(now())
+  responsibleId String?
+  reason        String?
+  changes       String?        // descrição das alterações
+  attachmentId  String?        // arquivo desta revisão — imutável após emissão
+  status        RevisionStatus @default(EM_ELABORACAO)
+  clientComments String?
+  createdAt     DateTime       @default(now())
+  createdById   String?
+
+  deliverable Deliverable @relation(fields: [deliverableId], references: [id], onDelete: Cascade)
+
+  @@unique([deliverableId, revisionCode])
+}
+
+model TimeEntry {
+  id          String    @id @default(uuid(7))
+  companyId   String
+  userId      String
+  projectId   String
+  taskId      String?
+  workDate    DateTime
+  hours       Decimal   @db.Decimal(9, 4)
+  description String?
+  billable    Boolean   @default(true)
+  hourlyCost  Decimal?  @db.Decimal(14, 2)
+  hourlyRate  Decimal?  @db.Decimal(14, 2)
+  approvedAt  DateTime?
+  approvedById String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+
+  user    User    @relation(fields: [userId], references: [id])
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  task    Task?   @relation(fields: [taskId], references: [id], onDelete: SetNull)
+
+  @@index([projectId, workDate])
+  @@index([userId, workDate])
+}
+
+enum TechRespStatus {
+  PENDENTE
+  EMITIDA
+  BAIXADA
+  CANCELADA
+}
+
+model TechnicalResponsibility {
+  id           String         @id @default(uuid(7))
+  companyId    String
+  projectId    String?
+  number       String         // nº da ART/RRT
+  docType      String         // ART | RRT | TRT
+  council      String?        // CREA-MT, CAU...
+  professionalId String?      // usuário interno, quando aplicável
+  professionalName String?
+  registration String?        // CREA/CAU do profissional
+  issuedAt     DateTime?
+  value        Decimal?       @db.Decimal(14, 2)
+  status       TechRespStatus @default(PENDENTE)
+  serviceDescription String?
+  attachmentId String?
+  dischargedAt DateTime?      // data de baixa
+  notes        String?
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  deletedAt    DateTime?
+
+  project      Project? @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  professional User?    @relation(fields: [professionalId], references: [id], onDelete: SetNull)
+
+  @@index([companyId, status])
+}
+
+enum PendencyStatus {
+  ABERTA
+  RECEBIDA
+  CANCELADA
+}
+
+model ClientPendency {
+  id             String         @id @default(uuid(7))
+  projectId      String
+  title          String         // documento ou decisão pendente
+  clientContact  String?        // responsável no cliente
+  requestedAt    DateTime       @default(now())
+  dueAt          DateTime?
+  impact         String?
+  status         PendencyStatus @default(ABERTA)
+  receivedAt     DateTime?
+  notes          String?
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([projectId, status])
+}
+
+// ============================================================
+// DOCUMENTOS / COMENTÁRIOS
+// ============================================================
+
+model Attachment {
+  id         String    @id @default(uuid(7))
+  companyId  String
+  entityType String    // client | opportunity | budget | proposal | contract | project | task | deliverable | invoice | receipt | company
+  entityId   String
+  category   String?   // §8.2
+  fileName   String
+  mimeType   String
+  sizeBytes  Int
+  sha256     String
+  storageKey String    // chave no storage (local ou S3)
+  version    Int       @default(1)
+  createdAt  DateTime  @default(now())
+  createdById String?
+  deletedAt  DateTime?
+
+  @@index([companyId, entityType, entityId])
+}
+
+model Comment {
+  id         String    @id @default(uuid(7))
+  companyId  String
+  entityType String
+  entityId   String
+  authorId   String?
+  body       String
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  deletedAt  DateTime?
+
+  author User? @relation(fields: [authorId], references: [id], onDelete: SetNull)
+
+  @@index([companyId, entityType, entityId])
+}
+
+// ============================================================
+// FINANCEIRO
+// ============================================================
+
+enum ReceivableStatus {
+  PREVISTO
+  A_FATURAR
+  AGUARDANDO_AUTORIZACAO
+  NF_EMITIDA
+  ENVIADO_AO_CLIENTE
+  A_VENCER
+  VENCIDO
+  PARCIALMENTE_RECEBIDO
+  RECEBIDO
+  RENEGOCIADO
+  CANCELADO
+  EM_COBRANCA
+  INADIMPLENTE
+}
+
+model Receivable {
+  id              String           @id @default(uuid(7))
+  companyId       String
+  code            String           // PARC-AAAA-NNN
+  contractId      String?
+  projectId       String?
+  clientId        String
+  description     String
+  installmentNumber Int            @default(1)
+  competenceDate  DateTime?
+  issueDate       DateTime?
+  dueDate         DateTime
+  grossValue      Decimal          @db.Decimal(14, 2)
+  discount        Decimal          @default(0) @db.Decimal(14, 2)
+  surcharge       Decimal          @default(0) @db.Decimal(14, 2)
+  retentions      Json?            // detalhe por tributo: [{tipo, percentual, valor}]
+  retentionsTotal Decimal          @default(0) @db.Decimal(14, 2)
+  netValue        Decimal          @db.Decimal(14, 2)
+  status          ReceivableStatus @default(PREVISTO)
+  paymentMethodId String?
+  notes           String?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  createdById     String?
+  updatedById     String?
+  deletedAt       DateTime?
+
+  contract      Contract?      @relation(fields: [contractId], references: [id], onDelete: SetNull)
+  project       Project?       @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  client        Client         @relation(fields: [clientId], references: [id])
+  paymentMethod PaymentMethod? @relation(fields: [paymentMethodId], references: [id], onDelete: SetNull)
+  receipts      Receipt[]
+  invoiceLinks  InvoiceReceivable[]
+  collectionEvents CollectionEvent[]
+
+  @@unique([companyId, code])
+  @@index([companyId, status, dueDate])
+  @@index([clientId])
+}
+
+model Receipt {
+  id            String    @id @default(uuid(7))
+  companyId     String
+  receivableId  String
+  receivedAt    DateTime
+  amount        Decimal   @db.Decimal(14, 2) // valor efetivamente recebido
+  interest      Decimal   @default(0) @db.Decimal(14, 2) // juros
+  fine          Decimal   @default(0) @db.Decimal(14, 2) // multa
+  discount      Decimal   @default(0) @db.Decimal(14, 2)
+  bankFee       Decimal   @default(0) @db.Decimal(14, 2)
+  retentions    Json?     // retenções efetivas na baixa
+  retentionsTotal Decimal @default(0) @db.Decimal(14, 2)
+  notes         String?
+  reversedAt    DateTime? // estorno
+  reversalReason String?
+  createdAt     DateTime  @default(now())
+  createdById   String?
+
+  receivable Receivable @relation(fields: [receivableId], references: [id], onDelete: Restrict)
+
+  @@index([receivableId])
+}
+
+model FinancialRetention {
+  id        String  @id @default(uuid(7))
+  companyId String
+  code      String  // ISS, INSS, IRRF, PIS, COFINS, CSLL...
+  name      String
+  percent   Decimal @default(0) @db.Decimal(9, 4) // zerado por padrão; usuário configura
+  active    Boolean @default(false)
+
+  @@unique([companyId, code])
+}
+
+enum InvoiceStatus {
+  REGISTRADA
+  EMITIDA
+  ENVIADA
+  CANCELADA
+}
+
+model Invoice {
+  id                 String        @id @default(uuid(7))
+  companyId          String
+  number             String
+  series             String?
+  issuerCity         String?
+  issueDate          DateTime
+  competenceDate     DateTime?
+  clientId           String
+  contractId         String?
+  projectId          String?
+  grossValue         Decimal       @db.Decimal(14, 2)
+  deductions         Decimal       @default(0) @db.Decimal(14, 2)
+  retentions         Json?
+  retentionsTotal    Decimal       @default(0) @db.Decimal(14, 2)
+  netValue           Decimal       @db.Decimal(14, 2)
+  serviceCode        String?
+  serviceDescription String?
+  status             InvoiceStatus @default(REGISTRADA)
+  pdfAttachmentId    String?
+  xmlAttachmentId    String?
+  externalLink       String?
+  cancelledAt        DateTime?
+  cancellationReason String?
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
+  createdById        String?
+  deletedAt          DateTime?
+
+  client      Client              @relation(fields: [clientId], references: [id])
+  contract    Contract?           @relation(fields: [contractId], references: [id], onDelete: SetNull)
+  project     Project?            @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  receivables InvoiceReceivable[]
+
+  @@unique([companyId, number, series])
+  @@index([clientId])
+}
+
+model InvoiceReceivable {
+  invoiceId    String
+  receivableId String
+  amount       Decimal? @db.Decimal(14, 2) // parte da NF alocada à parcela, se rateada
+
+  invoice    Invoice    @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  receivable Receivable @relation(fields: [receivableId], references: [id], onDelete: Cascade)
+
+  @@id([invoiceId, receivableId])
+}
+
+model PaymentMethod {
+  id        String  @id @default(uuid(7))
+  companyId String
+  name      String
+  active    Boolean @default(true)
+  sortOrder Int     @default(0)
+
+  receivables Receivable[]
+
+  @@unique([companyId, name])
+}
+
+enum CollectionEventType {
+  LEMBRETE_PRE_VENCIMENTO
+  AVISO_VENCIMENTO
+  PRIMEIRO_AVISO_ATRASO
+  SEGUNDO_AVISO_ATRASO
+  COBRANCA_FORMAL
+  RENEGOCIACAO
+  ENCAMINHAMENTO_JURIDICO
+}
+
+model CollectionEvent {
+  id           String              @id @default(uuid(7))
+  companyId    String
+  receivableId String
+  eventType    CollectionEventType
+  eventDate    DateTime            @default(now())
+  channel      String?             // e-mail, whatsapp, telefone, carta
+  templateUsed String?
+  notes        String?
+  createdById  String?
+
+  receivable Receivable @relation(fields: [receivableId], references: [id], onDelete: Cascade)
+
+  @@index([receivableId])
+}
+
+// ============================================================
+// NOTIFICAÇÕES / IMPORTAÇÃO
+// ============================================================
+
+model Notification {
+  id        String    @id @default(uuid(7))
+  companyId String
+  userId    String
+  kind      String    // follow_up_vencido, proposta_vencendo, parcela_vencida...
+  title     String
+  body      String?
+  link      String?
+  readAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, readAt])
+}
+
+enum ImportStatus {
+  PENDENTE
+  VALIDANDO
+  PRONTO_PARA_IMPORTAR
+  IMPORTANDO
+  CONCLUIDO
+  FALHOU
+  CANCELADO
+}
+
+model ImportJob {
+  id          String       @id @default(uuid(7))
+  companyId   String
+  sourceType  String       // trello_json, csv_clientes, csv_oportunidades...
+  fileName    String?
+  mapping     Json?        // mapeamento colunas → campos
+  status      ImportStatus @default(PENDENTE)
+  totalRows   Int          @default(0)
+  importedRows Int         @default(0)
+  errorRows   Int          @default(0)
+  report      Json?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  createdById String?
+
+  errors ImportError[]
+}
+
+model ImportError {
+  id          String    @id @default(uuid(7))
+  importJobId String
+  rowNumber   Int?
+  field       String?
+  message     String
+  rawData     Json?
+
+  importJob ImportJob @relation(fields: [importJobId], references: [id], onDelete: Cascade)
+}
