@@ -195,6 +195,77 @@ export async function payPayableAction(
   return { info: 'Pagamento registrado.' };
 }
 
+// ---------- Notas fiscais ----------
+
+const invoiceSchema = z.object({
+  number: z.string().trim().min(1, 'Informe o número da nota.'),
+  series: optional,
+  issueDate: z.string().min(1, 'Informe a data de emissão.'),
+  clientId: z.string().min(1, 'Selecione o cliente.'),
+  grossValue: dinheiro,
+  retentionsTotal: z.preprocess(
+    (v) => (typeof v === 'string' && v.trim() !== '' ? parseDecimalBR(v) : '0'),
+    z.string().regex(/^\d+(\.\d{1,2})?$/, 'Retenções inválidas.'),
+  ),
+  serviceDescription: optional,
+  externalLink: optional,
+  projectId: optional,
+});
+
+export async function createInvoiceAction(
+  _prev: ActionState, formData: FormData,
+): Promise<ActionState> {
+  const user = await requirePermission('invoice:write');
+  const parsed = invoiceSchema.safeParse(Object.fromEntries(formData.entries()));
+  if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? 'Dados inválidos.' };
+
+  const receivableIds = formData.getAll('receivableIds').map(String).filter(Boolean);
+  const result = await finance.createInvoice(user, { ...parsed.data, receivableIds });
+  if ('error' in result) return { error: result.error };
+
+  revalidatePath('/financeiro/notas');
+  revalidatePath('/financeiro/receber');
+  return { info: `Nota ${result.invoice.number} registrada.` };
+}
+
+export async function cancelInvoiceAction(id: string, reason: string): Promise<ActionState> {
+  const user = await requirePermission('invoice:write');
+  const result = await finance.cancelInvoice(user, id, reason);
+  if ('error' in result) return { error: result.error };
+  revalidatePath('/financeiro/notas');
+  return { info: 'Nota cancelada.' };
+}
+
+export async function listReceivablesToInvoiceAction(clientId: string) {
+  const user = await requirePermission('invoice:write');
+  const lista = await finance.listReceivablesToInvoice(user, clientId);
+  return lista.map((r) => ({
+    id: r.id, code: r.code, description: r.description,
+    dueDate: r.dueDate.toISOString(), netValue: r.netValue.toString(),
+  }));
+}
+
+// ---------- Cobrança ----------
+
+export async function addCollectionEventAction(
+  receivableId: string, _prev: ActionState, formData: FormData,
+): Promise<ActionState> {
+  const user = await requirePermission('finance:write');
+  const eventType = String(formData.get('eventType') ?? '');
+  if (!eventType) return { error: 'Selecione o tipo de contato.' };
+
+  const result = await finance.addCollectionEvent(user, receivableId, {
+    eventType,
+    channel: String(formData.get('channel') ?? '') || null,
+    notes: String(formData.get('notes') ?? '') || null,
+  });
+  if ('error' in result) return { error: result.error };
+
+  revalidatePath('/financeiro/cobranca');
+  revalidatePath('/financeiro/receber');
+  return { info: 'Contato de cobrança registrado.' };
+}
+
 export async function reopenPayableAction(id: string): Promise<ActionState> {
   const user = await requirePermission('finance:write');
   const result = await finance.setPayableStatus(user, id, 'A_PAGAR');

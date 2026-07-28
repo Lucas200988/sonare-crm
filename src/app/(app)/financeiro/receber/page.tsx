@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { requirePermissionPage } from '@/server/auth/guards';
 import { prisma } from '@/server/db';
-import { listReceivables, type ReceivableFilter } from '@/server/services/finance';
+import { listReceivables, refreshOverdue, type ReceivableFilter } from '@/server/services/finance';
 import { PageHeader, Card, EmptyState, Badge, inputCls } from '@/components/ui';
 import { formatBRL } from '@/lib/money';
 import { formatDateBR } from '@/lib/dates';
@@ -17,6 +17,7 @@ export default async function ReceivablesPage(props: {
   const user = await requirePermissionPage('finance:read');
   const sp = await props.searchParams;
   const canWrite = user.permissions.has('finance:write');
+  await refreshOverdue(user);
 
   const [{ items, total, page, totalPages, somaValor }, clients] = await Promise.all([
     listReceivables(user, {

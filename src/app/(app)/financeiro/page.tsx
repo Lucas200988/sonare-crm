@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { AlertTriangle, ArrowDownCircle, ArrowUpCircle, CalendarClock } from 'lucide-react';
 import { requirePermissionPage } from '@/server/auth/guards';
-import { getFinanceSummary, listReceivables, listPayables } from '@/server/services/finance';
+import { getFinanceSummary, listReceivables, listPayables, refreshOverdue } from '@/server/services/finance';
 import { PageHeader, Card } from '@/components/ui';
 import { formatBRL } from '@/lib/money';
 import { formatDateBR } from '@/lib/dates';
@@ -42,6 +42,8 @@ function Indicador({
 
 export default async function FinancePage() {
   const user = await requirePermissionPage('finance:read');
+  // marca vencidas as parcelas cujo prazo passou, sem depender de agendador
+  await refreshOverdue(user);
 
   const [resumo, vencidas, aPagarVencidas] = await Promise.all([
     getFinanceSummary(user),

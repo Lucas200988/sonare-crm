@@ -3,14 +3,14 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
-  ArrowDownCircle, ArrowUpCircle, BarChart3, Calculator, FileSignature, FolderKanban,
+  ArrowDownCircle, ArrowUpCircle, BarChart3, BellRing, Calculator, FileSignature, FolderKanban,
   KanbanSquare, LayoutDashboard, ReceiptText, Settings, UserCog, Users, Wallet, type LucideIcon,
 } from 'lucide-react';
 
 const ICONS: Record<string, LucideIcon> = {
   LayoutDashboard, Users, KanbanSquare, Calculator, FileSignature,
   FolderKanban, Wallet, ReceiptText, BarChart3, UserCog, Settings,
-  ArrowDownCircle, ArrowUpCircle,
+  ArrowDownCircle, ArrowUpCircle, BellRing,
 };
 
 export type SidebarItem = {

@@ -14,7 +14,7 @@ export type ClientOption = { id: string; legalName: string; tradeName: string | 
  * o cliente novo é criado ali mesmo e já fica selecionado.
  */
 export function ClientSelect({
-  name, id, clients, required, defaultValue, canCreate = true,
+  name, id, clients, required, defaultValue, canCreate = true, onSelect,
 }: {
   name: string;
   id: string;
@@ -22,6 +22,8 @@ export function ClientSelect({
   required?: boolean;
   defaultValue?: string;
   canCreate?: boolean;
+  /** Avisa a tela sobre o cliente escolhido (ou criado). */
+  onSelect?: (clientId: string) => void;
 }) {
   const [lista, setLista] = useState(clients);
   const [selecionado, setSelecionado] = useState<string>(defaultValue ?? '');
@@ -53,6 +55,7 @@ export function ClientSelect({
       };
       setLista((prev) => [...prev, novo].sort((a, b) => a.legalName.localeCompare(b.legalName)));
       setSelecionado(novo.id);
+      onSelect?.(novo.id);
       setCriando(false);
       setNome(''); setDocumento(''); setEmail(''); setTelefone('');
     });
@@ -136,7 +139,7 @@ export function ClientSelect({
         name={name}
         required={required}
         value={selecionado}
-        onChange={(e) => setSelecionado(e.target.value)}
+        onChange={(e) => { setSelecionado(e.target.value); onSelect?.(e.target.value); }}
         className={inputCls}
       >
         <option value="" disabled>Selecione…</option>

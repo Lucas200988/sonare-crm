@@ -371,6 +371,160 @@ export async function getProjectFinance(user: SessionUser, projectId: string) {
   };
 }
 
+// ---------- Notas fiscais ----------
+
+export type InvoiceFilter = { search?: string; status?: string; page?: number };
+
+export async function listInvoices(user: SessionUser, filter: InvoiceFilter) {
+  const page = Math.max(1, filter.page ?? 1);
+  const pageSize = 30;
+  const where: Prisma.InvoiceWhereInput = { companyId: user.companyId, deletedAt: null };
+
+  if (filter.status && filter.status !== 'TODOS') where.status = filter.status as never;
+  if (filter.search) {
+    where.OR = [
+      { number: { contains: filter.search, mode: 'insensitive' } },
+      { serviceDescription: { contains: filter.search, mode: 'insensitive' } },
+      { client: { legalName: { contains: filter.search, mode: 'insensitive' } } },
+    ];
+  }
+
+  const [total, items, soma] = await prisma.$transaction([
+    prisma.invoice.count({ where }),
+    prisma.invoice.findMany({
+      where,
+      include: {
+        client: { select: { legalName: true, tradeName: true } },
+        project: { select: { code: true } },
+        receivables: { include: { receivable: { select: { code: true } } } },
+      },
+      orderBy: { issueDate: 'desc' },
+      skip: (page - 1) * pageSize,
+      take: pageSize,
+    }),
+    prisma.invoice.aggregate({ where, _sum: { netValue: true } }),
+  ]);
+
+  return {
+    items, total, page, pageSize,
+    totalPages: Math.max(1, Math.ceil(total / pageSize)),
+    somaValor: soma._sum.netValue?.toString() ?? '0',
+  };
+}
+
+export type InvoiceInput = {
+  number: string;
+  series?: string | null;
+  issueDate: string;
+  clientId: string;
+  grossValue: string;
+  retentionsTotal?: string | null;
+  serviceDescription?: string | null;
+  externalLink?: string | null;
+  projectId?: string | null;
+  receivableIds?: string[];
+};
+
+/**
+ * Registro da NFS-e emitida no portal da prefeitura. O sistema não emite a
+ * nota — guarda o número, o valor e o vínculo com as parcelas, para o
+ * financeiro saber o que já foi faturado.
+ */
+export async function createInvoice(user: SessionUser, input: InvoiceInput) {
+  const emissao = parseDateInput(input.issueDate);
+  if (!emissao) return { error: 'Informe a data de emissão.' };
+
+  const client = await prisma.client.findFirst({
+    where: { id: input.clientId, companyId: user.companyId, deletedAt: null },
+    select: { id: true },
+  });
+  if (!client) return { error: 'Cliente não encontrado.' };
+
+  const duplicada = await prisma.invoice.findFirst({
+    where: {
+      companyId: user.companyId, number: input.number,
+      series: input.series || null, deletedAt: null,
+    },
+    select: { id: true },
+  });
+  if (duplicada) return { error: `A nota ${input.number} já está registrada.` };
+
+  const bruto = Number(input.grossValue);
+  const retencoes = Number(input.retentionsTotal ?? 0);
+  if (retencoes > bruto) return { error: 'As retenções não podem superar o valor bruto.' };
+  const liquido = (bruto - retencoes).toFixed(2);
+
+  const invoice = await prisma.invoice.create({
+    data: {
+      companyId: user.companyId,
+      number: input.number,
+      series: input.series || null,
+      issueDate: emissao,
+      clientId: input.clientId,
+      projectId: input.projectId || null,
+      grossValue: input.grossValue,
+      retentionsTotal: retencoes.toFixed(2),
+      netValue: liquido,
+      serviceDescription: input.serviceDescription || null,
+      externalLink: input.externalLink || null,
+      status: 'EMITIDA',
+      createdById: user.id,
+      receivables: input.receivableIds?.length
+        ? { create: input.receivableIds.map((receivableId) => ({ receivableId })) }
+        : undefined,
+    },
+  });
+
+  // As parcelas vinculadas passam a constar como faturadas
+  if (input.receivableIds?.length) {
+    await prisma.receivable.updateMany({
+      where: {
+        id: { in: input.receivableIds },
+        companyId: user.companyId,
+        status: { in: ['PREVISTO', 'A_FATURAR', 'AGUARDANDO_AUTORIZACAO', 'A_VENCER'] },
+      },
+      data: { status: 'NF_EMITIDA' },
+    });
+  }
+
+  await auditLog({
+    companyId: user.companyId, userId: user.id, action: 'create',
+    entityType: 'invoice', entityId: invoice.id, after: { numero: invoice.number },
+  });
+  return { invoice };
+}
+
+export async function cancelInvoice(user: SessionUser, id: string, reason: string) {
+  const invoice = await prisma.invoice.findFirst({
+    where: { id, companyId: user.companyId, deletedAt: null },
+  });
+  if (!invoice) return { error: 'Nota não encontrada.' };
+  if (invoice.status === 'CANCELADA') return { error: 'Esta nota já está cancelada.' };
+  if (!reason.trim()) return { error: 'Informe o motivo do cancelamento.' };
+
+  await prisma.invoice.update({
+    where: { id },
+    data: { status: 'CANCELADA', cancelledAt: new Date(), cancellationReason: reason },
+  });
+  await auditLog({
+    companyId: user.companyId, userId: user.id, action: 'cancel',
+    entityType: 'invoice', entityId: id, after: { motivo: reason },
+  });
+  return { ok: true };
+}
+
+/** Parcelas que ainda podem ser vinculadas a uma nota. */
+export async function listReceivablesToInvoice(user: SessionUser, clientId: string) {
+  return prisma.receivable.findMany({
+    where: {
+      companyId: user.companyId, clientId, deletedAt: null,
+      status: { in: ['PREVISTO', 'A_FATURAR', 'AGUARDANDO_AUTORIZACAO', 'A_VENCER', 'VENCIDO'] },
+    },
+    select: { id: true, code: true, description: true, dueDate: true, netValue: true },
+    orderBy: { dueDate: 'asc' },
+  });
+}
+
 // ---------- Contas a pagar ----------
 
 export type PayableFilter = {
@@ -496,6 +650,115 @@ export async function setPayableStatus(user: SessionUser, id: string, status: Pa
     },
   });
   return { ok: true };
+}
+
+// ---------- Cobrança ----------
+
+/**
+ * Marca como vencidas as parcelas cujo prazo passou. Roda ao abrir o
+ * financeiro, para a situação refletir a data de hoje sem depender de
+ * agendador externo.
+ */
+export async function refreshOverdue(user: SessionUser): Promise<number> {
+  const { count } = await prisma.receivable.updateMany({
+    where: {
+      companyId: user.companyId, deletedAt: null,
+      dueDate: { lt: hoje() },
+      status: { in: ['PREVISTO', 'A_FATURAR', 'NF_EMITIDA', 'ENVIADO_AO_CLIENTE', 'A_VENCER'] },
+    },
+    data: { status: 'VENCIDO' },
+  });
+  return count;
+}
+
+export type CollectionEventInput = {
+  eventType: string;
+  channel?: string | null;
+  notes?: string | null;
+};
+
+/** Registra o contato de cobrança feito com o cliente. */
+export async function addCollectionEvent(
+  user: SessionUser, receivableId: string, input: CollectionEventInput,
+) {
+  const receivable = await prisma.receivable.findFirst({
+    where: { id: receivableId, companyId: user.companyId, deletedAt: null },
+    select: { id: true, status: true },
+  });
+  if (!receivable) return { error: 'Parcela não encontrada.' };
+
+  const evento = await prisma.collectionEvent.create({
+    data: {
+      companyId: user.companyId,
+      receivableId,
+      eventType: input.eventType as never,
+      channel: input.channel || null,
+      notes: input.notes || null,
+      createdById: user.id,
+    },
+  });
+
+  // A partir do primeiro aviso de atraso a parcela entra em cobrança
+  const emCobranca = ['PRIMEIRO_AVISO_ATRASO', 'SEGUNDO_AVISO_ATRASO', 'COBRANCA_FORMAL'];
+  if (emCobranca.includes(input.eventType) && receivable.status === 'VENCIDO') {
+    await prisma.receivable.update({
+      where: { id: receivableId },
+      data: { status: 'EM_COBRANCA' },
+    });
+  }
+  if (input.eventType === 'ENCAMINHAMENTO_JURIDICO') {
+    await prisma.receivable.update({
+      where: { id: receivableId },
+      data: { status: 'INADIMPLENTE' },
+    });
+  }
+
+  return { evento };
+}
+
+export async function listCollectionEvents(user: SessionUser, receivableId: string) {
+  return prisma.collectionEvent.findMany({
+    where: { companyId: user.companyId, receivableId },
+    orderBy: { eventDate: 'desc' },
+  });
+}
+
+/**
+ * Parcelas que pedem ação de cobrança hoje, agrupadas pelo tempo de atraso —
+ * a régua que orienta quem cobrar primeiro.
+ */
+export async function getCollectionQueue(user: SessionUser) {
+  const inicioDia = hoje();
+  const vencidas = await prisma.receivable.findMany({
+    where: {
+      companyId: user.companyId, deletedAt: null,
+      dueDate: { lt: inicioDia },
+      status: { in: ['VENCIDO', 'EM_COBRANCA', 'INADIMPLENTE', 'PARCIALMENTE_RECEBIDO'] },
+    },
+    include: {
+      client: { select: { id: true, legalName: true, tradeName: true, email: true, phone: true } },
+      receipts: { where: { reversedAt: null }, select: { amount: true } },
+      collectionEvents: { orderBy: { eventDate: 'desc' }, take: 1 },
+    },
+    orderBy: { dueDate: 'asc' },
+  });
+
+  return vencidas.map((r) => {
+    const recebido = r.receipts.reduce((acc, x) => acc + Number(x.amount), 0);
+    const diasAtraso = Math.floor((inicioDia.getTime() - r.dueDate.getTime()) / 86_400_000);
+    return {
+      ...r,
+      saldo: (Number(r.netValue) - recebido).toFixed(2),
+      diasAtraso,
+      // sugestão de próximo passo conforme o tempo de atraso
+      sugestao:
+        diasAtraso <= 7 ? 'PRIMEIRO_AVISO_ATRASO'
+        : diasAtraso <= 20 ? 'SEGUNDO_AVISO_ATRASO'
+        : diasAtraso <= 45 ? 'COBRANCA_FORMAL'
+        : 'ENCAMINHAMENTO_JURIDICO',
+      ultimoContato: r.collectionEvents[0] ?? null,
+    };
+  });
 }
 
 export async function deletePayable(user: SessionUser, id: string) {

@@ -9,6 +9,15 @@ import { appUrl } from '@/server/signature';
  */
 export async function GET() {
   const checks: Record<string, unknown> = {};
+
+  // Identifica a versão publicada — evita confundir "não subiu" com "ainda
+  // está publicando" depois de um push.
+  const sha = process.env.VERCEL_GIT_COMMIT_SHA;
+  checks.versao = {
+    commit: sha ? sha.slice(0, 7) : 'local',
+    mensagem: process.env.VERCEL_GIT_COMMIT_MESSAGE?.split('\n')[0] ?? null,
+    publicadoEm: process.env.VERCEL_DEPLOYMENT_ID ? undefined : 'ambiente local',
+  };
   let healthy = true;
 
   try {
