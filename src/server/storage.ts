@@ -19,6 +19,37 @@ import { prisma } from '@/server/db';
 
 const BUCKET = process.env.SUPABASE_STORAGE_BUCKET ?? 'documentos';
 
+/**
+ * O nome do bucket diferencia maiúsculas ("Documentos" e "documentos" são
+ * buckets distintos). Como o nome é digitado à mão no painel do Supabase, um
+ * "D" maiúsculo derrubaria toda a emissão de documentos. Descobrimos o nome
+ * real uma vez e guardamos em memória.
+ */
+let bucketResolvido: string | null = null;
+
+async function resolveBucket(client: ReturnType<typeof supabaseClient>): Promise<string> {
+  if (bucketResolvido) return bucketResolvido;
+
+  const { data, error } = await client.storage.listBuckets();
+  if (error || !data) {
+    // sem permissão para listar: segue com o nome configurado
+    bucketResolvido = BUCKET;
+    return bucketResolvido;
+  }
+
+  const exato = data.find((b) => b.name === BUCKET);
+  const semCaso = data.find((b) => b.name.toLowerCase() === BUCKET.toLowerCase());
+  if (!exato && !semCaso) {
+    throw new Error(
+      `O bucket "${BUCKET}" não existe no Supabase. ` +
+      `Buckets disponíveis: ${data.map((b) => b.name).join(', ') || 'nenhum'}. ` +
+      'Crie-o em Storage → New bucket (privado) ou ajuste SUPABASE_STORAGE_BUCKET.',
+    );
+  }
+  bucketResolvido = (exato ?? semCaso)!.name;
+  return bucketResolvido;
+}
+
 function supabaseConfigured(): boolean {
   return Boolean(process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY);
 }
@@ -74,8 +105,10 @@ export async function saveFile(input: {
   );
 
   if (useSupabase()) {
-    const { error } = await supabaseClient()
-      .storage.from(BUCKET)
+    const client = supabaseClient();
+    const bucket = await resolveBucket(client);
+    const { error } = await client
+      .storage.from(bucket)
       .upload(key, input.content, { contentType: input.mimeType, upsert: true });
     if (error) throw new Error(`Falha ao enviar o arquivo: ${error.message}`);
   } else {
@@ -110,7 +143,9 @@ export async function readAttachment(companyId: string, attachmentId: string) {
 
   try {
     if (useSupabase()) {
-      const { data, error } = await supabaseClient().storage.from(BUCKET).download(attachment.storageKey);
+      const client = supabaseClient();
+      const bucket = await resolveBucket(client);
+      const { data, error } = await client.storage.from(bucket).download(attachment.storageKey);
       if (error || !data) return null;
       return { attachment, content: Buffer.from(await data.arrayBuffer()) };
     }
@@ -125,7 +160,8 @@ export async function readAttachment(companyId: string, attachmentId: string) {
 export async function deleteStoredFile(storageKey: string): Promise<void> {
   try {
     if (useSupabase()) {
-      await supabaseClient().storage.from(BUCKET).remove([storageKey]);
+      const client = supabaseClient();
+      await client.storage.from(await resolveBucket(client)).remove([storageKey]);
       return;
     }
     await rm(path.join(baseDir(), storageKey), { force: true });
@@ -141,4 +177,27 @@ export function storageInfo() {
     bucket: useSupabase() ? BUCKET : null,
     configured: useSupabase() ? supabaseConfigured() : true,
   };
+}
+
+/**
+ * Confere se o bucket realmente existe e aceita gravação. O health check só
+ * olhava as variáveis de ambiente — e um bucket com nome divergente passava
+ * despercebido até a primeira emissão de documento falhar.
+ */
+export async function checkStorageAccess(): Promise<
+  { ok: true; bucket: string } | { ok: false; erro: string }
+> {
+  if (!useSupabase()) return { ok: true, bucket: 'local' };
+  try {
+    const client = supabaseClient();
+    const bucket = await resolveBucket(client);
+    const chave = '.healthcheck';
+    const { error } = await client.storage
+      .from(bucket)
+      .upload(chave, Buffer.from('ok'), { contentType: 'text/plain', upsert: true });
+    if (error) return { ok: false, erro: error.message };
+    return { ok: true, bucket };
+  } catch (e) {
+    return { ok: false, erro: e instanceof Error ? e.message : 'falha desconhecida' };
+  }
 }

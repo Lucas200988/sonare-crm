@@ -10,7 +10,7 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
 
   const items: SidebarItem[] = NAV_ITEMS.filter(
     (item) => item.permission === null || user.permissions.has(item.permission),
-  ).map(({ label, href, icon, comingSoon }) => ({ label, href, icon, comingSoon }));
+  ).map(({ label, href, icon, comingSoon, child }) => ({ label, href, icon, comingSoon, child }));
 
   return (
     <div className="flex min-h-screen bg-slate-100">

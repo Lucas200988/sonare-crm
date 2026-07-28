@@ -280,6 +280,15 @@ export const InvoiceStatus = {
 export type InvoiceStatus = (typeof InvoiceStatus)[keyof typeof InvoiceStatus]
 
 
+export const PayableStatus = {
+  A_PAGAR: 'A_PAGAR',
+  PAGO: 'PAGO',
+  CANCELADO: 'CANCELADO'
+} as const
+
+export type PayableStatus = (typeof PayableStatus)[keyof typeof PayableStatus]
+
+
 export const CollectionEventType = {
   LEMBRETE_PRE_VENCIMENTO: 'LEMBRETE_PRE_VENCIMENTO',
   AVISO_VENCIMENTO: 'AVISO_VENCIMENTO',

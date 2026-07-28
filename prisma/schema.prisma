@@ -982,6 +982,7 @@ model Project {
   pendencies    ClientPendency[]
   receivables   Receivable[]
   invoices      Invoice[]
+  payables      Payable[]
 
   @@unique([companyId, code])
   @@index([clientId, status])
@@ -1426,6 +1427,38 @@ model PaymentMethod {
   receivables Receivable[]
 
   @@unique([companyId, name])
+}
+
+enum PayableStatus {
+  A_PAGAR
+  PAGO
+  CANCELADO
+}
+
+/// Contas a pagar — deliberadamente enxuto: sem cadastro de fornecedor nem
+/// centro de custo, que só fariam sentido com contabilidade integrada.
+model Payable {
+  id          String        @id @default(uuid(7))
+  companyId   String
+  description String
+  supplier    String? // nome livre; não há cadastro de fornecedores
+  category    String? // Aluguel, Impostos, Salários, Fornecedores…
+  projectId   String? // rateio simples: despesa ligada a um projeto
+  dueDate     DateTime
+  amount      Decimal       @db.Decimal(14, 2)
+  paidAt      DateTime?
+  paidAmount  Decimal?      @db.Decimal(14, 2)
+  status      PayableStatus @default(A_PAGAR)
+  notes       String?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  createdById String?
+  updatedById String?
+  deletedAt   DateTime?
+
+  project Project? @relation(fields: [projectId], references: [id], onDelete: SetNull)
+
+  @@index([companyId, status, dueDate])
 }
 
 enum CollectionEventType {

@@ -1,0 +1,163 @@
+'use server';
+
+import { revalidatePath } from 'next/cache';
+import { z } from 'zod';
+import { requirePermission } from '@/server/auth/guards';
+import * as finance from '@/server/services/finance';
+import { parseDecimalBR } from '@/lib/parse';
+
+export type ActionState = { error?: string; info?: string };
+
+const optional = z.preprocess(
+  (v) => (typeof v === 'string' && v.trim() === '' ? null : v),
+  z.string().nullable().optional(),
+);
+
+/** Campo de dinheiro digitado em pt-BR ("1.250,00") vira decimal com ponto. */
+const dinheiro = z.preprocess(
+  (v) => (typeof v === 'string' ? parseDecimalBR(v) : v),
+  z.string().regex(/^\d+(\.\d{1,2})?$/, 'Valor inválido.'),
+);
+
+// ---------- Contas a receber ----------
+
+const receivableSchema = z.object({
+  clientId: z.string().min(1, 'Selecione o cliente.'),
+  description: z.string().trim().min(3, 'Descreva a cobrança.'),
+  dueDate: z.string().min(1, 'Informe o vencimento.'),
+  grossValue: dinheiro,
+  contractId: optional,
+  projectId: optional,
+  notes: optional,
+});
+
+export async function createReceivableAction(
+  _prev: ActionState, formData: FormData,
+): Promise<ActionState> {
+  const user = await requirePermission('finance:write');
+  const parsed = receivableSchema.safeParse(Object.fromEntries(formData.entries()));
+  if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? 'Dados inválidos.' };
+
+  const result = await finance.createReceivable(user, parsed.data);
+  if ('error' in result) return { error: result.error };
+
+  revalidatePath('/financeiro/receber');
+  revalidatePath('/financeiro');
+  return { info: `Parcela ${result.receivable.code} criada.` };
+}
+
+const installmentsSchema = z.object({
+  quantidade: z.coerce.number().int().min(1, 'Mínimo de 1 parcela.').max(60, 'Máximo de 60 parcelas.'),
+  primeiroVencimento: z.string().min(1, 'Informe o primeiro vencimento.'),
+  intervaloDias: z.coerce.number().int().min(1).max(365).default(30),
+});
+
+export async function generateInstallmentsAction(
+  contractId: string, _prev: ActionState, formData: FormData,
+): Promise<ActionState> {
+  const user = await requirePermission('finance:write');
+  const parsed = installmentsSchema.safeParse(Object.fromEntries(formData.entries()));
+  if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? 'Dados inválidos.' };
+
+  const result = await finance.generateInstallments(user, contractId, parsed.data);
+  if ('error' in result) return { error: result.error };
+
+  revalidatePath('/financeiro/receber');
+  revalidatePath(`/contratos/${contractId}`);
+  return { info: `${result.quantidade} parcela(s) gerada(s).` };
+}
+
+const receiptSchema = z.object({
+  receivedAt: z.string().min(1, 'Informe a data.'),
+  amount: dinheiro,
+  interest: dinheiro.optional(),
+  fine: dinheiro.optional(),
+  discount: dinheiro.optional(),
+  notes: optional,
+});
+
+export async function registerReceiptAction(
+  receivableId: string, _prev: ActionState, formData: FormData,
+): Promise<ActionState> {
+  const user = await requirePermission('finance:write');
+  const parsed = receiptSchema.safeParse(Object.fromEntries(formData.entries()));
+  if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? 'Dados inválidos.' };
+
+  const result = await finance.registerReceipt(user, receivableId, parsed.data);
+  if ('error' in result) return { error: result.error };
+
+  revalidatePath('/financeiro/receber');
+  revalidatePath('/financeiro');
+  return { info: result.quitado ? 'Parcela quitada.' : 'Recebimento parcial registrado.' };
+}
+
+export async function cancelReceivableAction(id: string): Promise<ActionState> {
+  const user = await requirePermission('finance:write');
+  const result = await finance.cancelReceivable(user, id);
+  if ('error' in result) return { error: result.error };
+  revalidatePath('/financeiro/receber');
+  return { info: 'Parcela cancelada.' };
+}
+
+// ---------- Contas a pagar ----------
+
+const payableSchema = z.object({
+  description: z.string().trim().min(3, 'Descreva a conta.'),
+  supplier: optional,
+  category: optional,
+  projectId: optional,
+  dueDate: z.string().min(1, 'Informe o vencimento.'),
+  amount: dinheiro,
+  notes: optional,
+});
+
+export async function createPayableAction(
+  _prev: ActionState, formData: FormData,
+): Promise<ActionState> {
+  const user = await requirePermission('finance:write');
+  const parsed = payableSchema.safeParse(Object.fromEntries(formData.entries()));
+  if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? 'Dados inválidos.' };
+
+  const result = await finance.createPayable(user, parsed.data);
+  if ('error' in result) return { error: result.error };
+
+  revalidatePath('/financeiro/pagar');
+  revalidatePath('/financeiro');
+  return { info: 'Conta lançada.' };
+}
+
+const paySchema = z.object({
+  paidAt: z.string().min(1, 'Informe a data do pagamento.'),
+  paidAmount: dinheiro,
+});
+
+export async function payPayableAction(
+  id: string, _prev: ActionState, formData: FormData,
+): Promise<ActionState> {
+  const user = await requirePermission('finance:write');
+  const parsed = paySchema.safeParse(Object.fromEntries(formData.entries()));
+  if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? 'Dados inválidos.' };
+
+  const result = await finance.payPayable(user, id, parsed.data);
+  if ('error' in result) return { error: result.error };
+
+  revalidatePath('/financeiro/pagar');
+  revalidatePath('/financeiro');
+  return { info: 'Pagamento registrado.' };
+}
+
+export async function reopenPayableAction(id: string): Promise<ActionState> {
+  const user = await requirePermission('finance:write');
+  const result = await finance.setPayableStatus(user, id, 'A_PAGAR');
+  if ('error' in result) return { error: result.error };
+  revalidatePath('/financeiro/pagar');
+  return { info: 'Pagamento desfeito.' };
+}
+
+export async function deletePayableAction(id: string): Promise<ActionState> {
+  const user = await requirePermission('finance:write');
+  const result = await finance.deletePayable(user, id);
+  if ('error' in result) return { error: result.error };
+  revalidatePath('/financeiro/pagar');
+  return { info: 'Conta removida.' };
+}

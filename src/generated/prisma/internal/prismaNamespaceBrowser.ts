@@ -103,6 +103,7 @@ export const ModelName = {
   Invoice: 'Invoice',
   InvoiceReceivable: 'InvoiceReceivable',
   PaymentMethod: 'PaymentMethod',
+  Payable: 'Payable',
   CollectionEvent: 'CollectionEvent',
   Notification: 'Notification',
   ImportJob: 'ImportJob',
@@ -1129,6 +1130,29 @@ export const PaymentMethodScalarFieldEnum = {
 } as const
 
 export type PaymentMethodScalarFieldEnum = (typeof PaymentMethodScalarFieldEnum)[keyof typeof PaymentMethodScalarFieldEnum]
+
+
+export const PayableScalarFieldEnum = {
+  id: 'id',
+  companyId: 'companyId',
+  description: 'description',
+  supplier: 'supplier',
+  category: 'category',
+  projectId: 'projectId',
+  dueDate: 'dueDate',
+  amount: 'amount',
+  paidAt: 'paidAt',
+  paidAmount: 'paidAmount',
+  status: 'status',
+  notes: 'notes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  createdById: 'createdById',
+  updatedById: 'updatedById',
+  deletedAt: 'deletedAt'
+} as const
+
+export type PayableScalarFieldEnum = (typeof PayableScalarFieldEnum)[keyof typeof PayableScalarFieldEnum]
 
 
 export const CollectionEventScalarFieldEnum = {

@@ -449,6 +449,7 @@ export const ModelName = {
   Invoice: 'Invoice',
   InvoiceReceivable: 'InvoiceReceivable',
   PaymentMethod: 'PaymentMethod',
+  Payable: 'Payable',
   CollectionEvent: 'CollectionEvent',
   Notification: 'Notification',
   ImportJob: 'ImportJob',
@@ -468,7 +469,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "company" | "user" | "role" | "permission" | "rolePermission" | "userRole" | "userPermission" | "session" | "passwordResetToken" | "auditLog" | "systemSetting" | "documentSequence" | "customField" | "customFieldValue" | "client" | "clientContact" | "clientUnit" | "leadSource" | "opportunityStage" | "opportunity" | "opportunityActivity" | "lossReason" | "serviceCatalog" | "budget" | "budgetVersion" | "budgetItem" | "budgetApproval" | "proposal" | "proposalTemplate" | "contract" | "contractVersion" | "contractAmendment" | "contractSignature" | "contractTemplate" | "project" | "projectStage" | "projectMember" | "task" | "taskChecklistItem" | "deliverable" | "deliverableRevision" | "timeEntry" | "technicalResponsibility" | "clientPendency" | "attachment" | "comment" | "receivable" | "receipt" | "financialRetention" | "invoice" | "invoiceReceivable" | "paymentMethod" | "collectionEvent" | "notification" | "importJob" | "importError"
+    modelProps: "company" | "user" | "role" | "permission" | "rolePermission" | "userRole" | "userPermission" | "session" | "passwordResetToken" | "auditLog" | "systemSetting" | "documentSequence" | "customField" | "customFieldValue" | "client" | "clientContact" | "clientUnit" | "leadSource" | "opportunityStage" | "opportunity" | "opportunityActivity" | "lossReason" | "serviceCatalog" | "budget" | "budgetVersion" | "budgetItem" | "budgetApproval" | "proposal" | "proposalTemplate" | "contract" | "contractVersion" | "contractAmendment" | "contractSignature" | "contractTemplate" | "project" | "projectStage" | "projectMember" | "task" | "taskChecklistItem" | "deliverable" | "deliverableRevision" | "timeEntry" | "technicalResponsibility" | "clientPendency" | "attachment" | "comment" | "receivable" | "receipt" | "financialRetention" | "invoice" | "invoiceReceivable" | "paymentMethod" | "payable" | "collectionEvent" | "notification" | "importJob" | "importError"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -4320,6 +4321,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    Payable: {
+      payload: Prisma.$PayablePayload<ExtArgs>
+      fields: Prisma.PayableFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.PayableFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PayablePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.PayableFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PayablePayload>
+        }
+        findFirst: {
+          args: Prisma.PayableFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PayablePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.PayableFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PayablePayload>
+        }
+        findMany: {
+          args: Prisma.PayableFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PayablePayload>[]
+        }
+        create: {
+          args: Prisma.PayableCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PayablePayload>
+        }
+        createMany: {
+          args: Prisma.PayableCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.PayableCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PayablePayload>[]
+        }
+        delete: {
+          args: Prisma.PayableDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PayablePayload>
+        }
+        update: {
+          args: Prisma.PayableUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PayablePayload>
+        }
+        deleteMany: {
+          args: Prisma.PayableDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.PayableUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.PayableUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PayablePayload>[]
+        }
+        upsert: {
+          args: Prisma.PayableUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PayablePayload>
+        }
+        aggregate: {
+          args: Prisma.PayableAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregatePayable>
+        }
+        groupBy: {
+          args: Prisma.PayableGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PayableGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.PayableCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PayableCountAggregateOutputType> | number
+        }
+      }
+    }
     CollectionEvent: {
       payload: Prisma.$CollectionEventPayload<ExtArgs>
       fields: Prisma.CollectionEventFieldRefs
@@ -5661,6 +5736,29 @@ export const PaymentMethodScalarFieldEnum = {
 export type PaymentMethodScalarFieldEnum = (typeof PaymentMethodScalarFieldEnum)[keyof typeof PaymentMethodScalarFieldEnum]
 
 
+export const PayableScalarFieldEnum = {
+  id: 'id',
+  companyId: 'companyId',
+  description: 'description',
+  supplier: 'supplier',
+  category: 'category',
+  projectId: 'projectId',
+  dueDate: 'dueDate',
+  amount: 'amount',
+  paidAt: 'paidAt',
+  paidAmount: 'paidAmount',
+  status: 'status',
+  notes: 'notes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  createdById: 'createdById',
+  updatedById: 'updatedById',
+  deletedAt: 'deletedAt'
+} as const
+
+export type PayableScalarFieldEnum = (typeof PayableScalarFieldEnum)[keyof typeof PayableScalarFieldEnum]
+
+
 export const CollectionEventScalarFieldEnum = {
   id: 'id',
   companyId: 'companyId',
@@ -6162,6 +6260,20 @@ export type ListEnumInvoiceStatusFieldRefInput<$PrismaModel> = FieldRefInputType
 
 
 /**
+ * Reference to a field of type 'PayableStatus'
+ */
+export type EnumPayableStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PayableStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'PayableStatus[]'
+ */
+export type ListEnumPayableStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PayableStatus[]'>
+    
+
+
+/**
  * Reference to a field of type 'CollectionEventType'
  */
 export type EnumCollectionEventTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CollectionEventType'>
@@ -6405,6 +6517,7 @@ export type GlobalOmitConfig = {
   invoice?: Prisma.InvoiceOmit
   invoiceReceivable?: Prisma.InvoiceReceivableOmit
   paymentMethod?: Prisma.PaymentMethodOmit
+  payable?: Prisma.PayableOmit
   collectionEvent?: Prisma.CollectionEventOmit
   notification?: Prisma.NotificationOmit
   importJob?: Prisma.ImportJobOmit

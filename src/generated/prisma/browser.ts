@@ -278,6 +278,12 @@ export type InvoiceReceivable = Prisma.InvoiceReceivableModel
  */
 export type PaymentMethod = Prisma.PaymentMethodModel
 /**
+ * Model Payable
+ * Contas a pagar — deliberadamente enxuto: sem cadastro de fornecedor nem
+ * centro de custo, que só fariam sentido com contabilidade integrada.
+ */
+export type Payable = Prisma.PayableModel
+/**
  * Model CollectionEvent
  * 
  */

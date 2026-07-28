@@ -3,16 +3,19 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
-  BarChart3, Calculator, FileSignature, FolderKanban, KanbanSquare,
-  LayoutDashboard, ReceiptText, Settings, UserCog, Users, Wallet, type LucideIcon,
+  ArrowDownCircle, ArrowUpCircle, BarChart3, Calculator, FileSignature, FolderKanban,
+  KanbanSquare, LayoutDashboard, ReceiptText, Settings, UserCog, Users, Wallet, type LucideIcon,
 } from 'lucide-react';
 
 const ICONS: Record<string, LucideIcon> = {
   LayoutDashboard, Users, KanbanSquare, Calculator, FileSignature,
   FolderKanban, Wallet, ReceiptText, BarChart3, UserCog, Settings,
+  ArrowDownCircle, ArrowUpCircle,
 };
 
-export type SidebarItem = { label: string; href: string; icon: string; comingSoon?: boolean };
+export type SidebarItem = {
+  label: string; href: string; icon: string; comingSoon?: boolean; child?: boolean;
+};
 
 export function SidebarNav({ items }: { items: SidebarItem[] }) {
   const pathname = usePathname();
@@ -21,7 +24,11 @@ export function SidebarNav({ items }: { items: SidebarItem[] }) {
     <nav aria-label="Menu principal" className="flex-1 space-y-0.5 px-3 py-4">
       {items.map((item) => {
         const Icon = ICONS[item.icon] ?? LayoutDashboard;
-        const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
+        // subitens do financeiro nao devem acender o item pai
+        const active = item.child
+          ? pathname === item.href
+          : pathname === item.href || (!items.some((i) => i.child && i.href === pathname) && pathname.startsWith(`${item.href}/`));
+        const recuo = item.child ? 'ml-4 text-xs' : '';
 
         // Módulo previsto: aparece no menu para dar visão do todo, mas não navega
         if (item.comingSoon) {
@@ -46,13 +53,13 @@ export function SidebarNav({ items }: { items: SidebarItem[] }) {
             key={item.href}
             href={item.href}
             aria-current={active ? 'page' : undefined}
-            className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition ${
+            className={`${recuo} flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition ${
               active
                 ? 'bg-brand/15 text-white'
                 : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100'
             }`}
           >
-            <Icon className="h-4.5 w-4.5 shrink-0" aria-hidden />
+            <Icon className={`shrink-0 ${item.child ? 'h-3.5 w-3.5' : 'h-4.5 w-4.5'}`} aria-hidden />
             {item.label}
           </Link>
         );

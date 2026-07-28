@@ -7,6 +7,8 @@ export type NavItem = {
   permission: PermissionCode | null; // null = visível a qualquer autenticado
   /** Módulo previsto, ainda não implementado: aparece no menu mas não navega. */
   comingSoon?: boolean;
+  /** Subitem: recuado sob o item anterior. */
+  child?: boolean;
 };
 
 export const NAV_ITEMS: NavItem[] = [
@@ -16,7 +18,9 @@ export const NAV_ITEMS: NavItem[] = [
   { label: 'Orçamentos', href: '/orcamentos', icon: 'Calculator', permission: 'budget:read' },
   { label: 'Contratos', href: '/contratos', icon: 'FileSignature', permission: 'contract:read' },
   { label: 'Projetos', href: '/projetos', icon: 'FolderKanban', permission: 'project:read' },
-  { label: 'Financeiro', href: '/financeiro', icon: 'Wallet', permission: 'finance:read', comingSoon: true },
+  { label: 'Financeiro', href: '/financeiro', icon: 'Wallet', permission: 'finance:read' },
+  { label: 'A receber', href: '/financeiro/receber', icon: 'ArrowDownCircle', permission: 'finance:read', child: true },
+  { label: 'A pagar', href: '/financeiro/pagar', icon: 'ArrowUpCircle', permission: 'finance:read', child: true },
   { label: 'Notas Fiscais', href: '/notas-fiscais', icon: 'ReceiptText', permission: 'invoice:read', comingSoon: true },
   { label: 'Relatórios', href: '/relatorios', icon: 'BarChart3', permission: 'report:read', comingSoon: true },
   { label: 'Usuários', href: '/usuarios', icon: 'UserCog', permission: 'user:manage' },

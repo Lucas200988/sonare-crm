@@ -1,0 +1,452 @@
+import 'server-only';
+import { prisma } from '@/server/db';
+import { auditLog } from '@/server/audit/audit';
+import { nextCode } from '@/server/services/sequence';
+import { parseDateInput } from '@/lib/dates';
+import type { Prisma, ReceivableStatus, PayableStatus } from '@/generated/prisma/client';
+import type { SessionUser } from '@/server/auth/session';
+
+/** Situações em que a parcela ainda não entrou no caixa. */
+const EM_ABERTO: ReceivableStatus[] = [
+  'PREVISTO', 'A_FATURAR', 'AGUARDANDO_AUTORIZACAO', 'NF_EMITIDA', 'ENVIADO_AO_CLIENTE',
+  'A_VENCER', 'VENCIDO', 'PARCIALMENTE_RECEBIDO', 'EM_COBRANCA', 'INADIMPLENTE',
+];
+
+/** Início do dia de hoje no fuso da empresa — base das comparações de vencimento. */
+function hoje(): Date {
+  const d = new Date();
+  d.setHours(0, 0, 0, 0);
+  return d;
+}
+
+// ---------- Painel ----------
+
+export async function getFinanceSummary(user: SessionUser) {
+  const inicioDia = hoje();
+  const em7dias = new Date(inicioDia);
+  em7dias.setDate(em7dias.getDate() + 7);
+  const inicioMes = new Date(inicioDia.getFullYear(), inicioDia.getMonth(), 1);
+  const proximoMes = new Date(inicioDia.getFullYear(), inicioDia.getMonth() + 1, 1);
+
+  const base = { companyId: user.companyId, deletedAt: null };
+
+  const [vencidos, vencem7, recebidoMes, aPagarVencidos, aPagar7, pagoMes] = await Promise.all([
+    prisma.receivable.aggregate({
+      where: { ...base, status: { in: EM_ABERTO }, dueDate: { lt: inicioDia } },
+      _sum: { netValue: true }, _count: true,
+    }),
+    prisma.receivable.aggregate({
+      where: { ...base, status: { in: EM_ABERTO }, dueDate: { gte: inicioDia, lte: em7dias } },
+      _sum: { netValue: true }, _count: true,
+    }),
+    prisma.receipt.aggregate({
+      where: {
+        companyId: user.companyId, reversedAt: null,
+        receivedAt: { gte: inicioMes, lt: proximoMes },
+      },
+      _sum: { amount: true },
+    }),
+    prisma.payable.aggregate({
+      where: { ...base, status: 'A_PAGAR', dueDate: { lt: inicioDia } },
+      _sum: { amount: true }, _count: true,
+    }),
+    prisma.payable.aggregate({
+      where: { ...base, status: 'A_PAGAR', dueDate: { gte: inicioDia, lte: em7dias } },
+      _sum: { amount: true }, _count: true,
+    }),
+    prisma.payable.aggregate({
+      where: { ...base, status: 'PAGO', paidAt: { gte: inicioMes, lt: proximoMes } },
+      _sum: { paidAmount: true },
+    }),
+  ]);
+
+  const num = (v: Prisma.Decimal | null | undefined) => (v ? v.toString() : '0');
+
+  return {
+    receber: {
+      vencidoValor: num(vencidos._sum.netValue), vencidoQtd: vencidos._count,
+      proximoValor: num(vencem7._sum.netValue), proximoQtd: vencem7._count,
+      recebidoMes: num(recebidoMes._sum.amount),
+    },
+    pagar: {
+      vencidoValor: num(aPagarVencidos._sum.amount), vencidoQtd: aPagarVencidos._count,
+      proximoValor: num(aPagar7._sum.amount), proximoQtd: aPagar7._count,
+      pagoMes: num(pagoMes._sum.paidAmount),
+    },
+  };
+}
+
+// ---------- Contas a receber ----------
+
+export type ReceivableFilter = {
+  search?: string;
+  situacao?: 'ABERTO' | 'VENCIDO' | 'RECEBIDO' | 'TODOS';
+  clientId?: string;
+  page?: number;
+};
+
+export async function listReceivables(user: SessionUser, filter: ReceivableFilter) {
+  const page = Math.max(1, filter.page ?? 1);
+  const pageSize = 30;
+  const where: Prisma.ReceivableWhereInput = { companyId: user.companyId, deletedAt: null };
+
+  if (filter.clientId) where.clientId = filter.clientId;
+  if (filter.situacao === 'VENCIDO') {
+    where.status = { in: EM_ABERTO };
+    where.dueDate = { lt: hoje() };
+  } else if (filter.situacao === 'RECEBIDO') {
+    where.status = 'RECEBIDO';
+  } else if (filter.situacao !== 'TODOS') {
+    where.status = { in: EM_ABERTO }; // padrão: em aberto
+  }
+  if (filter.search) {
+    where.OR = [
+      { code: { contains: filter.search, mode: 'insensitive' } },
+      { description: { contains: filter.search, mode: 'insensitive' } },
+      { client: { legalName: { contains: filter.search, mode: 'insensitive' } } },
+    ];
+  }
+
+  const [total, items, soma] = await prisma.$transaction([
+    prisma.receivable.count({ where }),
+    prisma.receivable.findMany({
+      where,
+      include: {
+        client: { select: { id: true, legalName: true, tradeName: true } },
+        contract: { select: { id: true, code: true } },
+        project: { select: { id: true, code: true } },
+        receipts: { where: { reversedAt: null }, select: { amount: true } },
+      },
+      orderBy: { dueDate: 'asc' },
+      skip: (page - 1) * pageSize,
+      take: pageSize,
+    }),
+    prisma.receivable.aggregate({ where, _sum: { netValue: true } }),
+  ]);
+
+  return {
+    items, total, page, pageSize,
+    totalPages: Math.max(1, Math.ceil(total / pageSize)),
+    somaValor: soma._sum.netValue?.toString() ?? '0',
+  };
+}
+
+export type ReceivableInput = {
+  clientId: string;
+  description: string;
+  dueDate: string;
+  grossValue: string;
+  contractId?: string | null;
+  projectId?: string | null;
+  notes?: string | null;
+};
+
+export async function createReceivable(user: SessionUser, input: ReceivableInput) {
+  const client = await prisma.client.findFirst({
+    where: { id: input.clientId, companyId: user.companyId, deletedAt: null },
+    select: { id: true },
+  });
+  if (!client) return { error: 'Cliente não encontrado.' };
+
+  const vencimento = parseDateInput(input.dueDate);
+  if (!vencimento) return { error: 'Informe a data de vencimento.' };
+
+  const receivable = await prisma.$transaction(async (tx) => {
+    const code = await nextCode(user.companyId, 'PARC', tx);
+    return tx.receivable.create({
+      data: {
+        companyId: user.companyId,
+        code,
+        clientId: input.clientId,
+        contractId: input.contractId || null,
+        projectId: input.projectId || null,
+        description: input.description,
+        dueDate: vencimento,
+        grossValue: input.grossValue,
+        netValue: input.grossValue,
+        notes: input.notes || null,
+        status: 'A_VENCER',
+        createdById: user.id,
+      },
+    });
+  });
+
+  await auditLog({
+    companyId: user.companyId, userId: user.id, action: 'create',
+    entityType: 'receivable', entityId: receivable.id, after: { code: receivable.code },
+  });
+  return { receivable };
+}
+
+/**
+ * Gera as parcelas de um contrato assinado a partir do número de vezes e do
+ * primeiro vencimento — o caminho comum, sem redigitar valor por valor.
+ */
+export async function generateInstallments(
+  user: SessionUser,
+  contractId: string,
+  input: { quantidade: number; primeiroVencimento: string; intervaloDias: number },
+) {
+  const contract = await prisma.contract.findFirst({
+    where: { id: contractId, companyId: user.companyId, deletedAt: null },
+    include: { projects: { where: { deletedAt: null }, select: { id: true }, take: 1 } },
+  });
+  if (!contract) return { error: 'Contrato não encontrado.' };
+  if (!['ASSINADO', 'VIGENTE'].includes(contract.status)) {
+    return { error: 'Gere as parcelas apenas de contratos assinados ou vigentes.' };
+  }
+  const jaExistem = await prisma.receivable.count({ where: { contractId, deletedAt: null } });
+  if (jaExistem > 0) return { error: 'Este contrato já possui parcelas geradas.' };
+
+  const primeiro = parseDateInput(input.primeiroVencimento);
+  if (!primeiro) return { error: 'Informe o primeiro vencimento.' };
+  if (input.quantidade < 1 || input.quantidade > 60) {
+    return { error: 'A quantidade de parcelas deve estar entre 1 e 60.' };
+  }
+
+  const total = Number(contract.totalValue);
+  // A diferença de arredondamento vai para a primeira parcela
+  const valorParcela = Math.floor((total / input.quantidade) * 100) / 100;
+  const sobra = Math.round((total - valorParcela * input.quantidade) * 100) / 100;
+
+  const criadas = await prisma.$transaction(async (tx) => {
+    const lista = [];
+    for (let i = 0; i < input.quantidade; i++) {
+      const code = await nextCode(user.companyId, 'PARC', tx);
+      const vencimento = new Date(primeiro);
+      vencimento.setDate(vencimento.getDate() + i * input.intervaloDias);
+      const valor = (i === 0 ? valorParcela + sobra : valorParcela).toFixed(2);
+
+      lista.push(await tx.receivable.create({
+        data: {
+          companyId: user.companyId,
+          code,
+          clientId: contract.clientId,
+          contractId: contract.id,
+          projectId: contract.projects[0]?.id ?? null,
+          description: `${contract.subject} — parcela ${i + 1}/${input.quantidade}`,
+          installmentNumber: i + 1,
+          dueDate: vencimento,
+          grossValue: valor,
+          netValue: valor,
+          status: 'A_VENCER',
+          createdById: user.id,
+        },
+      }));
+    }
+    return lista;
+  });
+
+  await auditLog({
+    companyId: user.companyId, userId: user.id, action: 'create',
+    entityType: 'receivable', entityId: contract.id,
+    after: { parcelas: criadas.length, contrato: contract.code },
+  });
+  return { quantidade: criadas.length };
+}
+
+/** Baixa (recebimento) da parcela; recebimento parcial mantém o saldo em aberto. */
+export async function registerReceipt(
+  user: SessionUser,
+  receivableId: string,
+  input: { receivedAt: string; amount: string; interest?: string; fine?: string; discount?: string; notes?: string | null },
+) {
+  const receivable = await prisma.receivable.findFirst({
+    where: { id: receivableId, companyId: user.companyId, deletedAt: null },
+    include: { receipts: { where: { reversedAt: null } } },
+  });
+  if (!receivable) return { error: 'Parcela não encontrada.' };
+  if (receivable.status === 'RECEBIDO') return { error: 'Esta parcela já foi recebida.' };
+
+  const data = parseDateInput(input.receivedAt);
+  if (!data) return { error: 'Informe a data do recebimento.' };
+  const valor = Number(input.amount);
+  if (!(valor > 0)) return { error: 'O valor recebido deve ser maior que zero.' };
+
+  const jaRecebido = receivable.receipts.reduce((acc, r) => acc + Number(r.amount), 0);
+  const total = Number(receivable.netValue);
+  const acumulado = jaRecebido + valor;
+  // tolerância de 1 centavo para arredondamentos
+  const quitado = acumulado >= total - 0.01;
+
+  await prisma.$transaction([
+    prisma.receipt.create({
+      data: {
+        companyId: user.companyId,
+        receivableId,
+        receivedAt: data,
+        amount: input.amount,
+        interest: input.interest || '0',
+        fine: input.fine || '0',
+        discount: input.discount || '0',
+        notes: input.notes || null,
+        createdById: user.id,
+      },
+    }),
+    prisma.receivable.update({
+      where: { id: receivableId },
+      data: { status: quitado ? 'RECEBIDO' : 'PARCIALMENTE_RECEBIDO', updatedById: user.id },
+    }),
+  ]);
+
+  await auditLog({
+    companyId: user.companyId, userId: user.id, action: 'receipt',
+    entityType: 'receivable', entityId: receivableId,
+    after: { valor: input.amount, quitado },
+  });
+  return { ok: true, quitado };
+}
+
+export async function cancelReceivable(user: SessionUser, id: string) {
+  const receivable = await prisma.receivable.findFirst({
+    where: { id, companyId: user.companyId, deletedAt: null },
+    include: { receipts: { where: { reversedAt: null }, select: { id: true } } },
+  });
+  if (!receivable) return { error: 'Parcela não encontrada.' };
+  if (receivable.receipts.length > 0) {
+    return { error: 'Esta parcela tem recebimento lançado. Estorne antes de cancelar.' };
+  }
+
+  await prisma.receivable.update({ where: { id }, data: { status: 'CANCELADO', updatedById: user.id } });
+  await auditLog({
+    companyId: user.companyId, userId: user.id, action: 'cancel',
+    entityType: 'receivable', entityId: id,
+  });
+  return { ok: true };
+}
+
+// ---------- Contas a pagar ----------
+
+export type PayableFilter = {
+  search?: string;
+  situacao?: 'ABERTO' | 'VENCIDO' | 'PAGO' | 'TODOS';
+  page?: number;
+};
+
+export async function listPayables(user: SessionUser, filter: PayableFilter) {
+  const page = Math.max(1, filter.page ?? 1);
+  const pageSize = 30;
+  const where: Prisma.PayableWhereInput = { companyId: user.companyId, deletedAt: null };
+
+  if (filter.situacao === 'VENCIDO') {
+    where.status = 'A_PAGAR';
+    where.dueDate = { lt: hoje() };
+  } else if (filter.situacao === 'PAGO') {
+    where.status = 'PAGO';
+  } else if (filter.situacao !== 'TODOS') {
+    where.status = 'A_PAGAR';
+  }
+  if (filter.search) {
+    where.OR = [
+      { description: { contains: filter.search, mode: 'insensitive' } },
+      { supplier: { contains: filter.search, mode: 'insensitive' } },
+      { category: { contains: filter.search, mode: 'insensitive' } },
+    ];
+  }
+
+  const [total, items, soma] = await prisma.$transaction([
+    prisma.payable.count({ where }),
+    prisma.payable.findMany({
+      where,
+      include: { project: { select: { id: true, code: true } } },
+      orderBy: { dueDate: 'asc' },
+      skip: (page - 1) * pageSize,
+      take: pageSize,
+    }),
+    prisma.payable.aggregate({ where, _sum: { amount: true } }),
+  ]);
+
+  return {
+    items, total, page, pageSize,
+    totalPages: Math.max(1, Math.ceil(total / pageSize)),
+    somaValor: soma._sum.amount?.toString() ?? '0',
+  };
+}
+
+export type PayableInput = {
+  description: string;
+  supplier?: string | null;
+  category?: string | null;
+  projectId?: string | null;
+  dueDate: string;
+  amount: string;
+  notes?: string | null;
+};
+
+export async function createPayable(user: SessionUser, input: PayableInput) {
+  const vencimento = parseDateInput(input.dueDate);
+  if (!vencimento) return { error: 'Informe a data de vencimento.' };
+  if (!(Number(input.amount) > 0)) return { error: 'O valor deve ser maior que zero.' };
+
+  const payable = await prisma.payable.create({
+    data: {
+      companyId: user.companyId,
+      description: input.description,
+      supplier: input.supplier || null,
+      category: input.category || null,
+      projectId: input.projectId || null,
+      dueDate: vencimento,
+      amount: input.amount,
+      notes: input.notes || null,
+      createdById: user.id,
+    },
+  });
+
+  await auditLog({
+    companyId: user.companyId, userId: user.id, action: 'create',
+    entityType: 'payable', entityId: payable.id, after: { descricao: payable.description },
+  });
+  return { payable };
+}
+
+export async function payPayable(
+  user: SessionUser, id: string, input: { paidAt: string; paidAmount: string },
+) {
+  const payable = await prisma.payable.findFirst({
+    where: { id, companyId: user.companyId, deletedAt: null },
+  });
+  if (!payable) return { error: 'Conta não encontrada.' };
+  if (payable.status === 'PAGO') return { error: 'Esta conta já está paga.' };
+
+  const data = parseDateInput(input.paidAt);
+  if (!data) return { error: 'Informe a data do pagamento.' };
+  if (!(Number(input.paidAmount) > 0)) return { error: 'O valor pago deve ser maior que zero.' };
+
+  await prisma.payable.update({
+    where: { id },
+    data: { status: 'PAGO', paidAt: data, paidAmount: input.paidAmount, updatedById: user.id },
+  });
+  await auditLog({
+    companyId: user.companyId, userId: user.id, action: 'payment',
+    entityType: 'payable', entityId: id, after: { valor: input.paidAmount },
+  });
+  return { ok: true };
+}
+
+export async function setPayableStatus(user: SessionUser, id: string, status: PayableStatus) {
+  const payable = await prisma.payable.findFirst({
+    where: { id, companyId: user.companyId, deletedAt: null },
+  });
+  if (!payable) return { error: 'Conta não encontrada.' };
+
+  await prisma.payable.update({
+    where: { id },
+    data: {
+      status,
+      // desfazer o pagamento limpa a baixa
+      paidAt: status === 'PAGO' ? payable.paidAt : null,
+      paidAmount: status === 'PAGO' ? payable.paidAmount : null,
+      updatedById: user.id,
+    },
+  });
+  return { ok: true };
+}
+
+export async function deletePayable(user: SessionUser, id: string) {
+  const payable = await prisma.payable.findFirst({
+    where: { id, companyId: user.companyId, deletedAt: null },
+  });
+  if (!payable) return { error: 'Conta não encontrada.' };
+  await prisma.payable.update({ where: { id }, data: { deletedAt: new Date() } });
+  return { ok: true };
+}

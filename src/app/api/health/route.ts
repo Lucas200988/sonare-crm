@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/server/db';
-import { storageInfo } from '@/server/storage';
+import { storageInfo, checkStorageAccess } from '@/server/storage';
 import { appUrl } from '@/server/signature';
 
 /**
@@ -21,8 +21,11 @@ export async function GET() {
   }
 
   const storage = storageInfo();
-  checks.storage = storage;
-  if (!storage.configured) healthy = false;
+  const acesso = await checkStorageAccess();
+  checks.storage = acesso.ok
+    ? { ...storage, bucket: acesso.bucket, gravacao: 'ok' }
+    : { ...storage, gravacao: 'falhou', erro: acesso.erro };
+  if (!storage.configured || !acesso.ok) healthy = false;
 
   const url = appUrl();
   checks.appUrl = url;

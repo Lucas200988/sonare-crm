@@ -1,6 +1,6 @@
 'use client';
 
-import { useActionState, useState, useTransition } from 'react';
+import { useActionState, useEffect, useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { CheckCircle2, FileDown, PenLine, Plus, X } from 'lucide-react';
 import {
@@ -8,7 +8,8 @@ import {
   setStatusAction, createAmendmentAction, signAmendmentAction, type ActionState,
 } from '@/actions/contracts';
 import { createProjectFromContractAction } from '@/actions/projects';
-import { inputCls, Field, FormError } from '@/components/ui';
+import { generateInstallmentsAction, type ActionState as FinanceActionState } from '@/actions/finance';
+import { inputCls, Field, FormError, SubmitButton } from '@/components/ui';
 import { formatDateBR } from '@/lib/dates';
 
 const STATUS_OPTIONS = [
@@ -331,6 +332,75 @@ export function AmendmentsSection({
       </ul>
       <FormError message={error} />
     </div>
+  );
+}
+
+/**
+ * Gera as parcelas do contrato de uma vez: informa quantas vezes e o primeiro
+ * vencimento, e o sistema divide o valor e cria as cobranças.
+ */
+export function GenerateInstallmentsButton({ contractId, total }: {
+  contractId: string; total: string;
+}) {
+  const router = useRouter();
+  const [aberto, setAberto] = useState(false);
+  const [vezes, setVezes] = useState(1);
+  const action = generateInstallmentsAction.bind(null, contractId);
+  const [state, formAction, pending] = useActionState<FinanceActionState, FormData>(action, {});
+
+  useEffect(() => {
+    if (state.info) { setAberto(false); router.refresh(); }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state]);
+
+  const porParcela = vezes > 0 ? Number(total) / vezes : 0;
+
+  if (!aberto) {
+    return (
+      <button
+        type="button"
+        onClick={() => setAberto(true)}
+        className="inline-flex items-center gap-2 rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-white hover:bg-brand-dark"
+      >
+        <Plus className="h-4 w-4" aria-hidden /> Gerar parcelas
+      </button>
+    );
+  }
+
+  return (
+    <form action={formAction} className="space-y-3">
+      <div className="grid grid-cols-2 gap-2">
+        <Field label="Parcelas" htmlFor="gi-qtd" required>
+          <input
+            id="gi-qtd" name="quantidade" type="number" min={1} max={60} required
+            value={vezes} onChange={(e) => setVezes(Number(e.target.value))}
+            className={inputCls}
+          />
+        </Field>
+        <Field label="Intervalo (dias)" htmlFor="gi-int">
+          <input id="gi-int" name="intervaloDias" type="number" min={1} max={365} defaultValue={30} className={inputCls} />
+        </Field>
+      </div>
+      <Field label="Primeiro vencimento" htmlFor="gi-venc" required>
+        <input id="gi-venc" name="primeiroVencimento" type="date" required className={inputCls} />
+      </Field>
+
+      {vezes > 0 ? (
+        <p className="rounded-lg bg-slate-50 px-3 py-2 text-xs text-slate-600">
+          {vezes}× de aproximadamente{' '}
+          <strong>{porParcela.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</strong>
+          {vezes > 1 ? ' — a diferença de arredondamento entra na primeira.' : ''}
+        </p>
+      ) : null}
+
+      <FormError message={state.error} />
+      <div className="flex gap-2">
+        <SubmitButton pending={pending}>Gerar</SubmitButton>
+        <button type="button" onClick={() => setAberto(false)} className="rounded-lg border border-slate-300 px-4 py-2 text-sm text-slate-600 hover:bg-slate-50">
+          Cancelar
+        </button>
+      </div>
+    </form>
   );
 }
 
