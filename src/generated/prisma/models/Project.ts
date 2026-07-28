@@ -29,11 +29,13 @@ export type AggregateProject = {
 export type ProjectAvgAggregateOutputType = {
   contractValue: runtime.Decimal | null
   progressPercent: runtime.Decimal | null
+  boardPosition: number | null
 }
 
 export type ProjectSumAggregateOutputType = {
   contractValue: runtime.Decimal | null
   progressPercent: runtime.Decimal | null
+  boardPosition: number | null
 }
 
 export type ProjectMinAggregateOutputType = {
@@ -55,6 +57,9 @@ export type ProjectMinAggregateOutputType = {
   status: $Enums.ProjectStatus | null
   priority: $Enums.PriorityLevel | null
   progressPercent: runtime.Decimal | null
+  boardPosition: number | null
+  archivedAt: Date | null
+  folderPath: string | null
   risks: string | null
   notes: string | null
   createdAt: Date | null
@@ -83,6 +88,9 @@ export type ProjectMaxAggregateOutputType = {
   status: $Enums.ProjectStatus | null
   priority: $Enums.PriorityLevel | null
   progressPercent: runtime.Decimal | null
+  boardPosition: number | null
+  archivedAt: Date | null
+  folderPath: string | null
   risks: string | null
   notes: string | null
   createdAt: Date | null
@@ -112,6 +120,9 @@ export type ProjectCountAggregateOutputType = {
   status: number
   priority: number
   progressPercent: number
+  boardPosition: number
+  archivedAt: number
+  folderPath: number
   risks: number
   notes: number
   createdAt: number
@@ -126,11 +137,13 @@ export type ProjectCountAggregateOutputType = {
 export type ProjectAvgAggregateInputType = {
   contractValue?: true
   progressPercent?: true
+  boardPosition?: true
 }
 
 export type ProjectSumAggregateInputType = {
   contractValue?: true
   progressPercent?: true
+  boardPosition?: true
 }
 
 export type ProjectMinAggregateInputType = {
@@ -152,6 +165,9 @@ export type ProjectMinAggregateInputType = {
   status?: true
   priority?: true
   progressPercent?: true
+  boardPosition?: true
+  archivedAt?: true
+  folderPath?: true
   risks?: true
   notes?: true
   createdAt?: true
@@ -180,6 +196,9 @@ export type ProjectMaxAggregateInputType = {
   status?: true
   priority?: true
   progressPercent?: true
+  boardPosition?: true
+  archivedAt?: true
+  folderPath?: true
   risks?: true
   notes?: true
   createdAt?: true
@@ -209,6 +228,9 @@ export type ProjectCountAggregateInputType = {
   status?: true
   priority?: true
   progressPercent?: true
+  boardPosition?: true
+  archivedAt?: true
+  folderPath?: true
   risks?: true
   notes?: true
   createdAt?: true
@@ -325,6 +347,9 @@ export type ProjectGroupByOutputType = {
   status: $Enums.ProjectStatus
   priority: $Enums.PriorityLevel
   progressPercent: runtime.Decimal
+  boardPosition: number
+  archivedAt: Date | null
+  folderPath: string | null
   risks: string | null
   notes: string | null
   createdAt: Date
@@ -377,6 +402,9 @@ export type ProjectWhereInput = {
   status?: Prisma.EnumProjectStatusFilter<"Project"> | $Enums.ProjectStatus
   priority?: Prisma.EnumPriorityLevelFilter<"Project"> | $Enums.PriorityLevel
   progressPercent?: Prisma.DecimalFilter<"Project"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  boardPosition?: Prisma.IntFilter<"Project"> | number
+  archivedAt?: Prisma.DateTimeNullableFilter<"Project"> | Date | string | null
+  folderPath?: Prisma.StringNullableFilter<"Project"> | string | null
   risks?: Prisma.StringNullableFilter<"Project"> | string | null
   notes?: Prisma.StringNullableFilter<"Project"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Project"> | Date | string
@@ -421,6 +449,9 @@ export type ProjectOrderByWithRelationInput = {
   status?: Prisma.SortOrder
   priority?: Prisma.SortOrder
   progressPercent?: Prisma.SortOrder
+  boardPosition?: Prisma.SortOrder
+  archivedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  folderPath?: Prisma.SortOrderInput | Prisma.SortOrder
   risks?: Prisma.SortOrderInput | Prisma.SortOrder
   notes?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -469,6 +500,9 @@ export type ProjectWhereUniqueInput = Prisma.AtLeast<{
   status?: Prisma.EnumProjectStatusFilter<"Project"> | $Enums.ProjectStatus
   priority?: Prisma.EnumPriorityLevelFilter<"Project"> | $Enums.PriorityLevel
   progressPercent?: Prisma.DecimalFilter<"Project"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  boardPosition?: Prisma.IntFilter<"Project"> | number
+  archivedAt?: Prisma.DateTimeNullableFilter<"Project"> | Date | string | null
+  folderPath?: Prisma.StringNullableFilter<"Project"> | string | null
   risks?: Prisma.StringNullableFilter<"Project"> | string | null
   notes?: Prisma.StringNullableFilter<"Project"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Project"> | Date | string
@@ -513,6 +547,9 @@ export type ProjectOrderByWithAggregationInput = {
   status?: Prisma.SortOrder
   priority?: Prisma.SortOrder
   progressPercent?: Prisma.SortOrder
+  boardPosition?: Prisma.SortOrder
+  archivedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  folderPath?: Prisma.SortOrderInput | Prisma.SortOrder
   risks?: Prisma.SortOrderInput | Prisma.SortOrder
   notes?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -550,6 +587,9 @@ export type ProjectScalarWhereWithAggregatesInput = {
   status?: Prisma.EnumProjectStatusWithAggregatesFilter<"Project"> | $Enums.ProjectStatus
   priority?: Prisma.EnumPriorityLevelWithAggregatesFilter<"Project"> | $Enums.PriorityLevel
   progressPercent?: Prisma.DecimalWithAggregatesFilter<"Project"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  boardPosition?: Prisma.IntWithAggregatesFilter<"Project"> | number
+  archivedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Project"> | Date | string | null
+  folderPath?: Prisma.StringNullableWithAggregatesFilter<"Project"> | string | null
   risks?: Prisma.StringNullableWithAggregatesFilter<"Project"> | string | null
   notes?: Prisma.StringNullableWithAggregatesFilter<"Project"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Project"> | Date | string
@@ -573,6 +613,9 @@ export type ProjectCreateInput = {
   status?: $Enums.ProjectStatus
   priority?: $Enums.PriorityLevel
   progressPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  boardPosition?: number
+  archivedAt?: Date | string | null
+  folderPath?: string | null
   risks?: string | null
   notes?: string | null
   createdAt?: Date | string
@@ -617,6 +660,9 @@ export type ProjectUncheckedCreateInput = {
   status?: $Enums.ProjectStatus
   priority?: $Enums.PriorityLevel
   progressPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  boardPosition?: number
+  archivedAt?: Date | string | null
+  folderPath?: string | null
   risks?: string | null
   notes?: string | null
   createdAt?: Date | string
@@ -649,6 +695,9 @@ export type ProjectUpdateInput = {
   status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
   priority?: Prisma.EnumPriorityLevelFieldUpdateOperationsInput | $Enums.PriorityLevel
   progressPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -693,6 +742,9 @@ export type ProjectUncheckedUpdateInput = {
   status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
   priority?: Prisma.EnumPriorityLevelFieldUpdateOperationsInput | $Enums.PriorityLevel
   progressPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -731,6 +783,9 @@ export type ProjectCreateManyInput = {
   status?: $Enums.ProjectStatus
   priority?: $Enums.PriorityLevel
   progressPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  boardPosition?: number
+  archivedAt?: Date | string | null
+  folderPath?: string | null
   risks?: string | null
   notes?: string | null
   createdAt?: Date | string
@@ -754,6 +809,9 @@ export type ProjectUpdateManyMutationInput = {
   status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
   priority?: Prisma.EnumPriorityLevelFieldUpdateOperationsInput | $Enums.PriorityLevel
   progressPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -783,6 +841,9 @@ export type ProjectUncheckedUpdateManyInput = {
   status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
   priority?: Prisma.EnumPriorityLevelFieldUpdateOperationsInput | $Enums.PriorityLevel
   progressPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -827,6 +888,9 @@ export type ProjectCountOrderByAggregateInput = {
   status?: Prisma.SortOrder
   priority?: Prisma.SortOrder
   progressPercent?: Prisma.SortOrder
+  boardPosition?: Prisma.SortOrder
+  archivedAt?: Prisma.SortOrder
+  folderPath?: Prisma.SortOrder
   risks?: Prisma.SortOrder
   notes?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -839,6 +903,7 @@ export type ProjectCountOrderByAggregateInput = {
 export type ProjectAvgOrderByAggregateInput = {
   contractValue?: Prisma.SortOrder
   progressPercent?: Prisma.SortOrder
+  boardPosition?: Prisma.SortOrder
 }
 
 export type ProjectMaxOrderByAggregateInput = {
@@ -860,6 +925,9 @@ export type ProjectMaxOrderByAggregateInput = {
   status?: Prisma.SortOrder
   priority?: Prisma.SortOrder
   progressPercent?: Prisma.SortOrder
+  boardPosition?: Prisma.SortOrder
+  archivedAt?: Prisma.SortOrder
+  folderPath?: Prisma.SortOrder
   risks?: Prisma.SortOrder
   notes?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -888,6 +956,9 @@ export type ProjectMinOrderByAggregateInput = {
   status?: Prisma.SortOrder
   priority?: Prisma.SortOrder
   progressPercent?: Prisma.SortOrder
+  boardPosition?: Prisma.SortOrder
+  archivedAt?: Prisma.SortOrder
+  folderPath?: Prisma.SortOrder
   risks?: Prisma.SortOrder
   notes?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -900,6 +971,7 @@ export type ProjectMinOrderByAggregateInput = {
 export type ProjectSumOrderByAggregateInput = {
   contractValue?: Prisma.SortOrder
   progressPercent?: Prisma.SortOrder
+  boardPosition?: Prisma.SortOrder
 }
 
 export type ProjectScalarRelationFilter = {
@@ -1325,6 +1397,9 @@ export type ProjectCreateWithoutTechnicalLeadInput = {
   status?: $Enums.ProjectStatus
   priority?: $Enums.PriorityLevel
   progressPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  boardPosition?: number
+  archivedAt?: Date | string | null
+  folderPath?: string | null
   risks?: string | null
   notes?: string | null
   createdAt?: Date | string
@@ -1367,6 +1442,9 @@ export type ProjectUncheckedCreateWithoutTechnicalLeadInput = {
   status?: $Enums.ProjectStatus
   priority?: $Enums.PriorityLevel
   progressPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  boardPosition?: number
+  archivedAt?: Date | string | null
+  folderPath?: string | null
   risks?: string | null
   notes?: string | null
   createdAt?: Date | string
@@ -1409,6 +1487,9 @@ export type ProjectCreateWithoutCoordinatorInput = {
   status?: $Enums.ProjectStatus
   priority?: $Enums.PriorityLevel
   progressPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  boardPosition?: number
+  archivedAt?: Date | string | null
+  folderPath?: string | null
   risks?: string | null
   notes?: string | null
   createdAt?: Date | string
@@ -1451,6 +1532,9 @@ export type ProjectUncheckedCreateWithoutCoordinatorInput = {
   status?: $Enums.ProjectStatus
   priority?: $Enums.PriorityLevel
   progressPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  boardPosition?: number
+  archivedAt?: Date | string | null
+  folderPath?: string | null
   risks?: string | null
   notes?: string | null
   createdAt?: Date | string
@@ -1518,6 +1602,9 @@ export type ProjectScalarWhereInput = {
   status?: Prisma.EnumProjectStatusFilter<"Project"> | $Enums.ProjectStatus
   priority?: Prisma.EnumPriorityLevelFilter<"Project"> | $Enums.PriorityLevel
   progressPercent?: Prisma.DecimalFilter<"Project"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  boardPosition?: Prisma.IntFilter<"Project"> | number
+  archivedAt?: Prisma.DateTimeNullableFilter<"Project"> | Date | string | null
+  folderPath?: Prisma.StringNullableFilter<"Project"> | string | null
   risks?: Prisma.StringNullableFilter<"Project"> | string | null
   notes?: Prisma.StringNullableFilter<"Project"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Project"> | Date | string
@@ -1557,6 +1644,9 @@ export type ProjectCreateWithoutClientInput = {
   status?: $Enums.ProjectStatus
   priority?: $Enums.PriorityLevel
   progressPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  boardPosition?: number
+  archivedAt?: Date | string | null
+  folderPath?: string | null
   risks?: string | null
   notes?: string | null
   createdAt?: Date | string
@@ -1599,6 +1689,9 @@ export type ProjectUncheckedCreateWithoutClientInput = {
   status?: $Enums.ProjectStatus
   priority?: $Enums.PriorityLevel
   progressPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  boardPosition?: number
+  archivedAt?: Date | string | null
+  folderPath?: string | null
   risks?: string | null
   notes?: string | null
   createdAt?: Date | string
@@ -1657,6 +1750,9 @@ export type ProjectCreateWithoutClientUnitInput = {
   status?: $Enums.ProjectStatus
   priority?: $Enums.PriorityLevel
   progressPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  boardPosition?: number
+  archivedAt?: Date | string | null
+  folderPath?: string | null
   risks?: string | null
   notes?: string | null
   createdAt?: Date | string
@@ -1699,6 +1795,9 @@ export type ProjectUncheckedCreateWithoutClientUnitInput = {
   status?: $Enums.ProjectStatus
   priority?: $Enums.PriorityLevel
   progressPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  boardPosition?: number
+  archivedAt?: Date | string | null
+  folderPath?: string | null
   risks?: string | null
   notes?: string | null
   createdAt?: Date | string
@@ -1757,6 +1856,9 @@ export type ProjectCreateWithoutBudgetInput = {
   status?: $Enums.ProjectStatus
   priority?: $Enums.PriorityLevel
   progressPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  boardPosition?: number
+  archivedAt?: Date | string | null
+  folderPath?: string | null
   risks?: string | null
   notes?: string | null
   createdAt?: Date | string
@@ -1799,6 +1901,9 @@ export type ProjectUncheckedCreateWithoutBudgetInput = {
   status?: $Enums.ProjectStatus
   priority?: $Enums.PriorityLevel
   progressPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  boardPosition?: number
+  archivedAt?: Date | string | null
+  folderPath?: string | null
   risks?: string | null
   notes?: string | null
   createdAt?: Date | string
@@ -1857,6 +1962,9 @@ export type ProjectCreateWithoutContractInput = {
   status?: $Enums.ProjectStatus
   priority?: $Enums.PriorityLevel
   progressPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  boardPosition?: number
+  archivedAt?: Date | string | null
+  folderPath?: string | null
   risks?: string | null
   notes?: string | null
   createdAt?: Date | string
@@ -1899,6 +2007,9 @@ export type ProjectUncheckedCreateWithoutContractInput = {
   status?: $Enums.ProjectStatus
   priority?: $Enums.PriorityLevel
   progressPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  boardPosition?: number
+  archivedAt?: Date | string | null
+  folderPath?: string | null
   risks?: string | null
   notes?: string | null
   createdAt?: Date | string
@@ -1957,6 +2068,9 @@ export type ProjectCreateWithoutStagesInput = {
   status?: $Enums.ProjectStatus
   priority?: $Enums.PriorityLevel
   progressPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  boardPosition?: number
+  archivedAt?: Date | string | null
+  folderPath?: string | null
   risks?: string | null
   notes?: string | null
   createdAt?: Date | string
@@ -2000,6 +2114,9 @@ export type ProjectUncheckedCreateWithoutStagesInput = {
   status?: $Enums.ProjectStatus
   priority?: $Enums.PriorityLevel
   progressPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  boardPosition?: number
+  archivedAt?: Date | string | null
+  folderPath?: string | null
   risks?: string | null
   notes?: string | null
   createdAt?: Date | string
@@ -2047,6 +2164,9 @@ export type ProjectUpdateWithoutStagesInput = {
   status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
   priority?: Prisma.EnumPriorityLevelFieldUpdateOperationsInput | $Enums.PriorityLevel
   progressPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2090,6 +2210,9 @@ export type ProjectUncheckedUpdateWithoutStagesInput = {
   status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
   priority?: Prisma.EnumPriorityLevelFieldUpdateOperationsInput | $Enums.PriorityLevel
   progressPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2121,6 +2244,9 @@ export type ProjectCreateWithoutMembersInput = {
   status?: $Enums.ProjectStatus
   priority?: $Enums.PriorityLevel
   progressPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  boardPosition?: number
+  archivedAt?: Date | string | null
+  folderPath?: string | null
   risks?: string | null
   notes?: string | null
   createdAt?: Date | string
@@ -2164,6 +2290,9 @@ export type ProjectUncheckedCreateWithoutMembersInput = {
   status?: $Enums.ProjectStatus
   priority?: $Enums.PriorityLevel
   progressPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  boardPosition?: number
+  archivedAt?: Date | string | null
+  folderPath?: string | null
   risks?: string | null
   notes?: string | null
   createdAt?: Date | string
@@ -2211,6 +2340,9 @@ export type ProjectUpdateWithoutMembersInput = {
   status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
   priority?: Prisma.EnumPriorityLevelFieldUpdateOperationsInput | $Enums.PriorityLevel
   progressPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2254,6 +2386,9 @@ export type ProjectUncheckedUpdateWithoutMembersInput = {
   status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
   priority?: Prisma.EnumPriorityLevelFieldUpdateOperationsInput | $Enums.PriorityLevel
   progressPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2285,6 +2420,9 @@ export type ProjectCreateWithoutTasksInput = {
   status?: $Enums.ProjectStatus
   priority?: $Enums.PriorityLevel
   progressPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  boardPosition?: number
+  archivedAt?: Date | string | null
+  folderPath?: string | null
   risks?: string | null
   notes?: string | null
   createdAt?: Date | string
@@ -2328,6 +2466,9 @@ export type ProjectUncheckedCreateWithoutTasksInput = {
   status?: $Enums.ProjectStatus
   priority?: $Enums.PriorityLevel
   progressPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  boardPosition?: number
+  archivedAt?: Date | string | null
+  folderPath?: string | null
   risks?: string | null
   notes?: string | null
   createdAt?: Date | string
@@ -2375,6 +2516,9 @@ export type ProjectUpdateWithoutTasksInput = {
   status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
   priority?: Prisma.EnumPriorityLevelFieldUpdateOperationsInput | $Enums.PriorityLevel
   progressPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2418,6 +2562,9 @@ export type ProjectUncheckedUpdateWithoutTasksInput = {
   status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
   priority?: Prisma.EnumPriorityLevelFieldUpdateOperationsInput | $Enums.PriorityLevel
   progressPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2449,6 +2596,9 @@ export type ProjectCreateWithoutDeliverablesInput = {
   status?: $Enums.ProjectStatus
   priority?: $Enums.PriorityLevel
   progressPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  boardPosition?: number
+  archivedAt?: Date | string | null
+  folderPath?: string | null
   risks?: string | null
   notes?: string | null
   createdAt?: Date | string
@@ -2492,6 +2642,9 @@ export type ProjectUncheckedCreateWithoutDeliverablesInput = {
   status?: $Enums.ProjectStatus
   priority?: $Enums.PriorityLevel
   progressPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  boardPosition?: number
+  archivedAt?: Date | string | null
+  folderPath?: string | null
   risks?: string | null
   notes?: string | null
   createdAt?: Date | string
@@ -2539,6 +2692,9 @@ export type ProjectUpdateWithoutDeliverablesInput = {
   status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
   priority?: Prisma.EnumPriorityLevelFieldUpdateOperationsInput | $Enums.PriorityLevel
   progressPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2582,6 +2738,9 @@ export type ProjectUncheckedUpdateWithoutDeliverablesInput = {
   status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
   priority?: Prisma.EnumPriorityLevelFieldUpdateOperationsInput | $Enums.PriorityLevel
   progressPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2613,6 +2772,9 @@ export type ProjectCreateWithoutTimeEntriesInput = {
   status?: $Enums.ProjectStatus
   priority?: $Enums.PriorityLevel
   progressPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  boardPosition?: number
+  archivedAt?: Date | string | null
+  folderPath?: string | null
   risks?: string | null
   notes?: string | null
   createdAt?: Date | string
@@ -2656,6 +2818,9 @@ export type ProjectUncheckedCreateWithoutTimeEntriesInput = {
   status?: $Enums.ProjectStatus
   priority?: $Enums.PriorityLevel
   progressPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  boardPosition?: number
+  archivedAt?: Date | string | null
+  folderPath?: string | null
   risks?: string | null
   notes?: string | null
   createdAt?: Date | string
@@ -2703,6 +2868,9 @@ export type ProjectUpdateWithoutTimeEntriesInput = {
   status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
   priority?: Prisma.EnumPriorityLevelFieldUpdateOperationsInput | $Enums.PriorityLevel
   progressPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2746,6 +2914,9 @@ export type ProjectUncheckedUpdateWithoutTimeEntriesInput = {
   status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
   priority?: Prisma.EnumPriorityLevelFieldUpdateOperationsInput | $Enums.PriorityLevel
   progressPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2777,6 +2948,9 @@ export type ProjectCreateWithoutTechnicalResponsibilitiesInput = {
   status?: $Enums.ProjectStatus
   priority?: $Enums.PriorityLevel
   progressPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  boardPosition?: number
+  archivedAt?: Date | string | null
+  folderPath?: string | null
   risks?: string | null
   notes?: string | null
   createdAt?: Date | string
@@ -2820,6 +2994,9 @@ export type ProjectUncheckedCreateWithoutTechnicalResponsibilitiesInput = {
   status?: $Enums.ProjectStatus
   priority?: $Enums.PriorityLevel
   progressPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  boardPosition?: number
+  archivedAt?: Date | string | null
+  folderPath?: string | null
   risks?: string | null
   notes?: string | null
   createdAt?: Date | string
@@ -2867,6 +3044,9 @@ export type ProjectUpdateWithoutTechnicalResponsibilitiesInput = {
   status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
   priority?: Prisma.EnumPriorityLevelFieldUpdateOperationsInput | $Enums.PriorityLevel
   progressPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2910,6 +3090,9 @@ export type ProjectUncheckedUpdateWithoutTechnicalResponsibilitiesInput = {
   status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
   priority?: Prisma.EnumPriorityLevelFieldUpdateOperationsInput | $Enums.PriorityLevel
   progressPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2941,6 +3124,9 @@ export type ProjectCreateWithoutPendenciesInput = {
   status?: $Enums.ProjectStatus
   priority?: $Enums.PriorityLevel
   progressPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  boardPosition?: number
+  archivedAt?: Date | string | null
+  folderPath?: string | null
   risks?: string | null
   notes?: string | null
   createdAt?: Date | string
@@ -2984,6 +3170,9 @@ export type ProjectUncheckedCreateWithoutPendenciesInput = {
   status?: $Enums.ProjectStatus
   priority?: $Enums.PriorityLevel
   progressPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  boardPosition?: number
+  archivedAt?: Date | string | null
+  folderPath?: string | null
   risks?: string | null
   notes?: string | null
   createdAt?: Date | string
@@ -3031,6 +3220,9 @@ export type ProjectUpdateWithoutPendenciesInput = {
   status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
   priority?: Prisma.EnumPriorityLevelFieldUpdateOperationsInput | $Enums.PriorityLevel
   progressPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3074,6 +3266,9 @@ export type ProjectUncheckedUpdateWithoutPendenciesInput = {
   status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
   priority?: Prisma.EnumPriorityLevelFieldUpdateOperationsInput | $Enums.PriorityLevel
   progressPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3105,6 +3300,9 @@ export type ProjectCreateWithoutReceivablesInput = {
   status?: $Enums.ProjectStatus
   priority?: $Enums.PriorityLevel
   progressPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  boardPosition?: number
+  archivedAt?: Date | string | null
+  folderPath?: string | null
   risks?: string | null
   notes?: string | null
   createdAt?: Date | string
@@ -3148,6 +3346,9 @@ export type ProjectUncheckedCreateWithoutReceivablesInput = {
   status?: $Enums.ProjectStatus
   priority?: $Enums.PriorityLevel
   progressPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  boardPosition?: number
+  archivedAt?: Date | string | null
+  folderPath?: string | null
   risks?: string | null
   notes?: string | null
   createdAt?: Date | string
@@ -3195,6 +3396,9 @@ export type ProjectUpdateWithoutReceivablesInput = {
   status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
   priority?: Prisma.EnumPriorityLevelFieldUpdateOperationsInput | $Enums.PriorityLevel
   progressPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3238,6 +3442,9 @@ export type ProjectUncheckedUpdateWithoutReceivablesInput = {
   status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
   priority?: Prisma.EnumPriorityLevelFieldUpdateOperationsInput | $Enums.PriorityLevel
   progressPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3269,6 +3476,9 @@ export type ProjectCreateWithoutInvoicesInput = {
   status?: $Enums.ProjectStatus
   priority?: $Enums.PriorityLevel
   progressPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  boardPosition?: number
+  archivedAt?: Date | string | null
+  folderPath?: string | null
   risks?: string | null
   notes?: string | null
   createdAt?: Date | string
@@ -3312,6 +3522,9 @@ export type ProjectUncheckedCreateWithoutInvoicesInput = {
   status?: $Enums.ProjectStatus
   priority?: $Enums.PriorityLevel
   progressPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  boardPosition?: number
+  archivedAt?: Date | string | null
+  folderPath?: string | null
   risks?: string | null
   notes?: string | null
   createdAt?: Date | string
@@ -3359,6 +3572,9 @@ export type ProjectUpdateWithoutInvoicesInput = {
   status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
   priority?: Prisma.EnumPriorityLevelFieldUpdateOperationsInput | $Enums.PriorityLevel
   progressPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3402,6 +3618,9 @@ export type ProjectUncheckedUpdateWithoutInvoicesInput = {
   status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
   priority?: Prisma.EnumPriorityLevelFieldUpdateOperationsInput | $Enums.PriorityLevel
   progressPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3438,6 +3657,9 @@ export type ProjectCreateManyTechnicalLeadInput = {
   status?: $Enums.ProjectStatus
   priority?: $Enums.PriorityLevel
   progressPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  boardPosition?: number
+  archivedAt?: Date | string | null
+  folderPath?: string | null
   risks?: string | null
   notes?: string | null
   createdAt?: Date | string
@@ -3466,6 +3688,9 @@ export type ProjectCreateManyCoordinatorInput = {
   status?: $Enums.ProjectStatus
   priority?: $Enums.PriorityLevel
   progressPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  boardPosition?: number
+  archivedAt?: Date | string | null
+  folderPath?: string | null
   risks?: string | null
   notes?: string | null
   createdAt?: Date | string
@@ -3489,6 +3714,9 @@ export type ProjectUpdateWithoutTechnicalLeadInput = {
   status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
   priority?: Prisma.EnumPriorityLevelFieldUpdateOperationsInput | $Enums.PriorityLevel
   progressPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3531,6 +3759,9 @@ export type ProjectUncheckedUpdateWithoutTechnicalLeadInput = {
   status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
   priority?: Prisma.EnumPriorityLevelFieldUpdateOperationsInput | $Enums.PriorityLevel
   progressPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3568,6 +3799,9 @@ export type ProjectUncheckedUpdateManyWithoutTechnicalLeadInput = {
   status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
   priority?: Prisma.EnumPriorityLevelFieldUpdateOperationsInput | $Enums.PriorityLevel
   progressPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3591,6 +3825,9 @@ export type ProjectUpdateWithoutCoordinatorInput = {
   status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
   priority?: Prisma.EnumPriorityLevelFieldUpdateOperationsInput | $Enums.PriorityLevel
   progressPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3633,6 +3870,9 @@ export type ProjectUncheckedUpdateWithoutCoordinatorInput = {
   status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
   priority?: Prisma.EnumPriorityLevelFieldUpdateOperationsInput | $Enums.PriorityLevel
   progressPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3670,6 +3910,9 @@ export type ProjectUncheckedUpdateManyWithoutCoordinatorInput = {
   status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
   priority?: Prisma.EnumPriorityLevelFieldUpdateOperationsInput | $Enums.PriorityLevel
   progressPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3698,6 +3941,9 @@ export type ProjectCreateManyClientInput = {
   status?: $Enums.ProjectStatus
   priority?: $Enums.PriorityLevel
   progressPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  boardPosition?: number
+  archivedAt?: Date | string | null
+  folderPath?: string | null
   risks?: string | null
   notes?: string | null
   createdAt?: Date | string
@@ -3721,6 +3967,9 @@ export type ProjectUpdateWithoutClientInput = {
   status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
   priority?: Prisma.EnumPriorityLevelFieldUpdateOperationsInput | $Enums.PriorityLevel
   progressPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3763,6 +4012,9 @@ export type ProjectUncheckedUpdateWithoutClientInput = {
   status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
   priority?: Prisma.EnumPriorityLevelFieldUpdateOperationsInput | $Enums.PriorityLevel
   progressPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3800,6 +4052,9 @@ export type ProjectUncheckedUpdateManyWithoutClientInput = {
   status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
   priority?: Prisma.EnumPriorityLevelFieldUpdateOperationsInput | $Enums.PriorityLevel
   progressPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3828,6 +4083,9 @@ export type ProjectCreateManyClientUnitInput = {
   status?: $Enums.ProjectStatus
   priority?: $Enums.PriorityLevel
   progressPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  boardPosition?: number
+  archivedAt?: Date | string | null
+  folderPath?: string | null
   risks?: string | null
   notes?: string | null
   createdAt?: Date | string
@@ -3851,6 +4109,9 @@ export type ProjectUpdateWithoutClientUnitInput = {
   status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
   priority?: Prisma.EnumPriorityLevelFieldUpdateOperationsInput | $Enums.PriorityLevel
   progressPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3893,6 +4154,9 @@ export type ProjectUncheckedUpdateWithoutClientUnitInput = {
   status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
   priority?: Prisma.EnumPriorityLevelFieldUpdateOperationsInput | $Enums.PriorityLevel
   progressPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3930,6 +4194,9 @@ export type ProjectUncheckedUpdateManyWithoutClientUnitInput = {
   status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
   priority?: Prisma.EnumPriorityLevelFieldUpdateOperationsInput | $Enums.PriorityLevel
   progressPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3958,6 +4225,9 @@ export type ProjectCreateManyBudgetInput = {
   status?: $Enums.ProjectStatus
   priority?: $Enums.PriorityLevel
   progressPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  boardPosition?: number
+  archivedAt?: Date | string | null
+  folderPath?: string | null
   risks?: string | null
   notes?: string | null
   createdAt?: Date | string
@@ -3981,6 +4251,9 @@ export type ProjectUpdateWithoutBudgetInput = {
   status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
   priority?: Prisma.EnumPriorityLevelFieldUpdateOperationsInput | $Enums.PriorityLevel
   progressPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -4023,6 +4296,9 @@ export type ProjectUncheckedUpdateWithoutBudgetInput = {
   status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
   priority?: Prisma.EnumPriorityLevelFieldUpdateOperationsInput | $Enums.PriorityLevel
   progressPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -4060,6 +4336,9 @@ export type ProjectUncheckedUpdateManyWithoutBudgetInput = {
   status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
   priority?: Prisma.EnumPriorityLevelFieldUpdateOperationsInput | $Enums.PriorityLevel
   progressPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -4088,6 +4367,9 @@ export type ProjectCreateManyContractInput = {
   status?: $Enums.ProjectStatus
   priority?: $Enums.PriorityLevel
   progressPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  boardPosition?: number
+  archivedAt?: Date | string | null
+  folderPath?: string | null
   risks?: string | null
   notes?: string | null
   createdAt?: Date | string
@@ -4111,6 +4393,9 @@ export type ProjectUpdateWithoutContractInput = {
   status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
   priority?: Prisma.EnumPriorityLevelFieldUpdateOperationsInput | $Enums.PriorityLevel
   progressPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -4153,6 +4438,9 @@ export type ProjectUncheckedUpdateWithoutContractInput = {
   status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
   priority?: Prisma.EnumPriorityLevelFieldUpdateOperationsInput | $Enums.PriorityLevel
   progressPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -4190,6 +4478,9 @@ export type ProjectUncheckedUpdateManyWithoutContractInput = {
   status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
   priority?: Prisma.EnumPriorityLevelFieldUpdateOperationsInput | $Enums.PriorityLevel
   progressPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -4322,6 +4613,9 @@ export type ProjectSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   status?: boolean
   priority?: boolean
   progressPercent?: boolean
+  boardPosition?: boolean
+  archivedAt?: boolean
+  folderPath?: boolean
   risks?: boolean
   notes?: boolean
   createdAt?: boolean
@@ -4367,6 +4661,9 @@ export type ProjectSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   status?: boolean
   priority?: boolean
   progressPercent?: boolean
+  boardPosition?: boolean
+  archivedAt?: boolean
+  folderPath?: boolean
   risks?: boolean
   notes?: boolean
   createdAt?: boolean
@@ -4402,6 +4699,9 @@ export type ProjectSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   status?: boolean
   priority?: boolean
   progressPercent?: boolean
+  boardPosition?: boolean
+  archivedAt?: boolean
+  folderPath?: boolean
   risks?: boolean
   notes?: boolean
   createdAt?: boolean
@@ -4437,6 +4737,9 @@ export type ProjectSelectScalar = {
   status?: boolean
   priority?: boolean
   progressPercent?: boolean
+  boardPosition?: boolean
+  archivedAt?: boolean
+  folderPath?: boolean
   risks?: boolean
   notes?: boolean
   createdAt?: boolean
@@ -4446,7 +4749,7 @@ export type ProjectSelectScalar = {
   deletedAt?: boolean
 }
 
-export type ProjectOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "companyId" | "code" | "name" | "clientId" | "clientUnitId" | "contractId" | "budgetId" | "technicalLeadId" | "coordinatorId" | "disciplines" | "startDate" | "contractualDeadline" | "expectedEndDate" | "actualEndDate" | "contractValue" | "status" | "priority" | "progressPercent" | "risks" | "notes" | "createdAt" | "updatedAt" | "createdById" | "updatedById" | "deletedAt", ExtArgs["result"]["project"]>
+export type ProjectOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "companyId" | "code" | "name" | "clientId" | "clientUnitId" | "contractId" | "budgetId" | "technicalLeadId" | "coordinatorId" | "disciplines" | "startDate" | "contractualDeadline" | "expectedEndDate" | "actualEndDate" | "contractValue" | "status" | "priority" | "progressPercent" | "boardPosition" | "archivedAt" | "folderPath" | "risks" | "notes" | "createdAt" | "updatedAt" | "createdById" | "updatedById" | "deletedAt", ExtArgs["result"]["project"]>
 export type ProjectInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   client?: boolean | Prisma.ClientDefaultArgs<ExtArgs>
   clientUnit?: boolean | Prisma.Project$clientUnitArgs<ExtArgs>
@@ -4521,6 +4824,12 @@ export type $ProjectPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     status: $Enums.ProjectStatus
     priority: $Enums.PriorityLevel
     progressPercent: runtime.Decimal
+    boardPosition: number
+    archivedAt: Date | null
+    /**
+     * Pasta de rede com os documentos do projeto (ex.: Z:\SONARE\Projetos\...)
+     */
+    folderPath: string | null
     risks: string | null
     notes: string | null
     createdAt: Date
@@ -4985,6 +5294,9 @@ export interface ProjectFieldRefs {
   readonly status: Prisma.FieldRef<"Project", 'ProjectStatus'>
   readonly priority: Prisma.FieldRef<"Project", 'PriorityLevel'>
   readonly progressPercent: Prisma.FieldRef<"Project", 'Decimal'>
+  readonly boardPosition: Prisma.FieldRef<"Project", 'Int'>
+  readonly archivedAt: Prisma.FieldRef<"Project", 'DateTime'>
+  readonly folderPath: Prisma.FieldRef<"Project", 'String'>
   readonly risks: Prisma.FieldRef<"Project", 'String'>
   readonly notes: Prisma.FieldRef<"Project", 'String'>
   readonly createdAt: Prisma.FieldRef<"Project", 'DateTime'>

@@ -36,6 +36,8 @@ const companySchema = z.object({
   signerName: optional,
   signerTitle: optional,
   signerRegistration: optional,
+  signerPhone: optional,
+  signerEmail: optional,
 });
 
 /**
@@ -50,7 +52,7 @@ export async function saveCompanyAction(
   const parsed = companySchema.safeParse(Object.fromEntries(formData.entries()));
   if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? 'Dados inválidos.' };
 
-  const { signerName, signerTitle, signerRegistration, ...company } = parsed.data;
+  const { signerName, signerTitle, signerRegistration, signerPhone, signerEmail, ...company } = parsed.data;
 
   if (company.cnpj && !isValidCNPJ(company.cnpj)) return { error: 'CNPJ inválido.' };
 
@@ -73,6 +75,8 @@ export async function saveCompanyAction(
   await upsertSetting('proposal.signerName', signerName ?? null);
   await upsertSetting('proposal.signerTitle', signerTitle ?? null);
   await upsertSetting('proposal.signerRegistration', signerRegistration ?? null);
+  await upsertSetting('proposal.signerPhone', signerPhone ?? null);
+  await upsertSetting('proposal.signerEmail', signerEmail ?? null);
 
   await auditLog({
     companyId: user.companyId, userId: user.id,

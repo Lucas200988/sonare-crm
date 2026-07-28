@@ -1,4 +1,5 @@
 import 'server-only';
+import { isEmptyRich } from '@/lib/html-text';
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { renderToBuffer } from '@react-pdf/renderer';
@@ -43,6 +44,7 @@ export async function generateProposal(user: SessionUser, budgetId: string) {
         in: [
           'proposal.infoGerais', 'proposal.diferenciais',
           'proposal.signerName', 'proposal.signerTitle', 'proposal.signerRegistration',
+          'proposal.signerPhone', 'proposal.signerEmail',
         ],
       },
     },
@@ -56,7 +58,7 @@ export async function generateProposal(user: SessionUser, budgetId: string) {
   if (Number(budget.currentVersion.total) <= 0) {
     return { error: 'O valor total do orçamento está zerado. Informe os preços antes de gerar a proposta.' };
   }
-  if (!budget.currentVersion.scope?.trim()) {
+  if (isEmptyRich(budget.currentVersion.scope)) {
     return { error: 'O escopo dos serviços está vazio. Preencha-o antes de gerar a proposta.' };
   }
 
@@ -170,6 +172,8 @@ export async function generateProposal(user: SessionUser, budgetId: string) {
     signerName,
     signerTitle: setting('proposal.signerTitle'),
     signerRegistration,
+    signerPhone: setting('proposal.signerPhone') ?? company.phone,
+    signerEmail: setting('proposal.signerEmail') ?? company.email,
     signature: {
       verificationCode: proposal.verificationCode!,
       verificationUrl: verifyUrl,
@@ -237,6 +241,7 @@ export async function previewProposal(
         in: [
           'proposal.infoGerais', 'proposal.diferenciais', 'proposal.defaultValidityDays',
           'proposal.signerName', 'proposal.signerTitle', 'proposal.signerRegistration',
+          'proposal.signerPhone', 'proposal.signerEmail',
         ],
       },
     },
@@ -318,6 +323,8 @@ export async function previewProposal(
       setting('proposal.signerRegistration')
       ?? budget.commercialOwner?.creaCau
       ?? (company.crea ? `CREA-${company.crea}` : null),
+    signerPhone: setting('proposal.signerPhone') ?? company.phone,
+    signerEmail: setting('proposal.signerEmail') ?? company.email,
     // sem selo de assinatura: é rascunho de conferência, não documento emitido
     signature: null,
     watermark: 'PRÉ-VISUALIZAÇÃO',

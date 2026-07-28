@@ -123,7 +123,8 @@ export async function generateScopeAction(
 // ---------- Revisão ortográfica e gramatical ----------
 
 const reviewSchema = z.object({
-  text: z.string().trim().min(3, 'Nada a revisar.').max(8000, 'Texto muito longo para revisar de uma vez.'),
+  // Textos longos são divididos em blocos pelo serviço; o teto evita abuso.
+  text: z.string().trim().min(3, 'Nada a revisar.').max(60_000, 'Texto muito longo para revisar de uma vez.'),
   context: z.string().trim().optional(),
 });
 

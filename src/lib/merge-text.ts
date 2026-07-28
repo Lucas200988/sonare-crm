@@ -30,9 +30,27 @@ export function mergeTextBlocks(
   dedupe = false,
 ): string {
   const atual = mode === 'replace' ? '' : current.trim();
+  const bloco = additionBlock(atual, addition, heading, dedupe);
 
+  if (bloco === null) return current;
+  if (mode === 'replace') return bloco;
+  return atual ? `${atual}\n\n${bloco}` : bloco;
+}
+
+/**
+ * Apenas o bloco novo que sobrou depois do descarte de repetições — permite
+ * acrescentar o conteúdo sem reescrever o que já está no campo (necessário
+ * quando o campo guarda HTML formatado, que não pode ser remontado como texto).
+ * Devolve null quando nada de novo restou.
+ */
+export function additionBlock(
+  currentText: string,
+  addition: string,
+  heading: string | null,
+  dedupe = false,
+): string | null {
   const existentes = new Set(
-    dedupe ? atual.split('\n').map(normalizeLine).filter(Boolean) : [],
+    dedupe ? currentText.split('\n').map(normalizeLine).filter(Boolean) : [],
   );
 
   const linhasNovas = addition
@@ -47,10 +65,8 @@ export function mergeTextBlocks(
       return true;
     });
 
-  if (linhasNovas.length === 0) return current;
+  if (linhasNovas.length === 0) return null;
 
   const novo = linhasNovas.join('\n');
-  const bloco = heading ? `${heading}\n${novo}` : novo;
-  if (mode === 'replace') return bloco;
-  return atual ? `${atual}\n\n${bloco}` : bloco;
+  return heading ? `${heading}\n${novo}` : novo;
 }

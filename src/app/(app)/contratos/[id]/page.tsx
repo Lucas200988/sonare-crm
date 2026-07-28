@@ -12,7 +12,7 @@ import { formatDecimalBR } from '@/lib/parse';
 import { CONTRACT_STATUS_BADGE } from '../status-badge';
 import { ContractForm, type ContractFormValues } from './contract-form';
 import {
-  StatusSelect, GenerateDraftButton, SignaturesSection, AmendmentsSection,
+  StatusSelect, GenerateDraftButton, SignaturesSection, AmendmentsSection, CreateProjectButton,
   type SignatureRow, type AmendmentRow,
 } from './contract-actions';
 import { ViewDocumentButton } from '@/components/pdf-viewer';
@@ -188,11 +188,21 @@ export default async function ContractDetailPage(props: { params: Promise<{ id: 
               <ul className="space-y-1 text-xs">
                 {contract.projects.map((p) => (
                   <li key={p.id}>
-                    <span className="font-medium text-slate-900">{p.code}</span>
+                    <Link href={`/projetos/${p.id}`} className="font-medium text-slate-900 hover:underline">
+                      {p.code}
+                    </Link>
                     <span className="ml-1.5 text-slate-500">{p.name}</span>
                   </li>
                 ))}
               </ul>
+            </Card>
+          ) : user.permissions.has('project:write') && ['ASSINADO', 'VIGENTE'].includes(contract.status) ? (
+            <Card className="p-4">
+              <h2 className="mb-2 text-sm font-semibold text-slate-900">Projeto</h2>
+              <p className="mb-3 text-xs text-slate-500">
+                Contrato assinado — pode iniciar a execução criando o projeto correspondente.
+              </p>
+              <CreateProjectButton contractId={contract.id} />
             </Card>
           ) : null}
         </div>

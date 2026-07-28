@@ -3,6 +3,9 @@
 import { Document, Image, Page, StyleSheet, Text, View } from '@react-pdf/renderer';
 import { formatBRL } from '@/lib/money';
 import { formatDateBR, formatDateTimeBR } from '@/lib/dates';
+import { parseInline, classifyLine } from '@/lib/rich-text';
+import { htmlToBlocks, type InlineRun } from '@/lib/html-blocks';
+import { isHtml } from '@/lib/html-text';
 
 const BRAND = '#e22020';
 const INK = '#111111';
@@ -77,9 +80,12 @@ const styles = StyleSheet.create({
   totalValue: { fontFamily: 'Helvetica-Bold', fontSize: 12 },
   adjustRow: { flexDirection: 'row', justifyContent: 'flex-end', paddingVertical: 2, paddingHorizontal: 8 },
   signature: { marginTop: 34, alignItems: 'center' },
-  signLine: { width: 260, borderTopWidth: 0.8, borderTopColor: INK, paddingTop: 5, alignItems: 'center' },
+  // Largura suficiente para títulos longos ("Eng. Esp. Civil e Eletricista")
+  // caberem em uma linha só, sem hifenização feia.
+  signLine: { width: 340, borderTopWidth: 0.8, borderTopColor: INK, paddingTop: 5, alignItems: 'center' },
   signName: { fontFamily: 'Helvetica-Bold', fontSize: 10 },
-  signRole: { fontSize: 8, color: MUTED, textTransform: 'uppercase', marginTop: 1 },
+  signRole: { fontSize: 8.5, color: INK, marginTop: 2, textAlign: 'center' },
+  signContact: { fontSize: 8, color: MUTED, marginTop: 1, textAlign: 'center' },
   // Selo de assinatura eletrônica
   stamp: {
     marginTop: 16, flexDirection: 'row', gap: 10, alignItems: 'center',
@@ -141,6 +147,8 @@ export type ProposalPdfData = {
   signerName?: string | null;
   signerTitle?: string | null;
   signerRegistration?: string | null; // CREA/CAU
+  signerPhone?: string | null;
+  signerEmail?: string | null;
   /** Assinatura eletrônica: selo de conferência impresso ao pé do documento. */
   signature?: {
     verificationCode: string;
@@ -152,38 +160,110 @@ export type ProposalPdfData = {
   watermark?: string | null;
 };
 
-/** Linha toda em maiúsculas e sem bullet é subtítulo de serviço (orçamentos com vários serviços). */
-function isSubheading(line: string): boolean {
-  if (line.startsWith('-') || line.length < 3 || line.length > 70) return false;
-  const letters = line.replace(/[^A-Za-zÀ-ÿ]/g, '');
-  return letters.length > 2 && letters === letters.toUpperCase();
+/** Aplica os marcadores de negrito e itálico dentro de uma linha. */
+function Inline({ text }: { text: string }) {
+  return (
+    <>
+      {parseInline(text).map((seg, i) => (
+        <Text
+          key={i}
+          style={{
+            fontFamily: seg.bold ? 'Helvetica-Bold' : undefined,
+            fontStyle: seg.italic ? 'italic' : undefined,
+          }}
+        >
+          {seg.text}
+        </Text>
+      ))}
+    </>
+  );
 }
 
 /**
- * Renderiza um texto multilinha: linhas iniciadas com "-" viram bullets;
- * linhas em maiúsculas viram subtítulos, separando os serviços de um
- * orçamento que reúne mais de um escopo.
+ * Renderiza um texto multilinha: "-" vira marcador, "1." vira lista numerada,
+ * linhas em maiúsculas viram subtítulos (separando os serviços de um orçamento
+ * com vários escopos) e os marcadores de negrito e itálico valem dentro da linha.
  */
+/** Trechos com negrito/itálico/sublinhado vindos do editor rico. */
+function Runs({ runs }: { runs: InlineRun[] }) {
+  return (
+    <>
+      {runs.map((r, i) => (
+        <Text
+          key={i}
+          style={{
+            fontFamily: r.bold ? 'Helvetica-Bold' : undefined,
+            fontStyle: r.italic ? 'italic' : undefined,
+            textDecoration: r.underline ? 'underline' : undefined,
+          }}
+        >
+          {r.text}
+        </Text>
+      ))}
+    </>
+  );
+}
+
+/** Renderiza o HTML do editor preservando alinhamento, listas e títulos. */
+function HtmlBlock({ html }: { html: string }) {
+  return (
+    <View>
+      {htmlToBlocks(html).map((b, i) => {
+        if (b.kind === 'listItem') {
+          return (
+            <View key={i} style={styles.bullet}>
+              <Text style={styles.bulletDash}>{b.marker}</Text>
+              <Text style={[styles.paragraph, { flex: 1, textAlign: b.align }]}>
+                <Runs runs={b.runs} />
+              </Text>
+            </View>
+          );
+        }
+        if (b.kind === 'heading') {
+          return (
+            <Text key={i} style={[styles.subServiceHeading, { textAlign: b.align }]} minPresenceAhead={30}>
+              <Runs runs={b.runs} />
+            </Text>
+          );
+        }
+        return (
+          <Text key={i} style={[styles.paragraph, { marginBottom: 2, textAlign: b.align }]}>
+            <Runs runs={b.runs} />
+          </Text>
+        );
+      })}
+    </View>
+  );
+}
+
 function TextBlock({ text }: { text?: string | null }) {
   if (!text) return null;
+  // Conteúdo do editor rico; os orçamentos antigos seguem pelo caminho de texto puro
+  if (isHtml(text)) return <HtmlBlock html={text} />;
   const lines = text.split('\n').map((l) => l.trim()).filter(Boolean);
   return (
     <View>
       {lines.map((line, i) => {
-        if (line.startsWith('-')) {
+        const { kind, content, marker } = classifyLine(line);
+
+        if (kind === 'bullet' || kind === 'numbered') {
           return (
             <View key={i} style={styles.bullet}>
-              <Text style={styles.bulletDash}>-</Text>
-              <Text style={[styles.paragraph, { flex: 1 }]}>{line.replace(/^-\s*/, '')}</Text>
+              <Text style={styles.bulletDash}>{marker ?? '-'}</Text>
+              <Text style={[styles.paragraph, { flex: 1 }]}><Inline text={content} /></Text>
             </View>
           );
         }
-        if (isSubheading(line)) {
+        if (kind === 'heading') {
           return (
-            <Text key={i} style={styles.subServiceHeading} minPresenceAhead={30}>{line}</Text>
+            <Text key={i} style={styles.subServiceHeading} minPresenceAhead={30}>
+              <Inline text={content} />
+            </Text>
           );
         }
-        return <Text key={i} style={[styles.paragraph, { marginBottom: 2 }]}>{line}</Text>;
+        return (
+          <Text key={i} style={[styles.paragraph, { marginBottom: 2 }]}><Inline text={content} /></Text>
+        );
       })}
     </View>
   );
@@ -367,6 +447,8 @@ export function ProposalPdf({ data }: { data: ProposalPdfData }) {
             <Text style={styles.signName}>{data.signerName ?? data.company.legalName}</Text>
             {data.signerTitle ? <Text style={styles.signRole}>{data.signerTitle}</Text> : null}
             {data.signerRegistration ? <Text style={styles.signRole}>{data.signerRegistration}</Text> : null}
+            {data.signerPhone ? <Text style={styles.signContact}>Tel. {data.signerPhone}</Text> : null}
+            {data.signerEmail ? <Text style={styles.signContact}>{data.signerEmail}</Text> : null}
           </View>
         </View>
 

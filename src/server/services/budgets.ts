@@ -1,4 +1,5 @@
 import 'server-only';
+import { isEmptyRich } from '@/lib/html-text';
 import { prisma } from '@/server/db';
 import { auditLog } from '@/server/audit/audit';
 import { nextCode } from '@/server/services/sequence';
@@ -367,7 +368,7 @@ export async function submitBudget(user: SessionUser, budgetId: string) {
   }
   // O escopo é a parte principal da proposta — sem ele o cliente recebe
   // um documento só com preços.
-  if (!budget.currentVersion.scope?.trim()) {
+  if (isEmptyRich(budget.currentVersion.scope)) {
     return {
       error: 'Preencha o escopo dos serviços antes de submeter — é a descrição que vai para a proposta.',
     };

@@ -15,7 +15,7 @@ export const NAV_ITEMS: NavItem[] = [
   { label: 'CRM / Pipeline', href: '/crm', icon: 'KanbanSquare', permission: 'opportunity:read' },
   { label: 'Orçamentos', href: '/orcamentos', icon: 'Calculator', permission: 'budget:read' },
   { label: 'Contratos', href: '/contratos', icon: 'FileSignature', permission: 'contract:read' },
-  { label: 'Projetos', href: '/projetos', icon: 'FolderKanban', permission: 'project:read', comingSoon: true },
+  { label: 'Projetos', href: '/projetos', icon: 'FolderKanban', permission: 'project:read' },
   { label: 'Financeiro', href: '/financeiro', icon: 'Wallet', permission: 'finance:read', comingSoon: true },
   { label: 'Notas Fiscais', href: '/notas-fiscais', icon: 'ReceiptText', permission: 'invoice:read', comingSoon: true },
   { label: 'Relatórios', href: '/relatorios', icon: 'BarChart3', permission: 'report:read', comingSoon: true },

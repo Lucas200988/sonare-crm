@@ -1,6 +1,7 @@
 import 'server-only';
 import { prisma } from '@/server/db';
 import { decryptSecret } from '@/server/crypto';
+import { splitForReview } from '@/lib/split-review';
 
 // Geração assistida de escopo de proposta.
 // Suporta OpenAI (padrão) e Anthropic; a chave fica criptografada em SystemSetting
@@ -197,6 +198,7 @@ Regras invioláveis:
 - NÃO acrescente, remova ou resuma conteúdo.
 - NÃO altere números, valores, unidades, prazos, códigos de normas (ABNT NBR, NR, IEC, IEEE) nem nomes próprios.
 - Preserve exatamente a formatação: quebras de linha, hífens no início das linhas, maiúsculas de títulos.
+- Preserve os marcadores de formatação **negrito**, _itálico_ e a numeração "1." exatamente onde estão.
 - Mantenha os termos técnicos do setor elétrico/civil como estão, mesmo que pareçam incomuns.
 - Se o texto já estiver correto, devolva-o idêntico.
 
@@ -265,8 +267,15 @@ export async function reviewText(
     : REVIEW_PROMPT;
 
   try {
-    const raw = await callTextModel(config, prompt, text);
-    const cleaned = raw.trim().replace(/^```[a-z]*\s*/i, '').replace(/```$/, '').trim();
+    const blocos = splitForReview(text);
+    const revisados: string[] = [];
+    for (const bloco of blocos) {
+      const raw = await callTextModel(config, prompt, bloco);
+      const limpo = raw.trim().replace(/^```[a-z]*\s*/i, '').replace(/```$/, '').trim();
+      // Bloco vazio significaria perder conteúdo — preserva o original
+      revisados.push(limpo || bloco);
+    }
+    const cleaned = revisados.join('\n\n').trim();
     if (!cleaned) return { error: 'A revisão retornou vazia. Tente novamente.' };
     return { text: cleaned };
   } catch (e) {

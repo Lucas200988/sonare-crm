@@ -1,0 +1,203 @@
+import type { Metadata } from 'next';
+import Link from 'next/link';
+import { notFound } from 'next/navigation';
+import { ArrowLeft } from 'lucide-react';
+import { requirePermissionPage } from '@/server/auth/guards';
+import { prisma } from '@/server/db';
+import {
+  getProject, listAssignableUsers, listTimeEntries,
+  listProjectComments, listProjectAttachments,
+} from '@/server/services/projects';
+import { Card } from '@/components/ui';
+import { CardHeader, CardTabs } from './card-header';
+import { StagesSection, DeliverablesSection, TimeEntriesSection } from './project-sections';
+import { CommentsSection, AttachmentsSection } from './activity-sections';
+import { TaskBoard } from './task-board';
+
+export const metadata: Metadata = { title: 'Projeto — SONARE CRM' };
+
+export default async function ProjectDetailPage(props: {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<Record<string, string | undefined>>;
+}) {
+  const user = await requirePermissionPage('project:read');
+  const { id } = await props.params;
+  const aba = (await props.searchParams).aba ?? 'visao';
+
+  const [project, assignableUsers] = await Promise.all([
+    getProject(user, id),
+    listAssignableUsers(user),
+  ]);
+  if (!project) notFound();
+
+  const canWrite = user.permissions.has('project:write');
+  const canWriteTasks = user.permissions.has('task:write');
+  const canWriteDeliverables = user.permissions.has('deliverable:write');
+  const canWriteTime = user.permissions.has('timeentry:write');
+  const canApproveTime = user.permissions.has('timeentry:approve');
+  const veHoras = canWriteTime || canApproveTime;
+
+  const [clientUnits, comments, attachments, timeEntries] = await Promise.all([
+    prisma.clientUnit.findMany({
+      where: { clientId: project.clientId, deletedAt: null },
+      select: { id: true, name: true },
+      orderBy: { name: 'asc' },
+    }),
+    listProjectComments(user, id),
+    listProjectAttachments(user, id),
+    veHoras ? listTimeEntries(user, id) : Promise.resolve([]),
+  ]);
+
+  const stageOptions = project.stages.map((s) => ({ id: s.id, name: s.name }));
+
+  return (
+    <div className="mx-auto max-w-4xl">
+      <Link href="/projetos" className="mb-3 inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-slate-800">
+        <ArrowLeft className="h-4 w-4" aria-hidden /> Voltar ao quadro
+      </Link>
+
+      <CardHeader
+        projectId={project.id}
+        code={project.code}
+        name={project.name}
+        status={project.status}
+        priority={project.priority}
+        archived={project.archivedAt !== null}
+        clientName={project.client.tradeName ?? project.client.legalName}
+        contract={project.contract ? { id: project.contract.id, code: project.contract.code } : null}
+        contractValue={project.contractValue ? project.contractValue.toString() : null}
+        contractualDeadline={project.contractualDeadline ? project.contractualDeadline.toISOString() : null}
+        technicalLead={project.technicalLead?.name ?? null}
+        members={project.members.map((m) => m.user)}
+        disciplines={project.disciplines}
+        folderPath={project.folderPath}
+        canWrite={canWrite}
+        initial={{
+          name: project.name,
+          clientUnitId: project.clientUnitId ?? '',
+          technicalLeadId: project.technicalLeadId ?? '',
+          coordinatorId: project.coordinatorId ?? '',
+          disciplines: project.disciplines.join(', '),
+          startDate: project.startDate ? project.startDate.toISOString().slice(0, 10) : '',
+          contractualDeadline: project.contractualDeadline ? project.contractualDeadline.toISOString().slice(0, 10) : '',
+          expectedEndDate: project.expectedEndDate ? project.expectedEndDate.toISOString().slice(0, 10) : '',
+          priority: project.priority,
+          folderPath: project.folderPath ?? '',
+          risks: project.risks ?? '',
+          notes: project.notes ?? '',
+          memberIds: project.members.map((m) => m.user.id),
+        }}
+        clientUnits={clientUnits}
+        users={assignableUsers}
+      />
+
+      <CardTabs
+        projectId={project.id}
+        current={aba}
+        counts={{
+          tarefas: project.tasks.length,
+          entregaveis: project.deliverables.length,
+          arquivos: attachments.length,
+          comentarios: comments.length,
+        }}
+        showHoras={veHoras}
+      />
+
+      <div className="mt-4 space-y-4">
+        {aba === 'visao' ? (
+          <>
+            <Card className="p-4">
+              <StagesSection
+                projectId={project.id}
+                stages={project.stages.map((s) => ({
+                  id: s.id, name: s.name, status: s.status,
+                  startedAt: s.startedAt ? s.startedAt.toISOString() : null,
+                  completedAt: s.completedAt ? s.completedAt.toISOString() : null,
+                }))}
+                canWrite={canWrite}
+              />
+            </Card>
+            <Card className="p-4">
+              <CommentsSection
+                projectId={project.id}
+                comments={comments.map((c) => ({
+                  id: c.id, body: c.body,
+                  createdAt: c.createdAt.toISOString(), author: c.author,
+                }))}
+              />
+            </Card>
+          </>
+        ) : null}
+
+        {aba === 'tarefas' ? (
+          <Card className="p-4">
+            <TaskBoard
+              projectId={project.id}
+              tasks={project.tasks.map((t) => ({
+                id: t.id, title: t.title, status: t.status, priority: t.priority,
+                dueAt: t.dueAt ? t.dueAt.toISOString() : null,
+                stageId: t.stageId, assignee: t.assignee,
+              }))}
+              stages={stageOptions}
+              users={assignableUsers}
+              canWrite={canWriteTasks}
+            />
+          </Card>
+        ) : null}
+
+        {aba === 'entregaveis' ? (
+          <Card className="p-4">
+            <DeliverablesSection
+              projectId={project.id}
+              deliverables={project.deliverables.map((d) => ({
+                id: d.id, name: d.name, discipline: d.discipline, status: d.status,
+                currentRevision: d.currentRevision,
+                dueAt: d.dueAt ? d.dueAt.toISOString() : null,
+                revisions: d.revisions.map((r) => ({
+                  id: r.id, revisionCode: r.revisionCode,
+                  revisionDate: r.revisionDate.toISOString(), reason: r.reason,
+                })),
+              }))}
+              stages={stageOptions}
+              users={assignableUsers}
+              canWrite={canWriteDeliverables}
+            />
+          </Card>
+        ) : null}
+
+        {aba === 'arquivos' ? (
+          <Card className="p-4">
+            <AttachmentsSection
+              projectId={project.id}
+              attachments={attachments.map((a) => ({
+                id: a.id, fileName: a.fileName, sizeBytes: a.sizeBytes,
+                createdAt: a.createdAt.toISOString(),
+              }))}
+              canWrite={canWrite}
+            />
+          </Card>
+        ) : null}
+
+        {aba === 'horas' && veHoras ? (
+          <Card className="p-4">
+            <TimeEntriesSection
+              projectId={project.id}
+              entries={timeEntries.map((e) => ({
+                id: e.id,
+                workDate: e.workDate.toISOString(),
+                hours: e.hours.toString(),
+                description: e.description,
+                billable: e.billable,
+                approvedAt: e.approvedAt ? e.approvedAt.toISOString() : null,
+                user: e.user,
+                task: e.task,
+              }))}
+              canWrite={canWriteTime}
+              canApprove={canApproveTime}
+            />
+          </Card>
+        ) : null}
+      </div>
+    </div>
+  );
+}

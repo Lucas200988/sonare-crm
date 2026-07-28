@@ -13,7 +13,8 @@
     "db:migrate": "prisma migrate dev",
     "db:deploy": "prisma migrate deploy",
     "db:seed": "tsx prisma/seed.ts",
-    "db:studio": "prisma studio"
+    "db:studio": "prisma studio",
+    "empacotar-atalho": "powershell -NoProfile -Command \"Compress-Archive -Path ferramentas/abrir-pasta/* -DestinationPath public/ferramentas/sonare-abrir-pasta-v2.zip -Force\""
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
@@ -27,6 +28,10 @@
     "@supabase/supabase-js": "^2.110.9",
     "@tanstack/react-query": "^5.101.4",
     "@tanstack/react-table": "^8.21.3",
+    "@tiptap/extension-text-align": "^3.29.2",
+    "@tiptap/extension-underline": "^3.29.2",
+    "@tiptap/react": "^3.29.2",
+    "@tiptap/starter-kit": "^3.29.2",
     "date-fns": "^4.4.0",
     "date-fns-tz": "^3.2.0",
     "decimal.js": "^10.6.0",

@@ -955,6 +955,10 @@ model Project {
   status              ProjectStatus @default(AGUARDANDO_INICIO)
   priority            PriorityLevel @default(MEDIA)
   progressPercent     Decimal       @default(0) @db.Decimal(9, 4)
+  boardPosition       Int           @default(0)
+  archivedAt          DateTime?
+  /// Pasta de rede com os documentos do projeto (ex.: Z:\SONARE\Projetos\...)
+  folderPath          String?
   risks               String?
   notes               String?
   createdAt           DateTime      @default(now())

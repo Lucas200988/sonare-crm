@@ -22,6 +22,21 @@ export function formatDateLongBR(date: Date | string | null | undefined): string
   return format(new Date(date), "d 'de' MMMM 'de' yyyy", { locale: ptBR });
 }
 
+/**
+ * Interpreta "aaaa-mm-dd" (campo <input type="date">) como meia-noite LOCAL.
+ * `new Date('2026-06-01')` seria meia-noite UTC, que em Cuiabá (UTC-4) cai no
+ * dia anterior — e a data apareceria um dia adiantada para trás na tela.
+ */
+export function parseDateInput(value: string | null | undefined): Date | null {
+  if (!value) return null;
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value.trim());
+  if (!m) {
+    const d = new Date(value);
+    return Number.isNaN(d.getTime()) ? null : d;
+  }
+  return new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
+}
+
 /** Interpreta "dd/mm/aaaa" ou ISO como Date (meia-noite local). Retorna null se inválida. */
 export function parseDateBR(value: string | null | undefined): Date | null {
   if (!value) return null;

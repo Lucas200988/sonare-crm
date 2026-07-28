@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { Download, FolderOpen } from 'lucide-react';
 import { requirePermissionPage } from '@/server/auth/guards';
 import { listCatalogs } from '@/server/services/catalogs';
 import { PageHeader, Card } from '@/components/ui';
@@ -43,6 +44,8 @@ export default async function SettingsPage() {
               signerName: signer('proposal.signerName'),
               signerTitle: signer('proposal.signerTitle'),
               signerRegistration: signer('proposal.signerRegistration'),
+              signerPhone: signer('proposal.signerPhone'),
+              signerEmail: signer('proposal.signerEmail'),
             }}
           />
         </Card>
@@ -89,6 +92,32 @@ export default async function SettingsPage() {
               id: r.id, code: r.code, name: r.name, percent: r.percent.toString(), active: r.active,
             }))}
           />
+        </Card>
+
+        <Card className="p-5 lg:col-span-2">
+          <h2 className="flex items-center gap-2 text-base font-semibold text-slate-900">
+            <FolderOpen className="h-4 w-4 text-brand" aria-hidden /> Abrir pastas com um clique
+          </h2>
+          <p className="mt-1 text-xs text-slate-500">
+            Por segurança, nenhum navegador abre pastas da rede sozinho. Este atalho resolve isso —
+            instale uma vez em cada computador que usa o sistema.
+          </p>
+          <ol className="mt-3 space-y-1 text-sm text-slate-700">
+            <li>1. Baixe e descompacte o arquivo abaixo</li>
+            <li>2. Dê duplo clique em <span className="font-mono text-xs">instalar.cmd</span> (não pede senha de administrador)</li>
+            <li>3. No primeiro clique em “Abrir pasta”, marque <strong>Sempre permitir</strong> no aviso do navegador</li>
+          </ol>
+          <a
+            href="/ferramentas/sonare-abrir-pasta-v2.zip"
+            download
+            className="mt-3 inline-flex items-center gap-2 rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-white hover:bg-brand-dark"
+          >
+            <Download className="h-4 w-4" aria-hidden /> Baixar o atalho de pastas
+          </a>
+          <p className="mt-2 text-[11px] text-slate-500">
+            Funciona apenas dentro da rede da empresa, onde a unidade <span className="font-mono">Z:</span> está
+            disponível. Sem o atalho, o botão copia o caminho para colar no Explorador.
+          </p>
         </Card>
       </div>
     </div>

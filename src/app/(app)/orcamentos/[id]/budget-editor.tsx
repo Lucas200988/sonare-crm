@@ -6,13 +6,33 @@ import { AlertTriangle, Plus, Save, Trash2 } from 'lucide-react';
 import { saveVersionAction } from '@/actions/budgets';
 import { computeBudgetTotals } from '@/lib/budget-calc';
 import { parseDecimalBR, formatDecimalBR } from '@/lib/parse';
-import { mergeTextBlocks } from '@/lib/merge-text';
+import { additionBlock, type MergeMode } from '@/lib/merge-text';
+import { appendTextToHtml, htmlToText, isEmptyRich, textToHtml } from '@/lib/html-text';
 import { inputCls, Field } from '@/components/ui';
 import { ReviewableTextarea } from '@/components/text-field';
+import { RichEditor } from '@/components/rich-editor';
 import {
   ScopeAssistant, type ScopeResult, type TemplateOption,
   type ApplyMode, type ApplyOptions,
 } from './scope-assistant';
+
+/**
+ * Junta o texto do assistente a um campo que guarda HTML formatado.
+ * Em "acrescentar", a formatação já existente é preservada; em "substituir",
+ * o bloco novo passa a ser todo o conteúdo.
+ */
+function mergeRich(
+  currentHtml: string,
+  addition: string,
+  mode: MergeMode,
+  heading: string | null,
+  dedupe = false,
+): string {
+  const textoAtual = mode === 'replace' ? '' : htmlToText(currentHtml);
+  const bloco = additionBlock(textoAtual, addition, heading, dedupe);
+  if (bloco === null) return currentHtml;
+  return mode === 'replace' ? textToHtml(bloco) : appendTextToHtml(currentHtml, bloco);
+}
 
 type ServiceOption = {
   id: string;
@@ -140,9 +160,9 @@ export function BudgetEditor({
       ...f,
       // escopo mantém um bloco por serviço; premissas e exclusões são
       // condições gerais e entram numa lista única, sem repetição
-      scope: mergeTextBlocks(f.scope, result.scope, mode, heading),
-      premises: mergeTextBlocks(f.premises, result.premises, mode, null, true),
-      exclusions: mergeTextBlocks(f.exclusions, result.exclusions, mode, null, true),
+      scope: mergeRich(f.scope, result.scope, mode, heading),
+      premises: mergeRich(f.premises, result.premises, mode, null, true),
+      exclusions: mergeRich(f.exclusions, result.exclusions, mode, null, true),
       // prazo é um campo curto: só substitui quando estiver vazio ou em modo substituir
       executionDeadline:
         mode === 'replace' || !f.executionDeadline
@@ -199,7 +219,7 @@ export function BudgetEditor({
           aiEnabled={aiEnabled}
           templates={scopeTemplates}
           defaultServiceType={fields.serviceType}
-          hasContent={fields.scope.trim() !== ''}
+          hasContent={!isEmptyRich(fields.scope)}
           onApply={applyScope}
         />
       ) : null}
@@ -210,22 +230,20 @@ export function BudgetEditor({
           <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
             Escopo dos serviços
           </h3>
-          {fields.scope.trim() === '' ? (
+          {isEmptyRich(fields.scope) ? (
             <span className="inline-flex items-center gap-1 rounded-full bg-amber-100 px-2 py-0.5 text-[11px] font-medium text-amber-800">
               <AlertTriangle className="h-3 w-3" aria-hidden /> Obrigatório na proposta
             </span>
           ) : null}
         </div>
-        <ReviewableTextarea
-          id="f-escopo"
+        <RichEditor
           value={fields.scope}
           onChange={(v) => setFields((f) => ({ ...f, scope: v }))}
           disabled={!editable}
-          rows={8}
-          placeholder="Descreva o que será executado. Use o assistente acima para partir de um modelo ou gerar por IA."
+          minHeight={220}
           context="escopo de proposta de engenharia"
         />
-        {fields.scope.trim() === '' ? (
+        {isEmptyRich(fields.scope) ? (
           <p className="mt-1 text-xs text-amber-700">
             Sem escopo, a proposta sai sem a descrição dos serviços — o item mais importante para o cliente.
           </p>
@@ -391,15 +409,15 @@ export function BudgetEditor({
           />
         </Field>
         <Field label="Premissas" htmlFor="f-premissas">
-          <ReviewableTextarea
-            id="f-premissas" value={fields.premises} onChange={(v) => setFields((f) => ({ ...f, premises: v }))}
-            disabled={!editable} rows={3} context="premissas de proposta de engenharia"
+          <RichEditor
+            value={fields.premises} onChange={(v) => setFields((f) => ({ ...f, premises: v }))}
+            disabled={!editable} minHeight={120} context="premissas de proposta de engenharia"
           />
         </Field>
         <Field label="Exclusões (o que NÃO está incluso)" htmlFor="f-exclusoes">
-          <ReviewableTextarea
-            id="f-exclusoes" value={fields.exclusions} onChange={(v) => setFields((f) => ({ ...f, exclusions: v }))}
-            disabled={!editable} rows={3} context="exclusões de proposta de engenharia"
+          <RichEditor
+            value={fields.exclusions} onChange={(v) => setFields((f) => ({ ...f, exclusions: v }))}
+            disabled={!editable} minHeight={120} context="exclusões de proposta de engenharia"
           />
         </Field>
         <Field label="Observações para o cliente (saem na proposta)" htmlFor="f-notas-cliente">

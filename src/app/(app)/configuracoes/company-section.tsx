@@ -27,6 +27,8 @@ export type CompanyValues = {
   signerName: string | null;
   signerTitle: string | null;
   signerRegistration: string | null;
+  signerPhone: string | null;
+  signerEmail: string | null;
 };
 
 export function CompanySection({ company }: { company: CompanyValues }) {
@@ -116,7 +118,16 @@ export function CompanySection({ company }: { company: CompanyValues }) {
             <Field label="Registro profissional" htmlFor="c-signer-reg">
               <input id="c-signer-reg" name="signerRegistration" defaultValue={company.signerRegistration ?? ''} placeholder="CREA-MT 029137" className={inputCls} />
             </Field>
+            <Field label="Telefone do responsável" htmlFor="c-signer-phone">
+              <input id="c-signer-phone" name="signerPhone" defaultValue={company.signerPhone ?? ''} placeholder="+55 (65) 98463-3872" className={inputCls} />
+            </Field>
+            <Field label="E-mail do responsável" htmlFor="c-signer-email">
+              <input id="c-signer-email" name="signerEmail" type="email" defaultValue={company.signerEmail ?? ''} placeholder="lucas@sonareengenharia.com.br" className={inputCls} />
+            </Field>
           </div>
+          <p className="mt-2 text-[11px] text-slate-500">
+            Sai no rodapé da proposta, abaixo da linha de assinatura. Em branco, usa o telefone e o e-mail da empresa.
+          </p>
         </fieldset>
 
         <FormError message={state.error} />

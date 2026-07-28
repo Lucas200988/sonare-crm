@@ -7,6 +7,7 @@ import {
   generateDraftAction, addSignerAction, confirmSignatureAction,
   setStatusAction, createAmendmentAction, signAmendmentAction, type ActionState,
 } from '@/actions/contracts';
+import { createProjectFromContractAction } from '@/actions/projects';
 import { inputCls, Field, FormError } from '@/components/ui';
 import { formatDateBR } from '@/lib/dates';
 
@@ -328,6 +329,31 @@ export function AmendmentsSection({
           </li>
         ))}
       </ul>
+      <FormError message={error} />
+    </div>
+  );
+}
+
+export function CreateProjectButton({ contractId }: { contractId: string }) {
+  const router = useRouter();
+  const [pending, startTransition] = useTransition();
+  const [error, setError] = useState<string | null>(null);
+
+  return (
+    <div className="space-y-2">
+      <button
+        type="button"
+        disabled={pending}
+        onClick={() => startTransition(async () => {
+          setError(null);
+          const r = await createProjectFromContractAction(contractId);
+          if (r.error) setError(r.error);
+          else router.refresh();
+        })}
+        className="inline-flex items-center gap-2 rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-white hover:bg-brand-dark disabled:opacity-60"
+      >
+        <Plus className="h-4 w-4" aria-hidden /> {pending ? 'Criando…' : 'Criar projeto'}
+      </button>
       <FormError message={error} />
     </div>
   );
