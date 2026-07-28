@@ -139,6 +139,8 @@ export type ReceivableInput = {
   contractId?: string | null;
   projectId?: string | null;
   notes?: string | null;
+  /** Entrada paga na hora: cria a cobrança e a baixa num passo só. */
+  jaRecebido?: boolean;
 };
 
 export async function createReceivable(user: SessionUser, input: ReceivableInput) {
@@ -153,7 +155,7 @@ export async function createReceivable(user: SessionUser, input: ReceivableInput
 
   const receivable = await prisma.$transaction(async (tx) => {
     const code = await nextCode(user.companyId, 'PARC', tx);
-    return tx.receivable.create({
+    const criada = await tx.receivable.create({
       data: {
         companyId: user.companyId,
         code,
@@ -165,10 +167,24 @@ export async function createReceivable(user: SessionUser, input: ReceivableInput
         grossValue: input.grossValue,
         netValue: input.grossValue,
         notes: input.notes || null,
-        status: 'A_VENCER',
+        status: input.jaRecebido ? 'RECEBIDO' : 'A_VENCER',
         createdById: user.id,
       },
     });
+
+    // Entrada quitada no ato: registra a baixa junto, sem um segundo passo
+    if (input.jaRecebido) {
+      await tx.receipt.create({
+        data: {
+          companyId: user.companyId,
+          receivableId: criada.id,
+          receivedAt: vencimento,
+          amount: input.grossValue,
+          createdById: user.id,
+        },
+      });
+    }
+    return criada;
   });
 
   await auditLog({
@@ -313,6 +329,46 @@ export async function cancelReceivable(user: SessionUser, id: string) {
     entityType: 'receivable', entityId: id,
   });
   return { ok: true };
+}
+
+/**
+ * Situação financeira de um projeto: o que foi cobrado, recebido, ainda falta
+ * e quanto saiu em despesas ligadas a ele.
+ */
+export async function getProjectFinance(user: SessionUser, projectId: string) {
+  const [receivables, payables] = await Promise.all([
+    prisma.receivable.findMany({
+      where: { projectId, companyId: user.companyId, deletedAt: null },
+      include: { receipts: { where: { reversedAt: null }, select: { amount: true } } },
+      orderBy: { dueDate: 'asc' },
+    }),
+    prisma.payable.findMany({
+      where: { projectId, companyId: user.companyId, deletedAt: null },
+      orderBy: { dueDate: 'asc' },
+    }),
+  ]);
+
+  const ativos = receivables.filter((r) => r.status !== 'CANCELADO');
+  const cobrado = ativos.reduce((acc, r) => acc + Number(r.netValue), 0);
+  const recebido = ativos.reduce(
+    (acc, r) => acc + r.receipts.reduce((s, x) => s + Number(x.amount), 0),
+    0,
+  );
+  const despesas = payables
+    .filter((p) => p.status !== 'CANCELADO')
+    .reduce((acc, p) => acc + Number(p.paidAmount ?? p.amount), 0);
+
+  return {
+    receivables,
+    payables,
+    resumo: {
+      cobrado: cobrado.toFixed(2),
+      recebido: recebido.toFixed(2),
+      aReceber: Math.max(0, cobrado - recebido).toFixed(2),
+      despesas: despesas.toFixed(2),
+      saldo: (recebido - despesas).toFixed(2),
+    },
+  };
 }
 
 // ---------- Contas a pagar ----------

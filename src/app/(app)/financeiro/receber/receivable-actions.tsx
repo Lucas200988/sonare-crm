@@ -7,6 +7,7 @@ import {
   createReceivableAction, registerReceiptAction, cancelReceivableAction, type ActionState,
 } from '@/actions/finance';
 import { inputCls, Field, FormError, SubmitButton } from '@/components/ui';
+import { ClientSelect } from '@/components/client-select';
 import { formatBRL } from '@/lib/money';
 
 export type ClientOption = { id: string; legalName: string; tradeName: string | null };
@@ -37,10 +38,7 @@ export function NewReceivable({ clients }: { clients: ClientOption[] }) {
   return (
     <form action={formAction} className="grid w-full gap-3 rounded-xl border border-slate-200 bg-white p-4 sm:grid-cols-4">
       <Field label="Cliente" htmlFor="r-client" required className="sm:col-span-2">
-        <select id="r-client" name="clientId" required defaultValue="" className={inputCls}>
-          <option value="" disabled>Selecione…</option>
-          {clients.map((c) => <option key={c.id} value={c.id}>{c.tradeName ?? c.legalName}</option>)}
-        </select>
+        <ClientSelect id="r-client" name="clientId" clients={clients} required />
       </Field>
       <Field label="Vencimento" htmlFor="r-due" required>
         <input id="r-due" name="dueDate" type="date" required className={inputCls} />

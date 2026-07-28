@@ -136,7 +136,9 @@ export default async function BudgetDetailPage(props: { params: Promise<{ id: st
                 Aguardando aprovação da diretoria.
               </p>
             ) : null}
-            {budget.status === 'APROVADO' && canProposal ? <GenerateProposalButton budgetId={budget.id} /> : null}
+            {budget.status === 'APROVADO' && canProposal ? (
+              <GenerateProposalButton budgetId={budget.id} jaEmitida={allProposals.length > 0} />
+            ) : null}
             {canWrite ? <NewVersionForm budgetId={budget.id} /> : null}
             {canWrite ? (
               <DangerZone
@@ -201,6 +203,9 @@ export default async function BudgetDetailPage(props: { params: Promise<{ id: st
                       </div>
                       <p className="mt-0.5 text-[11px] text-slate-500">
                         Gerada em {formatDateTimeBR(p.createdAt)}
+                        {p.emissionCount > 1
+                          ? ` · ${p.emissionCount} emissões${p.lastEmittedAt ? ` (última ${formatDateTimeBR(p.lastEmittedAt)})` : ''}`
+                          : ''}
                         {p.sentAt ? ` · enviada ${formatDateBR(p.sentAt)}` : ''}
                         {p.acceptedAt ? ` · aceita ${formatDateBR(p.acceptedAt)}` : ''}
                         {p.rejectedAt ? ` · recusada ${formatDateBR(p.rejectedAt)}` : ''}

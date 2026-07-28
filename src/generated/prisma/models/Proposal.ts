@@ -20,8 +20,18 @@ export type ProposalModel = runtime.Types.Result.DefaultSelection<Prisma.$Propos
 
 export type AggregateProposal = {
   _count: ProposalCountAggregateOutputType | null
+  _avg: ProposalAvgAggregateOutputType | null
+  _sum: ProposalSumAggregateOutputType | null
   _min: ProposalMinAggregateOutputType | null
   _max: ProposalMaxAggregateOutputType | null
+}
+
+export type ProposalAvgAggregateOutputType = {
+  emissionCount: number | null
+}
+
+export type ProposalSumAggregateOutputType = {
+  emissionCount: number | null
 }
 
 export type ProposalMinAggregateOutputType = {
@@ -33,6 +43,8 @@ export type ProposalMinAggregateOutputType = {
   proposalType: $Enums.ProposalType | null
   status: $Enums.ProposalStatus | null
   pdfAttachmentId: string | null
+  emissionCount: number | null
+  lastEmittedAt: Date | null
   verificationCode: string | null
   signedElectronicallyAt: Date | null
   signerName: string | null
@@ -61,6 +73,8 @@ export type ProposalMaxAggregateOutputType = {
   proposalType: $Enums.ProposalType | null
   status: $Enums.ProposalStatus | null
   pdfAttachmentId: string | null
+  emissionCount: number | null
+  lastEmittedAt: Date | null
   verificationCode: string | null
   signedElectronicallyAt: Date | null
   signerName: string | null
@@ -89,6 +103,8 @@ export type ProposalCountAggregateOutputType = {
   proposalType: number
   status: number
   pdfAttachmentId: number
+  emissionCount: number
+  lastEmittedAt: number
   verificationCode: number
   signedElectronicallyAt: number
   signerName: number
@@ -110,6 +126,14 @@ export type ProposalCountAggregateOutputType = {
 }
 
 
+export type ProposalAvgAggregateInputType = {
+  emissionCount?: true
+}
+
+export type ProposalSumAggregateInputType = {
+  emissionCount?: true
+}
+
 export type ProposalMinAggregateInputType = {
   id?: true
   companyId?: true
@@ -119,6 +143,8 @@ export type ProposalMinAggregateInputType = {
   proposalType?: true
   status?: true
   pdfAttachmentId?: true
+  emissionCount?: true
+  lastEmittedAt?: true
   verificationCode?: true
   signedElectronicallyAt?: true
   signerName?: true
@@ -147,6 +173,8 @@ export type ProposalMaxAggregateInputType = {
   proposalType?: true
   status?: true
   pdfAttachmentId?: true
+  emissionCount?: true
+  lastEmittedAt?: true
   verificationCode?: true
   signedElectronicallyAt?: true
   signerName?: true
@@ -175,6 +203,8 @@ export type ProposalCountAggregateInputType = {
   proposalType?: true
   status?: true
   pdfAttachmentId?: true
+  emissionCount?: true
+  lastEmittedAt?: true
   verificationCode?: true
   signedElectronicallyAt?: true
   signerName?: true
@@ -233,6 +263,18 @@ export type ProposalAggregateArgs<ExtArgs extends runtime.Types.Extensions.Inter
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
+   * Select which fields to average
+  **/
+  _avg?: ProposalAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
+   * Select which fields to sum
+  **/
+  _sum?: ProposalSumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
    * Select which fields to find the minimum value
   **/
   _min?: ProposalMinAggregateInputType
@@ -263,6 +305,8 @@ export type ProposalGroupByArgs<ExtArgs extends runtime.Types.Extensions.Interna
   take?: number
   skip?: number
   _count?: ProposalCountAggregateInputType | true
+  _avg?: ProposalAvgAggregateInputType
+  _sum?: ProposalSumAggregateInputType
   _min?: ProposalMinAggregateInputType
   _max?: ProposalMaxAggregateInputType
 }
@@ -276,6 +320,8 @@ export type ProposalGroupByOutputType = {
   proposalType: $Enums.ProposalType
   status: $Enums.ProposalStatus
   pdfAttachmentId: string | null
+  emissionCount: number
+  lastEmittedAt: Date | null
   verificationCode: string | null
   signedElectronicallyAt: Date | null
   signerName: string | null
@@ -294,6 +340,8 @@ export type ProposalGroupByOutputType = {
   createdById: string | null
   deletedAt: Date | null
   _count: ProposalCountAggregateOutputType | null
+  _avg: ProposalAvgAggregateOutputType | null
+  _sum: ProposalSumAggregateOutputType | null
   _min: ProposalMinAggregateOutputType | null
   _max: ProposalMaxAggregateOutputType | null
 }
@@ -325,6 +373,8 @@ export type ProposalWhereInput = {
   proposalType?: Prisma.EnumProposalTypeFilter<"Proposal"> | $Enums.ProposalType
   status?: Prisma.EnumProposalStatusFilter<"Proposal"> | $Enums.ProposalStatus
   pdfAttachmentId?: Prisma.StringNullableFilter<"Proposal"> | string | null
+  emissionCount?: Prisma.IntFilter<"Proposal"> | number
+  lastEmittedAt?: Prisma.DateTimeNullableFilter<"Proposal"> | Date | string | null
   verificationCode?: Prisma.StringNullableFilter<"Proposal"> | string | null
   signedElectronicallyAt?: Prisma.DateTimeNullableFilter<"Proposal"> | Date | string | null
   signerName?: Prisma.StringNullableFilter<"Proposal"> | string | null
@@ -356,6 +406,8 @@ export type ProposalOrderByWithRelationInput = {
   proposalType?: Prisma.SortOrder
   status?: Prisma.SortOrder
   pdfAttachmentId?: Prisma.SortOrderInput | Prisma.SortOrder
+  emissionCount?: Prisma.SortOrder
+  lastEmittedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   verificationCode?: Prisma.SortOrderInput | Prisma.SortOrder
   signedElectronicallyAt?: Prisma.SortOrderInput | Prisma.SortOrder
   signerName?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -392,6 +444,8 @@ export type ProposalWhereUniqueInput = Prisma.AtLeast<{
   proposalType?: Prisma.EnumProposalTypeFilter<"Proposal"> | $Enums.ProposalType
   status?: Prisma.EnumProposalStatusFilter<"Proposal"> | $Enums.ProposalStatus
   pdfAttachmentId?: Prisma.StringNullableFilter<"Proposal"> | string | null
+  emissionCount?: Prisma.IntFilter<"Proposal"> | number
+  lastEmittedAt?: Prisma.DateTimeNullableFilter<"Proposal"> | Date | string | null
   signedElectronicallyAt?: Prisma.DateTimeNullableFilter<"Proposal"> | Date | string | null
   signerName?: Prisma.StringNullableFilter<"Proposal"> | string | null
   signerRegistration?: Prisma.StringNullableFilter<"Proposal"> | string | null
@@ -422,6 +476,8 @@ export type ProposalOrderByWithAggregationInput = {
   proposalType?: Prisma.SortOrder
   status?: Prisma.SortOrder
   pdfAttachmentId?: Prisma.SortOrderInput | Prisma.SortOrder
+  emissionCount?: Prisma.SortOrder
+  lastEmittedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   verificationCode?: Prisma.SortOrderInput | Prisma.SortOrder
   signedElectronicallyAt?: Prisma.SortOrderInput | Prisma.SortOrder
   signerName?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -440,8 +496,10 @@ export type ProposalOrderByWithAggregationInput = {
   createdById?: Prisma.SortOrderInput | Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.ProposalCountOrderByAggregateInput
+  _avg?: Prisma.ProposalAvgOrderByAggregateInput
   _max?: Prisma.ProposalMaxOrderByAggregateInput
   _min?: Prisma.ProposalMinOrderByAggregateInput
+  _sum?: Prisma.ProposalSumOrderByAggregateInput
 }
 
 export type ProposalScalarWhereWithAggregatesInput = {
@@ -456,6 +514,8 @@ export type ProposalScalarWhereWithAggregatesInput = {
   proposalType?: Prisma.EnumProposalTypeWithAggregatesFilter<"Proposal"> | $Enums.ProposalType
   status?: Prisma.EnumProposalStatusWithAggregatesFilter<"Proposal"> | $Enums.ProposalStatus
   pdfAttachmentId?: Prisma.StringNullableWithAggregatesFilter<"Proposal"> | string | null
+  emissionCount?: Prisma.IntWithAggregatesFilter<"Proposal"> | number
+  lastEmittedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Proposal"> | Date | string | null
   verificationCode?: Prisma.StringNullableWithAggregatesFilter<"Proposal"> | string | null
   signedElectronicallyAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Proposal"> | Date | string | null
   signerName?: Prisma.StringNullableWithAggregatesFilter<"Proposal"> | string | null
@@ -482,6 +542,8 @@ export type ProposalCreateInput = {
   proposalType?: $Enums.ProposalType
   status?: $Enums.ProposalStatus
   pdfAttachmentId?: string | null
+  emissionCount?: number
+  lastEmittedAt?: Date | string | null
   verificationCode?: string | null
   signedElectronicallyAt?: Date | string | null
   signerName?: string | null
@@ -513,6 +575,8 @@ export type ProposalUncheckedCreateInput = {
   proposalType?: $Enums.ProposalType
   status?: $Enums.ProposalStatus
   pdfAttachmentId?: string | null
+  emissionCount?: number
+  lastEmittedAt?: Date | string | null
   verificationCode?: string | null
   signedElectronicallyAt?: Date | string | null
   signerName?: string | null
@@ -540,6 +604,8 @@ export type ProposalUpdateInput = {
   proposalType?: Prisma.EnumProposalTypeFieldUpdateOperationsInput | $Enums.ProposalType
   status?: Prisma.EnumProposalStatusFieldUpdateOperationsInput | $Enums.ProposalStatus
   pdfAttachmentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emissionCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lastEmittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   verificationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   signedElectronicallyAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   signerName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -571,6 +637,8 @@ export type ProposalUncheckedUpdateInput = {
   proposalType?: Prisma.EnumProposalTypeFieldUpdateOperationsInput | $Enums.ProposalType
   status?: Prisma.EnumProposalStatusFieldUpdateOperationsInput | $Enums.ProposalStatus
   pdfAttachmentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emissionCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lastEmittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   verificationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   signedElectronicallyAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   signerName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -600,6 +668,8 @@ export type ProposalCreateManyInput = {
   proposalType?: $Enums.ProposalType
   status?: $Enums.ProposalStatus
   pdfAttachmentId?: string | null
+  emissionCount?: number
+  lastEmittedAt?: Date | string | null
   verificationCode?: string | null
   signedElectronicallyAt?: Date | string | null
   signerName?: string | null
@@ -626,6 +696,8 @@ export type ProposalUpdateManyMutationInput = {
   proposalType?: Prisma.EnumProposalTypeFieldUpdateOperationsInput | $Enums.ProposalType
   status?: Prisma.EnumProposalStatusFieldUpdateOperationsInput | $Enums.ProposalStatus
   pdfAttachmentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emissionCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lastEmittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   verificationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   signedElectronicallyAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   signerName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -654,6 +726,8 @@ export type ProposalUncheckedUpdateManyInput = {
   proposalType?: Prisma.EnumProposalTypeFieldUpdateOperationsInput | $Enums.ProposalType
   status?: Prisma.EnumProposalStatusFieldUpdateOperationsInput | $Enums.ProposalStatus
   pdfAttachmentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emissionCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lastEmittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   verificationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   signedElectronicallyAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   signerName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -697,6 +771,8 @@ export type ProposalCountOrderByAggregateInput = {
   proposalType?: Prisma.SortOrder
   status?: Prisma.SortOrder
   pdfAttachmentId?: Prisma.SortOrder
+  emissionCount?: Prisma.SortOrder
+  lastEmittedAt?: Prisma.SortOrder
   verificationCode?: Prisma.SortOrder
   signedElectronicallyAt?: Prisma.SortOrder
   signerName?: Prisma.SortOrder
@@ -716,6 +792,10 @@ export type ProposalCountOrderByAggregateInput = {
   deletedAt?: Prisma.SortOrder
 }
 
+export type ProposalAvgOrderByAggregateInput = {
+  emissionCount?: Prisma.SortOrder
+}
+
 export type ProposalMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   companyId?: Prisma.SortOrder
@@ -725,6 +805,8 @@ export type ProposalMaxOrderByAggregateInput = {
   proposalType?: Prisma.SortOrder
   status?: Prisma.SortOrder
   pdfAttachmentId?: Prisma.SortOrder
+  emissionCount?: Prisma.SortOrder
+  lastEmittedAt?: Prisma.SortOrder
   verificationCode?: Prisma.SortOrder
   signedElectronicallyAt?: Prisma.SortOrder
   signerName?: Prisma.SortOrder
@@ -753,6 +835,8 @@ export type ProposalMinOrderByAggregateInput = {
   proposalType?: Prisma.SortOrder
   status?: Prisma.SortOrder
   pdfAttachmentId?: Prisma.SortOrder
+  emissionCount?: Prisma.SortOrder
+  lastEmittedAt?: Prisma.SortOrder
   verificationCode?: Prisma.SortOrder
   signedElectronicallyAt?: Prisma.SortOrder
   signerName?: Prisma.SortOrder
@@ -770,6 +854,10 @@ export type ProposalMinOrderByAggregateInput = {
   updatedAt?: Prisma.SortOrder
   createdById?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
+}
+
+export type ProposalSumOrderByAggregateInput = {
+  emissionCount?: Prisma.SortOrder
 }
 
 export type ProposalNullableScalarRelationFilter = {
@@ -892,6 +980,8 @@ export type ProposalCreateWithoutBudgetVersionInput = {
   proposalType?: $Enums.ProposalType
   status?: $Enums.ProposalStatus
   pdfAttachmentId?: string | null
+  emissionCount?: number
+  lastEmittedAt?: Date | string | null
   verificationCode?: string | null
   signedElectronicallyAt?: Date | string | null
   signerName?: string | null
@@ -921,6 +1011,8 @@ export type ProposalUncheckedCreateWithoutBudgetVersionInput = {
   proposalType?: $Enums.ProposalType
   status?: $Enums.ProposalStatus
   pdfAttachmentId?: string | null
+  emissionCount?: number
+  lastEmittedAt?: Date | string | null
   verificationCode?: string | null
   signedElectronicallyAt?: Date | string | null
   signerName?: string | null
@@ -979,6 +1071,8 @@ export type ProposalScalarWhereInput = {
   proposalType?: Prisma.EnumProposalTypeFilter<"Proposal"> | $Enums.ProposalType
   status?: Prisma.EnumProposalStatusFilter<"Proposal"> | $Enums.ProposalStatus
   pdfAttachmentId?: Prisma.StringNullableFilter<"Proposal"> | string | null
+  emissionCount?: Prisma.IntFilter<"Proposal"> | number
+  lastEmittedAt?: Prisma.DateTimeNullableFilter<"Proposal"> | Date | string | null
   verificationCode?: Prisma.StringNullableFilter<"Proposal"> | string | null
   signedElectronicallyAt?: Prisma.DateTimeNullableFilter<"Proposal"> | Date | string | null
   signerName?: Prisma.StringNullableFilter<"Proposal"> | string | null
@@ -1005,6 +1099,8 @@ export type ProposalCreateWithoutTemplateInput = {
   proposalType?: $Enums.ProposalType
   status?: $Enums.ProposalStatus
   pdfAttachmentId?: string | null
+  emissionCount?: number
+  lastEmittedAt?: Date | string | null
   verificationCode?: string | null
   signedElectronicallyAt?: Date | string | null
   signerName?: string | null
@@ -1034,6 +1130,8 @@ export type ProposalUncheckedCreateWithoutTemplateInput = {
   proposalType?: $Enums.ProposalType
   status?: $Enums.ProposalStatus
   pdfAttachmentId?: string | null
+  emissionCount?: number
+  lastEmittedAt?: Date | string | null
   verificationCode?: string | null
   signedElectronicallyAt?: Date | string | null
   signerName?: string | null
@@ -1087,6 +1185,8 @@ export type ProposalCreateWithoutContractsInput = {
   proposalType?: $Enums.ProposalType
   status?: $Enums.ProposalStatus
   pdfAttachmentId?: string | null
+  emissionCount?: number
+  lastEmittedAt?: Date | string | null
   verificationCode?: string | null
   signedElectronicallyAt?: Date | string | null
   signerName?: string | null
@@ -1117,6 +1217,8 @@ export type ProposalUncheckedCreateWithoutContractsInput = {
   proposalType?: $Enums.ProposalType
   status?: $Enums.ProposalStatus
   pdfAttachmentId?: string | null
+  emissionCount?: number
+  lastEmittedAt?: Date | string | null
   verificationCode?: string | null
   signedElectronicallyAt?: Date | string | null
   signerName?: string | null
@@ -1159,6 +1261,8 @@ export type ProposalUpdateWithoutContractsInput = {
   proposalType?: Prisma.EnumProposalTypeFieldUpdateOperationsInput | $Enums.ProposalType
   status?: Prisma.EnumProposalStatusFieldUpdateOperationsInput | $Enums.ProposalStatus
   pdfAttachmentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emissionCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lastEmittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   verificationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   signedElectronicallyAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   signerName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1189,6 +1293,8 @@ export type ProposalUncheckedUpdateWithoutContractsInput = {
   proposalType?: Prisma.EnumProposalTypeFieldUpdateOperationsInput | $Enums.ProposalType
   status?: Prisma.EnumProposalStatusFieldUpdateOperationsInput | $Enums.ProposalStatus
   pdfAttachmentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emissionCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lastEmittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   verificationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   signedElectronicallyAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   signerName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1216,6 +1322,8 @@ export type ProposalCreateManyBudgetVersionInput = {
   proposalType?: $Enums.ProposalType
   status?: $Enums.ProposalStatus
   pdfAttachmentId?: string | null
+  emissionCount?: number
+  lastEmittedAt?: Date | string | null
   verificationCode?: string | null
   signedElectronicallyAt?: Date | string | null
   signerName?: string | null
@@ -1242,6 +1350,8 @@ export type ProposalUpdateWithoutBudgetVersionInput = {
   proposalType?: Prisma.EnumProposalTypeFieldUpdateOperationsInput | $Enums.ProposalType
   status?: Prisma.EnumProposalStatusFieldUpdateOperationsInput | $Enums.ProposalStatus
   pdfAttachmentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emissionCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lastEmittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   verificationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   signedElectronicallyAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   signerName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1271,6 +1381,8 @@ export type ProposalUncheckedUpdateWithoutBudgetVersionInput = {
   proposalType?: Prisma.EnumProposalTypeFieldUpdateOperationsInput | $Enums.ProposalType
   status?: Prisma.EnumProposalStatusFieldUpdateOperationsInput | $Enums.ProposalStatus
   pdfAttachmentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emissionCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lastEmittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   verificationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   signedElectronicallyAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   signerName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1299,6 +1411,8 @@ export type ProposalUncheckedUpdateManyWithoutBudgetVersionInput = {
   proposalType?: Prisma.EnumProposalTypeFieldUpdateOperationsInput | $Enums.ProposalType
   status?: Prisma.EnumProposalStatusFieldUpdateOperationsInput | $Enums.ProposalStatus
   pdfAttachmentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emissionCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lastEmittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   verificationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   signedElectronicallyAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   signerName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1326,6 +1440,8 @@ export type ProposalCreateManyTemplateInput = {
   proposalType?: $Enums.ProposalType
   status?: $Enums.ProposalStatus
   pdfAttachmentId?: string | null
+  emissionCount?: number
+  lastEmittedAt?: Date | string | null
   verificationCode?: string | null
   signedElectronicallyAt?: Date | string | null
   signerName?: string | null
@@ -1352,6 +1468,8 @@ export type ProposalUpdateWithoutTemplateInput = {
   proposalType?: Prisma.EnumProposalTypeFieldUpdateOperationsInput | $Enums.ProposalType
   status?: Prisma.EnumProposalStatusFieldUpdateOperationsInput | $Enums.ProposalStatus
   pdfAttachmentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emissionCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lastEmittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   verificationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   signedElectronicallyAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   signerName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1381,6 +1499,8 @@ export type ProposalUncheckedUpdateWithoutTemplateInput = {
   proposalType?: Prisma.EnumProposalTypeFieldUpdateOperationsInput | $Enums.ProposalType
   status?: Prisma.EnumProposalStatusFieldUpdateOperationsInput | $Enums.ProposalStatus
   pdfAttachmentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emissionCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lastEmittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   verificationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   signedElectronicallyAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   signerName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1409,6 +1529,8 @@ export type ProposalUncheckedUpdateManyWithoutTemplateInput = {
   proposalType?: Prisma.EnumProposalTypeFieldUpdateOperationsInput | $Enums.ProposalType
   status?: Prisma.EnumProposalStatusFieldUpdateOperationsInput | $Enums.ProposalStatus
   pdfAttachmentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emissionCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lastEmittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   verificationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   signedElectronicallyAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   signerName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1468,6 +1590,8 @@ export type ProposalSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   proposalType?: boolean
   status?: boolean
   pdfAttachmentId?: boolean
+  emissionCount?: boolean
+  lastEmittedAt?: boolean
   verificationCode?: boolean
   signedElectronicallyAt?: boolean
   signerName?: boolean
@@ -1500,6 +1624,8 @@ export type ProposalSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   proposalType?: boolean
   status?: boolean
   pdfAttachmentId?: boolean
+  emissionCount?: boolean
+  lastEmittedAt?: boolean
   verificationCode?: boolean
   signedElectronicallyAt?: boolean
   signerName?: boolean
@@ -1530,6 +1656,8 @@ export type ProposalSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   proposalType?: boolean
   status?: boolean
   pdfAttachmentId?: boolean
+  emissionCount?: boolean
+  lastEmittedAt?: boolean
   verificationCode?: boolean
   signedElectronicallyAt?: boolean
   signerName?: boolean
@@ -1560,6 +1688,8 @@ export type ProposalSelectScalar = {
   proposalType?: boolean
   status?: boolean
   pdfAttachmentId?: boolean
+  emissionCount?: boolean
+  lastEmittedAt?: boolean
   verificationCode?: boolean
   signedElectronicallyAt?: boolean
   signerName?: boolean
@@ -1579,7 +1709,7 @@ export type ProposalSelectScalar = {
   deletedAt?: boolean
 }
 
-export type ProposalOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "companyId" | "code" | "budgetVersionId" | "templateId" | "proposalType" | "status" | "pdfAttachmentId" | "verificationCode" | "signedElectronicallyAt" | "signerName" | "signerRegistration" | "documentHash" | "sentAt" | "sentVia" | "recipients" | "viewedAt" | "acceptedAt" | "rejectedAt" | "rejectionReason" | "negotiationNotes" | "createdAt" | "updatedAt" | "createdById" | "deletedAt", ExtArgs["result"]["proposal"]>
+export type ProposalOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "companyId" | "code" | "budgetVersionId" | "templateId" | "proposalType" | "status" | "pdfAttachmentId" | "emissionCount" | "lastEmittedAt" | "verificationCode" | "signedElectronicallyAt" | "signerName" | "signerRegistration" | "documentHash" | "sentAt" | "sentVia" | "recipients" | "viewedAt" | "acceptedAt" | "rejectedAt" | "rejectionReason" | "negotiationNotes" | "createdAt" | "updatedAt" | "createdById" | "deletedAt", ExtArgs["result"]["proposal"]>
 export type ProposalInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   budgetVersion?: boolean | Prisma.BudgetVersionDefaultArgs<ExtArgs>
   template?: boolean | Prisma.Proposal$templateArgs<ExtArgs>
@@ -1611,6 +1741,12 @@ export type $ProposalPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     proposalType: $Enums.ProposalType
     status: $Enums.ProposalStatus
     pdfAttachmentId: string | null
+    /**
+     * Quantas vezes o PDF foi emitido. O número da proposta não muda ao
+     * reemitir os mesmos dados — só uma nova versão do orçamento gera outro.
+     */
+    emissionCount: number
+    lastEmittedAt: Date | null
     verificationCode: string | null
     signedElectronicallyAt: Date | null
     signerName: string | null
@@ -2062,6 +2198,8 @@ export interface ProposalFieldRefs {
   readonly proposalType: Prisma.FieldRef<"Proposal", 'ProposalType'>
   readonly status: Prisma.FieldRef<"Proposal", 'ProposalStatus'>
   readonly pdfAttachmentId: Prisma.FieldRef<"Proposal", 'String'>
+  readonly emissionCount: Prisma.FieldRef<"Proposal", 'Int'>
+  readonly lastEmittedAt: Prisma.FieldRef<"Proposal", 'DateTime'>
   readonly verificationCode: Prisma.FieldRef<"Proposal", 'String'>
   readonly signedElectronicallyAt: Prisma.FieldRef<"Proposal", 'DateTime'>
   readonly signerName: Prisma.FieldRef<"Proposal", 'String'>

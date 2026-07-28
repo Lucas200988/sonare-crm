@@ -187,16 +187,20 @@ const TABS = [
   { id: 'tarefas', label: 'Tarefas', count: 'tarefas' as const },
   { id: 'entregaveis', label: 'Entregáveis', count: 'entregaveis' as const },
   { id: 'arquivos', label: 'Arquivos', count: 'arquivos' as const },
+  { id: 'financeiro', label: 'Financeiro' },
   { id: 'horas', label: 'Horas' },
 ];
 
-export function CardTabs({ projectId, current, counts, showHoras }: {
+export function CardTabs({ projectId, current, counts, showHoras, showFinanceiro }: {
   projectId: string;
   current: string;
   counts: { tarefas: number; entregaveis: number; arquivos: number; comentarios: number };
   showHoras: boolean;
+  showFinanceiro: boolean;
 }) {
-  const abas = showHoras ? TABS : TABS.filter((t) => t.id !== 'horas');
+  const abas = TABS
+    .filter((t) => showHoras || t.id !== 'horas')
+    .filter((t) => showFinanceiro || t.id !== 'financeiro');
 
   return (
     <nav className="mt-4 flex gap-1 border-b border-slate-200" aria-label="Seções do projeto">

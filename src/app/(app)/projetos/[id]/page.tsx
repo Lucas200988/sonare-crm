@@ -13,6 +13,8 @@ import { CardHeader, CardTabs } from './card-header';
 import { StagesSection, DeliverablesSection, TimeEntriesSection } from './project-sections';
 import { CommentsSection, AttachmentsSection } from './activity-sections';
 import { TaskBoard } from './task-board';
+import { ProjectFinanceSection } from './finance-section';
+import { getProjectFinance } from '@/server/services/finance';
 
 export const metadata: Metadata = { title: 'Projeto — SONARE CRM' };
 
@@ -36,8 +38,10 @@ export default async function ProjectDetailPage(props: {
   const canWriteTime = user.permissions.has('timeentry:write');
   const canApproveTime = user.permissions.has('timeentry:approve');
   const veHoras = canWriteTime || canApproveTime;
+  const veFinanceiro = user.permissions.has('finance:read');
+  const podeFinanceiro = user.permissions.has('finance:write');
 
-  const [clientUnits, comments, attachments, timeEntries] = await Promise.all([
+  const [clientUnits, comments, attachments, timeEntries, financeiro] = await Promise.all([
     prisma.clientUnit.findMany({
       where: { clientId: project.clientId, deletedAt: null },
       select: { id: true, name: true },
@@ -46,6 +50,7 @@ export default async function ProjectDetailPage(props: {
     listProjectComments(user, id),
     listProjectAttachments(user, id),
     veHoras ? listTimeEntries(user, id) : Promise.resolve([]),
+    veFinanceiro ? getProjectFinance(user, id) : Promise.resolve(null),
   ]);
 
   const stageOptions = project.stages.map((s) => ({ id: s.id, name: s.name }));
@@ -101,6 +106,7 @@ export default async function ProjectDetailPage(props: {
           comentarios: comments.length,
         }}
         showHoras={veHoras}
+        showFinanceiro={veFinanceiro}
       />
 
       <div className="mt-4 space-y-4">
@@ -174,6 +180,27 @@ export default async function ProjectDetailPage(props: {
                 createdAt: a.createdAt.toISOString(),
               }))}
               canWrite={canWrite}
+            />
+          </Card>
+        ) : null}
+
+        {aba === 'financeiro' && financeiro ? (
+          <Card className="p-4">
+            <ProjectFinanceSection
+              projectId={project.id}
+              clientId={project.clientId}
+              resumo={financeiro.resumo}
+              receivables={financeiro.receivables.map((r) => ({
+                id: r.id, code: r.code, description: r.description,
+                dueDate: r.dueDate.toISOString(), netValue: r.netValue.toString(),
+                status: r.status,
+                recebido: r.receipts.reduce((acc, x) => acc + Number(x.amount), 0).toFixed(2),
+              }))}
+              payables={financeiro.payables.map((p) => ({
+                id: p.id, description: p.description, supplier: p.supplier,
+                dueDate: p.dueDate.toISOString(), amount: p.amount.toString(), status: p.status,
+              }))}
+              canWrite={podeFinanceiro}
             />
           </Card>
         ) : null}

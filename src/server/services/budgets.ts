@@ -91,7 +91,12 @@ export async function getBudget(user: SessionUser, id: string) {
       opportunity: { select: { id: true, code: true, title: true, stageId: true } },
       commercialOwner: { select: { id: true, name: true } },
       technicalOwner: { select: { id: true, name: true } },
-      currentVersion: { include: { items: { orderBy: { sortOrder: 'asc' } }, proposals: { orderBy: { createdAt: 'desc' } } } },
+      currentVersion: {
+        include: {
+          items: { orderBy: { sortOrder: 'asc' } },
+          proposals: { where: { deletedAt: null }, orderBy: { createdAt: 'desc' } },
+        },
+      },
       versions: { orderBy: { versionNumber: 'desc' }, select: { id: true, versionNumber: true, total: true, immutable: true, createdAt: true, changeReason: true } },
       approvals: {
         include: {

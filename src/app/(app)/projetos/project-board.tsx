@@ -14,6 +14,7 @@ import {
 import { inputCls, Field, FormError, SubmitButton } from '@/components/ui';
 import { formatDateBR } from '@/lib/dates';
 import { abrirPastaNoExplorador } from './[id]/folder-link';
+import { ClientSelect } from '@/components/client-select';
 import { BOARD_COLUMNS, columnForStatus } from '@/config/project-board';
 
 export type BoardProject = {
@@ -301,12 +302,7 @@ function NewProjectForm({ clients, onDone }: { clients: ClientOption[]; onDone: 
         <input id="np-name" name="name" required className={inputCls} placeholder="Ex.: Projeto elétrico — Unidade Cuiabá" />
       </Field>
       <Field label="Cliente" htmlFor="np-clientId" required>
-        <select id="np-clientId" name="clientId" required className={inputCls} defaultValue="">
-          <option value="" disabled>Selecione…</option>
-          {clients.map((c) => (
-            <option key={c.id} value={c.id}>{c.tradeName ?? c.legalName}</option>
-          ))}
-        </select>
+        <ClientSelect id="np-clientId" name="clientId" clients={clients} required />
       </Field>
       <Field label="Prioridade" htmlFor="np-priority">
         <select id="np-priority" name="priority" defaultValue="MEDIA" className={inputCls}>

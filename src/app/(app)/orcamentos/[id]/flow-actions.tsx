@@ -3,7 +3,7 @@
 import { useActionState, useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { CheckCircle2, Eye, FileDown, FilePlus2, SendHorizonal, ShieldCheck, Trash2, XCircle } from 'lucide-react';
-import { PdfViewer } from '@/components/pdf-viewer';
+import { PdfViewer, ViewDocumentButton } from '@/components/pdf-viewer';
 import {
   submitBudgetAction, decideApprovalAction, newVersionAction,
   generateProposalAction, proposalEventAction, deleteBudgetAction, cancelBudgetAction,
@@ -134,11 +134,18 @@ export function NewVersionForm({ budgetId }: { budgetId: string }) {
   );
 }
 
-export function GenerateProposalButton({ budgetId }: { budgetId: string }) {
+export function GenerateProposalButton({ budgetId, jaEmitida }: {
+  budgetId: string;
+  /** Já existe proposta para a versão corrente — o botão passa a reemitir. */
+  jaEmitida?: boolean;
+}) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [msg, setMsg] = useState<string | null>(null);
   const [err, setErr] = useState<string | null>(null);
+  const [attachmentId, setAttachmentId] = useState<string | null>(null);
+
+  const rotulo = jaEmitida ? 'Reemitir proposta (PDF)' : 'Gerar proposta (PDF)';
 
   return (
     <div className="space-y-2">
@@ -151,15 +158,31 @@ export function GenerateProposalButton({ budgetId }: { budgetId: string }) {
           if (r.error) setErr(r.error);
           else {
             setMsg(r.info ?? 'Proposta gerada.');
+            setAttachmentId(r.attachmentId ?? null);
             router.refresh();
           }
         })}
         className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-white hover:bg-brand-dark disabled:opacity-60"
       >
         <FileDown className="h-4 w-4" aria-hidden />
-        {pending ? 'Gerando PDF…' : 'Gerar proposta (PDF)'}
+        {pending ? 'Gerando PDF…' : rotulo}
       </button>
+
       {msg ? <p className="text-xs text-green-700">{msg}</p> : null}
+      {attachmentId ? (
+        <ViewDocumentButton
+          attachmentId={attachmentId}
+          title="Proposta"
+          fileName="proposta.pdf"
+          label="Abrir proposta"
+        />
+      ) : null}
+      {jaEmitida && !msg ? (
+        <p className="text-[11px] text-slate-500">
+          Reemitir gera o PDF de novo com o mesmo número. Para numerar outra proposta,
+          crie uma nova versão do orçamento.
+        </p>
+      ) : null}
       <FormError message={err} />
     </div>
   );

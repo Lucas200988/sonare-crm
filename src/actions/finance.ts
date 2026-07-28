@@ -19,6 +19,16 @@ const dinheiro = z.preprocess(
   z.string().regex(/^\d+(\.\d{1,2})?$/, 'Valor inválido.'),
 );
 
+const payableSchema = z.object({
+  description: z.string().trim().min(3, 'Descreva a conta.'),
+  supplier: optional,
+  category: optional,
+  projectId: optional,
+  dueDate: z.string().min(1, 'Informe o vencimento.'),
+  amount: dinheiro,
+  notes: optional,
+});
+
 // ---------- Contas a receber ----------
 
 const receivableSchema = z.object({
@@ -29,7 +39,55 @@ const receivableSchema = z.object({
   contractId: optional,
   projectId: optional,
   notes: optional,
+  jaRecebido: z.preprocess((v) => v === 'on' || v === 'true', z.boolean().default(false)),
 });
+
+/**
+ * Lançamento a partir do cartão do projeto: cliente e projeto já vêm do
+ * contexto, e a entrada paga no ato entra como recebida em um passo só.
+ */
+export async function createProjectReceivableAction(
+  projectId: string, clientId: string, _prev: ActionState, formData: FormData,
+): Promise<ActionState> {
+  const user = await requirePermission('finance:write');
+  const parsed = receivableSchema.safeParse({
+    ...Object.fromEntries(formData.entries()),
+    projectId,
+    clientId,
+  });
+  if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? 'Dados inválidos.' };
+
+  const result = await finance.createReceivable(user, parsed.data);
+  if ('error' in result) return { error: result.error };
+
+  revalidatePath(`/projetos/${projectId}`);
+  revalidatePath('/financeiro/receber');
+  revalidatePath('/financeiro');
+  return {
+    info: parsed.data.jaRecebido
+      ? `Recebimento de ${result.receivable.code} registrado.`
+      : `Cobrança ${result.receivable.code} lançada.`,
+  };
+}
+
+/** Despesa lançada direto do cartão do projeto. */
+export async function createProjectPayableAction(
+  projectId: string, _prev: ActionState, formData: FormData,
+): Promise<ActionState> {
+  const user = await requirePermission('finance:write');
+  const parsed = payableSchema.safeParse({
+    ...Object.fromEntries(formData.entries()),
+    projectId,
+  });
+  if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? 'Dados inválidos.' };
+
+  const result = await finance.createPayable(user, parsed.data);
+  if ('error' in result) return { error: result.error };
+
+  revalidatePath(`/projetos/${projectId}`);
+  revalidatePath('/financeiro/pagar');
+  return { info: 'Despesa lançada.' };
+}
 
 export async function createReceivableAction(
   _prev: ActionState, formData: FormData,
@@ -101,15 +159,6 @@ export async function cancelReceivableAction(id: string): Promise<ActionState> {
 
 // ---------- Contas a pagar ----------
 
-const payableSchema = z.object({
-  description: z.string().trim().min(3, 'Descreva a conta.'),
-  supplier: optional,
-  category: optional,
-  projectId: optional,
-  dueDate: z.string().min(1, 'Informe o vencimento.'),
-  amount: dinheiro,
-  notes: optional,
-});
 
 export async function createPayableAction(
   _prev: ActionState, formData: FormData,

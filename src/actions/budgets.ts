@@ -158,7 +158,12 @@ export async function generateProposalAction(
   const result = await generateProposal(user, budgetId);
   if ('error' in result) return { error: result.error };
   revalidatePath(`/orcamentos/${budgetId}`);
-  return { info: `Proposta ${result.code} gerada.`, attachmentId: result.attachmentId };
+  return {
+    info: result.reemitida
+      ? `Proposta ${result.code} reemitida (${result.emissionCount}ª emissão).`
+      : `Proposta ${result.code} gerada.`,
+    attachmentId: result.attachmentId,
+  };
 }
 
 const eventSchema = z.object({

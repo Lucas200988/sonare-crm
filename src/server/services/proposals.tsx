@@ -68,25 +68,45 @@ export async function generateProposal(user: SessionUser, budgetId: string) {
     ?? budget.commercialOwner?.creaCau
     ?? (company.crea ? `CREA-${company.crea}` : null);
 
-  const proposal = await prisma.$transaction(async (tx) => {
-    const code = await nextCode(user.companyId, 'PROP', tx);
-    await tx.budgetVersion.update({
-      where: { id: budget.currentVersion!.id },
-      data: { immutable: true },
-    });
-    return tx.proposal.create({
-      data: {
-        companyId: user.companyId,
-        code,
-        budgetVersionId: budget.currentVersion!.id,
-        createdById: user.id,
-        verificationCode: generateVerificationCode(),
-        signedElectronicallyAt: new Date(),
-        signerName,
-        signerRegistration,
-      },
-    });
+  /*
+   * Uma proposta por versão do orçamento. Reemitir os mesmos dados apenas
+   * regenera o PDF e soma uma emissão — numerar de novo criaria documentos
+   * distintos para o mesmo conteúdo, confundindo o cliente e o arquivo.
+   * Número novo só quando o orçamento ganha outra versão.
+   */
+  const existente = await prisma.proposal.findFirst({
+    where: {
+      companyId: user.companyId,
+      budgetVersionId: budget.currentVersion.id,
+      deletedAt: null,
+    },
   });
+
+  const proposal = existente
+    ? await prisma.proposal.update({
+        where: { id: existente.id },
+        data: { emissionCount: { increment: 1 }, lastEmittedAt: new Date() },
+      })
+    : await prisma.$transaction(async (tx) => {
+        const code = await nextCode(user.companyId, 'PROP', tx);
+        await tx.budgetVersion.update({
+          where: { id: budget.currentVersion!.id },
+          data: { immutable: true },
+        });
+        return tx.proposal.create({
+          data: {
+            companyId: user.companyId,
+            code,
+            budgetVersionId: budget.currentVersion!.id,
+            createdById: user.id,
+            verificationCode: generateVerificationCode(),
+            signedElectronicallyAt: new Date(),
+            lastEmittedAt: new Date(),
+            signerName,
+            signerRegistration,
+          },
+        });
+      });
 
   const cv = budget.currentVersion;
   const logoPng = await readFile(
@@ -202,11 +222,38 @@ export async function generateProposal(user: SessionUser, budgetId: string) {
 
   await auditLog({
     companyId: user.companyId, userId: user.id,
-    action: 'generate', entityType: 'proposal', entityId: proposal.id,
-    after: { code: proposal.code, budgetCode: budget.code, version: cv.versionNumber },
+    action: existente ? 'reissue' : 'generate', entityType: 'proposal', entityId: proposal.id,
+    after: { code: proposal.code, budgetCode: budget.code, version: cv.versionNumber, emissao: proposal.emissionCount },
   });
 
-  return { proposalId: proposal.id, code: proposal.code, attachmentId: saved.attachmentId };
+  return {
+    proposalId: proposal.id, code: proposal.code, attachmentId: saved.attachmentId,
+    emissionCount: proposal.emissionCount, reemitida: Boolean(existente),
+  };
+}
+
+/**
+ * Regenera o PDF de uma proposta cujo arquivo sumiu do storage — por troca de
+ * ambiente ou limpeza indevida. Não conta como nova emissão: é reparo, e o
+ * conteúdo é idêntico porque a versão do orçamento está congelada.
+ */
+export async function repairProposalPdf(user: SessionUser, attachmentId: string) {
+  const proposal = await prisma.proposal.findFirst({
+    where: { companyId: user.companyId, pdfAttachmentId: attachmentId, deletedAt: null },
+    include: { budgetVersion: { select: { budgetId: true } } },
+  });
+  if (!proposal) return null;
+
+  const antes = proposal.emissionCount;
+  const result = await generateProposal(user, proposal.budgetVersion.budgetId);
+  if ('error' in result) return null;
+
+  // desfaz o incremento: reparo não é emissão
+  await prisma.proposal.update({
+    where: { id: proposal.id },
+    data: { emissionCount: antes },
+  });
+  return result.attachmentId;
 }
 
 /**
