@@ -287,6 +287,40 @@ export async function moveProjectOnBoard(
   return { ok: true };
 }
 
+/**
+ * Cartões arquivados, do mais recente para o mais antigo.
+ *
+ * Arquivar tira do quadro sem apagar nada; esta consulta é o caminho de volta.
+ * A busca cobre código, nome e cliente porque é assim que alguém procura um
+ * projeto antigo — raramente pelo código.
+ */
+export async function listArchivedProjects(user: SessionUser, search?: string) {
+  const where: Prisma.ProjectWhereInput = {
+    companyId: user.companyId,
+    deletedAt: null,
+    archivedAt: { not: null },
+  };
+  if (search) {
+    where.OR = [
+      { code: { contains: search, mode: 'insensitive' } },
+      { name: { contains: search, mode: 'insensitive' } },
+      { client: { legalName: { contains: search, mode: 'insensitive' } } },
+      { client: { tradeName: { contains: search, mode: 'insensitive' } } },
+    ];
+  }
+
+  return prisma.project.findMany({
+    where,
+    include: {
+      client: { select: { id: true, legalName: true, tradeName: true } },
+      technicalLead: { select: { name: true } },
+      _count: { select: { tasks: true, deliverables: true } },
+    },
+    orderBy: { archivedAt: 'desc' },
+    take: 200,
+  });
+}
+
 /** Arquiva ou desarquiva o cartão — sai do quadro sem perder o histórico. */
 export async function setProjectArchived(user: SessionUser, id: string, archived: boolean) {
   const project = await prisma.project.findFirst({

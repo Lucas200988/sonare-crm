@@ -171,6 +171,7 @@ export function ProjectBoard({ projects, clients, canWrite }: {
   const [active, setActive] = useState<BoardProject | null>(null);
   const [optimistic, setOptimistic] = useState<Record<string, string>>({});
   const [archived, setArchived] = useState<string[]>([]);
+  const [arquivadoAgora, setArquivadoAgora] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
 
@@ -229,6 +230,9 @@ export function ProjectBoard({ projects, clients, canWrite }: {
         setError(result.error);
         return;
       }
+      // Sem isto, o cartão simplesmente some e ninguém sabe onde procurar.
+      setArquivadoAgora(true);
+      setTimeout(() => setArquivadoAgora(false), 6000);
       router.refresh();
     });
   }
@@ -257,6 +261,16 @@ export function ProjectBoard({ projects, clients, canWrite }: {
       {error ? (
         <p role="alert" className="mb-3 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
           {error}
+        </p>
+      ) : null}
+
+      {arquivadoAgora ? (
+        <p className="mb-3 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-600">
+          Cartão arquivado.{' '}
+          <Link href="/projetos/arquivados" className="font-medium text-slate-900 underline">
+            Ver arquivados
+          </Link>{' '}
+          para devolvê-lo ao quadro.
         </p>
       ) : null}
 

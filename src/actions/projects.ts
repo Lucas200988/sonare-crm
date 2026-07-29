@@ -61,6 +61,7 @@ export async function setProjectArchivedAction(
   const result = await projects.setProjectArchived(user, projectId, archived);
   if ('error' in result) return { error: result.error };
   revalidatePath('/projetos');
+  revalidatePath('/projetos/arquivados');
   revalidatePath(`/projetos/${projectId}`);
   return { info: archived ? 'Cartão arquivado.' : 'Cartão restaurado.' };
 }

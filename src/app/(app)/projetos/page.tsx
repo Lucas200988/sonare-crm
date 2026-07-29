@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { LayoutGrid, List } from 'lucide-react';
+import { Archive, LayoutGrid, List } from 'lucide-react';
 import { requirePermissionPage } from '@/server/auth/guards';
 import { prisma } from '@/server/db';
 import { listBoardProjects, listProjects, type ProjectListFilter } from '@/server/services/projects';
@@ -20,7 +20,15 @@ export default async function ProjectsPage(props: {
   const isList = sp.visao === 'lista';
 
   const viewToggle = (
-    <div className="flex rounded-lg border border-slate-300 p-0.5">
+    <div className="flex items-center gap-2">
+      <Link
+        href="/projetos/arquivados"
+        className="inline-flex items-center gap-1.5 rounded-lg border border-slate-300 px-3 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-100"
+        title="Cartões que saíram do quadro"
+      >
+        <Archive className="h-3.5 w-3.5" aria-hidden /> Arquivados
+      </Link>
+      <div className="flex rounded-lg border border-slate-300 p-0.5">
       <Link
         href="/projetos"
         className={`inline-flex items-center gap-1.5 rounded px-3 py-1.5 text-xs font-medium ${!isList ? 'bg-slate-900 text-white' : 'text-slate-600 hover:bg-slate-100'}`}
@@ -33,6 +41,7 @@ export default async function ProjectsPage(props: {
       >
         <List className="h-3.5 w-3.5" aria-hidden /> Lista
       </Link>
+      </div>
     </div>
   );
 
@@ -90,8 +99,8 @@ export default async function ProjectsPage(props: {
           />
           <select name="status" defaultValue={sp.status ?? 'ATIVOS'} className={`${inputCls} max-w-56`} aria-label="Status">
             <option value="ATIVOS">Ativos</option>
+            {/* Arquivados têm tela própria, com busca e o botão de devolver ao quadro */}
             <option value="TODOS">Todos os status</option>
-            <option value="ARQUIVADOS">Arquivados</option>
             {Object.entries(PROJECT_STATUS_BADGE).map(([value, { label }]) => (
               <option key={value} value={value}>{label}</option>
             ))}
