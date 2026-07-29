@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { ExportButton } from '@/components/export-button';
 import Link from 'next/link';
 import { ExternalLink } from 'lucide-react';
 import { requirePermissionPage } from '@/server/auth/guards';
@@ -45,7 +46,7 @@ export default async function InvoicesPage(props: {
       <PageHeader
         title="Notas fiscais"
         subtitle={`${total} nota(s) · ${formatBRL(somaValor)} líquido`}
-        actions={canWrite ? <NewInvoice clients={clients} /> : undefined}
+        actions={<div className="flex items-center gap-2"><ExportButton tipo="notas" />{canWrite ? <NewInvoice clients={clients} /> : null}</div>}
       />
 
       <Card className="mb-4 p-4">

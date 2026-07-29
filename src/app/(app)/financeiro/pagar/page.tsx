@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { ExportButton } from '@/components/export-button';
 import Link from 'next/link';
 import { requirePermissionPage } from '@/server/auth/guards';
 import { prisma } from '@/server/db';
@@ -42,7 +43,7 @@ export default async function PayablesPage(props: {
       <PageHeader
         title="Contas a pagar"
         subtitle={`${total} conta(s) · ${formatBRL(somaValor)}`}
-        actions={canWrite ? <NewPayable projects={projects} /> : undefined}
+        actions={<div className="flex items-center gap-2"><ExportButton tipo="pagar" />{canWrite ? <NewPayable projects={projects} /> : null}</div>}
       />
 
       <Card className="mb-4 p-4">

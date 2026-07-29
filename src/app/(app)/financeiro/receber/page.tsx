@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { ExportButton } from '@/components/export-button';
 import Link from 'next/link';
 import { requirePermissionPage } from '@/server/auth/guards';
 import { prisma } from '@/server/db';
@@ -42,7 +43,7 @@ export default async function ReceivablesPage(props: {
       <PageHeader
         title="Contas a receber"
         subtitle={`${total} parcela(s) · ${formatBRL(somaValor)}`}
-        actions={canWrite ? <NewReceivable clients={clients} /> : undefined}
+        actions={<div className="flex items-center gap-2"><ExportButton tipo="receber" />{canWrite ? <NewReceivable clients={clients} /> : null}</div>}
       />
 
       <Card className="mb-4 p-4">

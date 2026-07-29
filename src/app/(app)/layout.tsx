@@ -17,7 +17,7 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
   return (
     <div className="flex min-h-screen bg-slate-100">
       <aside className="fixed inset-y-0 left-0 z-30 hidden w-60 flex-col border-r border-slate-800 bg-slate-950 lg:flex">
-        <div className="border-b border-slate-800 px-5 py-5">
+        <div className="shrink-0 border-b border-slate-800 px-5 py-5">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/brand/logo-horizontal-branco.png"
@@ -26,11 +26,17 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
           />
           <p className="mt-2 text-[11px] text-slate-500">Sistema de gestão</p>
         </div>
-        <div className="px-3 pt-3">
+        <div className="shrink-0 px-3 pt-3">
           <GlobalSearch />
         </div>
-        <SidebarNav items={items} />
-        <div className="border-t border-slate-800 p-4">
+        {/*
+          Com zoom alto o menu não cabia na altura da tela e os últimos itens
+          ficavam inalcançáveis — a área de navegação passa a rolar sozinha.
+        */}
+        <div className="min-h-0 flex-1 overflow-y-auto">
+          <SidebarNav items={items} />
+        </div>
+        <div className="shrink-0 border-t border-slate-800 p-4">
           <p className="truncate text-sm font-medium text-slate-200">{user.name}</p>
           <p className="truncate text-xs text-slate-500">{user.email}</p>
           <form action={logoutAction} className="mt-3">

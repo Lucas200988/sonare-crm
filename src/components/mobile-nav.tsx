@@ -77,15 +77,15 @@ export function MobileNav({
               </button>
             </div>
 
-            <div className="px-3 pt-3">
+            <div className="shrink-0 px-3 pt-3">
               <GlobalSearch />
             </div>
 
-            <div className="flex-1 overflow-y-auto">
+            <div className="min-h-0 flex-1 overflow-y-auto">
               <SidebarNav items={items} />
             </div>
 
-            <div className="border-t border-slate-800 p-4">
+            <div className="shrink-0 border-t border-slate-800 p-4">
               <p className="truncate text-sm font-medium text-slate-200">{userName}</p>
               <p className="truncate text-xs text-slate-500">{userEmail}</p>
               <div className="mt-3">{logout}</div>
