@@ -1,10 +1,11 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import {
-  Calculator, Send, FolderKanban, SearchCheck, HandCoins, type LucideIcon,
+  BellRing, Calculator, Send, FolderKanban, SearchCheck, HandCoins, type LucideIcon,
 } from 'lucide-react';
 import { requireAuth } from '@/server/auth/guards';
 import { prisma } from '@/server/db';
+import { getAlerts } from '@/server/services/alerts';
 
 export const metadata: Metadata = { title: 'Dashboard — SONARE CRM' };
 
@@ -76,12 +77,46 @@ async function loadIndicators(companyId: string) {
 
 export default async function DashboardPage() {
   const user = await requireAuth();
-  const data = await loadIndicators(user.companyId);
+  const [data, alertas] = await Promise.all([
+    loadIndicators(user.companyId),
+    getAlerts(user).catch(() => []),
+  ]);
 
   return (
     <div>
       <h1 className="text-2xl font-bold text-slate-900">Dashboard</h1>
       <p className="mt-1 text-sm text-slate-500">Situação da operação em tempo real</p>
+
+      {alertas.length > 0 ? (
+        <section className="mt-6">
+          <h2 className="mb-2 flex items-center gap-2 text-sm font-semibold text-slate-800">
+            <BellRing className="h-4 w-4 text-amber-500" aria-hidden /> Precisa da sua atenção
+          </h2>
+          <ul className="space-y-2">
+            {alertas.slice(0, 6).map((a) => {
+              const cor = {
+                alta: 'border-red-200 bg-red-50 text-red-900',
+                media: 'border-amber-200 bg-amber-50 text-amber-900',
+                baixa: 'border-slate-200 bg-white text-slate-700',
+              }[a.gravidade];
+              return (
+                <li key={a.id}>
+                  <Link
+                    href={a.href}
+                    className={`flex items-center justify-between gap-3 rounded-lg border px-4 py-2.5 transition hover:shadow-sm ${cor}`}
+                  >
+                    <span className="min-w-0">
+                      <span className="block truncate text-sm font-medium">{a.titulo}</span>
+                      <span className="block truncate text-xs opacity-75">{a.detalhe}</span>
+                    </span>
+                    <span className="shrink-0 text-xs font-medium opacity-60">abrir →</span>
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+      ) : null}
 
       {!data.ok ? (
         <div className="mt-8 rounded-xl border border-amber-300 bg-amber-50 p-6 text-sm text-amber-900">

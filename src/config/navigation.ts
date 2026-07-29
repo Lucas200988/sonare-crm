@@ -23,7 +23,7 @@ export const NAV_ITEMS: NavItem[] = [
   { label: 'A pagar', href: '/financeiro/pagar', icon: 'ArrowUpCircle', permission: 'finance:read', child: true },
   { label: 'Cobrança', href: '/financeiro/cobranca', icon: 'BellRing', permission: 'finance:read', child: true },
   { label: 'Notas Fiscais', href: '/financeiro/notas', icon: 'ReceiptText', permission: 'invoice:read' },
-  { label: 'Relatórios', href: '/relatorios', icon: 'BarChart3', permission: 'report:read', comingSoon: true },
+  { label: 'Relatórios', href: '/relatorios', icon: 'BarChart3', permission: 'report:read' },
   { label: 'Usuários', href: '/usuarios', icon: 'UserCog', permission: 'user:manage' },
   { label: 'Configurações', href: '/configuracoes', icon: 'Settings', permission: 'settings:manage' },
 ];

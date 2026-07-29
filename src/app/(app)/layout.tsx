@@ -4,6 +4,7 @@ import { requireAuth } from '@/server/auth/guards';
 import { logoutAction } from '@/actions/auth';
 import { NAV_ITEMS } from '@/config/navigation';
 import { SidebarNav, type SidebarItem } from '@/components/sidebar-nav';
+import { GlobalSearch } from '@/components/global-search';
 
 export default async function AppLayout({ children }: { children: ReactNode }) {
   const user = await requireAuth();
@@ -23,6 +24,9 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
             className="h-9 w-auto"
           />
           <p className="mt-2 text-[11px] text-slate-500">Sistema de gestão</p>
+        </div>
+        <div className="px-3 pt-3">
+          <GlobalSearch />
         </div>
         <SidebarNav items={items} />
         <div className="border-t border-slate-800 p-4">
