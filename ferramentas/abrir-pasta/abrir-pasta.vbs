@@ -1,7 +1,7 @@
 ' Abre no Explorador a pasta indicada pelo link sonare:// do CRM.
 '
 ' O navegador chama:  sonare://abrir?p=Z%3A%5CSONARE%5CProjetos
-' (o Windows pode entregar como "sonare://abrir/?p=..." — a barra extra e as
+' (o Windows pode entregar como "sonare://abrir/?p=..." -- a barra extra e as
 ' variacoes de formato sao tratadas abaixo).
 '
 ' Este script abre APENAS o Explorador no caminho recebido. Nada mais e
@@ -18,7 +18,7 @@ If args.Count = 0 Then WScript.Quit 1
 
 bruto = args(0)
 
-' Pega tudo depois de "p=" — funciona com ou sem a barra que o navegador
+' Pega tudo depois de "p=" -- funciona com ou sem a barra que o navegador
 ' acrescenta, e independe do prefixo exato do protocolo.
 pos = InStr(1, bruto, "p=", vbTextCompare)
 If pos > 0 Then
