@@ -5,7 +5,9 @@ import { redirect } from 'next/navigation';
 import { z } from 'zod';
 import { requirePermission } from '@/server/auth/guards';
 import * as budgets from '@/server/services/budgets';
-import { generateProposal, registerProposalEvent } from '@/server/services/proposals';
+import {
+  generateProposal, registerProposalEvent, sendProposalByEmail,
+} from '@/server/services/proposals';
 import { parseDateBR } from '@/lib/dates';
 import { parseDecimalBR } from '@/lib/parse';
 
@@ -172,6 +174,27 @@ const eventSchema = z.object({
   recipients: z.string().optional(),
   rejectionReason: z.string().optional(),
 });
+
+const envioSchema = z.object({
+  para: z.string().trim().email('Informe um e-mail válido.'),
+  mensagem: z.string().optional(),
+});
+
+/** Envia a proposta ao cliente com o PDF anexado. */
+export async function sendProposalAction(
+  proposalId: string, budgetId: string, _prev: ActionState, formData: FormData,
+): Promise<ActionState> {
+  const user = await requirePermission('proposal:write');
+  const parsed = envioSchema.safeParse(Object.fromEntries(formData.entries()));
+  if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? 'Dados inválidos.' };
+
+  const result = await sendProposalByEmail(user, proposalId, parsed.data);
+  if ('error' in result) return { error: result.error };
+
+  revalidatePath(`/orcamentos/${budgetId}`);
+  revalidatePath('/orcamentos');
+  return { info: `Proposta enviada para ${parsed.data.para}.` };
+}
 
 export async function proposalEventAction(
   proposalId: string, budgetId: string, _prev: ActionState, formData: FormData,

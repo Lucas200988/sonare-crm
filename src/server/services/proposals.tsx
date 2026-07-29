@@ -7,9 +7,11 @@ import { prisma } from '@/server/db';
 import { auditLog } from '@/server/audit/audit';
 import { nextCode } from '@/server/services/sequence';
 import QRCode from 'qrcode';
-import { saveFile } from '@/server/storage';
+import { saveFile, readAttachment } from '@/server/storage';
 import { generateVerificationCode, verificationUrl } from '@/server/signature';
+import { enviarEmail, layoutEmail } from '@/server/mail';
 import { formatCNPJ, formatCPF, formatCEP, formatPhoneBR } from '@/lib/br';
+import { formatDateBR } from '@/lib/dates';
 import { ProposalPdf, type ProposalPdfData } from '@/server/pdf/proposal-pdf';
 import type { SessionUser } from '@/server/auth/session';
 
@@ -230,6 +232,92 @@ export async function generateProposal(user: SessionUser, budgetId: string) {
     proposalId: proposal.id, code: proposal.code, attachmentId: saved.attachmentId,
     emissionCount: proposal.emissionCount, reemitida: Boolean(existente),
   };
+}
+
+/**
+ * Envia a proposta ao cliente com o PDF anexado e registra o envio.
+ *
+ * Evita o vaivém de baixar o arquivo e escrever o e-mail à mão — e, como o
+ * envio fica registrado, o acompanhamento comercial passa a ser confiável.
+ */
+export async function sendProposalByEmail(
+  user: SessionUser,
+  proposalId: string,
+  input: { para: string; mensagem?: string | null },
+): Promise<{ ok: true } | { error: string }> {
+  const proposal = await prisma.proposal.findFirst({
+    where: { id: proposalId, companyId: user.companyId, deletedAt: null },
+    include: {
+      budgetVersion: {
+        include: {
+          budget: { include: { client: { select: { legalName: true, tradeName: true } } } },
+        },
+      },
+    },
+  });
+  if (!proposal) return { error: 'Proposta não encontrada.' };
+  if (!proposal.pdfAttachmentId) return { error: 'Gere o PDF da proposta antes de enviar.' };
+
+  const arquivo = await readAttachment(user.companyId, proposal.pdfAttachmentId);
+  if (!arquivo) return { error: 'O PDF da proposta não foi encontrado. Reemita e tente de novo.' };
+
+  const company = await prisma.company.findUniqueOrThrow({ where: { id: user.companyId } });
+  const cliente = proposal.budgetVersion.budget.client;
+  const nomeCliente = cliente.tradeName ?? cliente.legalName;
+  const validade = proposal.budgetVersion.validUntil;
+
+  const corpo = input.mensagem?.trim()
+    || `Segue em anexo a proposta ${proposal.code} para ${nomeCliente}.`;
+
+  const envio = await enviarEmail({
+    para: input.para,
+    assunto: `Proposta ${proposal.code} — ${company.tradeName ?? company.legalName}`,
+    texto:
+      `${corpo}\n\n`
+      + (validade ? `Validade da proposta: ${formatDateBR(validade)}.\n` : '')
+      + (proposal.verificationCode
+        ? `Conferência de autenticidade: ${verificationUrl(proposal.verificationCode)}\n`
+        : '')
+      + `\nQualquer dúvida, estamos à disposição.`,
+    html: layoutEmail(
+      `Proposta ${proposal.code}`,
+      `<p>${corpo.replace(/\n/g, '<br>')}</p>
+       ${validade ? `<p><strong>Validade:</strong> ${formatDateBR(validade)}</p>` : ''}
+       <p style="font-size:12px;color:#64748b">
+         O documento segue em anexo.
+         ${proposal.verificationCode
+           ? `Autenticidade em <a href="${verificationUrl(proposal.verificationCode)}">${verificationUrl(proposal.verificationCode)}</a>.`
+           : ''}
+       </p>`,
+    ),
+    anexos: [{
+      filename: `${proposal.code}.pdf`,
+      content: arquivo.content,
+      contentType: 'application/pdf',
+    }],
+  });
+
+  if ('error' in envio) return { error: envio.error };
+
+  // Só registra o envio depois de a mensagem sair, para o histórico não mentir
+  await prisma.proposal.update({
+    where: { id: proposalId },
+    data: {
+      // status so avanca de rascunho; enviada/aceita nao regridem ao reenviar
+      status: proposal.status === 'RASCUNHO' ? 'ENVIADA' : proposal.status,
+      sentAt: new Date(),
+      sentVia: 'e-mail',
+      recipients: input.para,
+    },
+  });
+
+  await auditLog({
+    companyId: user.companyId, userId: user.id,
+    action: 'send', entityType: 'proposal', entityId: proposalId,
+    after: { para: input.para },
+  });
+
+  return { ok: true };
 }
 
 /**

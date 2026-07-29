@@ -5,7 +5,9 @@ import { getCollectionQueue, refreshOverdue } from '@/server/services/finance';
 import { PageHeader, Card, EmptyState, Badge } from '@/components/ui';
 import { formatBRL } from '@/lib/money';
 import { formatDateBR, formatDateTimeBR } from '@/lib/dates';
-import { RegisterContactButton, WhatsAppButton, TIPOS_COBRANCA } from './collection-actions';
+import {
+  RegisterContactButton, SendCollectionEmailButton, WhatsAppButton, TIPOS_COBRANCA,
+} from './collection-actions';
 
 export const metadata: Metadata = { title: 'Cobrança — SONARE CRM' };
 
@@ -92,6 +94,13 @@ export default async function CollectionPage() {
                           {r.client.phone ? (
                             <WhatsAppButton telefone={r.client.phone} mensagem={mensagem} />
                           ) : null}
+                          <SendCollectionEmailButton
+                            receivableId={r.id}
+                            email={r.client.email}
+                            sugestao={r.sugestao}
+                            assunto={`Cobrança em aberto — ${r.code}`}
+                            mensagem={mensagem}
+                          />
                           <RegisterContactButton
                             receivableId={r.id}
                             sugestao={r.sugestao}

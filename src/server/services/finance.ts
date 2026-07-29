@@ -3,6 +3,7 @@ import { prisma } from '@/server/db';
 import { auditLog } from '@/server/audit/audit';
 import { nextCode } from '@/server/services/sequence';
 import { parseDateInput } from '@/lib/dates';
+import { enviarEmail, layoutEmail } from '@/server/mail';
 import type { Prisma, ReceivableStatus, PayableStatus } from '@/generated/prisma/client';
 import type { SessionUser } from '@/server/auth/session';
 
@@ -714,6 +715,42 @@ export async function addCollectionEvent(
   }
 
   return { evento };
+}
+
+/**
+ * Envia o aviso de cobrança ao cliente e já registra o contato — sem depender
+ * de alguém lembrar de anotar que cobrou.
+ */
+export async function sendCollectionEmail(
+  user: SessionUser,
+  receivableId: string,
+  input: { para: string; assunto: string; mensagem: string; eventType: string },
+): Promise<{ ok: true } | { error: string }> {
+  const receivable = await prisma.receivable.findFirst({
+    where: { id: receivableId, companyId: user.companyId, deletedAt: null },
+    include: { client: { select: { legalName: true, tradeName: true } } },
+  });
+  if (!receivable) return { error: 'Parcela não encontrada.' };
+
+  const envio = await enviarEmail({
+    para: input.para,
+    assunto: input.assunto,
+    texto: input.mensagem,
+    html: layoutEmail(
+      'Cobrança em aberto',
+      `<p>${input.mensagem.replace(/\n/g, '<br>')}</p>`,
+      'Se o pagamento já foi feito, desconsidere e nos envie o comprovante.',
+    ),
+  });
+  if ('error' in envio) return { error: envio.error };
+
+  await addCollectionEvent(user, receivableId, {
+    eventType: input.eventType,
+    channel: 'E-mail',
+    notes: `Enviado para ${input.para}`,
+  });
+
+  return { ok: true };
 }
 
 export async function listCollectionEvents(user: SessionUser, receivableId: string) {

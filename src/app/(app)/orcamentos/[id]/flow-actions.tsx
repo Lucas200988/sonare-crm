@@ -1,12 +1,13 @@
 'use client';
 
-import { useActionState, useState, useTransition } from 'react';
+import { useActionState, useEffect, useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { CheckCircle2, Eye, FileDown, FilePlus2, SendHorizonal, ShieldCheck, Trash2, XCircle } from 'lucide-react';
 import { PdfViewer, ViewDocumentButton } from '@/components/pdf-viewer';
 import {
   submitBudgetAction, decideApprovalAction, newVersionAction,
   generateProposalAction, proposalEventAction, deleteBudgetAction, cancelBudgetAction,
+  sendProposalAction,
   type ActionState,
 } from '@/actions/budgets';
 import { inputCls, FormError } from '@/components/ui';
@@ -273,6 +274,87 @@ const EVENT_OPTIONS = [
   { value: 'ACEITA', label: 'Cliente aceitou' },
   { value: 'RECUSADA', label: 'Cliente recusou' },
 ] as const;
+
+/**
+ * Envia a proposta ao cliente com o PDF anexado e já registra o envio —
+ * evita baixar o arquivo, escrever o e-mail à mão e marcar o status depois.
+ */
+export function SendProposalButton({
+  proposalId, budgetId, emailCliente, codigo,
+}: {
+  proposalId: string; budgetId: string; emailCliente: string | null; codigo: string;
+}) {
+  const router = useRouter();
+  const [aberto, setAberto] = useState(false);
+  const action = sendProposalAction.bind(null, proposalId, budgetId);
+  const [state, formAction, pending] = useActionState<ActionState, FormData>(action, {});
+
+  useEffect(() => {
+    if (state.info) { setAberto(false); router.refresh(); }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state]);
+
+  if (!aberto) {
+    return (
+      <button
+        type="button"
+        onClick={() => setAberto(true)}
+        className="mt-2 inline-flex items-center gap-1.5 rounded-lg border border-slate-300 px-2.5 py-1 text-[11px] font-medium text-slate-700 hover:bg-slate-50"
+      >
+        <SendHorizonal className="h-3 w-3" aria-hidden /> Enviar por e-mail
+      </button>
+    );
+  }
+
+  return (
+    <form action={formAction} className="mt-2 space-y-2 rounded-lg border border-slate-200 bg-slate-50 p-3">
+      <div>
+        <label htmlFor={`env-${proposalId}`} className="mb-1 block text-xs font-medium text-slate-600">
+          Enviar para
+        </label>
+        <input
+          id={`env-${proposalId}`} name="para" type="email" required
+          defaultValue={emailCliente ?? ''}
+          placeholder="cliente@empresa.com.br"
+          className={inputCls}
+        />
+        {!emailCliente ? (
+          <p className="mt-1 text-[11px] text-slate-500">
+            O cliente não tem e-mail cadastrado — informe o destinatário.
+          </p>
+        ) : null}
+      </div>
+      <div>
+        <label htmlFor={`msg-${proposalId}`} className="mb-1 block text-xs font-medium text-slate-600">
+          Mensagem
+        </label>
+        <textarea
+          id={`msg-${proposalId}`} name="mensagem" rows={3}
+          defaultValue={`Prezados,\n\nSegue em anexo a proposta ${codigo} para apreciação.\n\nFicamos à disposição para esclarecimentos.`}
+          className={inputCls}
+        />
+      </div>
+      <p className="text-[11px] text-slate-500">
+        O PDF vai anexado e o envio fica registrado no histórico da proposta.
+      </p>
+      <FormError message={state.error} />
+      <div className="flex gap-2">
+        <button
+          type="submit" disabled={pending}
+          className="rounded-lg bg-brand px-3 py-1.5 text-xs font-semibold text-white hover:bg-brand-dark disabled:opacity-60"
+        >
+          {pending ? 'Enviando…' : 'Enviar proposta'}
+        </button>
+        <button
+          type="button" onClick={() => setAberto(false)}
+          className="rounded-lg border border-slate-300 px-3 py-1.5 text-xs text-slate-600 hover:bg-white"
+        >
+          Cancelar
+        </button>
+      </div>
+    </form>
+  );
+}
 
 export function ProposalEventForm({ proposalId, budgetId, status }: { proposalId: string; budgetId: string; status: string }) {
   const action = proposalEventAction.bind(null, proposalId, budgetId);

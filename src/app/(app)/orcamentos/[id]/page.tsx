@@ -14,7 +14,7 @@ import { BUDGET_STATUS_BADGE, PROPOSAL_STATUS_BADGE } from '../status-badge';
 import { BudgetEditor, type EditorFields, type EditorItem } from './budget-editor';
 import {
   SubmitBudgetButton, ApprovalDecision, NewVersionForm,
-  GenerateProposalButton, ProposalEventForm, DangerZone, PreviewButton,
+  GenerateProposalButton, ProposalEventForm, DangerZone, PreviewButton, SendProposalButton,
 } from './flow-actions';
 import { ViewDocumentButton } from '@/components/pdf-viewer';
 
@@ -221,6 +221,12 @@ export default async function BudgetDetailPage(props: { params: Promise<{ id: st
                             fileName={`${p.code}.pdf`}
                           />
                         </div>
+                      ) : null}
+                      {canProposal && p.pdfAttachmentId ? (
+                        <SendProposalButton
+                          proposalId={p.id} budgetId={budget.id}
+                          emailCliente={budget.client.email} codigo={p.code}
+                        />
                       ) : null}
                       {canProposal ? <ProposalEventForm proposalId={p.id} budgetId={budget.id} status={p.status} /> : null}
                       {p.status === 'ACEITA' && user.permissions.has('contract:write') ? (

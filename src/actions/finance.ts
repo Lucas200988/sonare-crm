@@ -266,6 +266,27 @@ export async function addCollectionEventAction(
   return { info: 'Contato de cobrança registrado.' };
 }
 
+const cobrancaEmailSchema = z.object({
+  para: z.string().trim().email('Informe um e-mail válido.'),
+  assunto: z.string().trim().min(3, 'Informe o assunto.'),
+  mensagem: z.string().trim().min(10, 'Escreva a mensagem.'),
+  eventType: z.string().min(1),
+});
+
+export async function sendCollectionEmailAction(
+  receivableId: string, _prev: ActionState, formData: FormData,
+): Promise<ActionState> {
+  const user = await requirePermission('finance:write');
+  const parsed = cobrancaEmailSchema.safeParse(Object.fromEntries(formData.entries()));
+  if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? 'Dados inválidos.' };
+
+  const result = await finance.sendCollectionEmail(user, receivableId, parsed.data);
+  if ('error' in result) return { error: result.error };
+
+  revalidatePath('/financeiro/cobranca');
+  return { info: `Cobrança enviada para ${parsed.data.para}.` };
+}
+
 export async function reopenPayableAction(id: string): Promise<ActionState> {
   const user = await requirePermission('finance:write');
   const result = await finance.setPayableStatus(user, id, 'A_PAGAR');

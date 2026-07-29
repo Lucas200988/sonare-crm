@@ -2,8 +2,10 @@
 
 import { useActionState, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { MessageSquarePlus, X } from 'lucide-react';
-import { addCollectionEventAction, type ActionState } from '@/actions/finance';
+import { Mail, MessageSquarePlus, X } from 'lucide-react';
+import {
+  addCollectionEventAction, sendCollectionEmailAction, type ActionState,
+} from '@/actions/finance';
 import { inputCls, Field, FormError, SubmitButton } from '@/components/ui';
 
 export const TIPOS_COBRANCA: Array<[string, string]> = [
@@ -84,6 +86,91 @@ export function RegisterContactButton({
                 Cancelar
               </button>
               <SubmitButton pending={pending}>Registrar</SubmitButton>
+            </div>
+          </form>
+        </div>
+      ) : null}
+    </>
+  );
+}
+
+/**
+ * Envia a cobrança por e-mail e registra o contato num passo só — a mensagem
+ * já vem escrita com código, valor e vencimento.
+ */
+export function SendCollectionEmailButton({
+  receivableId, email, sugestao, assunto, mensagem,
+}: {
+  receivableId: string;
+  email: string | null;
+  sugestao: string;
+  assunto: string;
+  mensagem: string;
+}) {
+  const router = useRouter();
+  const [aberto, setAberto] = useState(false);
+  const action = sendCollectionEmailAction.bind(null, receivableId);
+  const [state, formAction, pending] = useActionState<ActionState, FormData>(action, {});
+
+  useEffect(() => {
+    if (state.info) { setAberto(false); router.refresh(); }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state]);
+
+  return (
+    <>
+      <button
+        type="button"
+        onClick={() => setAberto(true)}
+        className="inline-flex items-center gap-1 rounded-lg border border-slate-300 px-2.5 py-1 text-[11px] font-medium text-slate-700 hover:bg-slate-50"
+      >
+        <Mail className="h-3 w-3" aria-hidden /> E-mail
+      </button>
+
+      {aberto ? (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/50 p-4" role="dialog" aria-modal="true" aria-label="Enviar cobrança por e-mail">
+          <form action={formAction} className="w-full max-w-lg rounded-xl bg-white p-5 shadow-2xl">
+            <div className="mb-3 flex items-start justify-between gap-2">
+              <h3 className="text-base font-semibold text-slate-900">Enviar cobrança</h3>
+              <button type="button" onClick={() => setAberto(false)} aria-label="Fechar" className="rounded p-1 text-slate-400 hover:bg-slate-100">
+                <X className="h-4 w-4" aria-hidden />
+              </button>
+            </div>
+
+            <input type="hidden" name="eventType" value={sugestao} />
+
+            <div className="space-y-3">
+              <Field label="Para" htmlFor="ce-para" required>
+                <input
+                  id="ce-para" name="para" type="email" required
+                  defaultValue={email ?? ''}
+                  placeholder="financeiro@cliente.com.br"
+                  className={inputCls}
+                />
+                {!email ? (
+                  <p className="mt-1 text-[11px] text-slate-500">
+                    O cliente não tem e-mail cadastrado — informe o destinatário.
+                  </p>
+                ) : null}
+              </Field>
+              <Field label="Assunto" htmlFor="ce-assunto" required>
+                <input id="ce-assunto" name="assunto" required defaultValue={assunto} className={inputCls} />
+              </Field>
+              <Field label="Mensagem" htmlFor="ce-msg" required>
+                <textarea id="ce-msg" name="mensagem" rows={6} required defaultValue={mensagem} className={inputCls} />
+              </Field>
+            </div>
+
+            <p className="mt-2 text-[11px] text-slate-500">
+              O contato é registrado automaticamente no histórico da parcela.
+            </p>
+
+            <div className="mt-3"><FormError message={state.error} /></div>
+            <div className="mt-3 flex justify-end gap-2">
+              <button type="button" onClick={() => setAberto(false)} className="rounded-lg border border-slate-300 px-4 py-2 text-sm text-slate-600 hover:bg-slate-50">
+                Cancelar
+              </button>
+              <SubmitButton pending={pending}>Enviar</SubmitButton>
             </div>
           </form>
         </div>
