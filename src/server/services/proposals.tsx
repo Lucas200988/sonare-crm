@@ -12,6 +12,7 @@ import { generateVerificationCode, verificationUrl } from '@/server/signature';
 import { enviarEmail, layoutEmail } from '@/server/mail';
 import { formatCNPJ, formatCPF, formatCEP, formatPhoneBR } from '@/lib/br';
 import { formatDateBR } from '@/lib/dates';
+import { arquivoProposta, codigoProposta } from '@/lib/proposta-codigo';
 import { ProposalPdf, type ProposalPdfData } from '@/server/pdf/proposal-pdf';
 import type { SessionUser } from '@/server/auth/session';
 
@@ -71,23 +72,47 @@ export async function generateProposal(user: SessionUser, budgetId: string) {
     ?? (company.crea ? `CREA-${company.crea}` : null);
 
   /*
-   * Uma proposta por versão do orçamento. Reemitir os mesmos dados apenas
-   * regenera o PDF e soma uma emissão — numerar de novo criaria documentos
-   * distintos para o mesmo conteúdo, confundindo o cliente e o arquivo.
-   * Número novo só quando o orçamento ganha outra versão.
+   * Um número de proposta por orçamento — nunca por versão.
+   *
+   * Reemitir os mesmos dados só regenera o PDF e soma uma emissão. Se o
+   * orçamento ganhou outra versão (renegociação comercial), o número continua
+   * o mesmo e o documento passa a "Rev. 01", "Rev. 02"… Numerar de novo criaria
+   * documentos distintos para a mesma negociação, confundindo cliente e arquivo.
    */
   const existente = await prisma.proposal.findFirst({
     where: {
       companyId: user.companyId,
-      budgetVersionId: budget.currentVersion.id,
+      budgetVersion: { budgetId: budget.id },
       deletedAt: null,
     },
+    orderBy: { revision: 'desc' },
   });
 
   const proposal = existente
-    ? await prisma.proposal.update({
-        where: { id: existente.id },
-        data: { emissionCount: { increment: 1 }, lastEmittedAt: new Date() },
+    ? await prisma.$transaction(async (tx) => {
+        const renegociada = existente.budgetVersionId !== budget.currentVersion!.id;
+        if (renegociada) {
+          await tx.budgetVersion.update({
+            where: { id: budget.currentVersion!.id },
+            data: { immutable: true },
+          });
+        }
+        return tx.proposal.update({
+          where: { id: existente.id },
+          data: renegociada
+            ? {
+                // Documento novo da mesma negociação: revisão sobe e a
+                // contagem de emissões recomeça.
+                budgetVersionId: budget.currentVersion!.id,
+                revision: { increment: 1 },
+                emissionCount: 1,
+                lastEmittedAt: new Date(),
+                signedElectronicallyAt: new Date(),
+                signerName,
+                signerRegistration,
+              }
+            : { emissionCount: { increment: 1 }, lastEmittedAt: new Date() },
+        });
       })
     : await prisma.$transaction(async (tx) => {
         const code = await nextCode(user.companyId, 'PROP', tx);
@@ -109,6 +134,9 @@ export async function generateProposal(user: SessionUser, budgetId: string) {
           },
         });
       });
+
+  // Identificação do documento: o número mais "Rev. NN" quando renegociado.
+  const rotulo = codigoProposta(proposal.code, proposal.revision);
 
   const cv = budget.currentVersion;
   const logoPng = await readFile(
@@ -137,7 +165,7 @@ export async function generateProposal(user: SessionUser, budgetId: string) {
   }).catch(() => null);
   const pdfData: ProposalPdfData = {
     logoPng,
-    proposalCode: proposal.code,
+    proposalCode: rotulo,
     company: {
       legalName: company.legalName,
       cnpj: company.cnpj ? formatCNPJ(company.cnpj) : null,
@@ -211,7 +239,7 @@ export async function generateProposal(user: SessionUser, budgetId: string) {
     entityType: 'proposal',
     entityId: proposal.id,
     category: 'proposta',
-    fileName: `${proposal.code}-${budget.code}-V${String(cv.versionNumber).padStart(2, '0')}.pdf`,
+    fileName: `${arquivoProposta(proposal.code, proposal.revision)}-${budget.code}-V${String(cv.versionNumber).padStart(2, '0')}.pdf`,
     mimeType: 'application/pdf',
     content: Buffer.from(pdfBuffer),
     createdById: user.id,
@@ -225,11 +253,11 @@ export async function generateProposal(user: SessionUser, budgetId: string) {
   await auditLog({
     companyId: user.companyId, userId: user.id,
     action: existente ? 'reissue' : 'generate', entityType: 'proposal', entityId: proposal.id,
-    after: { code: proposal.code, budgetCode: budget.code, version: cv.versionNumber, emissao: proposal.emissionCount },
+    after: { code: rotulo, revisao: proposal.revision, budgetCode: budget.code, version: cv.versionNumber, emissao: proposal.emissionCount },
   });
 
   return {
-    proposalId: proposal.id, code: proposal.code, attachmentId: saved.attachmentId,
+    proposalId: proposal.id, code: rotulo, attachmentId: saved.attachmentId,
     emissionCount: proposal.emissionCount, reemitida: Boolean(existente),
   };
 }
@@ -266,12 +294,13 @@ export async function sendProposalByEmail(
   const nomeCliente = cliente.tradeName ?? cliente.legalName;
   const validade = proposal.budgetVersion.validUntil;
 
+  const rotulo = codigoProposta(proposal.code, proposal.revision);
   const corpo = input.mensagem?.trim()
-    || `Segue em anexo a proposta ${proposal.code} para ${nomeCliente}.`;
+    || `Segue em anexo a proposta ${rotulo} para ${nomeCliente}.`;
 
   const envio = await enviarEmail({
     para: input.para,
-    assunto: `Proposta ${proposal.code} — ${company.tradeName ?? company.legalName}`,
+    assunto: `Proposta ${rotulo} — ${company.tradeName ?? company.legalName}`,
     texto:
       `${corpo}\n\n`
       + (validade ? `Validade da proposta: ${formatDateBR(validade)}.\n` : '')
@@ -280,7 +309,7 @@ export async function sendProposalByEmail(
         : '')
       + `\nQualquer dúvida, estamos à disposição.`,
     html: layoutEmail(
-      `Proposta ${proposal.code}`,
+      `Proposta ${rotulo}`,
       `<p>${corpo.replace(/\n/g, '<br>')}</p>
        ${validade ? `<p><strong>Validade:</strong> ${formatDateBR(validade)}</p>` : ''}
        <p style="font-size:12px;color:#64748b">
@@ -291,7 +320,7 @@ export async function sendProposalByEmail(
        </p>`,
     ),
     anexos: [{
-      filename: `${proposal.code}.pdf`,
+      filename: `${arquivoProposta(proposal.code, proposal.revision)}.pdf`,
       content: arquivo.content,
       contentType: 'application/pdf',
     }],

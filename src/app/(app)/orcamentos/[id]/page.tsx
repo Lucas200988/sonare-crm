@@ -11,6 +11,7 @@ import { formatDateBR, formatDateTimeBR } from '@/lib/dates';
 import { formatDecimalBR } from '@/lib/parse';
 import { getAiConfig } from '@/server/ai/scope-generator';
 import { getPriceSuggestions } from '@/server/services/price-history';
+import { arquivoProposta, codigoProposta } from '@/lib/proposta-codigo';
 import { BUDGET_STATUS_BADGE, PROPOSAL_STATUS_BADGE } from '../status-badge';
 import { BudgetEditor, type EditorFields, type EditorItem } from './budget-editor';
 import {
@@ -144,7 +145,7 @@ export default async function BudgetDetailPage(props: { params: Promise<{ id: st
             {budget.status === 'APROVADO' && canProposal ? (
               <GenerateProposalButton budgetId={budget.id} jaEmitida={allProposals.length > 0} />
             ) : null}
-            {canWrite ? <NewVersionForm budgetId={budget.id} /> : null}
+            {canWrite ? <NewVersionForm budgetId={budget.id} jaEmitida={allProposals.length > 0} /> : null}
             {canWrite ? (
               <DangerZone
                 budgetId={budget.id}
@@ -193,7 +194,7 @@ export default async function BudgetDetailPage(props: { params: Promise<{ id: st
           </Card>
 
           <Card className="p-4">
-            <h2 className="mb-2 text-sm font-semibold text-slate-900">Propostas desta versão</h2>
+            <h2 className="mb-2 text-sm font-semibold text-slate-900">Proposta</h2>
             {allProposals.length === 0 ? (
               <p className="text-xs text-slate-500">Nenhuma proposta gerada.</p>
             ) : (
@@ -203,7 +204,7 @@ export default async function BudgetDetailPage(props: { params: Promise<{ id: st
                   return (
                     <li key={p.id} className="rounded-lg border border-slate-200 p-3">
                       <div className="flex items-center justify-between gap-2">
-                        <p className="text-sm font-semibold text-slate-900">{p.code}</p>
+                        <p className="text-sm font-semibold text-slate-900">{codigoProposta(p.code, p.revision)}</p>
                         <Badge color={pb.color}>{pb.label}</Badge>
                       </div>
                       <p className="mt-0.5 text-[11px] text-slate-500">
@@ -222,15 +223,15 @@ export default async function BudgetDetailPage(props: { params: Promise<{ id: st
                         <div className="mt-2">
                           <ViewDocumentButton
                             attachmentId={p.pdfAttachmentId}
-                            title={`Proposta ${p.code}`}
-                            fileName={`${p.code}.pdf`}
+                            title={`Proposta ${codigoProposta(p.code, p.revision)}`}
+                            fileName={`${arquivoProposta(p.code, p.revision)}.pdf`}
                           />
                         </div>
                       ) : null}
                       {canProposal && p.pdfAttachmentId ? (
                         <SendProposalButton
                           proposalId={p.id} budgetId={budget.id}
-                          emailCliente={budget.client.email} codigo={p.code}
+                          emailCliente={budget.client.email} codigo={codigoProposta(p.code, p.revision)}
                         />
                       ) : null}
                       {canProposal ? <ProposalEventForm proposalId={p.id} budgetId={budget.id} status={p.status} /> : null}

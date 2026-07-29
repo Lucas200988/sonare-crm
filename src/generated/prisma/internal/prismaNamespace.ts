@@ -5235,6 +5235,7 @@ export const ProposalScalarFieldEnum = {
   status: 'status',
   pdfAttachmentId: 'pdfAttachmentId',
   emissionCount: 'emissionCount',
+  revision: 'revision',
   lastEmittedAt: 'lastEmittedAt',
   verificationCode: 'verificationCode',
   signedElectronicallyAt: 'signedElectronicallyAt',

@@ -715,6 +715,9 @@ model Proposal {
   /// Quantas vezes o PDF foi emitido. O número da proposta não muda ao
   /// reemitir os mesmos dados — só uma nova versão do orçamento gera outro.
   emissionCount    Int            @default(1)
+  /// Renegociação: o número da proposta é o mesmo, mas o documento vira
+  /// "PROP-AAAA-NNN Rev. 01". 0 = oferta original, sem revisão.
+  revision         Int            @default(0)
   lastEmittedAt    DateTime?
   // Assinatura eletrônica (MP 2.200-2 art. 10 §2º): código público de conferência
   // + hash do PDF emitido. Para ICP-Brasil (PAdES) ver docs/ARQUITETURA.md.

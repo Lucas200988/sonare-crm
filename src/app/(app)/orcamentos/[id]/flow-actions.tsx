@@ -102,7 +102,17 @@ export function ApprovalDecision({ budgetId }: { budgetId: string }) {
   );
 }
 
-export function NewVersionForm({ budgetId }: { budgetId: string }) {
+/**
+ * Reabre o orçamento para edição criando outra versão.
+ *
+ * Depois da proposta emitida a versão fica congelada — é por aqui que passa a
+ * negociação comercial. A proposta mantém o número e vira "Rev. 01".
+ */
+export function NewVersionForm({ budgetId, jaEmitida }: {
+  budgetId: string;
+  /** Já existe proposta emitida: o botão vira renegociação. */
+  jaEmitida?: boolean;
+}) {
   const action = newVersionAction.bind(null, budgetId);
   const [state, formAction, pending] = useActionState<ActionState, FormData>(action, {});
   const [open, setOpen] = useState(false);
@@ -114,14 +124,23 @@ export function NewVersionForm({ budgetId }: { budgetId: string }) {
         onClick={() => setOpen(true)}
         className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100"
       >
-        <FilePlus2 className="h-4 w-4" aria-hidden /> Nova versão
+        <FilePlus2 className="h-4 w-4" aria-hidden />
+        {jaEmitida ? 'Renegociar (nova versão)' : 'Nova versão'}
       </button>
     );
   }
   return (
     <form action={formAction} className="space-y-2 rounded-lg border border-slate-200 bg-slate-50 p-3">
-      <label htmlFor="nv-reason" className="text-xs font-medium text-slate-600">Justificativa da nova versão</label>
-      <input id="nv-reason" name="reason" required placeholder="Ex.: ajuste de escopo a pedido do cliente" className={inputCls} />
+      <label htmlFor="nv-reason" className="text-xs font-medium text-slate-600">
+        {jaEmitida ? 'Motivo da renegociação' : 'Justificativa da nova versão'}
+      </label>
+      <input id="nv-reason" name="reason" required placeholder="Ex.: desconto negociado com o cliente" className={inputCls} />
+      {jaEmitida ? (
+        <p className="text-[11px] text-slate-500">
+          O orçamento volta a ficar editável. Ao emitir de novo, a proposta mantém o
+          mesmo número e passa a Rev. 01, Rev. 02…
+        </p>
+      ) : null}
       <FormError message={state.error} />
       <div className="flex gap-2">
         <button type="submit" disabled={pending} className="rounded-lg bg-slate-900 px-3 py-1.5 text-xs font-semibold text-white hover:bg-slate-700 disabled:opacity-60">
@@ -180,8 +199,8 @@ export function GenerateProposalButton({ budgetId, jaEmitida }: {
       ) : null}
       {jaEmitida && !msg ? (
         <p className="text-[11px] text-slate-500">
-          Reemitir gera o PDF de novo com o mesmo número. Para numerar outra proposta,
-          crie uma nova versão do orçamento.
+          Reemitir gera o PDF de novo com o mesmo número. Se o orçamento foi
+          renegociado, o documento sai como nova revisão.
         </p>
       ) : null}
       <FormError message={err} />
