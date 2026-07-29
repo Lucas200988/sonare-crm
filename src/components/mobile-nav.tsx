@@ -81,7 +81,7 @@ export function MobileNav({
               <GlobalSearch />
             </div>
 
-            <div className="min-h-0 flex-1 overflow-y-auto">
+            <div className="rolagem-escura min-h-0 flex-1 overflow-y-auto">
               <SidebarNav items={items} />
             </div>
 

@@ -58,3 +58,26 @@ body {
   height: 0;
   pointer-events: none;
 }
+
+/*
+ * Barra de rolagem do menu lateral: no fundo escuro a barra padrão do
+ * navegador aparece branca e destoa. Aqui ela vira um tom acima do fundo,
+ * discreta, e só ganha contraste ao passar o mouse.
+ */
+.rolagem-escura {
+  scrollbar-width: thin;                    /* Firefox */
+  scrollbar-color: #334155 transparent;     /* polegar / trilho */
+}
+.rolagem-escura::-webkit-scrollbar {
+  width: 6px;
+}
+.rolagem-escura::-webkit-scrollbar-track {
+  background: transparent;
+}
+.rolagem-escura::-webkit-scrollbar-thumb {
+  background-color: #334155;
+  border-radius: 999px;
+}
+.rolagem-escura::-webkit-scrollbar-thumb:hover {
+  background-color: #475569;
+}

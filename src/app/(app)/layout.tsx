@@ -33,7 +33,7 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
           Com zoom alto o menu não cabia na altura da tela e os últimos itens
           ficavam inalcançáveis — a área de navegação passa a rolar sozinha.
         */}
-        <div className="min-h-0 flex-1 overflow-y-auto">
+        <div className="rolagem-escura min-h-0 flex-1 overflow-y-auto">
           <SidebarNav items={items} />
         </div>
         <div className="shrink-0 border-t border-slate-800 p-4">
