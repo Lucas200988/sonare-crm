@@ -4,14 +4,13 @@ import { useEffect, useState, useTransition } from 'react';
 import { EditorContent, useEditor, type Editor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import TextAlign from '@tiptap/extension-text-align';
-import Underline from '@tiptap/extension-underline';
 import {
   AlignCenter, AlignJustify, AlignLeft, AlignRight, Bold, Check, Heading2,
-  Italic, List, ListOrdered, Redo2, RotateCcw, SpellCheck2, Underline as UnderlineIcon, Undo2, Wand2,
+  Italic, List, ListOrdered, Redo2, RotateCcw, SpellCheck2, Underline as UnderlineIcon, Undo2,
 } from 'lucide-react';
 import { reviewTextAction } from '@/actions/ai';
 import { htmlToText, toEditorHtml } from '@/lib/html-text';
-import { limparHtml, contarAjustes } from '@/lib/texto-limpo';
+import { limparHtml } from '@/lib/texto-limpo';
 
 /**
  * Editor de texto com as ferramentas essenciais do Word.
@@ -34,14 +33,14 @@ export function RichEditor({
   const [previous, setPrevious] = useState<string | null>(null);
   const [hint, setHint] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [autoCorrigir, setAutoCorrigir] = useState(true);
 
   const editor = useEditor({
     immediatelyRender: false, // o conteúdo vem do servidor; evita divergência de hidratação
     editable: !disabled,
     extensions: [
+      // O sublinhado já vem no StarterKit da v3; registrá-lo de novo duplica
+      // o nome da extensão e derruba a criação do editor.
       StarterKit.configure({ heading: { levels: [2, 3] } }),
-      Underline,
       TextAlign.configure({ types: ['heading', 'paragraph'] }),
     ],
     content: toEditorHtml(value),
@@ -49,39 +48,22 @@ export function RichEditor({
       attributes: {
         class: 'prose-sonare focus:outline-none',
         style: `min-height:${minHeight}px`,
-        // Corretor do navegador: sublinha em vermelho e sugere no botão
-        // direito, como em qualquer campo de texto. Sem isso o editor rico
-        // ficava sem a correção que todo mundo espera.
+        // Corretor do próprio navegador: sublinha em vermelho e oferece as
+        // sugestões no botão direito, como em qualquer campo de texto. O
+        // idioma vem do <html lang="pt-BR"> — forçar aqui só faria o Chrome
+        // procurar um dicionário que o usuário pode não ter instalado.
         spellcheck: 'true',
-        lang: 'pt-BR',
+        autocorrect: 'on',
+        autocapitalize: 'sentences',
       },
       // Descarta fonte, tamanho e cor do conteúdo colado; a estrutura é mantida
       transformPastedHTML: (html) => limparHtmlColado(html),
     },
     onUpdate: ({ editor: e }) => onChange(e.getHTML()),
+    // Garante o atributo no próprio elemento editável, independentemente de
+    // como o ProseMirror reaplica os atributos a cada atualização.
+    onCreate: ({ editor: e }) => e.view.dom.setAttribute('spellcheck', 'true'),
   });
-
-  /*
-   * Correções mecânicas (espaçamento, acentos esquecidos, unidades e siglas do
-   * setor) aplicadas ao sair do campo. É instantâneo e sem custo — a revisão
-   * por IA continua sob demanda, para o que exige julgamento.
-   *
-   * O evento é tratado aqui, e não no callback do Tiptap, porque aquele não
-   * dispara de forma confiável quando o foco sai por clique fora.
-   */
-  function corrigirAoSair() {
-    if (!editor || !autoCorrigir || disabled) return;
-    const atual = editor.getHTML();
-    const limpo = limparHtml(atual);
-    if (limpo === atual) return;
-
-    const quantos = contarAjustes(htmlToText(atual), htmlToText(limpo));
-    setPrevious(atual);
-    editor.commands.setContent(limpo, { emitUpdate: false });
-    onChange(limpo);
-    setHint(`${quantos} ajuste(s) de digitação`);
-    setTimeout(() => setHint(null), 3000);
-  }
 
   // Conteúdo trocado de fora (assistente de escopo, modelo aplicado)
   useEffect(() => {
@@ -96,38 +78,37 @@ export function RichEditor({
     editor?.setEditable(!disabled);
   }, [disabled, editor]);
 
-  /*
-   * Escuta o focusout no próprio elemento do editor. O callback `onBlur` do
-   * Tiptap não dispara de forma confiável quando o foco sai por clique fora,
-   * e é justamente esse o momento de aplicar a correção.
+  /**
+   * Revisão sob demanda: primeiro os ajustes mecânicos (espaçamento, acentos
+   * esquecidos, unidades e siglas do setor), depois a IA para o que exige
+   * julgamento. Nada disso acontece sozinho — o texto só muda quando o
+   * usuário clica.
    */
-  useEffect(() => {
-    const el = editor?.view.dom;
-    if (!el) return;
-    const aoSair = () => corrigirAoSair();
-    el.addEventListener('focusout', aoSair);
-    return () => el.removeEventListener('focusout', aoSair);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [editor, autoCorrigir, disabled]);
-
   function revisar() {
     if (!editor) return;
     setError(null);
     setHint(null);
-    const texto = htmlToText(editor.getHTML());
+    const original = editor.getHTML();
+    const texto = htmlToText(limparHtml(original));
     if (texto.trim().length < 3) return;
 
     startTransition(async () => {
       const result = await reviewTextAction({ text: texto, context });
       if ('error' in result) { setError(result.error); return; }
-      if (!result.changed) {
+
+      // A IA não mudou nada, mas a limpeza mecânica pode ter mudado —
+      // nesse caso o texto ajustado ainda precisa entrar.
+      const revisado = result.changed ? result.text : texto;
+      const novoHtml = toEditorHtml(revisado);
+      if (novoHtml === original) {
         setHint('Sem correções');
         setTimeout(() => setHint(null), 2500);
         return;
       }
-      setPrevious(editor.getHTML());
+
+      setPrevious(original);
       // A revisão devolve texto puro; reaplica preservando a estrutura de listas
-      editor.commands.setContent(toEditorHtml(result.text));
+      editor.commands.setContent(novoHtml);
       onChange(editor.getHTML());
       setHint('Texto revisado');
     });
@@ -146,14 +127,7 @@ export function RichEditor({
   }
 
   return (
-    <div
-      className={`rounded-lg border border-slate-300 bg-white ${disabled ? 'opacity-60' : ''}`}
-      onBlur={(e) => {
-        // só corrige quando o foco sai do componente inteiro; clicar na barra
-        // de ferramentas não deve disparar a correção
-        if (!e.currentTarget.contains(e.relatedTarget as Node)) corrigirAoSair();
-      }}
-    >
+    <div className={`rounded-lg border border-slate-300 bg-white ${disabled ? 'opacity-60' : ''}`}>
       {!disabled ? (
         <div className="flex flex-wrap items-center gap-0.5 border-b border-slate-200 bg-slate-50 px-1.5 py-1">
           <Tool editor={editor} label="Negrito" active={editor.isActive('bold')} onClick={() => editor.chain().focus().toggleBold().run()}>
@@ -212,22 +186,6 @@ export function RichEditor({
               </span>
             ) : null}
 
-            <button
-              type="button"
-              onClick={() => setAutoCorrigir((v) => !v)}
-              aria-pressed={autoCorrigir}
-              title={
-                autoCorrigir
-                  ? 'Correção automática ligada: ao sair do campo, ajusta espaçamento, acentos e siglas'
-                  : 'Correção automática desligada'
-              }
-              className={`inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-[11px] transition ${
-                autoCorrigir ? 'text-green-700' : 'text-slate-400 hover:text-slate-600'
-              }`}
-            >
-              <Wand2 className="h-3.5 w-3.5" aria-hidden />
-              Auto
-            </button>
             {previous !== null ? (
               <button
                 type="button" onClick={desfazerRevisao}
