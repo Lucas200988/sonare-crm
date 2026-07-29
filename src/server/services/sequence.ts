@@ -2,16 +2,17 @@ import 'server-only';
 import { prisma } from '@/server/db';
 import type { Prisma } from '@/generated/prisma/client';
 
-export type DocumentType = 'OPP' | 'ORC' | 'PROP' | 'CTR' | 'PRJ' | 'PARC';
+export type DocumentType = 'OPP' | 'ORC' | 'PROP' | 'CTR' | 'PRJ' | 'PARC' | 'EQP';
 
 /** Onde cada tipo de código é gravado — usado para detectar número já ocupado. */
-const TABELA: Record<DocumentType, 'opportunity' | 'budget' | 'proposal' | 'contract' | 'project' | 'receivable'> = {
+const TABELA: Record<DocumentType, 'opportunity' | 'budget' | 'proposal' | 'contract' | 'project' | 'receivable' | 'equipment'> = {
   OPP: 'opportunity',
   ORC: 'budget',
   PROP: 'proposal',
   CTR: 'contract',
   PRJ: 'project',
   PARC: 'receivable',
+  EQP: 'equipment',
 };
 
 function formatar(type: DocumentType, year: number, numero: number): string {

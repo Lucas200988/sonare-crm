@@ -42,6 +42,10 @@ export const PERMISSIONS = {
   'timeentry:approve': 'Aprovar apontamentos',
   'techresp:write': 'Gerenciar ART/RRT',
 
+  // Equipamentos
+  'equipment:read': 'Consultar equipamentos',
+  'equipment:write': 'Cadastrar equipamentos e registrar saídas e devoluções',
+
   // Financeiro
   'finance:read': 'Consultar financeiro',
   'finance:write': 'Gerenciar parcelas e recebimentos',
@@ -69,6 +73,7 @@ export const ROLE_DEFAULTS: Record<string, { name: string; permissions: Permissi
       'proposal:read', 'proposal:write',
       'contract:read',
       'project:read',
+      'equipment:read',
       'dashboard:read', 'report:read',
     ],
   },
@@ -82,6 +87,7 @@ export const ROLE_DEFAULTS: Record<string, { name: string; permissions: Permissi
       'deliverable:write',
       'timeentry:write',
       'techresp:write',
+      'equipment:read', 'equipment:write',
       'dashboard:read',
     ],
   },
@@ -91,6 +97,7 @@ export const ROLE_DEFAULTS: Record<string, { name: string; permissions: Permissi
       'client:read',
       'contract:read',
       'project:read',
+      'equipment:read',
       'finance:read', 'finance:write',
       'invoice:read', 'invoice:write',
       'collection:write',
@@ -103,6 +110,7 @@ export const ROLE_DEFAULTS: Record<string, { name: string; permissions: Permissi
       'client:read', 'opportunity:read', 'budget:read', 'budget:approve',
       'proposal:read', 'contract:read', 'contract:write', 'contract:sign',
       'project:read', 'task:read', 'timeentry:approve',
+      'equipment:read',
       'finance:read', 'invoice:read',
       'report:read', 'dashboard:read', 'audit:read',
     ],

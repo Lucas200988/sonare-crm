@@ -313,3 +313,23 @@ export const ImportStatus = {
 } as const
 
 export type ImportStatus = (typeof ImportStatus)[keyof typeof ImportStatus]
+
+
+export const EquipmentStatus = {
+  DISPONIVEL: 'DISPONIVEL',
+  EM_USO: 'EM_USO',
+  MANUTENCAO: 'MANUTENCAO',
+  BAIXADO: 'BAIXADO'
+} as const
+
+export type EquipmentStatus = (typeof EquipmentStatus)[keyof typeof EquipmentStatus]
+
+
+export const EquipmentMovementKind = {
+  OBRA: 'OBRA',
+  EMPRESTIMO: 'EMPRESTIMO',
+  ALUGUEL: 'ALUGUEL',
+  MANUTENCAO: 'MANUTENCAO'
+} as const
+
+export type EquipmentMovementKind = (typeof EquipmentMovementKind)[keyof typeof EquipmentMovementKind]

@@ -95,6 +95,7 @@ model User {
   technicalResponsibilities TechnicalResponsibility[]
   comments                 Comment[]
   notifications            Notification[]
+  equipmentHeld            EquipmentMovement[]       @relation("EquipmentHolder")
 
   @@index([companyId])
 }
@@ -317,6 +318,7 @@ model Client {
   projects        Project[]
   receivables     Receivable[]
   invoices        Invoice[]
+  equipmentMovements EquipmentMovement[]
   activities      OpportunityActivity[]
 
   @@index([companyId, status])
@@ -990,6 +992,7 @@ model Project {
   receivables   Receivable[]
   invoices      Invoice[]
   payables      Payable[]
+  equipmentMovements EquipmentMovement[]
 
   @@unique([companyId, code])
   @@index([clientId, status])
@@ -1551,4 +1554,89 @@ model ImportError {
   rawData     Json?
 
   importJob ImportJob @relation(fields: [importJobId], references: [id], onDelete: Cascade)
+}
+
+// ============================================================
+// EQUIPAMENTOS
+// ============================================================
+
+enum EquipmentStatus {
+  DISPONIVEL
+  EM_USO // saída registrada e ainda não devolvido
+  MANUTENCAO
+  BAIXADO // vendido, perdido ou descartado
+}
+
+/** Para onde o equipamento foi — muda o que se cobra na devolução. */
+enum EquipmentMovementKind {
+  OBRA // uso próprio em campo
+  EMPRESTIMO // cedido a terceiro sem cobrança
+  ALUGUEL // cedido com cobrança
+  MANUTENCAO // foi para assistência ou calibração
+}
+
+model Equipment {
+  id             String          @id @default(uuid(7))
+  companyId      String
+  code           String // EQP-AAAA-NNN
+  name           String
+  brand          String?
+  model          String?
+  serialNumber   String?
+  category       String?
+  status         EquipmentStatus @default(DISPONIVEL)
+  purchaseDate   DateTime?
+  purchaseValue  Decimal?        @db.Decimal(14, 2)
+  /// Instrumentos de medição perdem validade legal sem calibração em dia.
+  calibrationDueAt DateTime?
+  /// Onde fica quando está parado (sala, armário, veículo).
+  homeLocation   String?
+  notes          String?
+  active         Boolean         @default(true)
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  deletedAt      DateTime?
+
+  movements EquipmentMovement[]
+
+  @@unique([companyId, code])
+  @@index([companyId, status])
+}
+
+/**
+ * Uma saída e a devolução correspondente.
+ *
+ * Enquanto `returnedAt` for nulo o equipamento está fora — é isso que
+ * responde "quem está com o RE7000 e desde quando".
+ */
+model EquipmentMovement {
+  id              String                @id @default(uuid(7))
+  companyId       String
+  equipmentId     String
+  kind            EquipmentMovementKind @default(OBRA)
+  projectId       String?
+  clientId        String?
+  /// Quem ficou responsável pelo equipamento (colaborador interno).
+  holderUserId    String?
+  /// Nome livre para quando quem levou não é usuário do sistema.
+  holderName      String?
+  destination     String?
+  checkedOutAt    DateTime              @default(now())
+  expectedReturnAt DateTime?
+  conditionOut    String?
+  returnedAt      DateTime?
+  conditionIn     String?
+  notes           String?
+  createdAt       DateTime              @default(now())
+  updatedAt       DateTime              @updatedAt
+  checkedOutById  String?
+  returnedById    String?
+
+  equipment  Equipment @relation(fields: [equipmentId], references: [id], onDelete: Cascade)
+  project    Project?  @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  client     Client?   @relation(fields: [clientId], references: [id], onDelete: SetNull)
+  holderUser User?     @relation("EquipmentHolder", fields: [holderUserId], references: [id], onDelete: SetNull)
+
+  @@index([companyId, returnedAt])
+  @@index([equipmentId, checkedOutAt])
 }

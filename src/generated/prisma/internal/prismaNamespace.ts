@@ -453,7 +453,9 @@ export const ModelName = {
   CollectionEvent: 'CollectionEvent',
   Notification: 'Notification',
   ImportJob: 'ImportJob',
-  ImportError: 'ImportError'
+  ImportError: 'ImportError',
+  Equipment: 'Equipment',
+  EquipmentMovement: 'EquipmentMovement'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -469,7 +471,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "company" | "user" | "role" | "permission" | "rolePermission" | "userRole" | "userPermission" | "session" | "passwordResetToken" | "auditLog" | "systemSetting" | "documentSequence" | "customField" | "customFieldValue" | "client" | "clientContact" | "clientUnit" | "leadSource" | "opportunityStage" | "opportunity" | "opportunityActivity" | "lossReason" | "serviceCatalog" | "budget" | "budgetVersion" | "budgetItem" | "budgetApproval" | "proposal" | "proposalTemplate" | "contract" | "contractVersion" | "contractAmendment" | "contractSignature" | "contractTemplate" | "project" | "projectStage" | "projectMember" | "task" | "taskChecklistItem" | "deliverable" | "deliverableRevision" | "timeEntry" | "technicalResponsibility" | "clientPendency" | "attachment" | "comment" | "receivable" | "receipt" | "financialRetention" | "invoice" | "invoiceReceivable" | "paymentMethod" | "payable" | "collectionEvent" | "notification" | "importJob" | "importError"
+    modelProps: "company" | "user" | "role" | "permission" | "rolePermission" | "userRole" | "userPermission" | "session" | "passwordResetToken" | "auditLog" | "systemSetting" | "documentSequence" | "customField" | "customFieldValue" | "client" | "clientContact" | "clientUnit" | "leadSource" | "opportunityStage" | "opportunity" | "opportunityActivity" | "lossReason" | "serviceCatalog" | "budget" | "budgetVersion" | "budgetItem" | "budgetApproval" | "proposal" | "proposalTemplate" | "contract" | "contractVersion" | "contractAmendment" | "contractSignature" | "contractTemplate" | "project" | "projectStage" | "projectMember" | "task" | "taskChecklistItem" | "deliverable" | "deliverableRevision" | "timeEntry" | "technicalResponsibility" | "clientPendency" | "attachment" | "comment" | "receivable" | "receipt" | "financialRetention" | "invoice" | "invoiceReceivable" | "paymentMethod" | "payable" | "collectionEvent" | "notification" | "importJob" | "importError" | "equipment" | "equipmentMovement"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -4691,6 +4693,154 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    Equipment: {
+      payload: Prisma.$EquipmentPayload<ExtArgs>
+      fields: Prisma.EquipmentFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.EquipmentFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EquipmentPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.EquipmentFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EquipmentPayload>
+        }
+        findFirst: {
+          args: Prisma.EquipmentFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EquipmentPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.EquipmentFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EquipmentPayload>
+        }
+        findMany: {
+          args: Prisma.EquipmentFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EquipmentPayload>[]
+        }
+        create: {
+          args: Prisma.EquipmentCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EquipmentPayload>
+        }
+        createMany: {
+          args: Prisma.EquipmentCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.EquipmentCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EquipmentPayload>[]
+        }
+        delete: {
+          args: Prisma.EquipmentDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EquipmentPayload>
+        }
+        update: {
+          args: Prisma.EquipmentUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EquipmentPayload>
+        }
+        deleteMany: {
+          args: Prisma.EquipmentDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.EquipmentUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.EquipmentUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EquipmentPayload>[]
+        }
+        upsert: {
+          args: Prisma.EquipmentUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EquipmentPayload>
+        }
+        aggregate: {
+          args: Prisma.EquipmentAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateEquipment>
+        }
+        groupBy: {
+          args: Prisma.EquipmentGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.EquipmentGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.EquipmentCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.EquipmentCountAggregateOutputType> | number
+        }
+      }
+    }
+    EquipmentMovement: {
+      payload: Prisma.$EquipmentMovementPayload<ExtArgs>
+      fields: Prisma.EquipmentMovementFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.EquipmentMovementFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EquipmentMovementPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.EquipmentMovementFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EquipmentMovementPayload>
+        }
+        findFirst: {
+          args: Prisma.EquipmentMovementFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EquipmentMovementPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.EquipmentMovementFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EquipmentMovementPayload>
+        }
+        findMany: {
+          args: Prisma.EquipmentMovementFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EquipmentMovementPayload>[]
+        }
+        create: {
+          args: Prisma.EquipmentMovementCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EquipmentMovementPayload>
+        }
+        createMany: {
+          args: Prisma.EquipmentMovementCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.EquipmentMovementCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EquipmentMovementPayload>[]
+        }
+        delete: {
+          args: Prisma.EquipmentMovementDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EquipmentMovementPayload>
+        }
+        update: {
+          args: Prisma.EquipmentMovementUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EquipmentMovementPayload>
+        }
+        deleteMany: {
+          args: Prisma.EquipmentMovementDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.EquipmentMovementUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.EquipmentMovementUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EquipmentMovementPayload>[]
+        }
+        upsert: {
+          args: Prisma.EquipmentMovementUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EquipmentMovementPayload>
+        }
+        aggregate: {
+          args: Prisma.EquipmentMovementAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateEquipmentMovement>
+        }
+        groupBy: {
+          args: Prisma.EquipmentMovementGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.EquipmentMovementGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.EquipmentMovementCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.EquipmentMovementCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -5823,6 +5973,55 @@ export const ImportErrorScalarFieldEnum = {
 export type ImportErrorScalarFieldEnum = (typeof ImportErrorScalarFieldEnum)[keyof typeof ImportErrorScalarFieldEnum]
 
 
+export const EquipmentScalarFieldEnum = {
+  id: 'id',
+  companyId: 'companyId',
+  code: 'code',
+  name: 'name',
+  brand: 'brand',
+  model: 'model',
+  serialNumber: 'serialNumber',
+  category: 'category',
+  status: 'status',
+  purchaseDate: 'purchaseDate',
+  purchaseValue: 'purchaseValue',
+  calibrationDueAt: 'calibrationDueAt',
+  homeLocation: 'homeLocation',
+  notes: 'notes',
+  active: 'active',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt'
+} as const
+
+export type EquipmentScalarFieldEnum = (typeof EquipmentScalarFieldEnum)[keyof typeof EquipmentScalarFieldEnum]
+
+
+export const EquipmentMovementScalarFieldEnum = {
+  id: 'id',
+  companyId: 'companyId',
+  equipmentId: 'equipmentId',
+  kind: 'kind',
+  projectId: 'projectId',
+  clientId: 'clientId',
+  holderUserId: 'holderUserId',
+  holderName: 'holderName',
+  destination: 'destination',
+  checkedOutAt: 'checkedOutAt',
+  expectedReturnAt: 'expectedReturnAt',
+  conditionOut: 'conditionOut',
+  returnedAt: 'returnedAt',
+  conditionIn: 'conditionIn',
+  notes: 'notes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  checkedOutById: 'checkedOutById',
+  returnedById: 'returnedById'
+} as const
+
+export type EquipmentMovementScalarFieldEnum = (typeof EquipmentMovementScalarFieldEnum)[keyof typeof EquipmentMovementScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -6305,6 +6504,34 @@ export type ListEnumImportStatusFieldRefInput<$PrismaModel> = FieldRefInputType<
 
 
 /**
+ * Reference to a field of type 'EquipmentStatus'
+ */
+export type EnumEquipmentStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'EquipmentStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'EquipmentStatus[]'
+ */
+export type ListEnumEquipmentStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'EquipmentStatus[]'>
+    
+
+
+/**
+ * Reference to a field of type 'EquipmentMovementKind'
+ */
+export type EnumEquipmentMovementKindFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'EquipmentMovementKind'>
+    
+
+
+/**
+ * Reference to a field of type 'EquipmentMovementKind[]'
+ */
+export type ListEnumEquipmentMovementKindFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'EquipmentMovementKind[]'>
+    
+
+
+/**
  * Reference to a field of type 'Float'
  */
 export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
@@ -6525,6 +6752,8 @@ export type GlobalOmitConfig = {
   notification?: Prisma.NotificationOmit
   importJob?: Prisma.ImportJobOmit
   importError?: Prisma.ImportErrorOmit
+  equipment?: Prisma.EquipmentOmit
+  equipmentMovement?: Prisma.EquipmentMovementOmit
 }
 
 /* Types for Logging */

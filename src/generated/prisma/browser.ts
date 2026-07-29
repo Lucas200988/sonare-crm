@@ -303,3 +303,17 @@ export type ImportJob = Prisma.ImportJobModel
  * 
  */
 export type ImportError = Prisma.ImportErrorModel
+/**
+ * Model Equipment
+ * 
+ */
+export type Equipment = Prisma.EquipmentModel
+/**
+ * Model EquipmentMovement
+ * *
+ *  * Uma saída e a devolução correspondente.
+ *  *
+ *  * Enquanto `returnedAt` for nulo o equipamento está fora — é isso que
+ *  * responde "quem está com o RE7000 e desde quando".
+ */
+export type EquipmentMovement = Prisma.EquipmentMovementModel

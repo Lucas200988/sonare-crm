@@ -4,13 +4,13 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
   ArrowDownCircle, ArrowUpCircle, BarChart3, BellRing, Calculator, FileSignature, FolderKanban,
-  KanbanSquare, LayoutDashboard, ReceiptText, Settings, Stamp, UserCog, Users, Wallet, type LucideIcon,
+  KanbanSquare, LayoutDashboard, ReceiptText, Settings, Stamp, UserCog, Users, Wallet, Wrench, type LucideIcon,
 } from 'lucide-react';
 
 const ICONS: Record<string, LucideIcon> = {
   LayoutDashboard, Users, KanbanSquare, Calculator, FileSignature,
   FolderKanban, Wallet, ReceiptText, BarChart3, UserCog, Settings,
-  ArrowDownCircle, ArrowUpCircle, BellRing, Stamp,
+  ArrowDownCircle, ArrowUpCircle, BellRing, Stamp, Wrench,
 };
 
 export type SidebarItem = {

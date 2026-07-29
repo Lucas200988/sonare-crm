@@ -377,6 +377,32 @@ async function main() {
     console.log(`Seed: ${demoClients.length} clientes e ${demoOpps.length} oportunidades de demonstração criados.`);
   }
 
+  // 9. Equipamentos que a equipe leva a campo
+  const equipamentos = [
+    { name: 'Analisador de Energia RE7000', brand: 'Embrasul', model: 'RE7000', category: 'Instrumento de medição' },
+    { name: 'Analisador de Energia 4001', brand: 'Embrasul', model: 'RE4001', category: 'Instrumento de medição' },
+    { name: 'Câmera Termográfica E5', brand: 'FLIR', model: 'E5', category: 'Instrumento de medição' },
+    { name: 'Terrômetro de Estacas', brand: null, model: null, category: 'Instrumento de medição' },
+  ];
+  {
+    const year = new Date().getFullYear();
+    let seq = 1;
+    for (const eq of equipamentos) {
+      const existente = await prisma.equipment.findFirst({ where: { companyId, name: eq.name } });
+      if (existente) continue;
+      const code = `EQP-${year}-${String(seq).padStart(3, '0')}`;
+      await prisma.equipment.create({ data: { ...eq, companyId, code } });
+      seq += 1;
+    }
+    const total = await prisma.equipment.count({ where: { companyId } });
+    await prisma.documentSequence.upsert({
+      where: { companyId_type_year: { companyId, type: 'EQP', year } },
+      create: { companyId, type: 'EQP', year, nextValue: total + 1 },
+      update: { nextValue: total + 1 },
+    });
+    console.log(`Seed: ${total} equipamento(s) no catálogo.`);
+  }
+
   console.log('Seed: concluído.');
   console.log('Usuários de demonstração (senha: Sonare@2026):');
   for (const u of demoUsers) console.log(`  - ${u.email} (${u.role})`);

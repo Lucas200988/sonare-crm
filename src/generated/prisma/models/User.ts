@@ -345,6 +345,7 @@ export type UserWhereInput = {
   technicalResponsibilities?: Prisma.TechnicalResponsibilityListRelationFilter
   comments?: Prisma.CommentListRelationFilter
   notifications?: Prisma.NotificationListRelationFilter
+  equipmentHeld?: Prisma.EquipmentMovementListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -387,6 +388,7 @@ export type UserOrderByWithRelationInput = {
   technicalResponsibilities?: Prisma.TechnicalResponsibilityOrderByRelationAggregateInput
   comments?: Prisma.CommentOrderByRelationAggregateInput
   notifications?: Prisma.NotificationOrderByRelationAggregateInput
+  equipmentHeld?: Prisma.EquipmentMovementOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -432,6 +434,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   technicalResponsibilities?: Prisma.TechnicalResponsibilityListRelationFilter
   comments?: Prisma.CommentListRelationFilter
   notifications?: Prisma.NotificationListRelationFilter
+  equipmentHeld?: Prisma.EquipmentMovementListRelationFilter
 }, "id" | "email">
 
 export type UserOrderByWithAggregationInput = {
@@ -524,6 +527,7 @@ export type UserCreateInput = {
   technicalResponsibilities?: Prisma.TechnicalResponsibilityCreateNestedManyWithoutProfessionalInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  equipmentHeld?: Prisma.EquipmentMovementCreateNestedManyWithoutHolderUserInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -566,6 +570,7 @@ export type UserUncheckedCreateInput = {
   technicalResponsibilities?: Prisma.TechnicalResponsibilityUncheckedCreateNestedManyWithoutProfessionalInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  equipmentHeld?: Prisma.EquipmentMovementUncheckedCreateNestedManyWithoutHolderUserInput
 }
 
 export type UserUpdateInput = {
@@ -608,6 +613,7 @@ export type UserUpdateInput = {
   technicalResponsibilities?: Prisma.TechnicalResponsibilityUpdateManyWithoutProfessionalNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  equipmentHeld?: Prisma.EquipmentMovementUpdateManyWithoutHolderUserNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -650,6 +656,7 @@ export type UserUncheckedUpdateInput = {
   technicalResponsibilities?: Prisma.TechnicalResponsibilityUncheckedUpdateManyWithoutProfessionalNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  equipmentHeld?: Prisma.EquipmentMovementUncheckedUpdateManyWithoutHolderUserNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -1136,6 +1143,22 @@ export type UserUpdateOneRequiredWithoutNotificationsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutNotificationsInput, Prisma.UserUpdateWithoutNotificationsInput>, Prisma.UserUncheckedUpdateWithoutNotificationsInput>
 }
 
+export type UserCreateNestedOneWithoutEquipmentHeldInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutEquipmentHeldInput, Prisma.UserUncheckedCreateWithoutEquipmentHeldInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutEquipmentHeldInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneWithoutEquipmentHeldNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutEquipmentHeldInput, Prisma.UserUncheckedCreateWithoutEquipmentHeldInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutEquipmentHeldInput
+  upsert?: Prisma.UserUpsertWithoutEquipmentHeldInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutEquipmentHeldInput, Prisma.UserUpdateWithoutEquipmentHeldInput>, Prisma.UserUncheckedUpdateWithoutEquipmentHeldInput>
+}
+
 export type UserCreateWithoutRolesInput = {
   id?: string
   companyId: string
@@ -1175,6 +1198,7 @@ export type UserCreateWithoutRolesInput = {
   technicalResponsibilities?: Prisma.TechnicalResponsibilityCreateNestedManyWithoutProfessionalInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  equipmentHeld?: Prisma.EquipmentMovementCreateNestedManyWithoutHolderUserInput
 }
 
 export type UserUncheckedCreateWithoutRolesInput = {
@@ -1216,6 +1240,7 @@ export type UserUncheckedCreateWithoutRolesInput = {
   technicalResponsibilities?: Prisma.TechnicalResponsibilityUncheckedCreateNestedManyWithoutProfessionalInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  equipmentHeld?: Prisma.EquipmentMovementUncheckedCreateNestedManyWithoutHolderUserInput
 }
 
 export type UserCreateOrConnectWithoutRolesInput = {
@@ -1273,6 +1298,7 @@ export type UserUpdateWithoutRolesInput = {
   technicalResponsibilities?: Prisma.TechnicalResponsibilityUpdateManyWithoutProfessionalNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  equipmentHeld?: Prisma.EquipmentMovementUpdateManyWithoutHolderUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutRolesInput = {
@@ -1314,6 +1340,7 @@ export type UserUncheckedUpdateWithoutRolesInput = {
   technicalResponsibilities?: Prisma.TechnicalResponsibilityUncheckedUpdateManyWithoutProfessionalNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  equipmentHeld?: Prisma.EquipmentMovementUncheckedUpdateManyWithoutHolderUserNestedInput
 }
 
 export type UserCreateWithoutExtraPermissionsInput = {
@@ -1355,6 +1382,7 @@ export type UserCreateWithoutExtraPermissionsInput = {
   technicalResponsibilities?: Prisma.TechnicalResponsibilityCreateNestedManyWithoutProfessionalInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  equipmentHeld?: Prisma.EquipmentMovementCreateNestedManyWithoutHolderUserInput
 }
 
 export type UserUncheckedCreateWithoutExtraPermissionsInput = {
@@ -1396,6 +1424,7 @@ export type UserUncheckedCreateWithoutExtraPermissionsInput = {
   technicalResponsibilities?: Prisma.TechnicalResponsibilityUncheckedCreateNestedManyWithoutProfessionalInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  equipmentHeld?: Prisma.EquipmentMovementUncheckedCreateNestedManyWithoutHolderUserInput
 }
 
 export type UserCreateOrConnectWithoutExtraPermissionsInput = {
@@ -1453,6 +1482,7 @@ export type UserUpdateWithoutExtraPermissionsInput = {
   technicalResponsibilities?: Prisma.TechnicalResponsibilityUpdateManyWithoutProfessionalNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  equipmentHeld?: Prisma.EquipmentMovementUpdateManyWithoutHolderUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutExtraPermissionsInput = {
@@ -1494,6 +1524,7 @@ export type UserUncheckedUpdateWithoutExtraPermissionsInput = {
   technicalResponsibilities?: Prisma.TechnicalResponsibilityUncheckedUpdateManyWithoutProfessionalNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  equipmentHeld?: Prisma.EquipmentMovementUncheckedUpdateManyWithoutHolderUserNestedInput
 }
 
 export type UserCreateWithoutSessionsInput = {
@@ -1535,6 +1566,7 @@ export type UserCreateWithoutSessionsInput = {
   technicalResponsibilities?: Prisma.TechnicalResponsibilityCreateNestedManyWithoutProfessionalInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  equipmentHeld?: Prisma.EquipmentMovementCreateNestedManyWithoutHolderUserInput
 }
 
 export type UserUncheckedCreateWithoutSessionsInput = {
@@ -1576,6 +1608,7 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   technicalResponsibilities?: Prisma.TechnicalResponsibilityUncheckedCreateNestedManyWithoutProfessionalInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  equipmentHeld?: Prisma.EquipmentMovementUncheckedCreateNestedManyWithoutHolderUserInput
 }
 
 export type UserCreateOrConnectWithoutSessionsInput = {
@@ -1633,6 +1666,7 @@ export type UserUpdateWithoutSessionsInput = {
   technicalResponsibilities?: Prisma.TechnicalResponsibilityUpdateManyWithoutProfessionalNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  equipmentHeld?: Prisma.EquipmentMovementUpdateManyWithoutHolderUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSessionsInput = {
@@ -1674,6 +1708,7 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   technicalResponsibilities?: Prisma.TechnicalResponsibilityUncheckedUpdateManyWithoutProfessionalNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  equipmentHeld?: Prisma.EquipmentMovementUncheckedUpdateManyWithoutHolderUserNestedInput
 }
 
 export type UserCreateWithoutPasswordResetTokensInput = {
@@ -1715,6 +1750,7 @@ export type UserCreateWithoutPasswordResetTokensInput = {
   technicalResponsibilities?: Prisma.TechnicalResponsibilityCreateNestedManyWithoutProfessionalInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  equipmentHeld?: Prisma.EquipmentMovementCreateNestedManyWithoutHolderUserInput
 }
 
 export type UserUncheckedCreateWithoutPasswordResetTokensInput = {
@@ -1756,6 +1792,7 @@ export type UserUncheckedCreateWithoutPasswordResetTokensInput = {
   technicalResponsibilities?: Prisma.TechnicalResponsibilityUncheckedCreateNestedManyWithoutProfessionalInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  equipmentHeld?: Prisma.EquipmentMovementUncheckedCreateNestedManyWithoutHolderUserInput
 }
 
 export type UserCreateOrConnectWithoutPasswordResetTokensInput = {
@@ -1813,6 +1850,7 @@ export type UserUpdateWithoutPasswordResetTokensInput = {
   technicalResponsibilities?: Prisma.TechnicalResponsibilityUpdateManyWithoutProfessionalNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  equipmentHeld?: Prisma.EquipmentMovementUpdateManyWithoutHolderUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPasswordResetTokensInput = {
@@ -1854,6 +1892,7 @@ export type UserUncheckedUpdateWithoutPasswordResetTokensInput = {
   technicalResponsibilities?: Prisma.TechnicalResponsibilityUncheckedUpdateManyWithoutProfessionalNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  equipmentHeld?: Prisma.EquipmentMovementUncheckedUpdateManyWithoutHolderUserNestedInput
 }
 
 export type UserCreateWithoutAuditLogsInput = {
@@ -1895,6 +1934,7 @@ export type UserCreateWithoutAuditLogsInput = {
   technicalResponsibilities?: Prisma.TechnicalResponsibilityCreateNestedManyWithoutProfessionalInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  equipmentHeld?: Prisma.EquipmentMovementCreateNestedManyWithoutHolderUserInput
 }
 
 export type UserUncheckedCreateWithoutAuditLogsInput = {
@@ -1936,6 +1976,7 @@ export type UserUncheckedCreateWithoutAuditLogsInput = {
   technicalResponsibilities?: Prisma.TechnicalResponsibilityUncheckedCreateNestedManyWithoutProfessionalInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  equipmentHeld?: Prisma.EquipmentMovementUncheckedCreateNestedManyWithoutHolderUserInput
 }
 
 export type UserCreateOrConnectWithoutAuditLogsInput = {
@@ -1993,6 +2034,7 @@ export type UserUpdateWithoutAuditLogsInput = {
   technicalResponsibilities?: Prisma.TechnicalResponsibilityUpdateManyWithoutProfessionalNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  equipmentHeld?: Prisma.EquipmentMovementUpdateManyWithoutHolderUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAuditLogsInput = {
@@ -2034,6 +2076,7 @@ export type UserUncheckedUpdateWithoutAuditLogsInput = {
   technicalResponsibilities?: Prisma.TechnicalResponsibilityUncheckedUpdateManyWithoutProfessionalNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  equipmentHeld?: Prisma.EquipmentMovementUncheckedUpdateManyWithoutHolderUserNestedInput
 }
 
 export type UserCreateWithoutClientsOwnedInput = {
@@ -2075,6 +2118,7 @@ export type UserCreateWithoutClientsOwnedInput = {
   technicalResponsibilities?: Prisma.TechnicalResponsibilityCreateNestedManyWithoutProfessionalInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  equipmentHeld?: Prisma.EquipmentMovementCreateNestedManyWithoutHolderUserInput
 }
 
 export type UserUncheckedCreateWithoutClientsOwnedInput = {
@@ -2116,6 +2160,7 @@ export type UserUncheckedCreateWithoutClientsOwnedInput = {
   technicalResponsibilities?: Prisma.TechnicalResponsibilityUncheckedCreateNestedManyWithoutProfessionalInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  equipmentHeld?: Prisma.EquipmentMovementUncheckedCreateNestedManyWithoutHolderUserInput
 }
 
 export type UserCreateOrConnectWithoutClientsOwnedInput = {
@@ -2173,6 +2218,7 @@ export type UserUpdateWithoutClientsOwnedInput = {
   technicalResponsibilities?: Prisma.TechnicalResponsibilityUpdateManyWithoutProfessionalNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  equipmentHeld?: Prisma.EquipmentMovementUpdateManyWithoutHolderUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutClientsOwnedInput = {
@@ -2214,6 +2260,7 @@ export type UserUncheckedUpdateWithoutClientsOwnedInput = {
   technicalResponsibilities?: Prisma.TechnicalResponsibilityUncheckedUpdateManyWithoutProfessionalNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  equipmentHeld?: Prisma.EquipmentMovementUncheckedUpdateManyWithoutHolderUserNestedInput
 }
 
 export type UserCreateWithoutOpportunitiesCommercialInput = {
@@ -2255,6 +2302,7 @@ export type UserCreateWithoutOpportunitiesCommercialInput = {
   technicalResponsibilities?: Prisma.TechnicalResponsibilityCreateNestedManyWithoutProfessionalInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  equipmentHeld?: Prisma.EquipmentMovementCreateNestedManyWithoutHolderUserInput
 }
 
 export type UserUncheckedCreateWithoutOpportunitiesCommercialInput = {
@@ -2296,6 +2344,7 @@ export type UserUncheckedCreateWithoutOpportunitiesCommercialInput = {
   technicalResponsibilities?: Prisma.TechnicalResponsibilityUncheckedCreateNestedManyWithoutProfessionalInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  equipmentHeld?: Prisma.EquipmentMovementUncheckedCreateNestedManyWithoutHolderUserInput
 }
 
 export type UserCreateOrConnectWithoutOpportunitiesCommercialInput = {
@@ -2342,6 +2391,7 @@ export type UserCreateWithoutOpportunitiesTechnicalInput = {
   technicalResponsibilities?: Prisma.TechnicalResponsibilityCreateNestedManyWithoutProfessionalInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  equipmentHeld?: Prisma.EquipmentMovementCreateNestedManyWithoutHolderUserInput
 }
 
 export type UserUncheckedCreateWithoutOpportunitiesTechnicalInput = {
@@ -2383,6 +2433,7 @@ export type UserUncheckedCreateWithoutOpportunitiesTechnicalInput = {
   technicalResponsibilities?: Prisma.TechnicalResponsibilityUncheckedCreateNestedManyWithoutProfessionalInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  equipmentHeld?: Prisma.EquipmentMovementUncheckedCreateNestedManyWithoutHolderUserInput
 }
 
 export type UserCreateOrConnectWithoutOpportunitiesTechnicalInput = {
@@ -2440,6 +2491,7 @@ export type UserUpdateWithoutOpportunitiesCommercialInput = {
   technicalResponsibilities?: Prisma.TechnicalResponsibilityUpdateManyWithoutProfessionalNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  equipmentHeld?: Prisma.EquipmentMovementUpdateManyWithoutHolderUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutOpportunitiesCommercialInput = {
@@ -2481,6 +2533,7 @@ export type UserUncheckedUpdateWithoutOpportunitiesCommercialInput = {
   technicalResponsibilities?: Prisma.TechnicalResponsibilityUncheckedUpdateManyWithoutProfessionalNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  equipmentHeld?: Prisma.EquipmentMovementUncheckedUpdateManyWithoutHolderUserNestedInput
 }
 
 export type UserUpsertWithoutOpportunitiesTechnicalInput = {
@@ -2533,6 +2586,7 @@ export type UserUpdateWithoutOpportunitiesTechnicalInput = {
   technicalResponsibilities?: Prisma.TechnicalResponsibilityUpdateManyWithoutProfessionalNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  equipmentHeld?: Prisma.EquipmentMovementUpdateManyWithoutHolderUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutOpportunitiesTechnicalInput = {
@@ -2574,6 +2628,7 @@ export type UserUncheckedUpdateWithoutOpportunitiesTechnicalInput = {
   technicalResponsibilities?: Prisma.TechnicalResponsibilityUncheckedUpdateManyWithoutProfessionalNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  equipmentHeld?: Prisma.EquipmentMovementUncheckedUpdateManyWithoutHolderUserNestedInput
 }
 
 export type UserCreateWithoutActivitiesInput = {
@@ -2615,6 +2670,7 @@ export type UserCreateWithoutActivitiesInput = {
   technicalResponsibilities?: Prisma.TechnicalResponsibilityCreateNestedManyWithoutProfessionalInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  equipmentHeld?: Prisma.EquipmentMovementCreateNestedManyWithoutHolderUserInput
 }
 
 export type UserUncheckedCreateWithoutActivitiesInput = {
@@ -2656,6 +2712,7 @@ export type UserUncheckedCreateWithoutActivitiesInput = {
   technicalResponsibilities?: Prisma.TechnicalResponsibilityUncheckedCreateNestedManyWithoutProfessionalInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  equipmentHeld?: Prisma.EquipmentMovementUncheckedCreateNestedManyWithoutHolderUserInput
 }
 
 export type UserCreateOrConnectWithoutActivitiesInput = {
@@ -2713,6 +2770,7 @@ export type UserUpdateWithoutActivitiesInput = {
   technicalResponsibilities?: Prisma.TechnicalResponsibilityUpdateManyWithoutProfessionalNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  equipmentHeld?: Prisma.EquipmentMovementUpdateManyWithoutHolderUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutActivitiesInput = {
@@ -2754,6 +2812,7 @@ export type UserUncheckedUpdateWithoutActivitiesInput = {
   technicalResponsibilities?: Prisma.TechnicalResponsibilityUncheckedUpdateManyWithoutProfessionalNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  equipmentHeld?: Prisma.EquipmentMovementUncheckedUpdateManyWithoutHolderUserNestedInput
 }
 
 export type UserCreateWithoutBudgetsCommercialInput = {
@@ -2795,6 +2854,7 @@ export type UserCreateWithoutBudgetsCommercialInput = {
   technicalResponsibilities?: Prisma.TechnicalResponsibilityCreateNestedManyWithoutProfessionalInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  equipmentHeld?: Prisma.EquipmentMovementCreateNestedManyWithoutHolderUserInput
 }
 
 export type UserUncheckedCreateWithoutBudgetsCommercialInput = {
@@ -2836,6 +2896,7 @@ export type UserUncheckedCreateWithoutBudgetsCommercialInput = {
   technicalResponsibilities?: Prisma.TechnicalResponsibilityUncheckedCreateNestedManyWithoutProfessionalInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  equipmentHeld?: Prisma.EquipmentMovementUncheckedCreateNestedManyWithoutHolderUserInput
 }
 
 export type UserCreateOrConnectWithoutBudgetsCommercialInput = {
@@ -2882,6 +2943,7 @@ export type UserCreateWithoutBudgetsTechnicalInput = {
   technicalResponsibilities?: Prisma.TechnicalResponsibilityCreateNestedManyWithoutProfessionalInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  equipmentHeld?: Prisma.EquipmentMovementCreateNestedManyWithoutHolderUserInput
 }
 
 export type UserUncheckedCreateWithoutBudgetsTechnicalInput = {
@@ -2923,6 +2985,7 @@ export type UserUncheckedCreateWithoutBudgetsTechnicalInput = {
   technicalResponsibilities?: Prisma.TechnicalResponsibilityUncheckedCreateNestedManyWithoutProfessionalInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  equipmentHeld?: Prisma.EquipmentMovementUncheckedCreateNestedManyWithoutHolderUserInput
 }
 
 export type UserCreateOrConnectWithoutBudgetsTechnicalInput = {
@@ -2980,6 +3043,7 @@ export type UserUpdateWithoutBudgetsCommercialInput = {
   technicalResponsibilities?: Prisma.TechnicalResponsibilityUpdateManyWithoutProfessionalNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  equipmentHeld?: Prisma.EquipmentMovementUpdateManyWithoutHolderUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutBudgetsCommercialInput = {
@@ -3021,6 +3085,7 @@ export type UserUncheckedUpdateWithoutBudgetsCommercialInput = {
   technicalResponsibilities?: Prisma.TechnicalResponsibilityUncheckedUpdateManyWithoutProfessionalNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  equipmentHeld?: Prisma.EquipmentMovementUncheckedUpdateManyWithoutHolderUserNestedInput
 }
 
 export type UserUpsertWithoutBudgetsTechnicalInput = {
@@ -3073,6 +3138,7 @@ export type UserUpdateWithoutBudgetsTechnicalInput = {
   technicalResponsibilities?: Prisma.TechnicalResponsibilityUpdateManyWithoutProfessionalNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  equipmentHeld?: Prisma.EquipmentMovementUpdateManyWithoutHolderUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutBudgetsTechnicalInput = {
@@ -3114,6 +3180,7 @@ export type UserUncheckedUpdateWithoutBudgetsTechnicalInput = {
   technicalResponsibilities?: Prisma.TechnicalResponsibilityUncheckedUpdateManyWithoutProfessionalNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  equipmentHeld?: Prisma.EquipmentMovementUncheckedUpdateManyWithoutHolderUserNestedInput
 }
 
 export type UserCreateWithoutApprovalsRequestedInput = {
@@ -3155,6 +3222,7 @@ export type UserCreateWithoutApprovalsRequestedInput = {
   technicalResponsibilities?: Prisma.TechnicalResponsibilityCreateNestedManyWithoutProfessionalInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  equipmentHeld?: Prisma.EquipmentMovementCreateNestedManyWithoutHolderUserInput
 }
 
 export type UserUncheckedCreateWithoutApprovalsRequestedInput = {
@@ -3196,6 +3264,7 @@ export type UserUncheckedCreateWithoutApprovalsRequestedInput = {
   technicalResponsibilities?: Prisma.TechnicalResponsibilityUncheckedCreateNestedManyWithoutProfessionalInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  equipmentHeld?: Prisma.EquipmentMovementUncheckedCreateNestedManyWithoutHolderUserInput
 }
 
 export type UserCreateOrConnectWithoutApprovalsRequestedInput = {
@@ -3242,6 +3311,7 @@ export type UserCreateWithoutApprovalsDecidedInput = {
   technicalResponsibilities?: Prisma.TechnicalResponsibilityCreateNestedManyWithoutProfessionalInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  equipmentHeld?: Prisma.EquipmentMovementCreateNestedManyWithoutHolderUserInput
 }
 
 export type UserUncheckedCreateWithoutApprovalsDecidedInput = {
@@ -3283,6 +3353,7 @@ export type UserUncheckedCreateWithoutApprovalsDecidedInput = {
   technicalResponsibilities?: Prisma.TechnicalResponsibilityUncheckedCreateNestedManyWithoutProfessionalInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  equipmentHeld?: Prisma.EquipmentMovementUncheckedCreateNestedManyWithoutHolderUserInput
 }
 
 export type UserCreateOrConnectWithoutApprovalsDecidedInput = {
@@ -3340,6 +3411,7 @@ export type UserUpdateWithoutApprovalsRequestedInput = {
   technicalResponsibilities?: Prisma.TechnicalResponsibilityUpdateManyWithoutProfessionalNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  equipmentHeld?: Prisma.EquipmentMovementUpdateManyWithoutHolderUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutApprovalsRequestedInput = {
@@ -3381,6 +3453,7 @@ export type UserUncheckedUpdateWithoutApprovalsRequestedInput = {
   technicalResponsibilities?: Prisma.TechnicalResponsibilityUncheckedUpdateManyWithoutProfessionalNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  equipmentHeld?: Prisma.EquipmentMovementUncheckedUpdateManyWithoutHolderUserNestedInput
 }
 
 export type UserUpsertWithoutApprovalsDecidedInput = {
@@ -3433,6 +3506,7 @@ export type UserUpdateWithoutApprovalsDecidedInput = {
   technicalResponsibilities?: Prisma.TechnicalResponsibilityUpdateManyWithoutProfessionalNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  equipmentHeld?: Prisma.EquipmentMovementUpdateManyWithoutHolderUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutApprovalsDecidedInput = {
@@ -3474,6 +3548,7 @@ export type UserUncheckedUpdateWithoutApprovalsDecidedInput = {
   technicalResponsibilities?: Prisma.TechnicalResponsibilityUncheckedUpdateManyWithoutProfessionalNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  equipmentHeld?: Prisma.EquipmentMovementUncheckedUpdateManyWithoutHolderUserNestedInput
 }
 
 export type UserCreateWithoutProjectsLedInput = {
@@ -3515,6 +3590,7 @@ export type UserCreateWithoutProjectsLedInput = {
   technicalResponsibilities?: Prisma.TechnicalResponsibilityCreateNestedManyWithoutProfessionalInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  equipmentHeld?: Prisma.EquipmentMovementCreateNestedManyWithoutHolderUserInput
 }
 
 export type UserUncheckedCreateWithoutProjectsLedInput = {
@@ -3556,6 +3632,7 @@ export type UserUncheckedCreateWithoutProjectsLedInput = {
   technicalResponsibilities?: Prisma.TechnicalResponsibilityUncheckedCreateNestedManyWithoutProfessionalInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  equipmentHeld?: Prisma.EquipmentMovementUncheckedCreateNestedManyWithoutHolderUserInput
 }
 
 export type UserCreateOrConnectWithoutProjectsLedInput = {
@@ -3602,6 +3679,7 @@ export type UserCreateWithoutProjectsCoordinatedInput = {
   technicalResponsibilities?: Prisma.TechnicalResponsibilityCreateNestedManyWithoutProfessionalInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  equipmentHeld?: Prisma.EquipmentMovementCreateNestedManyWithoutHolderUserInput
 }
 
 export type UserUncheckedCreateWithoutProjectsCoordinatedInput = {
@@ -3643,6 +3721,7 @@ export type UserUncheckedCreateWithoutProjectsCoordinatedInput = {
   technicalResponsibilities?: Prisma.TechnicalResponsibilityUncheckedCreateNestedManyWithoutProfessionalInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  equipmentHeld?: Prisma.EquipmentMovementUncheckedCreateNestedManyWithoutHolderUserInput
 }
 
 export type UserCreateOrConnectWithoutProjectsCoordinatedInput = {
@@ -3700,6 +3779,7 @@ export type UserUpdateWithoutProjectsLedInput = {
   technicalResponsibilities?: Prisma.TechnicalResponsibilityUpdateManyWithoutProfessionalNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  equipmentHeld?: Prisma.EquipmentMovementUpdateManyWithoutHolderUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutProjectsLedInput = {
@@ -3741,6 +3821,7 @@ export type UserUncheckedUpdateWithoutProjectsLedInput = {
   technicalResponsibilities?: Prisma.TechnicalResponsibilityUncheckedUpdateManyWithoutProfessionalNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  equipmentHeld?: Prisma.EquipmentMovementUncheckedUpdateManyWithoutHolderUserNestedInput
 }
 
 export type UserUpsertWithoutProjectsCoordinatedInput = {
@@ -3793,6 +3874,7 @@ export type UserUpdateWithoutProjectsCoordinatedInput = {
   technicalResponsibilities?: Prisma.TechnicalResponsibilityUpdateManyWithoutProfessionalNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  equipmentHeld?: Prisma.EquipmentMovementUpdateManyWithoutHolderUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutProjectsCoordinatedInput = {
@@ -3834,6 +3916,7 @@ export type UserUncheckedUpdateWithoutProjectsCoordinatedInput = {
   technicalResponsibilities?: Prisma.TechnicalResponsibilityUncheckedUpdateManyWithoutProfessionalNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  equipmentHeld?: Prisma.EquipmentMovementUncheckedUpdateManyWithoutHolderUserNestedInput
 }
 
 export type UserCreateWithoutProjectMembershipsInput = {
@@ -3875,6 +3958,7 @@ export type UserCreateWithoutProjectMembershipsInput = {
   technicalResponsibilities?: Prisma.TechnicalResponsibilityCreateNestedManyWithoutProfessionalInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  equipmentHeld?: Prisma.EquipmentMovementCreateNestedManyWithoutHolderUserInput
 }
 
 export type UserUncheckedCreateWithoutProjectMembershipsInput = {
@@ -3916,6 +4000,7 @@ export type UserUncheckedCreateWithoutProjectMembershipsInput = {
   technicalResponsibilities?: Prisma.TechnicalResponsibilityUncheckedCreateNestedManyWithoutProfessionalInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  equipmentHeld?: Prisma.EquipmentMovementUncheckedCreateNestedManyWithoutHolderUserInput
 }
 
 export type UserCreateOrConnectWithoutProjectMembershipsInput = {
@@ -3973,6 +4058,7 @@ export type UserUpdateWithoutProjectMembershipsInput = {
   technicalResponsibilities?: Prisma.TechnicalResponsibilityUpdateManyWithoutProfessionalNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  equipmentHeld?: Prisma.EquipmentMovementUpdateManyWithoutHolderUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutProjectMembershipsInput = {
@@ -4014,6 +4100,7 @@ export type UserUncheckedUpdateWithoutProjectMembershipsInput = {
   technicalResponsibilities?: Prisma.TechnicalResponsibilityUncheckedUpdateManyWithoutProfessionalNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  equipmentHeld?: Prisma.EquipmentMovementUncheckedUpdateManyWithoutHolderUserNestedInput
 }
 
 export type UserCreateWithoutTasksAssignedInput = {
@@ -4055,6 +4142,7 @@ export type UserCreateWithoutTasksAssignedInput = {
   technicalResponsibilities?: Prisma.TechnicalResponsibilityCreateNestedManyWithoutProfessionalInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  equipmentHeld?: Prisma.EquipmentMovementCreateNestedManyWithoutHolderUserInput
 }
 
 export type UserUncheckedCreateWithoutTasksAssignedInput = {
@@ -4096,6 +4184,7 @@ export type UserUncheckedCreateWithoutTasksAssignedInput = {
   technicalResponsibilities?: Prisma.TechnicalResponsibilityUncheckedCreateNestedManyWithoutProfessionalInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  equipmentHeld?: Prisma.EquipmentMovementUncheckedCreateNestedManyWithoutHolderUserInput
 }
 
 export type UserCreateOrConnectWithoutTasksAssignedInput = {
@@ -4153,6 +4242,7 @@ export type UserUpdateWithoutTasksAssignedInput = {
   technicalResponsibilities?: Prisma.TechnicalResponsibilityUpdateManyWithoutProfessionalNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  equipmentHeld?: Prisma.EquipmentMovementUpdateManyWithoutHolderUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutTasksAssignedInput = {
@@ -4194,6 +4284,7 @@ export type UserUncheckedUpdateWithoutTasksAssignedInput = {
   technicalResponsibilities?: Prisma.TechnicalResponsibilityUncheckedUpdateManyWithoutProfessionalNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  equipmentHeld?: Prisma.EquipmentMovementUncheckedUpdateManyWithoutHolderUserNestedInput
 }
 
 export type UserCreateWithoutTimeEntriesInput = {
@@ -4235,6 +4326,7 @@ export type UserCreateWithoutTimeEntriesInput = {
   technicalResponsibilities?: Prisma.TechnicalResponsibilityCreateNestedManyWithoutProfessionalInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  equipmentHeld?: Prisma.EquipmentMovementCreateNestedManyWithoutHolderUserInput
 }
 
 export type UserUncheckedCreateWithoutTimeEntriesInput = {
@@ -4276,6 +4368,7 @@ export type UserUncheckedCreateWithoutTimeEntriesInput = {
   technicalResponsibilities?: Prisma.TechnicalResponsibilityUncheckedCreateNestedManyWithoutProfessionalInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  equipmentHeld?: Prisma.EquipmentMovementUncheckedCreateNestedManyWithoutHolderUserInput
 }
 
 export type UserCreateOrConnectWithoutTimeEntriesInput = {
@@ -4333,6 +4426,7 @@ export type UserUpdateWithoutTimeEntriesInput = {
   technicalResponsibilities?: Prisma.TechnicalResponsibilityUpdateManyWithoutProfessionalNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  equipmentHeld?: Prisma.EquipmentMovementUpdateManyWithoutHolderUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutTimeEntriesInput = {
@@ -4374,6 +4468,7 @@ export type UserUncheckedUpdateWithoutTimeEntriesInput = {
   technicalResponsibilities?: Prisma.TechnicalResponsibilityUncheckedUpdateManyWithoutProfessionalNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  equipmentHeld?: Prisma.EquipmentMovementUncheckedUpdateManyWithoutHolderUserNestedInput
 }
 
 export type UserCreateWithoutTechnicalResponsibilitiesInput = {
@@ -4415,6 +4510,7 @@ export type UserCreateWithoutTechnicalResponsibilitiesInput = {
   timeEntries?: Prisma.TimeEntryCreateNestedManyWithoutUserInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  equipmentHeld?: Prisma.EquipmentMovementCreateNestedManyWithoutHolderUserInput
 }
 
 export type UserUncheckedCreateWithoutTechnicalResponsibilitiesInput = {
@@ -4456,6 +4552,7 @@ export type UserUncheckedCreateWithoutTechnicalResponsibilitiesInput = {
   timeEntries?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutUserInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  equipmentHeld?: Prisma.EquipmentMovementUncheckedCreateNestedManyWithoutHolderUserInput
 }
 
 export type UserCreateOrConnectWithoutTechnicalResponsibilitiesInput = {
@@ -4513,6 +4610,7 @@ export type UserUpdateWithoutTechnicalResponsibilitiesInput = {
   timeEntries?: Prisma.TimeEntryUpdateManyWithoutUserNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  equipmentHeld?: Prisma.EquipmentMovementUpdateManyWithoutHolderUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutTechnicalResponsibilitiesInput = {
@@ -4554,6 +4652,7 @@ export type UserUncheckedUpdateWithoutTechnicalResponsibilitiesInput = {
   timeEntries?: Prisma.TimeEntryUncheckedUpdateManyWithoutUserNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  equipmentHeld?: Prisma.EquipmentMovementUncheckedUpdateManyWithoutHolderUserNestedInput
 }
 
 export type UserCreateWithoutCommentsInput = {
@@ -4595,6 +4694,7 @@ export type UserCreateWithoutCommentsInput = {
   timeEntries?: Prisma.TimeEntryCreateNestedManyWithoutUserInput
   technicalResponsibilities?: Prisma.TechnicalResponsibilityCreateNestedManyWithoutProfessionalInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  equipmentHeld?: Prisma.EquipmentMovementCreateNestedManyWithoutHolderUserInput
 }
 
 export type UserUncheckedCreateWithoutCommentsInput = {
@@ -4636,6 +4736,7 @@ export type UserUncheckedCreateWithoutCommentsInput = {
   timeEntries?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutUserInput
   technicalResponsibilities?: Prisma.TechnicalResponsibilityUncheckedCreateNestedManyWithoutProfessionalInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  equipmentHeld?: Prisma.EquipmentMovementUncheckedCreateNestedManyWithoutHolderUserInput
 }
 
 export type UserCreateOrConnectWithoutCommentsInput = {
@@ -4693,6 +4794,7 @@ export type UserUpdateWithoutCommentsInput = {
   timeEntries?: Prisma.TimeEntryUpdateManyWithoutUserNestedInput
   technicalResponsibilities?: Prisma.TechnicalResponsibilityUpdateManyWithoutProfessionalNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  equipmentHeld?: Prisma.EquipmentMovementUpdateManyWithoutHolderUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutCommentsInput = {
@@ -4734,6 +4836,7 @@ export type UserUncheckedUpdateWithoutCommentsInput = {
   timeEntries?: Prisma.TimeEntryUncheckedUpdateManyWithoutUserNestedInput
   technicalResponsibilities?: Prisma.TechnicalResponsibilityUncheckedUpdateManyWithoutProfessionalNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  equipmentHeld?: Prisma.EquipmentMovementUncheckedUpdateManyWithoutHolderUserNestedInput
 }
 
 export type UserCreateWithoutNotificationsInput = {
@@ -4775,6 +4878,7 @@ export type UserCreateWithoutNotificationsInput = {
   timeEntries?: Prisma.TimeEntryCreateNestedManyWithoutUserInput
   technicalResponsibilities?: Prisma.TechnicalResponsibilityCreateNestedManyWithoutProfessionalInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
+  equipmentHeld?: Prisma.EquipmentMovementCreateNestedManyWithoutHolderUserInput
 }
 
 export type UserUncheckedCreateWithoutNotificationsInput = {
@@ -4816,6 +4920,7 @@ export type UserUncheckedCreateWithoutNotificationsInput = {
   timeEntries?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutUserInput
   technicalResponsibilities?: Prisma.TechnicalResponsibilityUncheckedCreateNestedManyWithoutProfessionalInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
+  equipmentHeld?: Prisma.EquipmentMovementUncheckedCreateNestedManyWithoutHolderUserInput
 }
 
 export type UserCreateOrConnectWithoutNotificationsInput = {
@@ -4873,6 +4978,7 @@ export type UserUpdateWithoutNotificationsInput = {
   timeEntries?: Prisma.TimeEntryUpdateManyWithoutUserNestedInput
   technicalResponsibilities?: Prisma.TechnicalResponsibilityUpdateManyWithoutProfessionalNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
+  equipmentHeld?: Prisma.EquipmentMovementUpdateManyWithoutHolderUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutNotificationsInput = {
@@ -4914,6 +5020,191 @@ export type UserUncheckedUpdateWithoutNotificationsInput = {
   timeEntries?: Prisma.TimeEntryUncheckedUpdateManyWithoutUserNestedInput
   technicalResponsibilities?: Prisma.TechnicalResponsibilityUncheckedUpdateManyWithoutProfessionalNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
+  equipmentHeld?: Prisma.EquipmentMovementUncheckedUpdateManyWithoutHolderUserNestedInput
+}
+
+export type UserCreateWithoutEquipmentHeldInput = {
+  id?: string
+  companyId: string
+  name: string
+  email: string
+  passwordHash: string
+  active?: boolean
+  mfaEnabled?: boolean
+  mfaSecret?: string | null
+  passwordChangedAt?: Date | string | null
+  lastLoginAt?: Date | string | null
+  hourlyCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  hourlyRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  creaCau?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  createdById?: string | null
+  updatedById?: string | null
+  deletedAt?: Date | string | null
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput
+  roles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
+  extraPermissions?: Prisma.UserPermissionCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
+  clientsOwned?: Prisma.ClientCreateNestedManyWithoutCommercialOwnerInput
+  opportunitiesCommercial?: Prisma.OpportunityCreateNestedManyWithoutCommercialOwnerInput
+  opportunitiesTechnical?: Prisma.OpportunityCreateNestedManyWithoutTechnicalOwnerInput
+  activities?: Prisma.OpportunityActivityCreateNestedManyWithoutResponsibleInput
+  budgetsCommercial?: Prisma.BudgetCreateNestedManyWithoutCommercialOwnerInput
+  budgetsTechnical?: Prisma.BudgetCreateNestedManyWithoutTechnicalOwnerInput
+  approvalsRequested?: Prisma.BudgetApprovalCreateNestedManyWithoutRequestedByInput
+  approvalsDecided?: Prisma.BudgetApprovalCreateNestedManyWithoutDecidedByInput
+  projectsLed?: Prisma.ProjectCreateNestedManyWithoutTechnicalLeadInput
+  projectsCoordinated?: Prisma.ProjectCreateNestedManyWithoutCoordinatorInput
+  projectMemberships?: Prisma.ProjectMemberCreateNestedManyWithoutUserInput
+  tasksAssigned?: Prisma.TaskCreateNestedManyWithoutAssigneeInput
+  timeEntries?: Prisma.TimeEntryCreateNestedManyWithoutUserInput
+  technicalResponsibilities?: Prisma.TechnicalResponsibilityCreateNestedManyWithoutProfessionalInput
+  comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutEquipmentHeldInput = {
+  id?: string
+  companyId: string
+  name: string
+  email: string
+  passwordHash: string
+  active?: boolean
+  mfaEnabled?: boolean
+  mfaSecret?: string | null
+  passwordChangedAt?: Date | string | null
+  lastLoginAt?: Date | string | null
+  hourlyCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  hourlyRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  creaCau?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  createdById?: string | null
+  updatedById?: string | null
+  deletedAt?: Date | string | null
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
+  roles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
+  extraPermissions?: Prisma.UserPermissionUncheckedCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
+  clientsOwned?: Prisma.ClientUncheckedCreateNestedManyWithoutCommercialOwnerInput
+  opportunitiesCommercial?: Prisma.OpportunityUncheckedCreateNestedManyWithoutCommercialOwnerInput
+  opportunitiesTechnical?: Prisma.OpportunityUncheckedCreateNestedManyWithoutTechnicalOwnerInput
+  activities?: Prisma.OpportunityActivityUncheckedCreateNestedManyWithoutResponsibleInput
+  budgetsCommercial?: Prisma.BudgetUncheckedCreateNestedManyWithoutCommercialOwnerInput
+  budgetsTechnical?: Prisma.BudgetUncheckedCreateNestedManyWithoutTechnicalOwnerInput
+  approvalsRequested?: Prisma.BudgetApprovalUncheckedCreateNestedManyWithoutRequestedByInput
+  approvalsDecided?: Prisma.BudgetApprovalUncheckedCreateNestedManyWithoutDecidedByInput
+  projectsLed?: Prisma.ProjectUncheckedCreateNestedManyWithoutTechnicalLeadInput
+  projectsCoordinated?: Prisma.ProjectUncheckedCreateNestedManyWithoutCoordinatorInput
+  projectMemberships?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutUserInput
+  tasksAssigned?: Prisma.TaskUncheckedCreateNestedManyWithoutAssigneeInput
+  timeEntries?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutUserInput
+  technicalResponsibilities?: Prisma.TechnicalResponsibilityUncheckedCreateNestedManyWithoutProfessionalInput
+  comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutEquipmentHeldInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutEquipmentHeldInput, Prisma.UserUncheckedCreateWithoutEquipmentHeldInput>
+}
+
+export type UserUpsertWithoutEquipmentHeldInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutEquipmentHeldInput, Prisma.UserUncheckedUpdateWithoutEquipmentHeldInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutEquipmentHeldInput, Prisma.UserUncheckedCreateWithoutEquipmentHeldInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutEquipmentHeldInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutEquipmentHeldInput, Prisma.UserUncheckedUpdateWithoutEquipmentHeldInput>
+}
+
+export type UserUpdateWithoutEquipmentHeldInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  companyId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  mfaSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  hourlyCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  hourlyRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput
+  roles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
+  extraPermissions?: Prisma.UserPermissionUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
+  clientsOwned?: Prisma.ClientUpdateManyWithoutCommercialOwnerNestedInput
+  opportunitiesCommercial?: Prisma.OpportunityUpdateManyWithoutCommercialOwnerNestedInput
+  opportunitiesTechnical?: Prisma.OpportunityUpdateManyWithoutTechnicalOwnerNestedInput
+  activities?: Prisma.OpportunityActivityUpdateManyWithoutResponsibleNestedInput
+  budgetsCommercial?: Prisma.BudgetUpdateManyWithoutCommercialOwnerNestedInput
+  budgetsTechnical?: Prisma.BudgetUpdateManyWithoutTechnicalOwnerNestedInput
+  approvalsRequested?: Prisma.BudgetApprovalUpdateManyWithoutRequestedByNestedInput
+  approvalsDecided?: Prisma.BudgetApprovalUpdateManyWithoutDecidedByNestedInput
+  projectsLed?: Prisma.ProjectUpdateManyWithoutTechnicalLeadNestedInput
+  projectsCoordinated?: Prisma.ProjectUpdateManyWithoutCoordinatorNestedInput
+  projectMemberships?: Prisma.ProjectMemberUpdateManyWithoutUserNestedInput
+  tasksAssigned?: Prisma.TaskUpdateManyWithoutAssigneeNestedInput
+  timeEntries?: Prisma.TimeEntryUpdateManyWithoutUserNestedInput
+  technicalResponsibilities?: Prisma.TechnicalResponsibilityUpdateManyWithoutProfessionalNestedInput
+  comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutEquipmentHeldInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  companyId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  mfaSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  hourlyCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  hourlyRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
+  roles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
+  extraPermissions?: Prisma.UserPermissionUncheckedUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+  clientsOwned?: Prisma.ClientUncheckedUpdateManyWithoutCommercialOwnerNestedInput
+  opportunitiesCommercial?: Prisma.OpportunityUncheckedUpdateManyWithoutCommercialOwnerNestedInput
+  opportunitiesTechnical?: Prisma.OpportunityUncheckedUpdateManyWithoutTechnicalOwnerNestedInput
+  activities?: Prisma.OpportunityActivityUncheckedUpdateManyWithoutResponsibleNestedInput
+  budgetsCommercial?: Prisma.BudgetUncheckedUpdateManyWithoutCommercialOwnerNestedInput
+  budgetsTechnical?: Prisma.BudgetUncheckedUpdateManyWithoutTechnicalOwnerNestedInput
+  approvalsRequested?: Prisma.BudgetApprovalUncheckedUpdateManyWithoutRequestedByNestedInput
+  approvalsDecided?: Prisma.BudgetApprovalUncheckedUpdateManyWithoutDecidedByNestedInput
+  projectsLed?: Prisma.ProjectUncheckedUpdateManyWithoutTechnicalLeadNestedInput
+  projectsCoordinated?: Prisma.ProjectUncheckedUpdateManyWithoutCoordinatorNestedInput
+  projectMemberships?: Prisma.ProjectMemberUncheckedUpdateManyWithoutUserNestedInput
+  tasksAssigned?: Prisma.TaskUncheckedUpdateManyWithoutAssigneeNestedInput
+  timeEntries?: Prisma.TimeEntryUncheckedUpdateManyWithoutUserNestedInput
+  technicalResponsibilities?: Prisma.TechnicalResponsibilityUncheckedUpdateManyWithoutProfessionalNestedInput
+  comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
 }
 
 
@@ -4943,6 +5234,7 @@ export type UserCountOutputType = {
   technicalResponsibilities: number
   comments: number
   notifications: number
+  equipmentHeld: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -4967,6 +5259,7 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   technicalResponsibilities?: boolean | UserCountOutputTypeCountTechnicalResponsibilitiesArgs
   comments?: boolean | UserCountOutputTypeCountCommentsArgs
   notifications?: boolean | UserCountOutputTypeCountNotificationsArgs
+  equipmentHeld?: boolean | UserCountOutputTypeCountEquipmentHeldArgs
 }
 
 /**
@@ -5126,6 +5419,13 @@ export type UserCountOutputTypeCountNotificationsArgs<ExtArgs extends runtime.Ty
   where?: Prisma.NotificationWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountEquipmentHeldArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.EquipmentMovementWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -5167,6 +5467,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   technicalResponsibilities?: boolean | Prisma.User$technicalResponsibilitiesArgs<ExtArgs>
   comments?: boolean | Prisma.User$commentsArgs<ExtArgs>
   notifications?: boolean | Prisma.User$notificationsArgs<ExtArgs>
+  equipmentHeld?: boolean | Prisma.User$equipmentHeldArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -5256,6 +5557,7 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   technicalResponsibilities?: boolean | Prisma.User$technicalResponsibilitiesArgs<ExtArgs>
   comments?: boolean | Prisma.User$commentsArgs<ExtArgs>
   notifications?: boolean | Prisma.User$notificationsArgs<ExtArgs>
+  equipmentHeld?: boolean | Prisma.User$equipmentHeldArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -5285,6 +5587,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     technicalResponsibilities: Prisma.$TechnicalResponsibilityPayload<ExtArgs>[]
     comments: Prisma.$CommentPayload<ExtArgs>[]
     notifications: Prisma.$NotificationPayload<ExtArgs>[]
+    equipmentHeld: Prisma.$EquipmentMovementPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -5720,6 +6023,7 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   technicalResponsibilities<T extends Prisma.User$technicalResponsibilitiesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$technicalResponsibilitiesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TechnicalResponsibilityPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   comments<T extends Prisma.User$commentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$commentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CommentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   notifications<T extends Prisma.User$notificationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$notificationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  equipmentHeld<T extends Prisma.User$equipmentHeldArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$equipmentHeldArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EquipmentMovementPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -6661,6 +6965,30 @@ export type User$notificationsArgs<ExtArgs extends runtime.Types.Extensions.Inte
   take?: number
   skip?: number
   distinct?: Prisma.NotificationScalarFieldEnum | Prisma.NotificationScalarFieldEnum[]
+}
+
+/**
+ * User.equipmentHeld
+ */
+export type User$equipmentHeldArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the EquipmentMovement
+   */
+  select?: Prisma.EquipmentMovementSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the EquipmentMovement
+   */
+  omit?: Prisma.EquipmentMovementOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.EquipmentMovementInclude<ExtArgs> | null
+  where?: Prisma.EquipmentMovementWhereInput
+  orderBy?: Prisma.EquipmentMovementOrderByWithRelationInput | Prisma.EquipmentMovementOrderByWithRelationInput[]
+  cursor?: Prisma.EquipmentMovementWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.EquipmentMovementScalarFieldEnum | Prisma.EquipmentMovementScalarFieldEnum[]
 }
 
 /**

@@ -68,8 +68,12 @@ export const inputCls =
 export const labelCls = 'mb-1 block text-sm font-medium text-slate-700';
 
 export function Field({
-  label, htmlFor, required, children, className = '',
-}: { label: string; htmlFor?: string; required?: boolean; children: ReactNode; className?: string }) {
+  label, htmlFor, required, children, className = '', hint,
+}: {
+  label: string; htmlFor?: string; required?: boolean; children: ReactNode; className?: string;
+  /** Explicação curta abaixo do campo, para o que não é óbvio pelo rótulo. */
+  hint?: string;
+}) {
   return (
     <div className={className}>
       <label htmlFor={htmlFor} className={labelCls}>
@@ -77,6 +81,7 @@ export function Field({
         {required ? <span className="text-red-500"> *</span> : null}
       </label>
       {children}
+      {hint ? <p className="mt-1 text-[11px] text-slate-500">{hint}</p> : null}
     </div>
   );
 }

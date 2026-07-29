@@ -107,7 +107,9 @@ export const ModelName = {
   CollectionEvent: 'CollectionEvent',
   Notification: 'Notification',
   ImportJob: 'ImportJob',
-  ImportError: 'ImportError'
+  ImportError: 'ImportError',
+  Equipment: 'Equipment',
+  EquipmentMovement: 'EquipmentMovement'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -1217,6 +1219,55 @@ export const ImportErrorScalarFieldEnum = {
 } as const
 
 export type ImportErrorScalarFieldEnum = (typeof ImportErrorScalarFieldEnum)[keyof typeof ImportErrorScalarFieldEnum]
+
+
+export const EquipmentScalarFieldEnum = {
+  id: 'id',
+  companyId: 'companyId',
+  code: 'code',
+  name: 'name',
+  brand: 'brand',
+  model: 'model',
+  serialNumber: 'serialNumber',
+  category: 'category',
+  status: 'status',
+  purchaseDate: 'purchaseDate',
+  purchaseValue: 'purchaseValue',
+  calibrationDueAt: 'calibrationDueAt',
+  homeLocation: 'homeLocation',
+  notes: 'notes',
+  active: 'active',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt'
+} as const
+
+export type EquipmentScalarFieldEnum = (typeof EquipmentScalarFieldEnum)[keyof typeof EquipmentScalarFieldEnum]
+
+
+export const EquipmentMovementScalarFieldEnum = {
+  id: 'id',
+  companyId: 'companyId',
+  equipmentId: 'equipmentId',
+  kind: 'kind',
+  projectId: 'projectId',
+  clientId: 'clientId',
+  holderUserId: 'holderUserId',
+  holderName: 'holderName',
+  destination: 'destination',
+  checkedOutAt: 'checkedOutAt',
+  expectedReturnAt: 'expectedReturnAt',
+  conditionOut: 'conditionOut',
+  returnedAt: 'returnedAt',
+  conditionIn: 'conditionIn',
+  notes: 'notes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  checkedOutById: 'checkedOutById',
+  returnedById: 'returnedById'
+} as const
+
+export type EquipmentMovementScalarFieldEnum = (typeof EquipmentMovementScalarFieldEnum)[keyof typeof EquipmentMovementScalarFieldEnum]
 
 
 export const SortOrder = {

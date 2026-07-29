@@ -783,6 +783,40 @@ export type EnumImportStatusWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedEnumImportStatusFilter<$PrismaModel>
 }
 
+export type EnumEquipmentStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.EquipmentStatus | Prisma.EnumEquipmentStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.EquipmentStatus[] | Prisma.ListEnumEquipmentStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.EquipmentStatus[] | Prisma.ListEnumEquipmentStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumEquipmentStatusFilter<$PrismaModel> | $Enums.EquipmentStatus
+}
+
+export type EnumEquipmentStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.EquipmentStatus | Prisma.EnumEquipmentStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.EquipmentStatus[] | Prisma.ListEnumEquipmentStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.EquipmentStatus[] | Prisma.ListEnumEquipmentStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumEquipmentStatusWithAggregatesFilter<$PrismaModel> | $Enums.EquipmentStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumEquipmentStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumEquipmentStatusFilter<$PrismaModel>
+}
+
+export type EnumEquipmentMovementKindFilter<$PrismaModel = never> = {
+  equals?: $Enums.EquipmentMovementKind | Prisma.EnumEquipmentMovementKindFieldRefInput<$PrismaModel>
+  in?: $Enums.EquipmentMovementKind[] | Prisma.ListEnumEquipmentMovementKindFieldRefInput<$PrismaModel>
+  notIn?: $Enums.EquipmentMovementKind[] | Prisma.ListEnumEquipmentMovementKindFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumEquipmentMovementKindFilter<$PrismaModel> | $Enums.EquipmentMovementKind
+}
+
+export type EnumEquipmentMovementKindWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.EquipmentMovementKind | Prisma.EnumEquipmentMovementKindFieldRefInput<$PrismaModel>
+  in?: $Enums.EquipmentMovementKind[] | Prisma.ListEnumEquipmentMovementKindFieldRefInput<$PrismaModel>
+  notIn?: $Enums.EquipmentMovementKind[] | Prisma.ListEnumEquipmentMovementKindFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumEquipmentMovementKindWithAggregatesFilter<$PrismaModel> | $Enums.EquipmentMovementKind
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumEquipmentMovementKindFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumEquipmentMovementKindFilter<$PrismaModel>
+}
+
 export type NestedStringFilter<$PrismaModel = never> = {
   equals?: string | Prisma.StringFieldRefInput<$PrismaModel>
   in?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
@@ -1509,6 +1543,40 @@ export type NestedEnumImportStatusWithAggregatesFilter<$PrismaModel = never> = {
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumImportStatusFilter<$PrismaModel>
   _max?: Prisma.NestedEnumImportStatusFilter<$PrismaModel>
+}
+
+export type NestedEnumEquipmentStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.EquipmentStatus | Prisma.EnumEquipmentStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.EquipmentStatus[] | Prisma.ListEnumEquipmentStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.EquipmentStatus[] | Prisma.ListEnumEquipmentStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumEquipmentStatusFilter<$PrismaModel> | $Enums.EquipmentStatus
+}
+
+export type NestedEnumEquipmentStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.EquipmentStatus | Prisma.EnumEquipmentStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.EquipmentStatus[] | Prisma.ListEnumEquipmentStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.EquipmentStatus[] | Prisma.ListEnumEquipmentStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumEquipmentStatusWithAggregatesFilter<$PrismaModel> | $Enums.EquipmentStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumEquipmentStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumEquipmentStatusFilter<$PrismaModel>
+}
+
+export type NestedEnumEquipmentMovementKindFilter<$PrismaModel = never> = {
+  equals?: $Enums.EquipmentMovementKind | Prisma.EnumEquipmentMovementKindFieldRefInput<$PrismaModel>
+  in?: $Enums.EquipmentMovementKind[] | Prisma.ListEnumEquipmentMovementKindFieldRefInput<$PrismaModel>
+  notIn?: $Enums.EquipmentMovementKind[] | Prisma.ListEnumEquipmentMovementKindFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumEquipmentMovementKindFilter<$PrismaModel> | $Enums.EquipmentMovementKind
+}
+
+export type NestedEnumEquipmentMovementKindWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.EquipmentMovementKind | Prisma.EnumEquipmentMovementKindFieldRefInput<$PrismaModel>
+  in?: $Enums.EquipmentMovementKind[] | Prisma.ListEnumEquipmentMovementKindFieldRefInput<$PrismaModel>
+  notIn?: $Enums.EquipmentMovementKind[] | Prisma.ListEnumEquipmentMovementKindFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumEquipmentMovementKindWithAggregatesFilter<$PrismaModel> | $Enums.EquipmentMovementKind
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumEquipmentMovementKindFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumEquipmentMovementKindFilter<$PrismaModel>
 }
 
 
