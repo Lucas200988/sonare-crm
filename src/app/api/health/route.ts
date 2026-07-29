@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/server/db';
 import { storageInfo, checkStorageAccess } from '@/server/storage';
 import { appUrl } from '@/server/signature';
+import { mailInfo } from '@/server/mail';
 
 /**
  * Diagnóstico do ambiente. Útil após publicar para confirmar que banco,
@@ -35,6 +36,9 @@ export async function GET() {
     ? { ...storage, bucket: acesso.bucket, gravacao: 'ok' }
     : { ...storage, gravacao: 'falhou', erro: acesso.erro };
   if (!storage.configured || !acesso.ok) healthy = false;
+
+  const email = mailInfo();
+  checks.email = { driver: email.driver, pronto: email.pronto, remetente: email.from };
 
   const url = appUrl();
   checks.appUrl = url;

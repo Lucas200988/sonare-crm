@@ -24,17 +24,66 @@ function smtpConfigurado(): boolean {
   return Boolean(process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS);
 }
 
+function resendConfigurado(): boolean {
+  return Boolean(process.env.RESEND_API_KEY);
+}
+
+/**
+ * Destino escolhido. O Resend vem primeiro porque o Gmail passou a exigir
+ * OAuth em SMTP (senhas de app dependem de liberação do administrador),
+ * o que não se sustenta num servidor que apenas dispara mensagens.
+ */
 export function mailInfo() {
-  const driver = process.env.MAIL_DRIVER === 'smtp' && smtpConfigurado()
-    ? ('smtp' as const)
+  const escolhido = process.env.MAIL_DRIVER;
+  const driver =
+    escolhido === 'resend' && resendConfigurado() ? ('resend' as const)
+    : escolhido === 'smtp' && smtpConfigurado() ? ('smtp' as const)
+    : resendConfigurado() ? ('resend' as const)
+    : smtpConfigurado() ? ('smtp' as const)
     : ('console' as const);
+
   return {
     driver,
     host: driver === 'smtp' ? process.env.SMTP_HOST ?? null : null,
-    from: process.env.MAIL_FROM ?? 'SONARE Engenharia <nao-responda@sonareengenharia.com.br>',
-    /** Pedido de envio sem SMTP: a mensagem não sai da máquina. */
-    pronto: driver === 'smtp',
+    from: process.env.MAIL_FROM ?? 'SONARE Engenharia <nao-responda@sonare.com.br>',
+    /** Sem destino real configurado, a mensagem não sai da máquina. */
+    pronto: driver !== 'console',
   };
+}
+
+/** Envio pela API do Resend — só uma chave, sem SMTP nem OAuth. */
+async function enviarPeloResend(msg: Mensagem, from: string): Promise<{ ok: true } | { error: string }> {
+  try {
+    const res = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        from,
+        to: [msg.para],
+        subject: msg.assunto,
+        text: msg.texto,
+        html: msg.html,
+        attachments: msg.anexos?.map((a) => ({
+          filename: a.filename,
+          content: a.content.toString('base64'),
+        })),
+      }),
+      signal: AbortSignal.timeout(20_000),
+    });
+
+    if (!res.ok) {
+      const corpo = await res.text();
+      // A causa mais comum é domínio ainda não verificado no painel
+      return { error: `Resend ${res.status}: ${corpo.slice(0, 200)}` };
+    }
+    return { ok: true };
+  } catch (e) {
+    const detalhe = e instanceof Error ? e.message : 'falha desconhecida';
+    return { error: `Não foi possível enviar o e-mail: ${detalhe}` };
+  }
 }
 
 function transporte() {
@@ -53,11 +102,13 @@ export async function enviarEmail(msg: Mensagem): Promise<{ ok: true } | { error
 
   if (info.driver === 'console') {
     console.info(
-      `[e-mail não enviado — MAIL_DRIVER=console]\n`
+      `[e-mail não enviado — nenhum provedor configurado]\n`
       + `Para: ${msg.para}\nAssunto: ${msg.assunto}\n\n${msg.texto}\n`,
     );
     return { ok: true };
   }
+
+  if (info.driver === 'resend') return enviarPeloResend(msg, info.from);
 
   try {
     await transporte().sendMail({
