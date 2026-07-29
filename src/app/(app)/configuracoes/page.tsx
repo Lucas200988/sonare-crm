@@ -11,17 +11,22 @@ import {
   SimpleCatalogSection, StagesSection, ServicesSection, RetentionsSection,
 } from './sections';
 import { AiSection } from './ai-section';
+import { ContractTemplatesSection, type ClausulaEditavel } from './contract-templates-section';
 
 export const metadata: Metadata = { title: 'Configurações — SONARE CRM' };
 
 export default async function SettingsPage() {
   const user = await requirePermissionPage('settings:manage');
-  const [{ leadSources, lossReasons, stages, services, paymentMethods, retentions }, aiStatus, company, allSettings] =
+  const [{ leadSources, lossReasons, stages, services, paymentMethods, retentions }, aiStatus, company, allSettings, contractTemplates] =
     await Promise.all([
       listCatalogs(user),
       getAiStatusAction(),
       prisma.company.findUniqueOrThrow({ where: { id: user.companyId } }),
       prisma.systemSetting.findMany({ where: { companyId: user.companyId } }),
+      prisma.contractTemplate.findMany({
+        where: { companyId: user.companyId, active: true },
+        orderBy: { name: 'asc' },
+      }),
     ]);
 
   const setting = (key: string) => allSettings.find((s) => s.key === key)?.value ?? null;
@@ -90,6 +95,19 @@ export default async function SettingsPage() {
           <RetentionsSection
             retentions={retentions.map((r) => ({
               id: r.id, code: r.code, name: r.name, percent: r.percent.toString(), active: r.active,
+            }))}
+          />
+        </Card>
+
+        <Card className="p-5 lg:col-span-2">
+          <ContractTemplatesSection
+            templates={contractTemplates.map((t) => ({
+              id: t.id, name: t.name, kind: t.kind,
+              preamble: t.preamble ?? '',
+              clauses: (t.clauses as unknown as Array<{ title: string; paragraphs?: string[]; items?: string[] }>)
+                .map((c): ClausulaEditavel => ({
+                  title: c.title, paragraphs: c.paragraphs ?? [], items: c.items ?? [],
+                })),
             }))}
           />
         </Card>

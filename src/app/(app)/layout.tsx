@@ -5,6 +5,7 @@ import { logoutAction } from '@/actions/auth';
 import { NAV_ITEMS } from '@/config/navigation';
 import { SidebarNav, type SidebarItem } from '@/components/sidebar-nav';
 import { GlobalSearch } from '@/components/global-search';
+import { MobileNav } from '@/components/mobile-nav';
 
 export default async function AppLayout({ children }: { children: ReactNode }) {
   const user = await requireAuth();
@@ -43,6 +44,21 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
         </div>
       </aside>
       <div className="flex min-h-screen w-full flex-col lg:pl-60">
+        <MobileNav
+          items={items}
+          userName={user.name}
+          userEmail={user.email}
+          logout={
+            <form action={logoutAction}>
+              <button
+                type="submit"
+                className="flex w-full items-center justify-center gap-2 rounded-lg border border-slate-700 px-3 py-1.5 text-xs font-medium text-slate-300 transition hover:bg-slate-800"
+              >
+                <LogOut className="h-3.5 w-3.5" aria-hidden /> Sair
+              </button>
+            </form>
+          }
+        />
         <main className="flex-1 px-4 py-6 sm:px-6 lg:px-8">{children}</main>
       </div>
     </div>

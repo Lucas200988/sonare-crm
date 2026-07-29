@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
@@ -15,6 +15,16 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "SONARE CRM",
   description: "Sistema de gestão comercial, técnica e financeira da SONARE Engenharia",
+  // Instalável no celular; ao abrir pelo ícone roda em tela cheia
+  appleWebApp: { capable: true, title: "SONARE", statusBarStyle: "black-translucent" },
+};
+
+// Impede o zoom automático do iOS ao focar campos e respeita a área segura
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  themeColor: "#020617",
 };
 
 export default function RootLayout({
