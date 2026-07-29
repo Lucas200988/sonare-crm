@@ -1,6 +1,6 @@
 'use client';
 
-import { useActionState, useState } from 'react';
+import { Fragment, useActionState, useState } from 'react';
 import { Plus } from 'lucide-react';
 import {
   addCatalogItemAction, toggleCatalogItemAction, addStageAction, toggleStageAction,
@@ -8,6 +8,7 @@ import {
 } from '@/actions/catalogs';
 import { inputCls, FormError } from '@/components/ui';
 import { formatBRL } from '@/lib/money';
+import { formatDecimalBR } from '@/lib/parse';
 
 type SimpleItem = { id: string; name: string; active: boolean };
 
@@ -103,20 +104,77 @@ export function StagesSection({ stages }: { stages: StageItem[] }) {
 
 type ServiceItem = {
   id: string; code: string; name: string; category: string | null;
-  unit: string | null; defaultPrice: string | null; active: boolean;
+  unit: string | null; defaultPrice: string | null; estimatedCost: string | null;
+  scopeTemplate: string | null; premisesTemplate: string | null;
+  exclusionsTemplate: string | null; active: boolean;
 };
 
-export function ServicesSection({ services }: { services: ServiceItem[] }) {
-  const [showForm, setShowForm] = useState(false);
-  const action = saveServiceAction.bind(null, null);
+const textareaCls = `${inputCls} min-h-[90px] resize-y`;
+
+/**
+ * Formulário de um serviço do catálogo — o mesmo para criar e para editar.
+ *
+ * É aqui que entram o preço base e os textos padrão de escopo, premissas e
+ * exclusões: sem eles, escolher o serviço no orçamento não preenche nada.
+ */
+function ServiceForm({ service, onDone }: { service: ServiceItem | null; onDone: () => void }) {
+  const action = saveServiceAction.bind(null, service?.id ?? null);
   const [state, formAction, pending] = useActionState<ActionState, FormData>(
     async (prev, fd) => {
       const result = await action(prev, fd);
-      if (!result.error) setShowForm(false);
+      if (!result.error) onDone();
       return result;
     },
     {},
   );
+
+  return (
+    <form action={formAction} className="grid grid-cols-2 gap-2 rounded-lg border border-slate-200 bg-slate-50 p-3 sm:grid-cols-6">
+      <input name="code" placeholder="Código" required defaultValue={service?.code} className={inputCls} aria-label="Código" />
+      <input name="name" placeholder="Nome do serviço" required defaultValue={service?.name} className={`${inputCls} sm:col-span-3`} aria-label="Nome" />
+      <input name="category" placeholder="Categoria" defaultValue={service?.category ?? ''} className={inputCls} aria-label="Categoria" />
+      <input name="unit" placeholder="Unidade (un, m², h)" defaultValue={service?.unit ?? ''} className={inputCls} aria-label="Unidade" />
+      <input name="defaultPrice" placeholder="Preço base" inputMode="decimal" defaultValue={service?.defaultPrice ? formatDecimalBR(service.defaultPrice) : ''} className={`${inputCls} sm:col-span-3`} aria-label="Preço base" />
+      <input name="estimatedCost" placeholder="Custo estimado" inputMode="decimal" defaultValue={service?.estimatedCost ? formatDecimalBR(service.estimatedCost) : ''} className={`${inputCls} sm:col-span-3`} aria-label="Custo estimado" />
+
+      <div className="col-span-2 sm:col-span-6">
+        <p className="mb-2 text-xs text-slate-500">
+          Os textos abaixo entram sozinhos no orçamento quando este serviço é escolhido —
+          desde que o campo correspondente ainda esteja em branco.
+        </p>
+        <div className="grid gap-2 sm:grid-cols-3">
+          <label className="text-xs font-medium text-slate-600">
+            Escopo padrão
+            <textarea name="scopeTemplate" defaultValue={service?.scopeTemplate ?? ''} className={textareaCls} placeholder="Uma linha por item do escopo…" />
+          </label>
+          <label className="text-xs font-medium text-slate-600">
+            Premissas
+            <textarea name="premisesTemplate" defaultValue={service?.premisesTemplate ?? ''} className={textareaCls} placeholder="O que assumimos para este serviço…" />
+          </label>
+          <label className="text-xs font-medium text-slate-600">
+            Exclusões
+            <textarea name="exclusionsTemplate" defaultValue={service?.exclusionsTemplate ?? ''} className={textareaCls} placeholder="O que NÃO está incluso…" />
+          </label>
+        </div>
+      </div>
+
+      <div className="col-span-2 flex items-center gap-2 sm:col-span-6">
+        <button type="submit" disabled={pending} className="rounded-lg bg-slate-900 px-4 py-1.5 text-sm font-semibold text-white hover:bg-slate-700 disabled:opacity-60">
+          {pending ? 'Salvando…' : 'Salvar serviço'}
+        </button>
+        <button type="button" onClick={onDone} className="rounded-lg border border-slate-300 px-3 py-1.5 text-sm text-slate-600 hover:bg-slate-100">
+          Cancelar
+        </button>
+        <FormError message={state.error} />
+      </div>
+    </form>
+  );
+}
+
+export function ServicesSection({ services }: { services: ServiceItem[] }) {
+  // `null` = nada aberto; `'novo'` = criando; caso contrário, o id em edição.
+  const [aberto, setAberto] = useState<string | null>(null);
+  const semPreco = services.filter((s) => s.active && !s.defaultPrice).length;
 
   return (
     <div>
@@ -124,56 +182,77 @@ export function ServicesSection({ services }: { services: ServiceItem[] }) {
         <h2 className="text-base font-semibold text-slate-900">Catálogo de serviços ({services.length})</h2>
         <button
           type="button"
-          onClick={() => setShowForm(!showForm)}
+          onClick={() => setAberto(aberto === 'novo' ? null : 'novo')}
           className="inline-flex items-center gap-1 rounded-lg border border-slate-300 px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-100"
         >
-          <Plus className="h-3.5 w-3.5" aria-hidden /> {showForm ? 'Fechar' : 'Novo serviço'}
+          <Plus className="h-3.5 w-3.5" aria-hidden /> {aberto === 'novo' ? 'Fechar' : 'Novo serviço'}
         </button>
       </div>
 
-      {showForm ? (
-        <form action={formAction} className="mt-3 grid grid-cols-2 gap-2 rounded-lg border border-slate-200 bg-slate-50 p-3 sm:grid-cols-5">
-          <input name="code" placeholder="Código" required className={inputCls} aria-label="Código" />
-          <input name="name" placeholder="Nome do serviço" required className={`${inputCls} sm:col-span-2`} aria-label="Nome" />
-          <input name="category" placeholder="Categoria" className={inputCls} aria-label="Categoria" />
-          <input name="defaultPrice" placeholder="Preço base" inputMode="decimal" className={inputCls} aria-label="Preço base" />
-          <div className="col-span-2 sm:col-span-5">
-            <FormError message={state.error} />
-            <button type="submit" disabled={pending} className="mt-1 rounded-lg bg-slate-900 px-4 py-1.5 text-sm font-semibold text-white hover:bg-slate-700 disabled:opacity-60">
-              {pending ? 'Salvando…' : 'Salvar serviço'}
-            </button>
-          </div>
-        </form>
+      {semPreco > 0 ? (
+        <p className="mt-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800">
+          {semPreco} serviço(s) ainda sem preço base. Enquanto isso, escolher o serviço no
+          orçamento não sugere valor nenhum.
+        </p>
+      ) : null}
+
+      {aberto === 'novo' ? (
+        <div className="mt-3">
+          <ServiceForm service={null} onDone={() => setAberto(null)} />
+        </div>
       ) : null}
 
       <div className="mt-3 overflow-x-auto">
-        <table className="w-full min-w-[560px] text-left text-sm">
+        <table className="w-full min-w-[640px] text-left text-sm">
           <thead className="border-b border-slate-200 text-xs uppercase tracking-wide text-slate-500">
             <tr>
               <th className="py-2 pr-3 font-medium">Código</th>
               <th className="py-2 pr-3 font-medium">Serviço</th>
-              <th className="py-2 pr-3 font-medium">Categoria</th>
               <th className="py-2 pr-3 font-medium">Preço base</th>
-              <th className="py-2 font-medium">Status</th>
+              <th className="py-2 pr-3 font-medium">Escopo padrão</th>
+              <th className="py-2 font-medium">Ações</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
             {services.map((s) => (
-              <tr key={s.id} className={s.active ? '' : 'opacity-50'}>
-                <td className="py-2 pr-3 font-mono text-xs">{s.code}</td>
-                <td className="py-2 pr-3">{s.name}</td>
-                <td className="py-2 pr-3 text-slate-500">{s.category ?? '—'}</td>
-                <td className="py-2 pr-3">{s.defaultPrice ? formatBRL(s.defaultPrice) : '—'}</td>
-                <td className="py-2">
-                  <button
-                    type="button"
-                    onClick={() => void toggleServiceAction(s.id, !s.active)}
-                    className="rounded px-2 py-0.5 text-xs font-medium text-slate-500 hover:bg-slate-100"
-                  >
-                    {s.active ? 'Desativar' : 'Reativar'}
-                  </button>
-                </td>
-              </tr>
+              <Fragment key={s.id}>
+                <tr className={s.active ? '' : 'opacity-50'}>
+                  <td className="py-2 pr-3 font-mono text-xs">{s.code}</td>
+                  <td className="py-2 pr-3">
+                    {s.name}
+                    {s.category ? <span className="ml-1 text-xs text-slate-400">· {s.category}</span> : null}
+                  </td>
+                  <td className="py-2 pr-3">{s.defaultPrice ? formatBRL(s.defaultPrice) : <span className="text-amber-600">—</span>}</td>
+                  <td className="py-2 pr-3 text-xs">
+                    {s.scopeTemplate
+                      ? <span className="text-emerald-700">cadastrado</span>
+                      : <span className="text-slate-400">—</span>}
+                  </td>
+                  <td className="py-2">
+                    <button
+                      type="button"
+                      onClick={() => setAberto(aberto === s.id ? null : s.id)}
+                      className="rounded px-2 py-0.5 text-xs font-medium text-slate-700 hover:bg-slate-100"
+                    >
+                      {aberto === s.id ? 'Fechar' : 'Editar'}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => void toggleServiceAction(s.id, !s.active)}
+                      className="rounded px-2 py-0.5 text-xs font-medium text-slate-500 hover:bg-slate-100"
+                    >
+                      {s.active ? 'Desativar' : 'Reativar'}
+                    </button>
+                  </td>
+                </tr>
+                {aberto === s.id ? (
+                  <tr>
+                    <td colSpan={5} className="py-2">
+                      <ServiceForm service={s} onDone={() => setAberto(null)} />
+                    </td>
+                  </tr>
+                ) : null}
+              </Fragment>
             ))}
           </tbody>
         </table>

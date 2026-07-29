@@ -49,6 +49,14 @@ export type AplicacaoServico = {
   textos: TextosOrcamento | null;
   /** Mensagem para o usuário entender o que foi preenchido sozinho. */
   aviso: string | null;
+  /** `true` quando o serviço não tinha preço nem escopo para oferecer. */
+  semCadastro: boolean;
+};
+
+/** Valores que o item já tinha, para não perdê-los quando o catálogo é omisso. */
+export type ItemAtual = {
+  unitPrice: string;
+  unitCost: string;
 };
 
 /**
@@ -65,6 +73,7 @@ export function aplicarServico(
   servico: ServicoCatalogo,
   historico: SugestaoPrecoUI | undefined,
   atuais: TextosOrcamento,
+  itemAtual: ItemAtual,
 ): AplicacaoServico {
   const preco = historico?.sugerido ?? servico.defaultPrice;
 
@@ -72,8 +81,10 @@ export function aplicarServico(
     serviceCatalogId: servico.id,
     description: servico.name,
     unit: servico.unit ?? 'un',
-    unitPrice: preco ? formatDecimalBR(preco) : '0',
-    unitCost: servico.estimatedCost ? formatDecimalBR(servico.estimatedCost) : '0',
+    // Sem preço a oferecer, o que já estava digitado fica: trocar o serviço não
+    // pode apagar um valor que alguém negociou.
+    unitPrice: preco ? formatDecimalBR(preco) : itemAtual.unitPrice,
+    unitCost: servico.estimatedCost ? formatDecimalBR(servico.estimatedCost) : itemAtual.unitCost,
   };
 
   const avisos: string[] = [];
@@ -98,10 +109,20 @@ export function aplicarServico(
     avisos.push('escopo padrão do serviço aplicado');
   }
 
+  // Nada a oferecer: em vez de ficar em silêncio, dizemos onde cadastrar.
+  const semCadastro = !preco && !servico.scopeTemplate;
+  if (semCadastro) {
+    avisos.push(
+      'sem preço nem escopo padrão cadastrados — dá para preencher em '
+      + 'Configurações › Catálogo de serviços',
+    );
+  }
+
   return {
     item,
     textos,
     aviso: avisos.length > 0 ? `${servico.name}: ${avisos.join('; ')}.` : null,
+    semCadastro,
   };
 }
 

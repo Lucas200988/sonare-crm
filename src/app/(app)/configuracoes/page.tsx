@@ -84,7 +84,10 @@ export default async function SettingsPage() {
           <ServicesSection
             services={services.map((s) => ({
               id: s.id, code: s.code, name: s.name, category: s.category,
-              unit: s.unit, defaultPrice: s.defaultPrice?.toString() ?? null, active: s.active,
+              unit: s.unit, defaultPrice: s.defaultPrice?.toString() ?? null,
+              estimatedCost: s.estimatedCost?.toString() ?? null,
+              scopeTemplate: s.scopeTemplate, premisesTemplate: s.premisesTemplate,
+              exclusionsTemplate: s.exclusionsTemplate, active: s.active,
             }))}
           />
         </Card>

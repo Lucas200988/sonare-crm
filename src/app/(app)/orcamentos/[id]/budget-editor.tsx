@@ -140,11 +140,12 @@ export function BudgetEditor({
     }
 
     const historico = priceSuggestions.find((p) => p.serviceCatalogId === svc.id);
-    const { item, textos, aviso } = aplicarServico(svc, historico, fields);
+    const atual = items[idx];
+    const { item, textos, aviso, semCadastro } = aplicarServico(svc, historico, fields, atual);
 
     setItem(idx, item);
     if (textos) setFields((f) => ({ ...f, ...textos }));
-    if (aviso) setMessage({ kind: 'ok', text: aviso });
+    if (aviso) setMessage({ kind: semCadastro ? 'err' : 'ok', text: aviso });
   }
 
   function save() {

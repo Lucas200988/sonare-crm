@@ -62,16 +62,31 @@ export async function toggleStageAction(id: string, active: boolean): Promise<Ac
   return {};
 }
 
+/** Campo de texto opcional: string vazia do formulário vira null. */
+const textoOpcional = z.preprocess(
+  (v) => (typeof v === 'string' && v.trim() === '' ? null : v),
+  z.string().nullable().optional(),
+);
+
+/** Valor em pt-BR (1.234,56) convertido para o formato que o Prisma aceita. */
+const dinheiroOpcional = (rotulo: string) => z.preprocess(
+  (v) => (typeof v !== 'string' || v.trim() === '' ? null : v.trim().replace(/\./g, '').replace(',', '.')),
+  z.string().regex(/^\d+(\.\d+)?$/, `${rotulo} inválido`).nullable().optional(),
+);
+
 const serviceSchema = z.object({
   code: z.string().trim().min(2, 'Informe o código.'),
   name: nameSchema,
-  category: z.preprocess((v) => (typeof v === 'string' && v.trim() === '' ? null : v), z.string().nullable().optional()),
-  discipline: z.preprocess((v) => (typeof v === 'string' && v.trim() === '' ? null : v), z.string().nullable().optional()),
-  unit: z.preprocess((v) => (typeof v === 'string' && v.trim() === '' ? null : v), z.string().nullable().optional()),
-  defaultPrice: z.preprocess(
-    (v) => (typeof v !== 'string' || v.trim() === '' ? null : v.trim().replace(/\./g, '').replace(',', '.')),
-    z.string().regex(/^\d+(\.\d+)?$/, 'Preço inválido').nullable().optional(),
-  ),
+  category: textoOpcional,
+  discipline: textoOpcional,
+  unit: textoOpcional,
+  defaultPrice: dinheiroOpcional('Preço'),
+  estimatedCost: dinheiroOpcional('Custo'),
+  // Textos que o orçamento usa para preencher escopo, premissas e exclusões
+  // sozinho quando o serviço é escolhido.
+  scopeTemplate: textoOpcional,
+  premisesTemplate: textoOpcional,
+  exclusionsTemplate: textoOpcional,
 });
 
 export async function saveServiceAction(
