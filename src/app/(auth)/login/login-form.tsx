@@ -1,6 +1,7 @@
 'use client';
 
 import { useActionState } from 'react';
+import Link from 'next/link';
 import { loginAction, type LoginState } from '@/actions/auth';
 
 export function LoginForm() {
@@ -48,6 +49,11 @@ export function LoginForm() {
       >
         {pending ? 'Entrando…' : 'Entrar'}
       </button>
+      <p className="text-center">
+        <Link href="/esqueci-senha" className="text-xs text-slate-400 hover:text-slate-200">
+          Esqueci minha senha
+        </Link>
+      </p>
     </form>
   );
 }
