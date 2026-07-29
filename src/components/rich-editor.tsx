@@ -11,6 +11,19 @@ import {
 import { reviewTextAction } from '@/actions/ai';
 import { htmlToText, toEditorHtml } from '@/lib/html-text';
 import { limparHtml } from '@/lib/texto-limpo';
+import { Corretor, type MenuCorretor } from './corretor-extension';
+
+/** Consulta o dicionário do sistema; devolve só as palavras erradas. */
+async function verificarOrtografia(palavras: string[]): Promise<Record<string, string[]>> {
+  const resposta = await fetch('/api/ortografia', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ palavras }),
+  });
+  if (!resposta.ok) throw new Error('Verificação indisponível');
+  const dados = (await resposta.json()) as { erradas: Record<string, string[]> };
+  return dados.erradas;
+}
 
 /**
  * Editor de texto com as ferramentas essenciais do Word.
@@ -33,6 +46,7 @@ export function RichEditor({
   const [previous, setPrevious] = useState<string | null>(null);
   const [hint, setHint] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [menu, setMenu] = useState<MenuCorretor | null>(null);
 
   const editor = useEditor({
     immediatelyRender: false, // o conteúdo vem do servidor; evita divergência de hidratação
@@ -42,6 +56,7 @@ export function RichEditor({
       // o nome da extensão e derruba a criação do editor.
       StarterKit.configure({ heading: { levels: [2, 3] } }),
       TextAlign.configure({ types: ['heading', 'paragraph'] }),
+      Corretor.configure({ verificar: verificarOrtografia, onMenu: setMenu }),
     ],
     content: toEditorHtml(value),
     editorProps: {
@@ -113,6 +128,29 @@ export function RichEditor({
       setHint('Texto revisado');
     });
   }
+
+  /** Substitui a palavra sublinhada pela sugestão escolhida no menu. */
+  function aplicarSugestao(sugestao: string) {
+    if (!editor || !menu) return;
+    editor
+      .chain()
+      .focus()
+      .insertContentAt({ from: menu.erro.de, to: menu.erro.ate }, sugestao)
+      .run();
+    setMenu(null);
+  }
+
+  // Clique em qualquer lugar fecha o menu de sugestões
+  useEffect(() => {
+    if (!menu) return;
+    const fechar = () => setMenu(null);
+    window.addEventListener('click', fechar);
+    window.addEventListener('scroll', fechar, true);
+    return () => {
+      window.removeEventListener('click', fechar);
+      window.removeEventListener('scroll', fechar, true);
+    };
+  }, [menu]);
 
   function desfazerRevisao() {
     if (!editor || previous === null) return;
@@ -212,6 +250,33 @@ export function RichEditor({
       </div>
 
       {error ? <p role="alert" className="px-3 pb-2 text-[11px] text-red-600">{error}</p> : null}
+
+      {menu ? (
+        <div
+          role="menu"
+          aria-label={`Sugestões para ${menu.erro.palavra}`}
+          className="fixed z-50 min-w-40 rounded-lg border border-slate-200 bg-white py-1 shadow-lg"
+          style={{ left: menu.x, top: menu.y }}
+          // o clique dentro do menu não deve fechá-lo antes de agir
+          onClick={(e) => e.stopPropagation()}
+        >
+          {menu.erro.sugestoes.length === 0 ? (
+            <p className="px-3 py-1.5 text-xs text-slate-500">Sem sugestões</p>
+          ) : (
+            menu.erro.sugestoes.map((s) => (
+              <button
+                key={s}
+                type="button"
+                role="menuitem"
+                onClick={() => aplicarSugestao(s)}
+                className="block w-full px-3 py-1.5 text-left text-sm text-slate-800 hover:bg-slate-100"
+              >
+                {s}
+              </button>
+            ))
+          )}
+        </div>
+      ) : null}
     </div>
   );
 }
