@@ -5,9 +5,11 @@ import { useRouter } from 'next/navigation';
 import { AlertTriangle, Plus, Save, Trash2 } from 'lucide-react';
 import { saveVersionAction } from '@/actions/budgets';
 import { computeBudgetTotals } from '@/lib/budget-calc';
+import { formatBRL } from '@/lib/money';
 import { parseDecimalBR, formatDecimalBR } from '@/lib/parse';
 import { additionBlock, type MergeMode } from '@/lib/merge-text';
 import { appendTextToHtml, htmlToText, isEmptyRich, textToHtml } from '@/lib/html-text';
+import { aplicarServico, faixaPraticada } from '@/lib/aplicar-servico';
 import { inputCls, Field } from '@/components/ui';
 import { ReviewableTextarea } from '@/components/text-field';
 import { RichEditor } from '@/components/rich-editor';
@@ -41,6 +43,17 @@ type ServiceOption = {
   defaultPrice: string | null;
   estimatedCost: string | null;
   scopeTemplate: string | null;
+  premisesTemplate: string | null;
+  exclusionsTemplate: string | null;
+};
+
+export type PriceSuggestion = {
+  serviceCatalogId: string;
+  sugerido: string;
+  ultimo: string;
+  menor: string;
+  maior: string;
+  amostras: number;
 };
 
 export type EditorItem = {
@@ -77,6 +90,7 @@ const EMPTY_ITEM: EditorItem = {
 
 export function BudgetEditor({
   budgetId, editable, initialFields, initialItems, services, aiEnabled, scopeTemplates,
+  priceSuggestions = [],
 }: {
   budgetId: string;
   editable: boolean;
@@ -85,6 +99,8 @@ export function BudgetEditor({
   services: ServiceOption[];
   aiEnabled: boolean;
   scopeTemplates: TemplateOption[];
+  /** Preços praticados por serviço, vindos dos orçamentos anteriores. */
+  priceSuggestions?: PriceSuggestion[];
 }) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
@@ -109,19 +125,26 @@ export function BudgetEditor({
     setItems((prev) => prev.map((it, i) => (i === idx ? { ...it, ...patch } : it)));
   }
 
+  /**
+   * Escolher o serviço preenche o item e, quando faz sentido, o escopo.
+   *
+   * O preço vem do histórico praticado (mediana dos orçamentos que viraram
+   * proposta) e cai para o preço de tabela quando não há histórico — a tabela
+   * envelhece, o histórico não.
+   */
   function applyService(idx: number, serviceId: string) {
     const svc = services.find((s) => s.id === serviceId);
     if (!svc) {
       setItem(idx, { serviceCatalogId: null });
       return;
     }
-    setItem(idx, {
-      serviceCatalogId: svc.id,
-      description: svc.name,
-      unit: svc.unit ?? 'un',
-      unitPrice: svc.defaultPrice ? formatDecimalBR(svc.defaultPrice) : '0',
-      unitCost: svc.estimatedCost ? formatDecimalBR(svc.estimatedCost) : '0',
-    });
+
+    const historico = priceSuggestions.find((p) => p.serviceCatalogId === svc.id);
+    const { item, textos, aviso } = aplicarServico(svc, historico, fields);
+
+    setItem(idx, item);
+    if (textos) setFields((f) => ({ ...f, ...textos }));
+    if (aviso) setMessage({ kind: 'ok', text: aviso });
   }
 
   function save() {
@@ -312,6 +335,23 @@ export function BudgetEditor({
                   </td>
                   <td className="px-2 py-1.5">
                     <input value={item.unitPrice} onChange={(e) => setItem(idx, { unitPrice: e.target.value })} disabled={!editable} inputMode="decimal" className={`${cellCls} text-right`} aria-label="Preço unitário" />
+                    {(() => {
+                      // Faixa já praticada neste serviço, para dar referência
+                      // na hora de decidir o preço.
+                      const h = item.serviceCatalogId
+                        ? priceSuggestions.find((p) => p.serviceCatalogId === item.serviceCatalogId)
+                        : null;
+                      if (!h) return null;
+                      const faixa = faixaPraticada(h);
+                      return (
+                        <p
+                          className="mt-0.5 text-right text-[10px] text-slate-400"
+                          title={`Praticado em ${h.amostras} orçamento(s). Último: ${formatBRL(h.ultimo)}`}
+                        >
+                          {faixa}
+                        </p>
+                      );
+                    })()}
                   </td>
                   <td className="px-2 py-1.5">
                     <input value={item.unitCost} onChange={(e) => setItem(idx, { unitCost: e.target.value })} disabled={!editable} inputMode="decimal" className={`${cellCls} text-right`} aria-label="Custo unitário" />

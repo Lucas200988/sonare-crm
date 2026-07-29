@@ -10,6 +10,7 @@ import { formatBRL } from '@/lib/money';
 import { formatDateBR, formatDateTimeBR } from '@/lib/dates';
 import { formatDecimalBR } from '@/lib/parse';
 import { getAiConfig } from '@/server/ai/scope-generator';
+import { getPriceSuggestions } from '@/server/services/price-history';
 import { BUDGET_STATUS_BADGE, PROPOSAL_STATUS_BADGE } from '../status-badge';
 import { BudgetEditor, type EditorFields, type EditorItem } from './budget-editor';
 import {
@@ -24,7 +25,7 @@ export default async function BudgetDetailPage(props: { params: Promise<{ id: st
   const user = await requirePermissionPage('budget:read');
   const { id } = await props.params;
 
-  const [budget, services, aiConfig] = await Promise.all([
+  const [budget, services, aiConfig, priceSuggestions] = await Promise.all([
     getBudget(user, id),
     prisma.serviceCatalog.findMany({
       where: { companyId: user.companyId, active: true, deletedAt: null },
@@ -35,6 +36,7 @@ export default async function BudgetDetailPage(props: { params: Promise<{ id: st
       orderBy: { code: 'asc' },
     }),
     getAiConfig(user.companyId),
+    getPriceSuggestions(user),
   ]);
   if (!budget || !budget.currentVersion) notFound();
 
@@ -98,9 +100,12 @@ export default async function BudgetDetailPage(props: { params: Promise<{ id: st
               name: s.name,
               unit: s.unit,
               scopeTemplate: s.scopeTemplate,
+              premisesTemplate: s.premisesTemplate,
+              exclusionsTemplate: s.exclusionsTemplate,
               defaultPrice: s.defaultPrice?.toString() ?? null,
               estimatedCost: s.estimatedCost?.toString() ?? null,
             }))}
+            priceSuggestions={priceSuggestions}
             aiEnabled={aiConfig.enabled}
             scopeTemplates={services
               .filter((s) => s.scopeTemplate)
