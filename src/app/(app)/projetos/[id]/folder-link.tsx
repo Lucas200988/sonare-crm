@@ -84,7 +84,7 @@ export function FolderLink({ path }: { path: string }) {
         <p className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-[11px] text-amber-800">
           Este computador ainda não abre pastas com um clique — o caminho foi copiado, é só colar no
           Explorador (Win+E, depois Ctrl+L e Ctrl+V). Para habilitar,{' '}
-          <a href="/ferramentas/sonare-abrir-pasta-v2.zip" download className="font-semibold underline">
+          <a href="/ferramentas/sonare-abrir-pasta-v3.zip" download className="font-semibold underline">
             baixe o atalho
           </a>{' '}
           e rode o <span className="font-mono">instalar.cmd</span> uma única vez.

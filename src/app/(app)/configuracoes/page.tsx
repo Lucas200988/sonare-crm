@@ -129,7 +129,7 @@ export default async function SettingsPage() {
             <li>3. No primeiro clique em “Abrir pasta”, marque <strong>Sempre permitir</strong> no aviso do navegador</li>
           </ol>
           <a
-            href="/ferramentas/sonare-abrir-pasta-v2.zip"
+            href="/ferramentas/sonare-abrir-pasta-v3.zip"
             download
             className="mt-3 inline-flex items-center gap-2 rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-white hover:bg-brand-dark"
           >
