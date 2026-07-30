@@ -734,6 +734,8 @@ export async function sendCollectionEmail(
 
   const envio = await enviarEmail({
     para: input.para,
+    // Comprovante e dúvidas voltam para quem cobrou
+    responderPara: user.email,
     assunto: input.assunto,
     texto: input.mensagem,
     html: layoutEmail(

@@ -236,6 +236,19 @@ function HtmlBlock({ html }: { html: string }) {
   );
 }
 
+/**
+ * Prazo e forma de pagamento em branco não podem sair como seção vazia na
+ * proposta: o cliente lê como esquecimento. "A negociar" é a informação
+ * correta enquanto a condição ainda não foi fechada.
+ *
+ * Cobre também o texto só com espaços e o HTML vazio que o editor rico grava.
+ */
+export function ouNegociar(texto?: string | null): string {
+  if (!texto) return 'A negociar.';
+  const semTags = texto.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ');
+  return semTags.trim() === '' ? 'A negociar.' : texto;
+}
+
 function TextBlock({ text }: { text?: string | null }) {
   if (!text) return null;
   // Conteúdo do editor rico; os orçamentos antigos seguem pelo caminho de texto puro
@@ -415,11 +428,11 @@ export function ProposalPdf({ data }: { data: ProposalPdfData }) {
         </Section>
 
         <Section number={3} title="FORMA DE PAGAMENTO">
-          <TextBlock text={data.paymentTerms ?? 'A combinar.'} />
+          <TextBlock text={ouNegociar(data.paymentTerms)} />
         </Section>
 
         <Section number={4} title="PREVISÃO DE ENTREGA (PRAZO)">
-          <TextBlock text={data.executionDeadline ?? 'A combinar.'} />
+          <TextBlock text={ouNegociar(data.executionDeadline)} />
           {data.deliveryMethod ? <TextBlock text={`- Forma de entrega: ${data.deliveryMethod}`} /> : null}
         </Section>
 

@@ -539,6 +539,7 @@ export const BudgetScalarFieldEnum = {
   opportunityId: 'opportunityId',
   clientId: 'clientId',
   clientUnitId: 'clientUnitId',
+  contactId: 'contactId',
   commercialOwnerId: 'commercialOwnerId',
   technicalOwnerId: 'technicalOwnerId',
   status: 'status',

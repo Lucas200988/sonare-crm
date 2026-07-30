@@ -71,6 +71,7 @@ export default async function BudgetDetailPage(props: { params: Promise<{ id: st
     estimatedRetentions: formatDecimalBR(cv.estimatedRetentions.toString()),
     internalNotes: cv.internalNotes ?? '',
     clientNotes: cv.clientNotes ?? '',
+    contactId: budget.contactId,
     generalInfoOverride: cv.generalInfoOverride,
     differentialsOverride: cv.differentialsOverride,
   };
@@ -118,6 +119,9 @@ export default async function BudgetDetailPage(props: { params: Promise<{ id: st
               estimatedCost: s.estimatedCost?.toString() ?? null,
             }))}
             priceSuggestions={priceSuggestions}
+            contatos={budget.client.contacts.map((c) => ({
+              id: c.id, name: c.name, position: c.position,
+            }))}
             companyDefaults={{
               generalInfo: companySetting('proposal.infoGerais'),
               differentials: companySetting('proposal.diferenciais'),

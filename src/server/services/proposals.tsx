@@ -25,6 +25,7 @@ export async function generateProposal(user: SessionUser, budgetId: string) {
     where: { id: budgetId, companyId: user.companyId, deletedAt: null },
     include: {
       client: { include: { contacts: { where: { deletedAt: null, isPrimary: true }, take: 1 } } },
+      contact: { select: { name: true } },
       clientUnit: true,
       commercialOwner: { select: { name: true, creaCau: true } },
       opportunity: { select: { primaryContact: { select: { name: true } } } },
@@ -191,8 +192,13 @@ export async function generateProposal(user: SessionUser, budgetId: string) {
       email: budget.client.email,
     },
     clientUnit: budget.clientUnit?.name ?? null,
+    // O solicitante escolhido no orçamento manda; a oportunidade e o contato
+    // principal do cliente são só o palpite inicial.
     responsibleContact:
-      budget.opportunity?.primaryContact?.name ?? budget.client.contacts[0]?.name ?? null,
+      budget.contact?.name
+      ?? budget.opportunity?.primaryContact?.name
+      ?? budget.client.contacts[0]?.name
+      ?? null,
     budgetCode: budget.code,
     versionNumber: cv.versionNumber,
     issuedAt,
@@ -306,6 +312,9 @@ export async function sendProposalByEmail(
 
   const envio = await enviarEmail({
     para: input.para,
+    // A resposta do cliente ("aprovado", "podemos ajustar o prazo?") vai para
+    // quem enviou, não para o endereço de sistema que ninguém lê.
+    responderPara: user.email,
     assunto: `Proposta ${rotulo} — ${company.tradeName ?? company.legalName}`,
     texto:
       `${corpo}\n\n`
@@ -392,6 +401,7 @@ export async function previewProposal(
     where: { id: budgetId, companyId: user.companyId, deletedAt: null },
     include: {
       client: { include: { contacts: { where: { deletedAt: null, isPrimary: true }, take: 1 } } },
+      contact: { select: { name: true } },
       clientUnit: true,
       commercialOwner: { select: { name: true, creaCau: true } },
       opportunity: { select: { primaryContact: { select: { name: true } } } },
@@ -460,8 +470,13 @@ export async function previewProposal(
       email: budget.client.email,
     },
     clientUnit: budget.clientUnit?.name ?? null,
+    // O solicitante escolhido no orçamento manda; a oportunidade e o contato
+    // principal do cliente são só o palpite inicial.
     responsibleContact:
-      budget.opportunity?.primaryContact?.name ?? budget.client.contacts[0]?.name ?? null,
+      budget.contact?.name
+      ?? budget.opportunity?.primaryContact?.name
+      ?? budget.client.contacts[0]?.name
+      ?? null,
     budgetCode: budget.code,
     versionNumber: cv.versionNumber,
     issuedAt,

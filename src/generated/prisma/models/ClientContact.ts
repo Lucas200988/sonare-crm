@@ -280,6 +280,7 @@ export type ClientContactWhereInput = {
   deletedAt?: Prisma.DateTimeNullableFilter<"ClientContact"> | Date | string | null
   client?: Prisma.XOR<Prisma.ClientScalarRelationFilter, Prisma.ClientWhereInput>
   opportunities?: Prisma.OpportunityListRelationFilter
+  budgets?: Prisma.BudgetListRelationFilter
 }
 
 export type ClientContactOrderByWithRelationInput = {
@@ -302,6 +303,7 @@ export type ClientContactOrderByWithRelationInput = {
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   client?: Prisma.ClientOrderByWithRelationInput
   opportunities?: Prisma.OpportunityOrderByRelationAggregateInput
+  budgets?: Prisma.BudgetOrderByRelationAggregateInput
 }
 
 export type ClientContactWhereUniqueInput = Prisma.AtLeast<{
@@ -327,6 +329,7 @@ export type ClientContactWhereUniqueInput = Prisma.AtLeast<{
   deletedAt?: Prisma.DateTimeNullableFilter<"ClientContact"> | Date | string | null
   client?: Prisma.XOR<Prisma.ClientScalarRelationFilter, Prisma.ClientWhereInput>
   opportunities?: Prisma.OpportunityListRelationFilter
+  budgets?: Prisma.BudgetListRelationFilter
 }, "id">
 
 export type ClientContactOrderByWithAggregationInput = {
@@ -394,6 +397,7 @@ export type ClientContactCreateInput = {
   deletedAt?: Date | string | null
   client: Prisma.ClientCreateNestedOneWithoutContactsInput
   opportunities?: Prisma.OpportunityCreateNestedManyWithoutPrimaryContactInput
+  budgets?: Prisma.BudgetCreateNestedManyWithoutContactInput
 }
 
 export type ClientContactUncheckedCreateInput = {
@@ -415,6 +419,7 @@ export type ClientContactUncheckedCreateInput = {
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   opportunities?: Prisma.OpportunityUncheckedCreateNestedManyWithoutPrimaryContactInput
+  budgets?: Prisma.BudgetUncheckedCreateNestedManyWithoutContactInput
 }
 
 export type ClientContactUpdateInput = {
@@ -436,6 +441,7 @@ export type ClientContactUpdateInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   client?: Prisma.ClientUpdateOneRequiredWithoutContactsNestedInput
   opportunities?: Prisma.OpportunityUpdateManyWithoutPrimaryContactNestedInput
+  budgets?: Prisma.BudgetUpdateManyWithoutContactNestedInput
 }
 
 export type ClientContactUncheckedUpdateInput = {
@@ -457,6 +463,7 @@ export type ClientContactUncheckedUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   opportunities?: Prisma.OpportunityUncheckedUpdateManyWithoutPrimaryContactNestedInput
+  budgets?: Prisma.BudgetUncheckedUpdateManyWithoutContactNestedInput
 }
 
 export type ClientContactCreateManyInput = {
@@ -651,6 +658,22 @@ export type ClientContactUpdateOneWithoutOpportunitiesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.ClientContactUpdateToOneWithWhereWithoutOpportunitiesInput, Prisma.ClientContactUpdateWithoutOpportunitiesInput>, Prisma.ClientContactUncheckedUpdateWithoutOpportunitiesInput>
 }
 
+export type ClientContactCreateNestedOneWithoutBudgetsInput = {
+  create?: Prisma.XOR<Prisma.ClientContactCreateWithoutBudgetsInput, Prisma.ClientContactUncheckedCreateWithoutBudgetsInput>
+  connectOrCreate?: Prisma.ClientContactCreateOrConnectWithoutBudgetsInput
+  connect?: Prisma.ClientContactWhereUniqueInput
+}
+
+export type ClientContactUpdateOneWithoutBudgetsNestedInput = {
+  create?: Prisma.XOR<Prisma.ClientContactCreateWithoutBudgetsInput, Prisma.ClientContactUncheckedCreateWithoutBudgetsInput>
+  connectOrCreate?: Prisma.ClientContactCreateOrConnectWithoutBudgetsInput
+  upsert?: Prisma.ClientContactUpsertWithoutBudgetsInput
+  disconnect?: Prisma.ClientContactWhereInput | boolean
+  delete?: Prisma.ClientContactWhereInput | boolean
+  connect?: Prisma.ClientContactWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ClientContactUpdateToOneWithWhereWithoutBudgetsInput, Prisma.ClientContactUpdateWithoutBudgetsInput>, Prisma.ClientContactUncheckedUpdateWithoutBudgetsInput>
+}
+
 export type ClientContactCreateWithoutClientInput = {
   id?: string
   name: string
@@ -669,6 +692,7 @@ export type ClientContactCreateWithoutClientInput = {
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   opportunities?: Prisma.OpportunityCreateNestedManyWithoutPrimaryContactInput
+  budgets?: Prisma.BudgetCreateNestedManyWithoutContactInput
 }
 
 export type ClientContactUncheckedCreateWithoutClientInput = {
@@ -689,6 +713,7 @@ export type ClientContactUncheckedCreateWithoutClientInput = {
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   opportunities?: Prisma.OpportunityUncheckedCreateNestedManyWithoutPrimaryContactInput
+  budgets?: Prisma.BudgetUncheckedCreateNestedManyWithoutContactInput
 }
 
 export type ClientContactCreateOrConnectWithoutClientInput = {
@@ -758,6 +783,7 @@ export type ClientContactCreateWithoutOpportunitiesInput = {
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   client: Prisma.ClientCreateNestedOneWithoutContactsInput
+  budgets?: Prisma.BudgetCreateNestedManyWithoutContactInput
 }
 
 export type ClientContactUncheckedCreateWithoutOpportunitiesInput = {
@@ -778,6 +804,7 @@ export type ClientContactUncheckedCreateWithoutOpportunitiesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
+  budgets?: Prisma.BudgetUncheckedCreateNestedManyWithoutContactInput
 }
 
 export type ClientContactCreateOrConnectWithoutOpportunitiesInput = {
@@ -814,6 +841,7 @@ export type ClientContactUpdateWithoutOpportunitiesInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   client?: Prisma.ClientUpdateOneRequiredWithoutContactsNestedInput
+  budgets?: Prisma.BudgetUpdateManyWithoutContactNestedInput
 }
 
 export type ClientContactUncheckedUpdateWithoutOpportunitiesInput = {
@@ -834,6 +862,107 @@ export type ClientContactUncheckedUpdateWithoutOpportunitiesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  budgets?: Prisma.BudgetUncheckedUpdateManyWithoutContactNestedInput
+}
+
+export type ClientContactCreateWithoutBudgetsInput = {
+  id?: string
+  name: string
+  position?: string | null
+  email?: string | null
+  phone?: string | null
+  whatsapp?: string | null
+  department?: string | null
+  decisionMaker?: boolean
+  isPrimary?: boolean
+  isFinancial?: boolean
+  isTechnical?: boolean
+  isContractual?: boolean
+  notes?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  client: Prisma.ClientCreateNestedOneWithoutContactsInput
+  opportunities?: Prisma.OpportunityCreateNestedManyWithoutPrimaryContactInput
+}
+
+export type ClientContactUncheckedCreateWithoutBudgetsInput = {
+  id?: string
+  clientId: string
+  name: string
+  position?: string | null
+  email?: string | null
+  phone?: string | null
+  whatsapp?: string | null
+  department?: string | null
+  decisionMaker?: boolean
+  isPrimary?: boolean
+  isFinancial?: boolean
+  isTechnical?: boolean
+  isContractual?: boolean
+  notes?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  opportunities?: Prisma.OpportunityUncheckedCreateNestedManyWithoutPrimaryContactInput
+}
+
+export type ClientContactCreateOrConnectWithoutBudgetsInput = {
+  where: Prisma.ClientContactWhereUniqueInput
+  create: Prisma.XOR<Prisma.ClientContactCreateWithoutBudgetsInput, Prisma.ClientContactUncheckedCreateWithoutBudgetsInput>
+}
+
+export type ClientContactUpsertWithoutBudgetsInput = {
+  update: Prisma.XOR<Prisma.ClientContactUpdateWithoutBudgetsInput, Prisma.ClientContactUncheckedUpdateWithoutBudgetsInput>
+  create: Prisma.XOR<Prisma.ClientContactCreateWithoutBudgetsInput, Prisma.ClientContactUncheckedCreateWithoutBudgetsInput>
+  where?: Prisma.ClientContactWhereInput
+}
+
+export type ClientContactUpdateToOneWithWhereWithoutBudgetsInput = {
+  where?: Prisma.ClientContactWhereInput
+  data: Prisma.XOR<Prisma.ClientContactUpdateWithoutBudgetsInput, Prisma.ClientContactUncheckedUpdateWithoutBudgetsInput>
+}
+
+export type ClientContactUpdateWithoutBudgetsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  position?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  decisionMaker?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isPrimary?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isFinancial?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isTechnical?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isContractual?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  client?: Prisma.ClientUpdateOneRequiredWithoutContactsNestedInput
+  opportunities?: Prisma.OpportunityUpdateManyWithoutPrimaryContactNestedInput
+}
+
+export type ClientContactUncheckedUpdateWithoutBudgetsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  position?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  decisionMaker?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isPrimary?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isFinancial?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isTechnical?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isContractual?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  opportunities?: Prisma.OpportunityUncheckedUpdateManyWithoutPrimaryContactNestedInput
 }
 
 export type ClientContactCreateManyClientInput = {
@@ -873,6 +1002,7 @@ export type ClientContactUpdateWithoutClientInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   opportunities?: Prisma.OpportunityUpdateManyWithoutPrimaryContactNestedInput
+  budgets?: Prisma.BudgetUpdateManyWithoutContactNestedInput
 }
 
 export type ClientContactUncheckedUpdateWithoutClientInput = {
@@ -893,6 +1023,7 @@ export type ClientContactUncheckedUpdateWithoutClientInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   opportunities?: Prisma.OpportunityUncheckedUpdateManyWithoutPrimaryContactNestedInput
+  budgets?: Prisma.BudgetUncheckedUpdateManyWithoutContactNestedInput
 }
 
 export type ClientContactUncheckedUpdateManyWithoutClientInput = {
@@ -921,10 +1052,12 @@ export type ClientContactUncheckedUpdateManyWithoutClientInput = {
 
 export type ClientContactCountOutputType = {
   opportunities: number
+  budgets: number
 }
 
 export type ClientContactCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   opportunities?: boolean | ClientContactCountOutputTypeCountOpportunitiesArgs
+  budgets?: boolean | ClientContactCountOutputTypeCountBudgetsArgs
 }
 
 /**
@@ -942,6 +1075,13 @@ export type ClientContactCountOutputTypeDefaultArgs<ExtArgs extends runtime.Type
  */
 export type ClientContactCountOutputTypeCountOpportunitiesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.OpportunityWhereInput
+}
+
+/**
+ * ClientContactCountOutputType without action
+ */
+export type ClientContactCountOutputTypeCountBudgetsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.BudgetWhereInput
 }
 
 
@@ -965,6 +1105,7 @@ export type ClientContactSelect<ExtArgs extends runtime.Types.Extensions.Interna
   deletedAt?: boolean
   client?: boolean | Prisma.ClientDefaultArgs<ExtArgs>
   opportunities?: boolean | Prisma.ClientContact$opportunitiesArgs<ExtArgs>
+  budgets?: boolean | Prisma.ClientContact$budgetsArgs<ExtArgs>
   _count?: boolean | Prisma.ClientContactCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["clientContact"]>
 
@@ -1034,6 +1175,7 @@ export type ClientContactOmit<ExtArgs extends runtime.Types.Extensions.InternalA
 export type ClientContactInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   client?: boolean | Prisma.ClientDefaultArgs<ExtArgs>
   opportunities?: boolean | Prisma.ClientContact$opportunitiesArgs<ExtArgs>
+  budgets?: boolean | Prisma.ClientContact$budgetsArgs<ExtArgs>
   _count?: boolean | Prisma.ClientContactCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ClientContactIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1048,6 +1190,7 @@ export type $ClientContactPayload<ExtArgs extends runtime.Types.Extensions.Inter
   objects: {
     client: Prisma.$ClientPayload<ExtArgs>
     opportunities: Prisma.$OpportunityPayload<ExtArgs>[]
+    budgets: Prisma.$BudgetPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1463,6 +1606,7 @@ export interface Prisma__ClientContactClient<T, Null = never, ExtArgs extends ru
   readonly [Symbol.toStringTag]: "PrismaPromise"
   client<T extends Prisma.ClientDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ClientDefaultArgs<ExtArgs>>): Prisma.Prisma__ClientClient<runtime.Types.Result.GetResult<Prisma.$ClientPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   opportunities<T extends Prisma.ClientContact$opportunitiesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ClientContact$opportunitiesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OpportunityPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  budgets<T extends Prisma.ClientContact$budgetsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ClientContact$budgetsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BudgetPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1931,6 +2075,30 @@ export type ClientContact$opportunitiesArgs<ExtArgs extends runtime.Types.Extens
   take?: number
   skip?: number
   distinct?: Prisma.OpportunityScalarFieldEnum | Prisma.OpportunityScalarFieldEnum[]
+}
+
+/**
+ * ClientContact.budgets
+ */
+export type ClientContact$budgetsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Budget
+   */
+  select?: Prisma.BudgetSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Budget
+   */
+  omit?: Prisma.BudgetOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BudgetInclude<ExtArgs> | null
+  where?: Prisma.BudgetWhereInput
+  orderBy?: Prisma.BudgetOrderByWithRelationInput | Prisma.BudgetOrderByWithRelationInput[]
+  cursor?: Prisma.BudgetWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.BudgetScalarFieldEnum | Prisma.BudgetScalarFieldEnum[]
 }
 
 /**

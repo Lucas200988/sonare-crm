@@ -81,6 +81,8 @@ export type EditorFields = {
   estimatedRetentions: string;
   internalNotes: string;
   clientNotes: string;
+  /** Contato do cliente que pediu este orçamento. */
+  contactId: string | null;
   /** `null` = usa o texto padrão da empresa; string = sobrepõe (mesmo vazia, para omitir o bloco). */
   generalInfoOverride: string | null;
   differentialsOverride: string | null;
@@ -93,7 +95,7 @@ const EMPTY_ITEM: EditorItem = {
 
 export function BudgetEditor({
   budgetId, editable, initialFields, initialItems, services, aiEnabled, scopeTemplates,
-  priceSuggestions = [], companyDefaults,
+  priceSuggestions = [], companyDefaults, contatos,
 }: {
   budgetId: string;
   editable: boolean;
@@ -106,6 +108,8 @@ export function BudgetEditor({
   priceSuggestions?: PriceSuggestion[];
   /** Textos padrão cadastrados em Configurações — usados quando não há sobreposição. */
   companyDefaults: { generalInfo: string; differentials: string };
+  /** Contatos do cliente, para escolher quem pediu o orçamento. */
+  contatos: Array<{ id: string; name: string; position: string | null }>;
 }) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
@@ -465,6 +469,30 @@ export function BudgetEditor({
 
       {/* Condições e textos */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <Field
+          label="Solicitante (A/C)"
+          htmlFor="f-solicitante"
+          hint={
+            contatos.length === 0
+              ? 'Nenhum contato cadastrado neste cliente — cadastre na ficha do cliente.'
+              : 'Sai na proposta como responsável pelo contato.'
+          }
+        >
+          <select
+            id="f-solicitante"
+            value={fields.contactId ?? ''}
+            onChange={(e) => setFields((f) => ({ ...f, contactId: e.target.value || null }))}
+            disabled={!editable || contatos.length === 0}
+            className={inputCls}
+          >
+            <option value="">Não informado</option>
+            {contatos.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.position ? `${c.name} — ${c.position}` : c.name}
+              </option>
+            ))}
+          </select>
+        </Field>
         <Field label="Validade (dd/mm/aaaa)" htmlFor="f-validade">
           <input id="f-validade" value={fields.validUntil} onChange={set('validUntil')} disabled={!editable} placeholder="dd/mm/aaaa" className={inputCls} />
         </Field>

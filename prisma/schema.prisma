@@ -347,6 +347,7 @@ model ClientContact {
 
   client        Client        @relation(fields: [clientId], references: [id], onDelete: Cascade)
   opportunities Opportunity[]
+  budgets       Budget[]
 
   @@index([clientId])
 }
@@ -582,6 +583,9 @@ model Budget {
   opportunityId     String?
   clientId          String
   clientUnitId      String?
+  /// Quem pediu este orçamento. A mesma empresa costuma ter vários
+  /// solicitantes, e a proposta precisa sair endereçada ao certo.
+  contactId         String?
   commercialOwnerId String?
   technicalOwnerId  String?
   status            BudgetStatus @default(RASCUNHO)
@@ -595,6 +599,7 @@ model Budget {
   opportunity     Opportunity?    @relation(fields: [opportunityId], references: [id], onDelete: SetNull)
   client          Client          @relation(fields: [clientId], references: [id])
   clientUnit      ClientUnit?     @relation(fields: [clientUnitId], references: [id], onDelete: SetNull)
+  contact         ClientContact?  @relation(fields: [contactId], references: [id], onDelete: SetNull)
   commercialOwner User?           @relation("BudgetCommercialOwner", fields: [commercialOwnerId], references: [id], onDelete: SetNull)
   technicalOwner  User?           @relation("BudgetTechnicalOwner", fields: [technicalOwnerId], references: [id], onDelete: SetNull)
   currentVersion  BudgetVersion?  @relation("CurrentVersion", fields: [currentVersionId], references: [id], onDelete: SetNull)

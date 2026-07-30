@@ -18,6 +18,13 @@ export type Mensagem = {
   texto: string;
   html?: string;
   anexos?: Array<{ filename: string; content: Buffer; contentType?: string }>;
+  /**
+   * Para onde vai a resposta do destinatário.
+   *
+   * O remetente é um endereço de sistema que ninguém acompanha; sem isto, o
+   * cliente que responde "aprovado" à proposta escreve para o vazio.
+   */
+  responderPara?: string | null;
 };
 
 function smtpConfigurado(): boolean {
@@ -63,6 +70,7 @@ async function enviarPeloResend(msg: Mensagem, from: string): Promise<{ ok: true
       body: JSON.stringify({
         from,
         to: [msg.para],
+        ...(msg.responderPara ? { reply_to: msg.responderPara } : {}),
         subject: msg.assunto,
         text: msg.texto,
         html: msg.html,
@@ -114,6 +122,7 @@ export async function enviarEmail(msg: Mensagem): Promise<{ ok: true } | { error
     await transporte().sendMail({
       from: info.from,
       to: msg.para,
+      ...(msg.responderPara ? { replyTo: msg.responderPara } : {}),
       subject: msg.assunto,
       text: msg.texto,
       html: msg.html,

@@ -31,6 +31,7 @@ export type BudgetMinAggregateOutputType = {
   opportunityId: string | null
   clientId: string | null
   clientUnitId: string | null
+  contactId: string | null
   commercialOwnerId: string | null
   technicalOwnerId: string | null
   status: $Enums.BudgetStatus | null
@@ -49,6 +50,7 @@ export type BudgetMaxAggregateOutputType = {
   opportunityId: string | null
   clientId: string | null
   clientUnitId: string | null
+  contactId: string | null
   commercialOwnerId: string | null
   technicalOwnerId: string | null
   status: $Enums.BudgetStatus | null
@@ -67,6 +69,7 @@ export type BudgetCountAggregateOutputType = {
   opportunityId: number
   clientId: number
   clientUnitId: number
+  contactId: number
   commercialOwnerId: number
   technicalOwnerId: number
   status: number
@@ -87,6 +90,7 @@ export type BudgetMinAggregateInputType = {
   opportunityId?: true
   clientId?: true
   clientUnitId?: true
+  contactId?: true
   commercialOwnerId?: true
   technicalOwnerId?: true
   status?: true
@@ -105,6 +109,7 @@ export type BudgetMaxAggregateInputType = {
   opportunityId?: true
   clientId?: true
   clientUnitId?: true
+  contactId?: true
   commercialOwnerId?: true
   technicalOwnerId?: true
   status?: true
@@ -123,6 +128,7 @@ export type BudgetCountAggregateInputType = {
   opportunityId?: true
   clientId?: true
   clientUnitId?: true
+  contactId?: true
   commercialOwnerId?: true
   technicalOwnerId?: true
   status?: true
@@ -214,6 +220,7 @@ export type BudgetGroupByOutputType = {
   opportunityId: string | null
   clientId: string
   clientUnitId: string | null
+  contactId: string | null
   commercialOwnerId: string | null
   technicalOwnerId: string | null
   status: $Enums.BudgetStatus
@@ -253,6 +260,7 @@ export type BudgetWhereInput = {
   opportunityId?: Prisma.StringNullableFilter<"Budget"> | string | null
   clientId?: Prisma.StringFilter<"Budget"> | string
   clientUnitId?: Prisma.StringNullableFilter<"Budget"> | string | null
+  contactId?: Prisma.StringNullableFilter<"Budget"> | string | null
   commercialOwnerId?: Prisma.StringNullableFilter<"Budget"> | string | null
   technicalOwnerId?: Prisma.StringNullableFilter<"Budget"> | string | null
   status?: Prisma.EnumBudgetStatusFilter<"Budget"> | $Enums.BudgetStatus
@@ -265,6 +273,7 @@ export type BudgetWhereInput = {
   opportunity?: Prisma.XOR<Prisma.OpportunityNullableScalarRelationFilter, Prisma.OpportunityWhereInput> | null
   client?: Prisma.XOR<Prisma.ClientScalarRelationFilter, Prisma.ClientWhereInput>
   clientUnit?: Prisma.XOR<Prisma.ClientUnitNullableScalarRelationFilter, Prisma.ClientUnitWhereInput> | null
+  contact?: Prisma.XOR<Prisma.ClientContactNullableScalarRelationFilter, Prisma.ClientContactWhereInput> | null
   commercialOwner?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   technicalOwner?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   currentVersion?: Prisma.XOR<Prisma.BudgetVersionNullableScalarRelationFilter, Prisma.BudgetVersionWhereInput> | null
@@ -281,6 +290,7 @@ export type BudgetOrderByWithRelationInput = {
   opportunityId?: Prisma.SortOrderInput | Prisma.SortOrder
   clientId?: Prisma.SortOrder
   clientUnitId?: Prisma.SortOrderInput | Prisma.SortOrder
+  contactId?: Prisma.SortOrderInput | Prisma.SortOrder
   commercialOwnerId?: Prisma.SortOrderInput | Prisma.SortOrder
   technicalOwnerId?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
@@ -293,6 +303,7 @@ export type BudgetOrderByWithRelationInput = {
   opportunity?: Prisma.OpportunityOrderByWithRelationInput
   client?: Prisma.ClientOrderByWithRelationInput
   clientUnit?: Prisma.ClientUnitOrderByWithRelationInput
+  contact?: Prisma.ClientContactOrderByWithRelationInput
   commercialOwner?: Prisma.UserOrderByWithRelationInput
   technicalOwner?: Prisma.UserOrderByWithRelationInput
   currentVersion?: Prisma.BudgetVersionOrderByWithRelationInput
@@ -314,6 +325,7 @@ export type BudgetWhereUniqueInput = Prisma.AtLeast<{
   opportunityId?: Prisma.StringNullableFilter<"Budget"> | string | null
   clientId?: Prisma.StringFilter<"Budget"> | string
   clientUnitId?: Prisma.StringNullableFilter<"Budget"> | string | null
+  contactId?: Prisma.StringNullableFilter<"Budget"> | string | null
   commercialOwnerId?: Prisma.StringNullableFilter<"Budget"> | string | null
   technicalOwnerId?: Prisma.StringNullableFilter<"Budget"> | string | null
   status?: Prisma.EnumBudgetStatusFilter<"Budget"> | $Enums.BudgetStatus
@@ -325,6 +337,7 @@ export type BudgetWhereUniqueInput = Prisma.AtLeast<{
   opportunity?: Prisma.XOR<Prisma.OpportunityNullableScalarRelationFilter, Prisma.OpportunityWhereInput> | null
   client?: Prisma.XOR<Prisma.ClientScalarRelationFilter, Prisma.ClientWhereInput>
   clientUnit?: Prisma.XOR<Prisma.ClientUnitNullableScalarRelationFilter, Prisma.ClientUnitWhereInput> | null
+  contact?: Prisma.XOR<Prisma.ClientContactNullableScalarRelationFilter, Prisma.ClientContactWhereInput> | null
   commercialOwner?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   technicalOwner?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   currentVersion?: Prisma.XOR<Prisma.BudgetVersionNullableScalarRelationFilter, Prisma.BudgetVersionWhereInput> | null
@@ -341,6 +354,7 @@ export type BudgetOrderByWithAggregationInput = {
   opportunityId?: Prisma.SortOrderInput | Prisma.SortOrder
   clientId?: Prisma.SortOrder
   clientUnitId?: Prisma.SortOrderInput | Prisma.SortOrder
+  contactId?: Prisma.SortOrderInput | Prisma.SortOrder
   commercialOwnerId?: Prisma.SortOrderInput | Prisma.SortOrder
   technicalOwnerId?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
@@ -365,6 +379,7 @@ export type BudgetScalarWhereWithAggregatesInput = {
   opportunityId?: Prisma.StringNullableWithAggregatesFilter<"Budget"> | string | null
   clientId?: Prisma.StringWithAggregatesFilter<"Budget"> | string
   clientUnitId?: Prisma.StringNullableWithAggregatesFilter<"Budget"> | string | null
+  contactId?: Prisma.StringNullableWithAggregatesFilter<"Budget"> | string | null
   commercialOwnerId?: Prisma.StringNullableWithAggregatesFilter<"Budget"> | string | null
   technicalOwnerId?: Prisma.StringNullableWithAggregatesFilter<"Budget"> | string | null
   status?: Prisma.EnumBudgetStatusWithAggregatesFilter<"Budget"> | $Enums.BudgetStatus
@@ -389,6 +404,7 @@ export type BudgetCreateInput = {
   opportunity?: Prisma.OpportunityCreateNestedOneWithoutBudgetsInput
   client: Prisma.ClientCreateNestedOneWithoutBudgetsInput
   clientUnit?: Prisma.ClientUnitCreateNestedOneWithoutBudgetsInput
+  contact?: Prisma.ClientContactCreateNestedOneWithoutBudgetsInput
   commercialOwner?: Prisma.UserCreateNestedOneWithoutBudgetsCommercialInput
   technicalOwner?: Prisma.UserCreateNestedOneWithoutBudgetsTechnicalInput
   currentVersion?: Prisma.BudgetVersionCreateNestedOneWithoutCurrentOfBudgetInput
@@ -405,6 +421,7 @@ export type BudgetUncheckedCreateInput = {
   opportunityId?: string | null
   clientId: string
   clientUnitId?: string | null
+  contactId?: string | null
   commercialOwnerId?: string | null
   technicalOwnerId?: string | null
   status?: $Enums.BudgetStatus
@@ -433,6 +450,7 @@ export type BudgetUpdateInput = {
   opportunity?: Prisma.OpportunityUpdateOneWithoutBudgetsNestedInput
   client?: Prisma.ClientUpdateOneRequiredWithoutBudgetsNestedInput
   clientUnit?: Prisma.ClientUnitUpdateOneWithoutBudgetsNestedInput
+  contact?: Prisma.ClientContactUpdateOneWithoutBudgetsNestedInput
   commercialOwner?: Prisma.UserUpdateOneWithoutBudgetsCommercialNestedInput
   technicalOwner?: Prisma.UserUpdateOneWithoutBudgetsTechnicalNestedInput
   currentVersion?: Prisma.BudgetVersionUpdateOneWithoutCurrentOfBudgetNestedInput
@@ -449,6 +467,7 @@ export type BudgetUncheckedUpdateInput = {
   opportunityId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
   clientUnitId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   commercialOwnerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   technicalOwnerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumBudgetStatusFieldUpdateOperationsInput | $Enums.BudgetStatus
@@ -471,6 +490,7 @@ export type BudgetCreateManyInput = {
   opportunityId?: string | null
   clientId: string
   clientUnitId?: string | null
+  contactId?: string | null
   commercialOwnerId?: string | null
   technicalOwnerId?: string | null
   status?: $Enums.BudgetStatus
@@ -501,6 +521,7 @@ export type BudgetUncheckedUpdateManyInput = {
   opportunityId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
   clientUnitId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   commercialOwnerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   technicalOwnerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumBudgetStatusFieldUpdateOperationsInput | $Enums.BudgetStatus
@@ -534,6 +555,7 @@ export type BudgetCountOrderByAggregateInput = {
   opportunityId?: Prisma.SortOrder
   clientId?: Prisma.SortOrder
   clientUnitId?: Prisma.SortOrder
+  contactId?: Prisma.SortOrder
   commercialOwnerId?: Prisma.SortOrder
   technicalOwnerId?: Prisma.SortOrder
   status?: Prisma.SortOrder
@@ -552,6 +574,7 @@ export type BudgetMaxOrderByAggregateInput = {
   opportunityId?: Prisma.SortOrder
   clientId?: Prisma.SortOrder
   clientUnitId?: Prisma.SortOrder
+  contactId?: Prisma.SortOrder
   commercialOwnerId?: Prisma.SortOrder
   technicalOwnerId?: Prisma.SortOrder
   status?: Prisma.SortOrder
@@ -570,6 +593,7 @@ export type BudgetMinOrderByAggregateInput = {
   opportunityId?: Prisma.SortOrder
   clientId?: Prisma.SortOrder
   clientUnitId?: Prisma.SortOrder
+  contactId?: Prisma.SortOrder
   commercialOwnerId?: Prisma.SortOrder
   technicalOwnerId?: Prisma.SortOrder
   status?: Prisma.SortOrder
@@ -714,6 +738,48 @@ export type BudgetUncheckedUpdateManyWithoutClientNestedInput = {
   connect?: Prisma.BudgetWhereUniqueInput | Prisma.BudgetWhereUniqueInput[]
   update?: Prisma.BudgetUpdateWithWhereUniqueWithoutClientInput | Prisma.BudgetUpdateWithWhereUniqueWithoutClientInput[]
   updateMany?: Prisma.BudgetUpdateManyWithWhereWithoutClientInput | Prisma.BudgetUpdateManyWithWhereWithoutClientInput[]
+  deleteMany?: Prisma.BudgetScalarWhereInput | Prisma.BudgetScalarWhereInput[]
+}
+
+export type BudgetCreateNestedManyWithoutContactInput = {
+  create?: Prisma.XOR<Prisma.BudgetCreateWithoutContactInput, Prisma.BudgetUncheckedCreateWithoutContactInput> | Prisma.BudgetCreateWithoutContactInput[] | Prisma.BudgetUncheckedCreateWithoutContactInput[]
+  connectOrCreate?: Prisma.BudgetCreateOrConnectWithoutContactInput | Prisma.BudgetCreateOrConnectWithoutContactInput[]
+  createMany?: Prisma.BudgetCreateManyContactInputEnvelope
+  connect?: Prisma.BudgetWhereUniqueInput | Prisma.BudgetWhereUniqueInput[]
+}
+
+export type BudgetUncheckedCreateNestedManyWithoutContactInput = {
+  create?: Prisma.XOR<Prisma.BudgetCreateWithoutContactInput, Prisma.BudgetUncheckedCreateWithoutContactInput> | Prisma.BudgetCreateWithoutContactInput[] | Prisma.BudgetUncheckedCreateWithoutContactInput[]
+  connectOrCreate?: Prisma.BudgetCreateOrConnectWithoutContactInput | Prisma.BudgetCreateOrConnectWithoutContactInput[]
+  createMany?: Prisma.BudgetCreateManyContactInputEnvelope
+  connect?: Prisma.BudgetWhereUniqueInput | Prisma.BudgetWhereUniqueInput[]
+}
+
+export type BudgetUpdateManyWithoutContactNestedInput = {
+  create?: Prisma.XOR<Prisma.BudgetCreateWithoutContactInput, Prisma.BudgetUncheckedCreateWithoutContactInput> | Prisma.BudgetCreateWithoutContactInput[] | Prisma.BudgetUncheckedCreateWithoutContactInput[]
+  connectOrCreate?: Prisma.BudgetCreateOrConnectWithoutContactInput | Prisma.BudgetCreateOrConnectWithoutContactInput[]
+  upsert?: Prisma.BudgetUpsertWithWhereUniqueWithoutContactInput | Prisma.BudgetUpsertWithWhereUniqueWithoutContactInput[]
+  createMany?: Prisma.BudgetCreateManyContactInputEnvelope
+  set?: Prisma.BudgetWhereUniqueInput | Prisma.BudgetWhereUniqueInput[]
+  disconnect?: Prisma.BudgetWhereUniqueInput | Prisma.BudgetWhereUniqueInput[]
+  delete?: Prisma.BudgetWhereUniqueInput | Prisma.BudgetWhereUniqueInput[]
+  connect?: Prisma.BudgetWhereUniqueInput | Prisma.BudgetWhereUniqueInput[]
+  update?: Prisma.BudgetUpdateWithWhereUniqueWithoutContactInput | Prisma.BudgetUpdateWithWhereUniqueWithoutContactInput[]
+  updateMany?: Prisma.BudgetUpdateManyWithWhereWithoutContactInput | Prisma.BudgetUpdateManyWithWhereWithoutContactInput[]
+  deleteMany?: Prisma.BudgetScalarWhereInput | Prisma.BudgetScalarWhereInput[]
+}
+
+export type BudgetUncheckedUpdateManyWithoutContactNestedInput = {
+  create?: Prisma.XOR<Prisma.BudgetCreateWithoutContactInput, Prisma.BudgetUncheckedCreateWithoutContactInput> | Prisma.BudgetCreateWithoutContactInput[] | Prisma.BudgetUncheckedCreateWithoutContactInput[]
+  connectOrCreate?: Prisma.BudgetCreateOrConnectWithoutContactInput | Prisma.BudgetCreateOrConnectWithoutContactInput[]
+  upsert?: Prisma.BudgetUpsertWithWhereUniqueWithoutContactInput | Prisma.BudgetUpsertWithWhereUniqueWithoutContactInput[]
+  createMany?: Prisma.BudgetCreateManyContactInputEnvelope
+  set?: Prisma.BudgetWhereUniqueInput | Prisma.BudgetWhereUniqueInput[]
+  disconnect?: Prisma.BudgetWhereUniqueInput | Prisma.BudgetWhereUniqueInput[]
+  delete?: Prisma.BudgetWhereUniqueInput | Prisma.BudgetWhereUniqueInput[]
+  connect?: Prisma.BudgetWhereUniqueInput | Prisma.BudgetWhereUniqueInput[]
+  update?: Prisma.BudgetUpdateWithWhereUniqueWithoutContactInput | Prisma.BudgetUpdateWithWhereUniqueWithoutContactInput[]
+  updateMany?: Prisma.BudgetUpdateManyWithWhereWithoutContactInput | Prisma.BudgetUpdateManyWithWhereWithoutContactInput[]
   deleteMany?: Prisma.BudgetScalarWhereInput | Prisma.BudgetScalarWhereInput[]
 }
 
@@ -910,6 +976,7 @@ export type BudgetCreateWithoutCommercialOwnerInput = {
   opportunity?: Prisma.OpportunityCreateNestedOneWithoutBudgetsInput
   client: Prisma.ClientCreateNestedOneWithoutBudgetsInput
   clientUnit?: Prisma.ClientUnitCreateNestedOneWithoutBudgetsInput
+  contact?: Prisma.ClientContactCreateNestedOneWithoutBudgetsInput
   technicalOwner?: Prisma.UserCreateNestedOneWithoutBudgetsTechnicalInput
   currentVersion?: Prisma.BudgetVersionCreateNestedOneWithoutCurrentOfBudgetInput
   versions?: Prisma.BudgetVersionCreateNestedManyWithoutBudgetInput
@@ -925,6 +992,7 @@ export type BudgetUncheckedCreateWithoutCommercialOwnerInput = {
   opportunityId?: string | null
   clientId: string
   clientUnitId?: string | null
+  contactId?: string | null
   technicalOwnerId?: string | null
   status?: $Enums.BudgetStatus
   currentVersionId?: string | null
@@ -962,6 +1030,7 @@ export type BudgetCreateWithoutTechnicalOwnerInput = {
   opportunity?: Prisma.OpportunityCreateNestedOneWithoutBudgetsInput
   client: Prisma.ClientCreateNestedOneWithoutBudgetsInput
   clientUnit?: Prisma.ClientUnitCreateNestedOneWithoutBudgetsInput
+  contact?: Prisma.ClientContactCreateNestedOneWithoutBudgetsInput
   commercialOwner?: Prisma.UserCreateNestedOneWithoutBudgetsCommercialInput
   currentVersion?: Prisma.BudgetVersionCreateNestedOneWithoutCurrentOfBudgetInput
   versions?: Prisma.BudgetVersionCreateNestedManyWithoutBudgetInput
@@ -977,6 +1046,7 @@ export type BudgetUncheckedCreateWithoutTechnicalOwnerInput = {
   opportunityId?: string | null
   clientId: string
   clientUnitId?: string | null
+  contactId?: string | null
   commercialOwnerId?: string | null
   status?: $Enums.BudgetStatus
   currentVersionId?: string | null
@@ -1027,6 +1097,7 @@ export type BudgetScalarWhereInput = {
   opportunityId?: Prisma.StringNullableFilter<"Budget"> | string | null
   clientId?: Prisma.StringFilter<"Budget"> | string
   clientUnitId?: Prisma.StringNullableFilter<"Budget"> | string | null
+  contactId?: Prisma.StringNullableFilter<"Budget"> | string | null
   commercialOwnerId?: Prisma.StringNullableFilter<"Budget"> | string | null
   technicalOwnerId?: Prisma.StringNullableFilter<"Budget"> | string | null
   status?: Prisma.EnumBudgetStatusFilter<"Budget"> | $Enums.BudgetStatus
@@ -1066,6 +1137,7 @@ export type BudgetCreateWithoutClientInput = {
   deletedAt?: Date | string | null
   opportunity?: Prisma.OpportunityCreateNestedOneWithoutBudgetsInput
   clientUnit?: Prisma.ClientUnitCreateNestedOneWithoutBudgetsInput
+  contact?: Prisma.ClientContactCreateNestedOneWithoutBudgetsInput
   commercialOwner?: Prisma.UserCreateNestedOneWithoutBudgetsCommercialInput
   technicalOwner?: Prisma.UserCreateNestedOneWithoutBudgetsTechnicalInput
   currentVersion?: Prisma.BudgetVersionCreateNestedOneWithoutCurrentOfBudgetInput
@@ -1081,6 +1153,7 @@ export type BudgetUncheckedCreateWithoutClientInput = {
   code: string
   opportunityId?: string | null
   clientUnitId?: string | null
+  contactId?: string | null
   commercialOwnerId?: string | null
   technicalOwnerId?: string | null
   status?: $Enums.BudgetStatus
@@ -1122,6 +1195,76 @@ export type BudgetUpdateManyWithWhereWithoutClientInput = {
   data: Prisma.XOR<Prisma.BudgetUpdateManyMutationInput, Prisma.BudgetUncheckedUpdateManyWithoutClientInput>
 }
 
+export type BudgetCreateWithoutContactInput = {
+  id?: string
+  companyId: string
+  code: string
+  status?: $Enums.BudgetStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  createdById?: string | null
+  updatedById?: string | null
+  deletedAt?: Date | string | null
+  opportunity?: Prisma.OpportunityCreateNestedOneWithoutBudgetsInput
+  client: Prisma.ClientCreateNestedOneWithoutBudgetsInput
+  clientUnit?: Prisma.ClientUnitCreateNestedOneWithoutBudgetsInput
+  commercialOwner?: Prisma.UserCreateNestedOneWithoutBudgetsCommercialInput
+  technicalOwner?: Prisma.UserCreateNestedOneWithoutBudgetsTechnicalInput
+  currentVersion?: Prisma.BudgetVersionCreateNestedOneWithoutCurrentOfBudgetInput
+  versions?: Prisma.BudgetVersionCreateNestedManyWithoutBudgetInput
+  approvals?: Prisma.BudgetApprovalCreateNestedManyWithoutBudgetInput
+  contracts?: Prisma.ContractCreateNestedManyWithoutBudgetInput
+  projects?: Prisma.ProjectCreateNestedManyWithoutBudgetInput
+}
+
+export type BudgetUncheckedCreateWithoutContactInput = {
+  id?: string
+  companyId: string
+  code: string
+  opportunityId?: string | null
+  clientId: string
+  clientUnitId?: string | null
+  commercialOwnerId?: string | null
+  technicalOwnerId?: string | null
+  status?: $Enums.BudgetStatus
+  currentVersionId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  createdById?: string | null
+  updatedById?: string | null
+  deletedAt?: Date | string | null
+  versions?: Prisma.BudgetVersionUncheckedCreateNestedManyWithoutBudgetInput
+  approvals?: Prisma.BudgetApprovalUncheckedCreateNestedManyWithoutBudgetInput
+  contracts?: Prisma.ContractUncheckedCreateNestedManyWithoutBudgetInput
+  projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutBudgetInput
+}
+
+export type BudgetCreateOrConnectWithoutContactInput = {
+  where: Prisma.BudgetWhereUniqueInput
+  create: Prisma.XOR<Prisma.BudgetCreateWithoutContactInput, Prisma.BudgetUncheckedCreateWithoutContactInput>
+}
+
+export type BudgetCreateManyContactInputEnvelope = {
+  data: Prisma.BudgetCreateManyContactInput | Prisma.BudgetCreateManyContactInput[]
+  skipDuplicates?: boolean
+}
+
+export type BudgetUpsertWithWhereUniqueWithoutContactInput = {
+  where: Prisma.BudgetWhereUniqueInput
+  update: Prisma.XOR<Prisma.BudgetUpdateWithoutContactInput, Prisma.BudgetUncheckedUpdateWithoutContactInput>
+  create: Prisma.XOR<Prisma.BudgetCreateWithoutContactInput, Prisma.BudgetUncheckedCreateWithoutContactInput>
+}
+
+export type BudgetUpdateWithWhereUniqueWithoutContactInput = {
+  where: Prisma.BudgetWhereUniqueInput
+  data: Prisma.XOR<Prisma.BudgetUpdateWithoutContactInput, Prisma.BudgetUncheckedUpdateWithoutContactInput>
+}
+
+export type BudgetUpdateManyWithWhereWithoutContactInput = {
+  where: Prisma.BudgetScalarWhereInput
+  data: Prisma.XOR<Prisma.BudgetUpdateManyMutationInput, Prisma.BudgetUncheckedUpdateManyWithoutContactInput>
+}
+
 export type BudgetCreateWithoutClientUnitInput = {
   id?: string
   companyId: string
@@ -1134,6 +1277,7 @@ export type BudgetCreateWithoutClientUnitInput = {
   deletedAt?: Date | string | null
   opportunity?: Prisma.OpportunityCreateNestedOneWithoutBudgetsInput
   client: Prisma.ClientCreateNestedOneWithoutBudgetsInput
+  contact?: Prisma.ClientContactCreateNestedOneWithoutBudgetsInput
   commercialOwner?: Prisma.UserCreateNestedOneWithoutBudgetsCommercialInput
   technicalOwner?: Prisma.UserCreateNestedOneWithoutBudgetsTechnicalInput
   currentVersion?: Prisma.BudgetVersionCreateNestedOneWithoutCurrentOfBudgetInput
@@ -1149,6 +1293,7 @@ export type BudgetUncheckedCreateWithoutClientUnitInput = {
   code: string
   opportunityId?: string | null
   clientId: string
+  contactId?: string | null
   commercialOwnerId?: string | null
   technicalOwnerId?: string | null
   status?: $Enums.BudgetStatus
@@ -1202,6 +1347,7 @@ export type BudgetCreateWithoutOpportunityInput = {
   deletedAt?: Date | string | null
   client: Prisma.ClientCreateNestedOneWithoutBudgetsInput
   clientUnit?: Prisma.ClientUnitCreateNestedOneWithoutBudgetsInput
+  contact?: Prisma.ClientContactCreateNestedOneWithoutBudgetsInput
   commercialOwner?: Prisma.UserCreateNestedOneWithoutBudgetsCommercialInput
   technicalOwner?: Prisma.UserCreateNestedOneWithoutBudgetsTechnicalInput
   currentVersion?: Prisma.BudgetVersionCreateNestedOneWithoutCurrentOfBudgetInput
@@ -1217,6 +1363,7 @@ export type BudgetUncheckedCreateWithoutOpportunityInput = {
   code: string
   clientId: string
   clientUnitId?: string | null
+  contactId?: string | null
   commercialOwnerId?: string | null
   technicalOwnerId?: string | null
   status?: $Enums.BudgetStatus
@@ -1271,6 +1418,7 @@ export type BudgetCreateWithoutVersionsInput = {
   opportunity?: Prisma.OpportunityCreateNestedOneWithoutBudgetsInput
   client: Prisma.ClientCreateNestedOneWithoutBudgetsInput
   clientUnit?: Prisma.ClientUnitCreateNestedOneWithoutBudgetsInput
+  contact?: Prisma.ClientContactCreateNestedOneWithoutBudgetsInput
   commercialOwner?: Prisma.UserCreateNestedOneWithoutBudgetsCommercialInput
   technicalOwner?: Prisma.UserCreateNestedOneWithoutBudgetsTechnicalInput
   currentVersion?: Prisma.BudgetVersionCreateNestedOneWithoutCurrentOfBudgetInput
@@ -1286,6 +1434,7 @@ export type BudgetUncheckedCreateWithoutVersionsInput = {
   opportunityId?: string | null
   clientId: string
   clientUnitId?: string | null
+  contactId?: string | null
   commercialOwnerId?: string | null
   technicalOwnerId?: string | null
   status?: $Enums.BudgetStatus
@@ -1318,6 +1467,7 @@ export type BudgetCreateWithoutCurrentVersionInput = {
   opportunity?: Prisma.OpportunityCreateNestedOneWithoutBudgetsInput
   client: Prisma.ClientCreateNestedOneWithoutBudgetsInput
   clientUnit?: Prisma.ClientUnitCreateNestedOneWithoutBudgetsInput
+  contact?: Prisma.ClientContactCreateNestedOneWithoutBudgetsInput
   commercialOwner?: Prisma.UserCreateNestedOneWithoutBudgetsCommercialInput
   technicalOwner?: Prisma.UserCreateNestedOneWithoutBudgetsTechnicalInput
   versions?: Prisma.BudgetVersionCreateNestedManyWithoutBudgetInput
@@ -1333,6 +1483,7 @@ export type BudgetUncheckedCreateWithoutCurrentVersionInput = {
   opportunityId?: string | null
   clientId: string
   clientUnitId?: string | null
+  contactId?: string | null
   commercialOwnerId?: string | null
   technicalOwnerId?: string | null
   status?: $Enums.BudgetStatus
@@ -1376,6 +1527,7 @@ export type BudgetUpdateWithoutVersionsInput = {
   opportunity?: Prisma.OpportunityUpdateOneWithoutBudgetsNestedInput
   client?: Prisma.ClientUpdateOneRequiredWithoutBudgetsNestedInput
   clientUnit?: Prisma.ClientUnitUpdateOneWithoutBudgetsNestedInput
+  contact?: Prisma.ClientContactUpdateOneWithoutBudgetsNestedInput
   commercialOwner?: Prisma.UserUpdateOneWithoutBudgetsCommercialNestedInput
   technicalOwner?: Prisma.UserUpdateOneWithoutBudgetsTechnicalNestedInput
   currentVersion?: Prisma.BudgetVersionUpdateOneWithoutCurrentOfBudgetNestedInput
@@ -1391,6 +1543,7 @@ export type BudgetUncheckedUpdateWithoutVersionsInput = {
   opportunityId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
   clientUnitId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   commercialOwnerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   technicalOwnerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumBudgetStatusFieldUpdateOperationsInput | $Enums.BudgetStatus
@@ -1429,6 +1582,7 @@ export type BudgetUpdateWithoutCurrentVersionInput = {
   opportunity?: Prisma.OpportunityUpdateOneWithoutBudgetsNestedInput
   client?: Prisma.ClientUpdateOneRequiredWithoutBudgetsNestedInput
   clientUnit?: Prisma.ClientUnitUpdateOneWithoutBudgetsNestedInput
+  contact?: Prisma.ClientContactUpdateOneWithoutBudgetsNestedInput
   commercialOwner?: Prisma.UserUpdateOneWithoutBudgetsCommercialNestedInput
   technicalOwner?: Prisma.UserUpdateOneWithoutBudgetsTechnicalNestedInput
   versions?: Prisma.BudgetVersionUpdateManyWithoutBudgetNestedInput
@@ -1444,6 +1598,7 @@ export type BudgetUncheckedUpdateWithoutCurrentVersionInput = {
   opportunityId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
   clientUnitId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   commercialOwnerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   technicalOwnerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumBudgetStatusFieldUpdateOperationsInput | $Enums.BudgetStatus
@@ -1471,6 +1626,7 @@ export type BudgetCreateWithoutApprovalsInput = {
   opportunity?: Prisma.OpportunityCreateNestedOneWithoutBudgetsInput
   client: Prisma.ClientCreateNestedOneWithoutBudgetsInput
   clientUnit?: Prisma.ClientUnitCreateNestedOneWithoutBudgetsInput
+  contact?: Prisma.ClientContactCreateNestedOneWithoutBudgetsInput
   commercialOwner?: Prisma.UserCreateNestedOneWithoutBudgetsCommercialInput
   technicalOwner?: Prisma.UserCreateNestedOneWithoutBudgetsTechnicalInput
   currentVersion?: Prisma.BudgetVersionCreateNestedOneWithoutCurrentOfBudgetInput
@@ -1486,6 +1642,7 @@ export type BudgetUncheckedCreateWithoutApprovalsInput = {
   opportunityId?: string | null
   clientId: string
   clientUnitId?: string | null
+  contactId?: string | null
   commercialOwnerId?: string | null
   technicalOwnerId?: string | null
   status?: $Enums.BudgetStatus
@@ -1529,6 +1686,7 @@ export type BudgetUpdateWithoutApprovalsInput = {
   opportunity?: Prisma.OpportunityUpdateOneWithoutBudgetsNestedInput
   client?: Prisma.ClientUpdateOneRequiredWithoutBudgetsNestedInput
   clientUnit?: Prisma.ClientUnitUpdateOneWithoutBudgetsNestedInput
+  contact?: Prisma.ClientContactUpdateOneWithoutBudgetsNestedInput
   commercialOwner?: Prisma.UserUpdateOneWithoutBudgetsCommercialNestedInput
   technicalOwner?: Prisma.UserUpdateOneWithoutBudgetsTechnicalNestedInput
   currentVersion?: Prisma.BudgetVersionUpdateOneWithoutCurrentOfBudgetNestedInput
@@ -1544,6 +1702,7 @@ export type BudgetUncheckedUpdateWithoutApprovalsInput = {
   opportunityId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
   clientUnitId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   commercialOwnerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   technicalOwnerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumBudgetStatusFieldUpdateOperationsInput | $Enums.BudgetStatus
@@ -1571,6 +1730,7 @@ export type BudgetCreateWithoutContractsInput = {
   opportunity?: Prisma.OpportunityCreateNestedOneWithoutBudgetsInput
   client: Prisma.ClientCreateNestedOneWithoutBudgetsInput
   clientUnit?: Prisma.ClientUnitCreateNestedOneWithoutBudgetsInput
+  contact?: Prisma.ClientContactCreateNestedOneWithoutBudgetsInput
   commercialOwner?: Prisma.UserCreateNestedOneWithoutBudgetsCommercialInput
   technicalOwner?: Prisma.UserCreateNestedOneWithoutBudgetsTechnicalInput
   currentVersion?: Prisma.BudgetVersionCreateNestedOneWithoutCurrentOfBudgetInput
@@ -1586,6 +1746,7 @@ export type BudgetUncheckedCreateWithoutContractsInput = {
   opportunityId?: string | null
   clientId: string
   clientUnitId?: string | null
+  contactId?: string | null
   commercialOwnerId?: string | null
   technicalOwnerId?: string | null
   status?: $Enums.BudgetStatus
@@ -1629,6 +1790,7 @@ export type BudgetUpdateWithoutContractsInput = {
   opportunity?: Prisma.OpportunityUpdateOneWithoutBudgetsNestedInput
   client?: Prisma.ClientUpdateOneRequiredWithoutBudgetsNestedInput
   clientUnit?: Prisma.ClientUnitUpdateOneWithoutBudgetsNestedInput
+  contact?: Prisma.ClientContactUpdateOneWithoutBudgetsNestedInput
   commercialOwner?: Prisma.UserUpdateOneWithoutBudgetsCommercialNestedInput
   technicalOwner?: Prisma.UserUpdateOneWithoutBudgetsTechnicalNestedInput
   currentVersion?: Prisma.BudgetVersionUpdateOneWithoutCurrentOfBudgetNestedInput
@@ -1644,6 +1806,7 @@ export type BudgetUncheckedUpdateWithoutContractsInput = {
   opportunityId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
   clientUnitId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   commercialOwnerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   technicalOwnerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumBudgetStatusFieldUpdateOperationsInput | $Enums.BudgetStatus
@@ -1671,6 +1834,7 @@ export type BudgetCreateWithoutProjectsInput = {
   opportunity?: Prisma.OpportunityCreateNestedOneWithoutBudgetsInput
   client: Prisma.ClientCreateNestedOneWithoutBudgetsInput
   clientUnit?: Prisma.ClientUnitCreateNestedOneWithoutBudgetsInput
+  contact?: Prisma.ClientContactCreateNestedOneWithoutBudgetsInput
   commercialOwner?: Prisma.UserCreateNestedOneWithoutBudgetsCommercialInput
   technicalOwner?: Prisma.UserCreateNestedOneWithoutBudgetsTechnicalInput
   currentVersion?: Prisma.BudgetVersionCreateNestedOneWithoutCurrentOfBudgetInput
@@ -1686,6 +1850,7 @@ export type BudgetUncheckedCreateWithoutProjectsInput = {
   opportunityId?: string | null
   clientId: string
   clientUnitId?: string | null
+  contactId?: string | null
   commercialOwnerId?: string | null
   technicalOwnerId?: string | null
   status?: $Enums.BudgetStatus
@@ -1729,6 +1894,7 @@ export type BudgetUpdateWithoutProjectsInput = {
   opportunity?: Prisma.OpportunityUpdateOneWithoutBudgetsNestedInput
   client?: Prisma.ClientUpdateOneRequiredWithoutBudgetsNestedInput
   clientUnit?: Prisma.ClientUnitUpdateOneWithoutBudgetsNestedInput
+  contact?: Prisma.ClientContactUpdateOneWithoutBudgetsNestedInput
   commercialOwner?: Prisma.UserUpdateOneWithoutBudgetsCommercialNestedInput
   technicalOwner?: Prisma.UserUpdateOneWithoutBudgetsTechnicalNestedInput
   currentVersion?: Prisma.BudgetVersionUpdateOneWithoutCurrentOfBudgetNestedInput
@@ -1744,6 +1910,7 @@ export type BudgetUncheckedUpdateWithoutProjectsInput = {
   opportunityId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
   clientUnitId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   commercialOwnerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   technicalOwnerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumBudgetStatusFieldUpdateOperationsInput | $Enums.BudgetStatus
@@ -1765,6 +1932,7 @@ export type BudgetCreateManyCommercialOwnerInput = {
   opportunityId?: string | null
   clientId: string
   clientUnitId?: string | null
+  contactId?: string | null
   technicalOwnerId?: string | null
   status?: $Enums.BudgetStatus
   currentVersionId?: string | null
@@ -1782,6 +1950,7 @@ export type BudgetCreateManyTechnicalOwnerInput = {
   opportunityId?: string | null
   clientId: string
   clientUnitId?: string | null
+  contactId?: string | null
   commercialOwnerId?: string | null
   status?: $Enums.BudgetStatus
   currentVersionId?: string | null
@@ -1805,6 +1974,7 @@ export type BudgetUpdateWithoutCommercialOwnerInput = {
   opportunity?: Prisma.OpportunityUpdateOneWithoutBudgetsNestedInput
   client?: Prisma.ClientUpdateOneRequiredWithoutBudgetsNestedInput
   clientUnit?: Prisma.ClientUnitUpdateOneWithoutBudgetsNestedInput
+  contact?: Prisma.ClientContactUpdateOneWithoutBudgetsNestedInput
   technicalOwner?: Prisma.UserUpdateOneWithoutBudgetsTechnicalNestedInput
   currentVersion?: Prisma.BudgetVersionUpdateOneWithoutCurrentOfBudgetNestedInput
   versions?: Prisma.BudgetVersionUpdateManyWithoutBudgetNestedInput
@@ -1820,6 +1990,7 @@ export type BudgetUncheckedUpdateWithoutCommercialOwnerInput = {
   opportunityId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
   clientUnitId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   technicalOwnerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumBudgetStatusFieldUpdateOperationsInput | $Enums.BudgetStatus
   currentVersionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1841,6 +2012,7 @@ export type BudgetUncheckedUpdateManyWithoutCommercialOwnerInput = {
   opportunityId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
   clientUnitId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   technicalOwnerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumBudgetStatusFieldUpdateOperationsInput | $Enums.BudgetStatus
   currentVersionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1864,6 +2036,7 @@ export type BudgetUpdateWithoutTechnicalOwnerInput = {
   opportunity?: Prisma.OpportunityUpdateOneWithoutBudgetsNestedInput
   client?: Prisma.ClientUpdateOneRequiredWithoutBudgetsNestedInput
   clientUnit?: Prisma.ClientUnitUpdateOneWithoutBudgetsNestedInput
+  contact?: Prisma.ClientContactUpdateOneWithoutBudgetsNestedInput
   commercialOwner?: Prisma.UserUpdateOneWithoutBudgetsCommercialNestedInput
   currentVersion?: Prisma.BudgetVersionUpdateOneWithoutCurrentOfBudgetNestedInput
   versions?: Prisma.BudgetVersionUpdateManyWithoutBudgetNestedInput
@@ -1879,6 +2052,7 @@ export type BudgetUncheckedUpdateWithoutTechnicalOwnerInput = {
   opportunityId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
   clientUnitId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   commercialOwnerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumBudgetStatusFieldUpdateOperationsInput | $Enums.BudgetStatus
   currentVersionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1900,6 +2074,7 @@ export type BudgetUncheckedUpdateManyWithoutTechnicalOwnerInput = {
   opportunityId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
   clientUnitId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   commercialOwnerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumBudgetStatusFieldUpdateOperationsInput | $Enums.BudgetStatus
   currentVersionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1916,6 +2091,7 @@ export type BudgetCreateManyClientInput = {
   code: string
   opportunityId?: string | null
   clientUnitId?: string | null
+  contactId?: string | null
   commercialOwnerId?: string | null
   technicalOwnerId?: string | null
   status?: $Enums.BudgetStatus
@@ -1939,6 +2115,7 @@ export type BudgetUpdateWithoutClientInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   opportunity?: Prisma.OpportunityUpdateOneWithoutBudgetsNestedInput
   clientUnit?: Prisma.ClientUnitUpdateOneWithoutBudgetsNestedInput
+  contact?: Prisma.ClientContactUpdateOneWithoutBudgetsNestedInput
   commercialOwner?: Prisma.UserUpdateOneWithoutBudgetsCommercialNestedInput
   technicalOwner?: Prisma.UserUpdateOneWithoutBudgetsTechnicalNestedInput
   currentVersion?: Prisma.BudgetVersionUpdateOneWithoutCurrentOfBudgetNestedInput
@@ -1954,6 +2131,7 @@ export type BudgetUncheckedUpdateWithoutClientInput = {
   code?: Prisma.StringFieldUpdateOperationsInput | string
   opportunityId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   clientUnitId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   commercialOwnerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   technicalOwnerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumBudgetStatusFieldUpdateOperationsInput | $Enums.BudgetStatus
@@ -1975,6 +2153,87 @@ export type BudgetUncheckedUpdateManyWithoutClientInput = {
   code?: Prisma.StringFieldUpdateOperationsInput | string
   opportunityId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   clientUnitId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  commercialOwnerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  technicalOwnerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumBudgetStatusFieldUpdateOperationsInput | $Enums.BudgetStatus
+  currentVersionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+}
+
+export type BudgetCreateManyContactInput = {
+  id?: string
+  companyId: string
+  code: string
+  opportunityId?: string | null
+  clientId: string
+  clientUnitId?: string | null
+  commercialOwnerId?: string | null
+  technicalOwnerId?: string | null
+  status?: $Enums.BudgetStatus
+  currentVersionId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  createdById?: string | null
+  updatedById?: string | null
+  deletedAt?: Date | string | null
+}
+
+export type BudgetUpdateWithoutContactInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  companyId?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumBudgetStatusFieldUpdateOperationsInput | $Enums.BudgetStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  opportunity?: Prisma.OpportunityUpdateOneWithoutBudgetsNestedInput
+  client?: Prisma.ClientUpdateOneRequiredWithoutBudgetsNestedInput
+  clientUnit?: Prisma.ClientUnitUpdateOneWithoutBudgetsNestedInput
+  commercialOwner?: Prisma.UserUpdateOneWithoutBudgetsCommercialNestedInput
+  technicalOwner?: Prisma.UserUpdateOneWithoutBudgetsTechnicalNestedInput
+  currentVersion?: Prisma.BudgetVersionUpdateOneWithoutCurrentOfBudgetNestedInput
+  versions?: Prisma.BudgetVersionUpdateManyWithoutBudgetNestedInput
+  approvals?: Prisma.BudgetApprovalUpdateManyWithoutBudgetNestedInput
+  contracts?: Prisma.ContractUpdateManyWithoutBudgetNestedInput
+  projects?: Prisma.ProjectUpdateManyWithoutBudgetNestedInput
+}
+
+export type BudgetUncheckedUpdateWithoutContactInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  companyId?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  opportunityId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  clientUnitId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  commercialOwnerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  technicalOwnerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumBudgetStatusFieldUpdateOperationsInput | $Enums.BudgetStatus
+  currentVersionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  versions?: Prisma.BudgetVersionUncheckedUpdateManyWithoutBudgetNestedInput
+  approvals?: Prisma.BudgetApprovalUncheckedUpdateManyWithoutBudgetNestedInput
+  contracts?: Prisma.ContractUncheckedUpdateManyWithoutBudgetNestedInput
+  projects?: Prisma.ProjectUncheckedUpdateManyWithoutBudgetNestedInput
+}
+
+export type BudgetUncheckedUpdateManyWithoutContactInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  companyId?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  opportunityId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  clientUnitId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   commercialOwnerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   technicalOwnerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumBudgetStatusFieldUpdateOperationsInput | $Enums.BudgetStatus
@@ -1992,6 +2251,7 @@ export type BudgetCreateManyClientUnitInput = {
   code: string
   opportunityId?: string | null
   clientId: string
+  contactId?: string | null
   commercialOwnerId?: string | null
   technicalOwnerId?: string | null
   status?: $Enums.BudgetStatus
@@ -2015,6 +2275,7 @@ export type BudgetUpdateWithoutClientUnitInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   opportunity?: Prisma.OpportunityUpdateOneWithoutBudgetsNestedInput
   client?: Prisma.ClientUpdateOneRequiredWithoutBudgetsNestedInput
+  contact?: Prisma.ClientContactUpdateOneWithoutBudgetsNestedInput
   commercialOwner?: Prisma.UserUpdateOneWithoutBudgetsCommercialNestedInput
   technicalOwner?: Prisma.UserUpdateOneWithoutBudgetsTechnicalNestedInput
   currentVersion?: Prisma.BudgetVersionUpdateOneWithoutCurrentOfBudgetNestedInput
@@ -2030,6 +2291,7 @@ export type BudgetUncheckedUpdateWithoutClientUnitInput = {
   code?: Prisma.StringFieldUpdateOperationsInput | string
   opportunityId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  contactId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   commercialOwnerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   technicalOwnerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumBudgetStatusFieldUpdateOperationsInput | $Enums.BudgetStatus
@@ -2051,6 +2313,7 @@ export type BudgetUncheckedUpdateManyWithoutClientUnitInput = {
   code?: Prisma.StringFieldUpdateOperationsInput | string
   opportunityId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  contactId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   commercialOwnerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   technicalOwnerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumBudgetStatusFieldUpdateOperationsInput | $Enums.BudgetStatus
@@ -2068,6 +2331,7 @@ export type BudgetCreateManyOpportunityInput = {
   code: string
   clientId: string
   clientUnitId?: string | null
+  contactId?: string | null
   commercialOwnerId?: string | null
   technicalOwnerId?: string | null
   status?: $Enums.BudgetStatus
@@ -2091,6 +2355,7 @@ export type BudgetUpdateWithoutOpportunityInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   client?: Prisma.ClientUpdateOneRequiredWithoutBudgetsNestedInput
   clientUnit?: Prisma.ClientUnitUpdateOneWithoutBudgetsNestedInput
+  contact?: Prisma.ClientContactUpdateOneWithoutBudgetsNestedInput
   commercialOwner?: Prisma.UserUpdateOneWithoutBudgetsCommercialNestedInput
   technicalOwner?: Prisma.UserUpdateOneWithoutBudgetsTechnicalNestedInput
   currentVersion?: Prisma.BudgetVersionUpdateOneWithoutCurrentOfBudgetNestedInput
@@ -2106,6 +2371,7 @@ export type BudgetUncheckedUpdateWithoutOpportunityInput = {
   code?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
   clientUnitId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   commercialOwnerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   technicalOwnerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumBudgetStatusFieldUpdateOperationsInput | $Enums.BudgetStatus
@@ -2127,6 +2393,7 @@ export type BudgetUncheckedUpdateManyWithoutOpportunityInput = {
   code?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
   clientUnitId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   commercialOwnerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   technicalOwnerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumBudgetStatusFieldUpdateOperationsInput | $Enums.BudgetStatus
@@ -2203,6 +2470,7 @@ export type BudgetSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   opportunityId?: boolean
   clientId?: boolean
   clientUnitId?: boolean
+  contactId?: boolean
   commercialOwnerId?: boolean
   technicalOwnerId?: boolean
   status?: boolean
@@ -2215,6 +2483,7 @@ export type BudgetSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   opportunity?: boolean | Prisma.Budget$opportunityArgs<ExtArgs>
   client?: boolean | Prisma.ClientDefaultArgs<ExtArgs>
   clientUnit?: boolean | Prisma.Budget$clientUnitArgs<ExtArgs>
+  contact?: boolean | Prisma.Budget$contactArgs<ExtArgs>
   commercialOwner?: boolean | Prisma.Budget$commercialOwnerArgs<ExtArgs>
   technicalOwner?: boolean | Prisma.Budget$technicalOwnerArgs<ExtArgs>
   currentVersion?: boolean | Prisma.Budget$currentVersionArgs<ExtArgs>
@@ -2232,6 +2501,7 @@ export type BudgetSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
   opportunityId?: boolean
   clientId?: boolean
   clientUnitId?: boolean
+  contactId?: boolean
   commercialOwnerId?: boolean
   technicalOwnerId?: boolean
   status?: boolean
@@ -2244,6 +2514,7 @@ export type BudgetSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
   opportunity?: boolean | Prisma.Budget$opportunityArgs<ExtArgs>
   client?: boolean | Prisma.ClientDefaultArgs<ExtArgs>
   clientUnit?: boolean | Prisma.Budget$clientUnitArgs<ExtArgs>
+  contact?: boolean | Prisma.Budget$contactArgs<ExtArgs>
   commercialOwner?: boolean | Prisma.Budget$commercialOwnerArgs<ExtArgs>
   technicalOwner?: boolean | Prisma.Budget$technicalOwnerArgs<ExtArgs>
   currentVersion?: boolean | Prisma.Budget$currentVersionArgs<ExtArgs>
@@ -2256,6 +2527,7 @@ export type BudgetSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
   opportunityId?: boolean
   clientId?: boolean
   clientUnitId?: boolean
+  contactId?: boolean
   commercialOwnerId?: boolean
   technicalOwnerId?: boolean
   status?: boolean
@@ -2268,6 +2540,7 @@ export type BudgetSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
   opportunity?: boolean | Prisma.Budget$opportunityArgs<ExtArgs>
   client?: boolean | Prisma.ClientDefaultArgs<ExtArgs>
   clientUnit?: boolean | Prisma.Budget$clientUnitArgs<ExtArgs>
+  contact?: boolean | Prisma.Budget$contactArgs<ExtArgs>
   commercialOwner?: boolean | Prisma.Budget$commercialOwnerArgs<ExtArgs>
   technicalOwner?: boolean | Prisma.Budget$technicalOwnerArgs<ExtArgs>
   currentVersion?: boolean | Prisma.Budget$currentVersionArgs<ExtArgs>
@@ -2280,6 +2553,7 @@ export type BudgetSelectScalar = {
   opportunityId?: boolean
   clientId?: boolean
   clientUnitId?: boolean
+  contactId?: boolean
   commercialOwnerId?: boolean
   technicalOwnerId?: boolean
   status?: boolean
@@ -2291,11 +2565,12 @@ export type BudgetSelectScalar = {
   deletedAt?: boolean
 }
 
-export type BudgetOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "companyId" | "code" | "opportunityId" | "clientId" | "clientUnitId" | "commercialOwnerId" | "technicalOwnerId" | "status" | "currentVersionId" | "createdAt" | "updatedAt" | "createdById" | "updatedById" | "deletedAt", ExtArgs["result"]["budget"]>
+export type BudgetOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "companyId" | "code" | "opportunityId" | "clientId" | "clientUnitId" | "contactId" | "commercialOwnerId" | "technicalOwnerId" | "status" | "currentVersionId" | "createdAt" | "updatedAt" | "createdById" | "updatedById" | "deletedAt", ExtArgs["result"]["budget"]>
 export type BudgetInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   opportunity?: boolean | Prisma.Budget$opportunityArgs<ExtArgs>
   client?: boolean | Prisma.ClientDefaultArgs<ExtArgs>
   clientUnit?: boolean | Prisma.Budget$clientUnitArgs<ExtArgs>
+  contact?: boolean | Prisma.Budget$contactArgs<ExtArgs>
   commercialOwner?: boolean | Prisma.Budget$commercialOwnerArgs<ExtArgs>
   technicalOwner?: boolean | Prisma.Budget$technicalOwnerArgs<ExtArgs>
   currentVersion?: boolean | Prisma.Budget$currentVersionArgs<ExtArgs>
@@ -2309,6 +2584,7 @@ export type BudgetIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   opportunity?: boolean | Prisma.Budget$opportunityArgs<ExtArgs>
   client?: boolean | Prisma.ClientDefaultArgs<ExtArgs>
   clientUnit?: boolean | Prisma.Budget$clientUnitArgs<ExtArgs>
+  contact?: boolean | Prisma.Budget$contactArgs<ExtArgs>
   commercialOwner?: boolean | Prisma.Budget$commercialOwnerArgs<ExtArgs>
   technicalOwner?: boolean | Prisma.Budget$technicalOwnerArgs<ExtArgs>
   currentVersion?: boolean | Prisma.Budget$currentVersionArgs<ExtArgs>
@@ -2317,6 +2593,7 @@ export type BudgetIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   opportunity?: boolean | Prisma.Budget$opportunityArgs<ExtArgs>
   client?: boolean | Prisma.ClientDefaultArgs<ExtArgs>
   clientUnit?: boolean | Prisma.Budget$clientUnitArgs<ExtArgs>
+  contact?: boolean | Prisma.Budget$contactArgs<ExtArgs>
   commercialOwner?: boolean | Prisma.Budget$commercialOwnerArgs<ExtArgs>
   technicalOwner?: boolean | Prisma.Budget$technicalOwnerArgs<ExtArgs>
   currentVersion?: boolean | Prisma.Budget$currentVersionArgs<ExtArgs>
@@ -2328,6 +2605,7 @@ export type $BudgetPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     opportunity: Prisma.$OpportunityPayload<ExtArgs> | null
     client: Prisma.$ClientPayload<ExtArgs>
     clientUnit: Prisma.$ClientUnitPayload<ExtArgs> | null
+    contact: Prisma.$ClientContactPayload<ExtArgs> | null
     commercialOwner: Prisma.$UserPayload<ExtArgs> | null
     technicalOwner: Prisma.$UserPayload<ExtArgs> | null
     currentVersion: Prisma.$BudgetVersionPayload<ExtArgs> | null
@@ -2343,6 +2621,11 @@ export type $BudgetPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     opportunityId: string | null
     clientId: string
     clientUnitId: string | null
+    /**
+     * Quem pediu este orçamento. A mesma empresa costuma ter vários
+     * solicitantes, e a proposta precisa sair endereçada ao certo.
+     */
+    contactId: string | null
     commercialOwnerId: string | null
     technicalOwnerId: string | null
     status: $Enums.BudgetStatus
@@ -2749,6 +3032,7 @@ export interface Prisma__BudgetClient<T, Null = never, ExtArgs extends runtime.T
   opportunity<T extends Prisma.Budget$opportunityArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Budget$opportunityArgs<ExtArgs>>): Prisma.Prisma__OpportunityClient<runtime.Types.Result.GetResult<Prisma.$OpportunityPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   client<T extends Prisma.ClientDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ClientDefaultArgs<ExtArgs>>): Prisma.Prisma__ClientClient<runtime.Types.Result.GetResult<Prisma.$ClientPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   clientUnit<T extends Prisma.Budget$clientUnitArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Budget$clientUnitArgs<ExtArgs>>): Prisma.Prisma__ClientUnitClient<runtime.Types.Result.GetResult<Prisma.$ClientUnitPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  contact<T extends Prisma.Budget$contactArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Budget$contactArgs<ExtArgs>>): Prisma.Prisma__ClientContactClient<runtime.Types.Result.GetResult<Prisma.$ClientContactPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   commercialOwner<T extends Prisma.Budget$commercialOwnerArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Budget$commercialOwnerArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   technicalOwner<T extends Prisma.Budget$technicalOwnerArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Budget$technicalOwnerArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   currentVersion<T extends Prisma.Budget$currentVersionArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Budget$currentVersionArgs<ExtArgs>>): Prisma.Prisma__BudgetVersionClient<runtime.Types.Result.GetResult<Prisma.$BudgetVersionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
@@ -2791,6 +3075,7 @@ export interface BudgetFieldRefs {
   readonly opportunityId: Prisma.FieldRef<"Budget", 'String'>
   readonly clientId: Prisma.FieldRef<"Budget", 'String'>
   readonly clientUnitId: Prisma.FieldRef<"Budget", 'String'>
+  readonly contactId: Prisma.FieldRef<"Budget", 'String'>
   readonly commercialOwnerId: Prisma.FieldRef<"Budget", 'String'>
   readonly technicalOwnerId: Prisma.FieldRef<"Budget", 'String'>
   readonly status: Prisma.FieldRef<"Budget", 'BudgetStatus'>
@@ -3236,6 +3521,25 @@ export type Budget$clientUnitArgs<ExtArgs extends runtime.Types.Extensions.Inter
    */
   include?: Prisma.ClientUnitInclude<ExtArgs> | null
   where?: Prisma.ClientUnitWhereInput
+}
+
+/**
+ * Budget.contact
+ */
+export type Budget$contactArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ClientContact
+   */
+  select?: Prisma.ClientContactSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ClientContact
+   */
+  omit?: Prisma.ClientContactOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ClientContactInclude<ExtArgs> | null
+  where?: Prisma.ClientContactWhereInput
 }
 
 /**

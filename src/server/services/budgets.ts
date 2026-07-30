@@ -86,8 +86,19 @@ export async function getBudget(user: SessionUser, id: string) {
   return prisma.budget.findFirst({
     where: { id, companyId: user.companyId, deletedAt: null },
     include: {
-      client: { select: { id: true, legalName: true, tradeName: true, email: true } },
+      client: {
+        select: {
+          id: true, legalName: true, tradeName: true, email: true,
+          // solicitantes disponíveis para escolher no orçamento
+          contacts: {
+            where: { deletedAt: null },
+            select: { id: true, name: true, position: true, email: true },
+            orderBy: [{ isPrimary: 'desc' }, { name: 'asc' }],
+          },
+        },
+      },
       clientUnit: true,
+      contact: { select: { id: true, name: true, email: true } },
       opportunity: { select: { id: true, code: true, title: true, stageId: true } },
       commercialOwner: { select: { id: true, name: true } },
       technicalOwner: { select: { id: true, name: true } },
@@ -230,6 +241,8 @@ export type VersionPayload = {
   estimatedRetentions?: string;
   internalNotes?: string | null;
   clientNotes?: string | null;
+  /** Solicitante do cliente; fica no orçamento, não na versão. */
+  contactId?: string | null;
   /** `undefined` = não mexer no que já está salvo; `null`/string = grava a sobreposição. */
   generalInfoOverride?: string | null;
   differentialsOverride?: string | null;
@@ -318,7 +331,10 @@ export async function saveCurrentVersion(user: SessionUser, budgetId: string, pa
         total: totals.total.toString(),
       },
     }),
-    prisma.budget.update({ where: { id: budgetId }, data: { updatedById: user.id } }),
+    prisma.budget.update({
+      where: { id: budgetId },
+      data: { updatedById: user.id, contactId: payload.contactId ?? null },
+    }),
   ]);
 
   await auditLog({
