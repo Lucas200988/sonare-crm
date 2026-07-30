@@ -7,7 +7,7 @@ import { PageHeader, PrimaryLink, Card, EmptyState, Badge, inputCls } from '@/co
 import { formatBRL } from '@/lib/money';
 import { formatDateBR } from '@/lib/dates';
 
-import { BUDGET_STATUS_BADGE as STATUS_BADGE } from './status-badge';
+import { badgeDoOrcamento } from './status-badge';
 
 export const metadata: Metadata = { title: 'Orçamentos — SONARE CRM' };
 
@@ -78,7 +78,7 @@ export default async function BudgetsPage(props: {
             </thead>
             <tbody className="divide-y divide-slate-100">
               {items.map((b) => {
-                const badge = STATUS_BADGE[b.status] ?? STATUS_BADGE.RASCUNHO;
+                const badge = badgeDoOrcamento(b.status, b.currentVersion?.proposals);
                 return (
                   <tr key={b.id} className="hover:bg-slate-50">
                     <td className="px-4 py-3">

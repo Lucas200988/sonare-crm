@@ -52,6 +52,8 @@ const BADGE_STYLES: Record<string, string> = {
   blue: 'bg-sky-100 text-sky-800',
   slate: 'bg-slate-100 text-slate-700',
   violet: 'bg-violet-100 text-violet-800',
+  // pronto internamente, mas ainda não é "verde de negócio fechado"
+  teal: 'bg-teal-100 text-teal-800',
 };
 
 export function Badge({ color = 'slate', children }: { color?: string; children: ReactNode }) {

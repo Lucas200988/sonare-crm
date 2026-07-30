@@ -12,7 +12,7 @@ import { formatDecimalBR } from '@/lib/parse';
 import { getAiConfig } from '@/server/ai/scope-generator';
 import { getPriceSuggestions } from '@/server/services/price-history';
 import { codigoProposta, nomeArquivoProposta } from '@/lib/proposta-codigo';
-import { BUDGET_STATUS_BADGE, PROPOSAL_STATUS_BADGE } from '../status-badge';
+import { badgeDoOrcamento, PROPOSAL_STATUS_BADGE } from '../status-badge';
 import { BudgetEditor, type EditorFields, type EditorItem } from './budget-editor';
 import {
   SubmitBudgetButton, ApprovalDecision, NewVersionForm,
@@ -50,7 +50,7 @@ export default async function BudgetDetailPage(props: { params: Promise<{ id: st
   };
 
   const cv = budget.currentVersion;
-  const badge = BUDGET_STATUS_BADGE[budget.status] ?? BUDGET_STATUS_BADGE.RASCUNHO;
+  const badge = badgeDoOrcamento(budget.status, budget.currentVersion.proposals);
   const canWrite = user.permissions.has('budget:write');
   const canApprove = user.permissions.has('budget:approve');
   const canProposal = user.permissions.has('proposal:write');

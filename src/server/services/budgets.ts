@@ -70,7 +70,18 @@ export async function listBudgets(user: SessionUser, filter: BudgetListFilter) {
       include: {
         client: { select: { id: true, legalName: true, tradeName: true } },
         opportunity: { select: { id: true, code: true, title: true } },
-        currentVersion: { select: { id: true, versionNumber: true, total: true, validUntil: true } },
+        currentVersion: {
+          select: {
+            id: true, versionNumber: true, total: true, validUntil: true,
+            // a proposta mais recente define o status exibido na lista
+            proposals: {
+              where: { deletedAt: null },
+              orderBy: { createdAt: 'desc' },
+              take: 1,
+              select: { status: true },
+            },
+          },
+        },
         commercialOwner: { select: { id: true, name: true } },
       },
       orderBy: { createdAt: 'desc' },
