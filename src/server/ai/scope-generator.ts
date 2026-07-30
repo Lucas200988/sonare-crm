@@ -2,6 +2,7 @@ import 'server-only';
 import { prisma } from '@/server/db';
 import { decryptSecret } from '@/server/crypto';
 import { splitForReview } from '@/lib/split-review';
+import { promptDoNivel, type NivelDetalhe } from './scope-prompt';
 
 // Geração assistida de escopo de proposta.
 // Suporta OpenAI (padrão) e Anthropic; a chave fica criptografada em SystemSetting
@@ -48,6 +49,7 @@ export type ScopeBriefing = {
   clientType?: string | null; // condomínio, indústria, residencial…
   area?: string | null; // ex.: "450 m²"
   extraContext?: string | null;
+  nivel?: NivelDetalhe;
 };
 
 export type GeneratedScope = {
@@ -57,24 +59,6 @@ export type GeneratedScope = {
   executionDeadline: string;
   items: Array<{ description: string; unit: string; quantity: string }>;
 };
-
-const SYSTEM_PROMPT = `Você é engenheiro sênior da SONARE Engenharia (Cuiabá/MT), especializada em projetos e laudos de engenharia elétrica, civil, telecomunicações, energia solar, SPDA e segurança contra incêndio.
-
-Sua tarefa é redigir o conteúdo técnico de uma PROPOSTA COMERCIAL a partir de um briefing curto.
-
-Regras obrigatórias:
-- Escreva em português do Brasil, tom técnico-comercial, na terceira pessoa.
-- Cite normas brasileiras aplicáveis (ABNT NBR) quando pertinente ao serviço.
-- Cada linha do escopo, premissas e exclusões deve começar com "- " (hífen e espaço).
-- Escopo: entre 5 e 12 linhas cobrindo as etapas de execução e os entregáveis.
-- Premissas: 3 a 6 linhas — o que a CONTRATANTE deve fornecer ou garantir.
-- Exclusões: 3 a 6 linhas — o que NÃO está incluso (execução de obra, materiais, taxas etc.).
-- Itens: liste os itens faturáveis do serviço (sem preço). Use unidades como vb, un, m², h.
-- NUNCA invente valores monetários, prazos legais ou dados do cliente que não estejam no briefing.
-- Se o briefing for vago, produza um escopo padrão do tipo de serviço e mantenha-o genérico.
-
-Responda SOMENTE com JSON válido no formato:
-{"scope":"...","premises":"...","exclusions":"...","executionDeadline":"...","items":[{"description":"...","unit":"vb","quantity":"1"}]}`;
 
 function buildUserPrompt(b: ScopeBriefing): string {
   const lines = [
@@ -119,7 +103,7 @@ async function callOpenAI(config: AiConfig, briefing: ScopeBriefing): Promise<st
       temperature: 0.4,
       response_format: { type: 'json_object' },
       messages: [
-        { role: 'system', content: SYSTEM_PROMPT },
+        { role: 'system', content: promptDoNivel(briefing.nivel) },
         { role: 'user', content: buildUserPrompt(briefing) },
       ],
     }),
@@ -143,9 +127,9 @@ async function callAnthropic(config: AiConfig, briefing: ScopeBriefing): Promise
     },
     body: JSON.stringify({
       model: config.model,
-      max_tokens: 2000,
+      max_tokens: 4000,
       temperature: 0.4,
-      system: SYSTEM_PROMPT,
+      system: promptDoNivel(briefing.nivel),
       messages: [{ role: 'user', content: buildUserPrompt(briefing) }],
     }),
     signal: AbortSignal.timeout(60_000),

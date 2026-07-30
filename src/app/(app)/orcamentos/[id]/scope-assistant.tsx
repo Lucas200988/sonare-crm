@@ -25,6 +25,27 @@ export type TemplateOption = {
   defaultPrice: string | null;
 };
 
+/** Quanto detalhe a IA deve produzir no escopo. */
+type NivelDetalhe = 'resumido' | 'padrao' | 'detalhado';
+
+const NIVEIS: Array<{ value: NivelDetalhe; label: string; hint: string }> = [
+  {
+    value: 'resumido',
+    label: 'Resumido',
+    hint: '5 a 8 linhas — serviço simples, orçamento rápido.',
+  },
+  {
+    value: 'padrao',
+    label: 'Padrão',
+    hint: '12 a 18 linhas cobrindo as etapas mínimas de um projeto de engenharia.',
+  },
+  {
+    value: 'detalhado',
+    label: 'Detalhado',
+    hint: '22 a 35 linhas, nível de memorial — concorrência e órgão público.',
+  },
+];
+
 /** Como o conteúdo gerado entra no orçamento. */
 export type ApplyMode = 'append' | 'replace';
 
@@ -65,12 +86,15 @@ export function ScopeAssistant({
   const [description, setDescription] = useState('');
   const [clientType, setClientType] = useState('');
   const [area, setArea] = useState('');
+  // Padrão: o escopo curto demais era a queixa; o mínimo de engenharia vira o normal.
+  const [nivel, setNivel] = useState<NivelDetalhe>('padrao');
 
   function runAi() {
     setError(null);
     startTransition(async () => {
       const result = await generateScopeAction({
         serviceType, description, clientType: clientType || undefined, area: area || undefined,
+        nivel,
       });
       if ('error' in result) setError(result.error);
       else {
@@ -187,6 +211,34 @@ export function ScopeAssistant({
                 placeholder="Briefing: descreva a demanda em uma ou duas frases."
                 className={inputCls} aria-label="Briefing da demanda"
               />
+
+              <fieldset>
+                <legend className="mb-1 text-[11px] font-medium text-slate-600">
+                  Nível de detalhe
+                </legend>
+                <div className="flex gap-1 rounded-lg border border-slate-200 bg-slate-50 p-0.5">
+                  {NIVEIS.map((n) => (
+                    <button
+                      key={n.value}
+                      type="button"
+                      onClick={() => setNivel(n.value)}
+                      aria-pressed={nivel === n.value}
+                      title={n.hint}
+                      className={`flex-1 rounded-md px-2 py-1.5 text-[11px] font-medium transition ${
+                        nivel === n.value
+                          ? 'bg-white text-slate-900 shadow-sm ring-1 ring-slate-200'
+                          : 'text-slate-500 hover:text-slate-800'
+                      }`}
+                    >
+                      {n.label}
+                    </button>
+                  ))}
+                </div>
+                <p className="mt-1 text-[11px] text-slate-500">
+                  {NIVEIS.find((n) => n.value === nivel)?.hint}
+                </p>
+              </fieldset>
+
               <button
                 type="button" onClick={runAi}
                 disabled={pending || description.trim().length < 10}

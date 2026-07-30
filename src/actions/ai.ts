@@ -100,6 +100,7 @@ const briefingSchema = z.object({
   clientType: z.string().trim().optional(),
   area: z.string().trim().optional(),
   extraContext: z.string().trim().optional(),
+  nivel: z.enum(['resumido', 'padrao', 'detalhado']).optional(),
 });
 
 export async function generateScopeAction(
