@@ -137,6 +137,46 @@ export async function createBudget(user: SessionUser, input: {
   });
   const validityDays = validityDaysSetting ? Number(validityDaysSetting.value) : 60;
 
+  /*
+   * Todo orçamento aparece no pipeline.
+   *
+   * Quando nasce solto (sem oportunidade), o cartão era simplesmente não
+   * criado e o negócio ficava invisível no CRM. Aqui abrimos a oportunidade
+   * na primeira etapa do funil para que o acompanhamento comercial exista
+   * desde o começo.
+   */
+  let opportunityId = input.opportunityId || null;
+  if (!opportunityId) {
+    const primeiraEtapa = await prisma.opportunityStage.findFirst({
+      where: { companyId: user.companyId, active: true, kind: 'ABERTA' },
+      orderBy: { sortOrder: 'asc' },
+    });
+    if (primeiraEtapa) {
+      const nova = await prisma.$transaction(async (tx) => {
+        const oppCode = await nextCode(user.companyId, 'OPP', tx);
+        return tx.opportunity.create({
+          data: {
+            companyId: user.companyId,
+            code: oppCode,
+            title: `Orçamento — ${client.tradeName ?? client.legalName}`,
+            clientId: input.clientId,
+            clientUnitId: input.clientUnitId || null,
+            stageId: primeiraEtapa.id,
+            commercialOwnerId: user.id,
+            technicalOwnerId: input.technicalOwnerId || null,
+            createdById: user.id,
+          },
+        });
+      });
+      opportunityId = nova.id;
+      await auditLog({
+        companyId: user.companyId, userId: user.id,
+        action: 'create', entityType: 'opportunity', entityId: nova.id,
+        after: { code: nova.code, origem: 'orçamento' },
+      });
+    }
+  }
+
   const budget = await prisma.$transaction(async (tx) => {
     const code = await nextCode(user.companyId, 'ORC', tx);
     const created = await tx.budget.create({
@@ -144,7 +184,7 @@ export async function createBudget(user: SessionUser, input: {
         companyId: user.companyId,
         code,
         clientId: input.clientId,
-        opportunityId: input.opportunityId || null,
+        opportunityId,
         clientUnitId: input.clientUnitId || null,
         commercialOwnerId: user.id,
         technicalOwnerId: input.technicalOwnerId || null,
@@ -461,7 +501,10 @@ export async function softDeleteBudget(user: SessionUser, budgetId: string) {
 
   const proposals = budget.versions.flatMap((v) => v.proposals);
   const sent = proposals.filter((p) => p.status !== 'RASCUNHO');
-  if (sent.length > 0) {
+  // Proposta já enviada ao cliente pede cancelamento antes da exclusão, para
+  // o motivo ficar registrado. Uma vez cancelado, tirar da lista é legítimo —
+  // sem esta exceção o orçamento cancelado ficaria preso para sempre.
+  if (sent.length > 0 && budget.status !== 'CANCELADO') {
     return {
       error: `Este orçamento já gerou proposta enviada ao cliente (${sent.map((p) => p.code).join(', ')}). Cancele o orçamento em vez de excluí-lo.`,
     };

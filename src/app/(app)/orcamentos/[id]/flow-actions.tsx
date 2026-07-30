@@ -11,9 +11,12 @@ import {
   type ActionState,
 } from '@/actions/budgets';
 import { inputCls, FormError } from '@/components/ui';
+import { nomeArquivoPrevia } from '@/lib/proposta-codigo';
 
 /** Mostra o PDF como a proposta ficará, na própria tela, sem emitir documento. */
-export function PreviewButton({ budgetId, budgetCode }: { budgetId: string; budgetCode: string }) {
+export function PreviewButton({ budgetId, budgetCode, cliente }: {
+  budgetId: string; budgetCode: string; cliente: string;
+}) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -29,7 +32,7 @@ export function PreviewButton({ budgetId, budgetCode }: { budgetId: string; budg
         <PdfViewer
           url={`/api/orcamentos/${budgetId}/previa`}
           title={`Pré-visualização — ${budgetCode}`}
-          fileName={`previa-${budgetCode}.pdf`}
+          fileName={nomeArquivoPrevia(budgetCode, cliente)}
           onClose={() => setOpen(false)}
         />
       ) : null}

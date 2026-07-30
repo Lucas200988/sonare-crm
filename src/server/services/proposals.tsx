@@ -12,7 +12,7 @@ import { generateVerificationCode, verificationUrl } from '@/server/signature';
 import { enviarEmail, layoutEmail } from '@/server/mail';
 import { formatCNPJ, formatCPF, formatCEP, formatPhoneBR } from '@/lib/br';
 import { formatDateBR } from '@/lib/dates';
-import { arquivoProposta, codigoProposta } from '@/lib/proposta-codigo';
+import { codigoProposta, nomeArquivoPrevia, nomeArquivoProposta } from '@/lib/proposta-codigo';
 import { ProposalPdf, type ProposalPdfData } from '@/server/pdf/proposal-pdf';
 import type { SessionUser } from '@/server/auth/session';
 
@@ -239,7 +239,7 @@ export async function generateProposal(user: SessionUser, budgetId: string) {
     entityType: 'proposal',
     entityId: proposal.id,
     category: 'proposta',
-    fileName: `${arquivoProposta(proposal.code, proposal.revision)}-${budget.code}-V${String(cv.versionNumber).padStart(2, '0')}.pdf`,
+    fileName: nomeArquivoProposta(proposal.code, proposal.revision, budget.client.tradeName ?? budget.client.legalName),
     mimeType: 'application/pdf',
     content: Buffer.from(pdfBuffer),
     createdById: user.id,
@@ -320,7 +320,7 @@ export async function sendProposalByEmail(
        </p>`,
     ),
     anexos: [{
-      filename: `${arquivoProposta(proposal.code, proposal.revision)}.pdf`,
+      filename: nomeArquivoProposta(proposal.code, proposal.revision, nomeCliente),
       content: arquivo.content,
       contentType: 'application/pdf',
     }],
@@ -495,10 +495,58 @@ export async function previewProposal(
   };
 
   const pdf = await renderToBuffer(<ProposalPdf data={pdfData} />);
-  return { pdf: Buffer.from(pdf), fileName: `previa-${budget.code}.pdf` };
+  return { pdf: Buffer.from(pdf), fileName: nomeArquivoPrevia(budget.code, budget.client.tradeName ?? budget.client.legalName) };
 }
 
 /** Registra evento do ciclo da proposta: envio, visualização, aceite ou recusa. */
+/**
+ * Etapa do funil correspondente a cada evento da proposta.
+ *
+ * As etapas são cadastráveis, então a busca é pelo nome e o resultado é
+ * opcional: se a empresa renomeou ou removeu a etapa, o cartão simplesmente
+ * fica onde está — mover para o lugar errado seria pior que não mover.
+ */
+const ETAPA_POR_EVENTO: Record<string, string> = {
+  ENVIADA: 'Proposta enviada',
+  VISUALIZADA: 'Aguardando retorno',
+  ACEITA: 'Aprovado',
+  RECUSADA: 'Perdido',
+};
+
+async function moverCartaoDoPipeline(
+  user: SessionUser, opportunityId: string | null, event: string,
+) {
+  if (!opportunityId) return;
+  const nomeEtapa = ETAPA_POR_EVENTO[event];
+  if (!nomeEtapa) return;
+
+  const etapa = await prisma.opportunityStage.findFirst({
+    where: { companyId: user.companyId, active: true, name: nomeEtapa },
+  });
+  if (!etapa) return;
+
+  const opp = await prisma.opportunity.findFirst({
+    where: { id: opportunityId, companyId: user.companyId, deletedAt: null },
+    select: { id: true, stageId: true },
+  });
+  if (!opp || opp.stageId === etapa.id) return;
+
+  await prisma.opportunity.update({
+    where: { id: opportunityId },
+    data: {
+      stageId: etapa.id,
+      // Etapa de fechamento encerra a oportunidade no funil
+      closedAt: etapa.kind === 'ABERTA' ? null : new Date(),
+      updatedById: user.id,
+    },
+  });
+  await auditLog({
+    companyId: user.companyId, userId: user.id,
+    action: 'stage_change', entityType: 'opportunity', entityId: opportunityId,
+    after: { etapa: etapa.name, origem: `proposta ${event.toLowerCase()}` },
+  });
+}
+
 export async function registerProposalEvent(
   user: SessionUser,
   proposalId: string,
@@ -535,6 +583,8 @@ export async function registerProposalEvent(
       data: { status: 'RECUSADO', updatedById: user.id },
     });
   }
+
+  await moverCartaoDoPipeline(user, proposal.budgetVersion.budget.opportunityId, event);
 
   await auditLog({
     companyId: user.companyId, userId: user.id,

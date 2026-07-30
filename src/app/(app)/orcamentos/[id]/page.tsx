@@ -11,7 +11,7 @@ import { formatDateBR, formatDateTimeBR } from '@/lib/dates';
 import { formatDecimalBR } from '@/lib/parse';
 import { getAiConfig } from '@/server/ai/scope-generator';
 import { getPriceSuggestions } from '@/server/services/price-history';
-import { arquivoProposta, codigoProposta } from '@/lib/proposta-codigo';
+import { codigoProposta, nomeArquivoProposta } from '@/lib/proposta-codigo';
 import { BUDGET_STATUS_BADGE, PROPOSAL_STATUS_BADGE } from '../status-badge';
 import { BudgetEditor, type EditorFields, type EditorItem } from './budget-editor';
 import {
@@ -85,6 +85,7 @@ export default async function BudgetDetailPage(props: { params: Promise<{ id: st
   }));
 
   const allProposals = budget.currentVersion.proposals;
+  const nomeCliente = budget.client.tradeName ?? budget.client.legalName;
 
   return (
     <div className="mx-auto max-w-6xl">
@@ -148,7 +149,7 @@ export default async function BudgetDetailPage(props: { params: Promise<{ id: st
                 </Link>
               </p>
             ) : null}
-            <PreviewButton budgetId={budget.id} budgetCode={budget.code} />
+            <PreviewButton budgetId={budget.id} budgetCode={budget.code} cliente={nomeCliente} />
             {editable ? <SubmitBudgetButton budgetId={budget.id} /> : null}
             {budget.status === 'APROVACAO_INTERNA' && canApprove ? <ApprovalDecision budgetId={budget.id} /> : null}
             {budget.status === 'APROVACAO_INTERNA' && !canApprove ? (
@@ -163,7 +164,12 @@ export default async function BudgetDetailPage(props: { params: Promise<{ id: st
             {canWrite ? (
               <DangerZone
                 budgetId={budget.id}
-                canDelete={allProposals.every((p) => p.status === 'RASCUNHO')}
+                // Cancelado já tem o motivo registrado: pode sair da lista
+                // mesmo tendo proposta enviada.
+                canDelete={
+                  budget.status === 'CANCELADO'
+                  || allProposals.every((p) => p.status === 'RASCUNHO')
+                }
               />
             ) : null}
           </Card>
@@ -238,7 +244,7 @@ export default async function BudgetDetailPage(props: { params: Promise<{ id: st
                           <ViewDocumentButton
                             attachmentId={p.pdfAttachmentId}
                             title={`Proposta ${codigoProposta(p.code, p.revision)}`}
-                            fileName={`${arquivoProposta(p.code, p.revision)}.pdf`}
+                            fileName={nomeArquivoProposta(p.code, p.revision, nomeCliente)}
                           />
                         </div>
                       ) : null}
