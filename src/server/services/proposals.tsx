@@ -216,8 +216,8 @@ export async function generateProposal(user: SessionUser, budgetId: string) {
     discount: cv.discount.toString(),
     surcharge: cv.surcharge.toString(),
     total: cv.total.toString(),
-    generalInfo: setting('proposal.infoGerais'),
-    differentials: setting('proposal.diferenciais'),
+    generalInfo: cv.generalInfoOverride ?? setting('proposal.infoGerais'),
+    differentials: cv.differentialsOverride ?? setting('proposal.diferenciais'),
     // Assinatura padronizada em Configurações; cai para o responsável comercial se não definida
     signerName,
     signerTitle: setting('proposal.signerTitle'),
@@ -479,8 +479,8 @@ export async function previewProposal(
     discount: cv.discount.toString(),
     surcharge: cv.surcharge.toString(),
     total: cv.total.toString(),
-    generalInfo: setting('proposal.infoGerais'),
-    differentials: setting('proposal.diferenciais'),
+    generalInfo: cv.generalInfoOverride ?? setting('proposal.infoGerais'),
+    differentials: cv.differentialsOverride ?? setting('proposal.diferenciais'),
     signerName: setting('proposal.signerName') ?? budget.commercialOwner?.name ?? null,
     signerTitle: setting('proposal.signerTitle'),
     signerRegistration:

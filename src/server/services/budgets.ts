@@ -190,6 +190,9 @@ export type VersionPayload = {
   estimatedRetentions?: string;
   internalNotes?: string | null;
   clientNotes?: string | null;
+  /** `undefined` = não mexer no que já está salvo; `null`/string = grava a sobreposição. */
+  generalInfoOverride?: string | null;
+  differentialsOverride?: string | null;
   items: Array<{
     serviceCatalogId?: string | null;
     description: string;
@@ -262,6 +265,8 @@ export async function saveCurrentVersion(user: SessionUser, budgetId: string, pa
         paymentTerms: payload.paymentTerms,
         internalNotes: payload.internalNotes,
         clientNotes: payload.clientNotes,
+        generalInfoOverride: payload.generalInfoOverride,
+        differentialsOverride: payload.differentialsOverride,
         subtotal: totals.subtotal.toString(),
         discount: totals.discount.toString(),
         surcharge: totals.surcharge.toString(),
@@ -319,6 +324,8 @@ export async function createNewVersion(user: SessionUser, budgetId: string, reas
         totalCost: cv.totalCost, grossMargin: cv.grossMargin,
         marginPercent: cv.marginPercent, total: cv.total,
         internalNotes: cv.internalNotes, clientNotes: cv.clientNotes,
+        generalInfoOverride: cv.generalInfoOverride,
+        differentialsOverride: cv.differentialsOverride,
         changeReason: reason,
         createdById: user.id,
       },

@@ -26,7 +26,7 @@ export default async function BudgetDetailPage(props: { params: Promise<{ id: st
   const user = await requirePermissionPage('budget:read');
   const { id } = await props.params;
 
-  const [budget, services, aiConfig, priceSuggestions] = await Promise.all([
+  const [budget, services, aiConfig, priceSuggestions, companySettings] = await Promise.all([
     getBudget(user, id),
     prisma.serviceCatalog.findMany({
       where: { companyId: user.companyId, active: true, deletedAt: null },
@@ -38,8 +38,16 @@ export default async function BudgetDetailPage(props: { params: Promise<{ id: st
     }),
     getAiConfig(user.companyId),
     getPriceSuggestions(user),
+    prisma.systemSetting.findMany({
+      where: { companyId: user.companyId, key: { in: ['proposal.infoGerais', 'proposal.diferenciais'] } },
+    }),
   ]);
   if (!budget || !budget.currentVersion) notFound();
+
+  const companySetting = (key: string) => {
+    const s = companySettings.find((x) => x.key === key);
+    return typeof s?.value === 'string' ? s.value : '';
+  };
 
   const cv = budget.currentVersion;
   const badge = BUDGET_STATUS_BADGE[budget.status] ?? BUDGET_STATUS_BADGE.RASCUNHO;
@@ -63,6 +71,8 @@ export default async function BudgetDetailPage(props: { params: Promise<{ id: st
     estimatedRetentions: formatDecimalBR(cv.estimatedRetentions.toString()),
     internalNotes: cv.internalNotes ?? '',
     clientNotes: cv.clientNotes ?? '',
+    generalInfoOverride: cv.generalInfoOverride,
+    differentialsOverride: cv.differentialsOverride,
   };
   const initialItems: EditorItem[] = cv.items.map((i) => ({
     serviceCatalogId: i.serviceCatalogId,
@@ -107,6 +117,10 @@ export default async function BudgetDetailPage(props: { params: Promise<{ id: st
               estimatedCost: s.estimatedCost?.toString() ?? null,
             }))}
             priceSuggestions={priceSuggestions}
+            companyDefaults={{
+              generalInfo: companySetting('proposal.infoGerais'),
+              differentials: companySetting('proposal.diferenciais'),
+            }}
             aiEnabled={aiConfig.enabled}
             scopeTemplates={services
               .filter((s) => s.scopeTemplate)

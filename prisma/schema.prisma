@@ -632,6 +632,11 @@ model BudgetVersion {
   total              Decimal   @default(0) @db.Decimal(14, 2)
   internalNotes      String?
   clientNotes        String?
+  /// Sobrescreve o texto padrão da empresa (Configurações > Comercial) só
+  /// para esta proposta. null = usa o padrão; string (mesmo vazia) = usa
+  /// este texto, porque nem todo serviço se encaixa no texto genérico.
+  generalInfoOverride String?
+  differentialsOverride String?
   changeReason       String?   // justificativa da versão
   immutable          Boolean   @default(false) // true após envio/aprovação
   createdAt          DateTime  @default(now())

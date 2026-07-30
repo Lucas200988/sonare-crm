@@ -67,6 +67,10 @@ const versionSchema = z.object({
   estimatedRetentions: decimalStr,
   internalNotes: z.string().optional(),
   clientNotes: z.string().optional(),
+  // null = usar o texto padrão da empresa; string (mesmo vazia) = sobrepor,
+  // porque o texto genérico às vezes não se aplica ao serviço do orçamento.
+  generalInfoOverride: z.string().nullable().optional(),
+  differentialsOverride: z.string().nullable().optional(),
   items: z.array(itemSchema).max(200),
 });
 
@@ -87,6 +91,8 @@ export async function saveVersionAction(budgetId: string, payload: unknown): Pro
     paymentTerms: parsed.data.paymentTerms || null,
     internalNotes: parsed.data.internalNotes || null,
     clientNotes: parsed.data.clientNotes || null,
+    generalInfoOverride: parsed.data.generalInfoOverride ?? null,
+    differentialsOverride: parsed.data.differentialsOverride ?? null,
   });
   if ('error' in result) return { error: result.error };
   revalidatePath(`/orcamentos/${budgetId}`);

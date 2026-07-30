@@ -76,6 +76,8 @@ export type BudgetVersionMinAggregateOutputType = {
   total: runtime.Decimal | null
   internalNotes: string | null
   clientNotes: string | null
+  generalInfoOverride: string | null
+  differentialsOverride: string | null
   changeReason: string | null
   immutable: boolean | null
   createdAt: Date | null
@@ -107,6 +109,8 @@ export type BudgetVersionMaxAggregateOutputType = {
   total: runtime.Decimal | null
   internalNotes: string | null
   clientNotes: string | null
+  generalInfoOverride: string | null
+  differentialsOverride: string | null
   changeReason: string | null
   immutable: boolean | null
   createdAt: Date | null
@@ -139,6 +143,8 @@ export type BudgetVersionCountAggregateOutputType = {
   total: number
   internalNotes: number
   clientNotes: number
+  generalInfoOverride: number
+  differentialsOverride: number
   changeReason: number
   immutable: number
   createdAt: number
@@ -198,6 +204,8 @@ export type BudgetVersionMinAggregateInputType = {
   total?: true
   internalNotes?: true
   clientNotes?: true
+  generalInfoOverride?: true
+  differentialsOverride?: true
   changeReason?: true
   immutable?: true
   createdAt?: true
@@ -229,6 +237,8 @@ export type BudgetVersionMaxAggregateInputType = {
   total?: true
   internalNotes?: true
   clientNotes?: true
+  generalInfoOverride?: true
+  differentialsOverride?: true
   changeReason?: true
   immutable?: true
   createdAt?: true
@@ -261,6 +271,8 @@ export type BudgetVersionCountAggregateInputType = {
   total?: true
   internalNotes?: true
   clientNotes?: true
+  generalInfoOverride?: true
+  differentialsOverride?: true
   changeReason?: true
   immutable?: true
   createdAt?: true
@@ -380,6 +392,8 @@ export type BudgetVersionGroupByOutputType = {
   total: runtime.Decimal
   internalNotes: string | null
   clientNotes: string | null
+  generalInfoOverride: string | null
+  differentialsOverride: string | null
   changeReason: string | null
   immutable: boolean
   createdAt: Date
@@ -435,6 +449,8 @@ export type BudgetVersionWhereInput = {
   total?: Prisma.DecimalFilter<"BudgetVersion"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   internalNotes?: Prisma.StringNullableFilter<"BudgetVersion"> | string | null
   clientNotes?: Prisma.StringNullableFilter<"BudgetVersion"> | string | null
+  generalInfoOverride?: Prisma.StringNullableFilter<"BudgetVersion"> | string | null
+  differentialsOverride?: Prisma.StringNullableFilter<"BudgetVersion"> | string | null
   changeReason?: Prisma.StringNullableFilter<"BudgetVersion"> | string | null
   immutable?: Prisma.BoolFilter<"BudgetVersion"> | boolean
   createdAt?: Prisma.DateTimeFilter<"BudgetVersion"> | Date | string
@@ -471,6 +487,8 @@ export type BudgetVersionOrderByWithRelationInput = {
   total?: Prisma.SortOrder
   internalNotes?: Prisma.SortOrderInput | Prisma.SortOrder
   clientNotes?: Prisma.SortOrderInput | Prisma.SortOrder
+  generalInfoOverride?: Prisma.SortOrderInput | Prisma.SortOrder
+  differentialsOverride?: Prisma.SortOrderInput | Prisma.SortOrder
   changeReason?: Prisma.SortOrderInput | Prisma.SortOrder
   immutable?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -511,6 +529,8 @@ export type BudgetVersionWhereUniqueInput = Prisma.AtLeast<{
   total?: Prisma.DecimalFilter<"BudgetVersion"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   internalNotes?: Prisma.StringNullableFilter<"BudgetVersion"> | string | null
   clientNotes?: Prisma.StringNullableFilter<"BudgetVersion"> | string | null
+  generalInfoOverride?: Prisma.StringNullableFilter<"BudgetVersion"> | string | null
+  differentialsOverride?: Prisma.StringNullableFilter<"BudgetVersion"> | string | null
   changeReason?: Prisma.StringNullableFilter<"BudgetVersion"> | string | null
   immutable?: Prisma.BoolFilter<"BudgetVersion"> | boolean
   createdAt?: Prisma.DateTimeFilter<"BudgetVersion"> | Date | string
@@ -547,6 +567,8 @@ export type BudgetVersionOrderByWithAggregationInput = {
   total?: Prisma.SortOrder
   internalNotes?: Prisma.SortOrderInput | Prisma.SortOrder
   clientNotes?: Prisma.SortOrderInput | Prisma.SortOrder
+  generalInfoOverride?: Prisma.SortOrderInput | Prisma.SortOrder
+  differentialsOverride?: Prisma.SortOrderInput | Prisma.SortOrder
   changeReason?: Prisma.SortOrderInput | Prisma.SortOrder
   immutable?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -587,6 +609,8 @@ export type BudgetVersionScalarWhereWithAggregatesInput = {
   total?: Prisma.DecimalWithAggregatesFilter<"BudgetVersion"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   internalNotes?: Prisma.StringNullableWithAggregatesFilter<"BudgetVersion"> | string | null
   clientNotes?: Prisma.StringNullableWithAggregatesFilter<"BudgetVersion"> | string | null
+  generalInfoOverride?: Prisma.StringNullableWithAggregatesFilter<"BudgetVersion"> | string | null
+  differentialsOverride?: Prisma.StringNullableWithAggregatesFilter<"BudgetVersion"> | string | null
   changeReason?: Prisma.StringNullableWithAggregatesFilter<"BudgetVersion"> | string | null
   immutable?: Prisma.BoolWithAggregatesFilter<"BudgetVersion"> | boolean
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"BudgetVersion"> | Date | string
@@ -618,6 +642,8 @@ export type BudgetVersionCreateInput = {
   total?: runtime.Decimal | runtime.DecimalJsLike | number | string
   internalNotes?: string | null
   clientNotes?: string | null
+  generalInfoOverride?: string | null
+  differentialsOverride?: string | null
   changeReason?: string | null
   immutable?: boolean
   createdAt?: Date | string
@@ -654,6 +680,8 @@ export type BudgetVersionUncheckedCreateInput = {
   total?: runtime.Decimal | runtime.DecimalJsLike | number | string
   internalNotes?: string | null
   clientNotes?: string | null
+  generalInfoOverride?: string | null
+  differentialsOverride?: string | null
   changeReason?: string | null
   immutable?: boolean
   createdAt?: Date | string
@@ -688,6 +716,8 @@ export type BudgetVersionUpdateInput = {
   total?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   clientNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  generalInfoOverride?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  differentialsOverride?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   changeReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   immutable?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -724,6 +754,8 @@ export type BudgetVersionUncheckedUpdateInput = {
   total?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   clientNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  generalInfoOverride?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  differentialsOverride?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   changeReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   immutable?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -759,6 +791,8 @@ export type BudgetVersionCreateManyInput = {
   total?: runtime.Decimal | runtime.DecimalJsLike | number | string
   internalNotes?: string | null
   clientNotes?: string | null
+  generalInfoOverride?: string | null
+  differentialsOverride?: string | null
   changeReason?: string | null
   immutable?: boolean
   createdAt?: Date | string
@@ -790,6 +824,8 @@ export type BudgetVersionUpdateManyMutationInput = {
   total?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   clientNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  generalInfoOverride?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  differentialsOverride?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   changeReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   immutable?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -822,6 +858,8 @@ export type BudgetVersionUncheckedUpdateManyInput = {
   total?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   clientNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  generalInfoOverride?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  differentialsOverride?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   changeReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   immutable?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -874,6 +912,8 @@ export type BudgetVersionCountOrderByAggregateInput = {
   total?: Prisma.SortOrder
   internalNotes?: Prisma.SortOrder
   clientNotes?: Prisma.SortOrder
+  generalInfoOverride?: Prisma.SortOrder
+  differentialsOverride?: Prisma.SortOrder
   changeReason?: Prisma.SortOrder
   immutable?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -918,6 +958,8 @@ export type BudgetVersionMaxOrderByAggregateInput = {
   total?: Prisma.SortOrder
   internalNotes?: Prisma.SortOrder
   clientNotes?: Prisma.SortOrder
+  generalInfoOverride?: Prisma.SortOrder
+  differentialsOverride?: Prisma.SortOrder
   changeReason?: Prisma.SortOrder
   immutable?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -949,6 +991,8 @@ export type BudgetVersionMinOrderByAggregateInput = {
   total?: Prisma.SortOrder
   internalNotes?: Prisma.SortOrder
   clientNotes?: Prisma.SortOrder
+  generalInfoOverride?: Prisma.SortOrder
+  differentialsOverride?: Prisma.SortOrder
   changeReason?: Prisma.SortOrder
   immutable?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -1092,6 +1136,8 @@ export type BudgetVersionCreateWithoutCurrentOfBudgetInput = {
   total?: runtime.Decimal | runtime.DecimalJsLike | number | string
   internalNotes?: string | null
   clientNotes?: string | null
+  generalInfoOverride?: string | null
+  differentialsOverride?: string | null
   changeReason?: string | null
   immutable?: boolean
   createdAt?: Date | string
@@ -1127,6 +1173,8 @@ export type BudgetVersionUncheckedCreateWithoutCurrentOfBudgetInput = {
   total?: runtime.Decimal | runtime.DecimalJsLike | number | string
   internalNotes?: string | null
   clientNotes?: string | null
+  generalInfoOverride?: string | null
+  differentialsOverride?: string | null
   changeReason?: string | null
   immutable?: boolean
   createdAt?: Date | string
@@ -1165,6 +1213,8 @@ export type BudgetVersionCreateWithoutBudgetInput = {
   total?: runtime.Decimal | runtime.DecimalJsLike | number | string
   internalNotes?: string | null
   clientNotes?: string | null
+  generalInfoOverride?: string | null
+  differentialsOverride?: string | null
   changeReason?: string | null
   immutable?: boolean
   createdAt?: Date | string
@@ -1199,6 +1249,8 @@ export type BudgetVersionUncheckedCreateWithoutBudgetInput = {
   total?: runtime.Decimal | runtime.DecimalJsLike | number | string
   internalNotes?: string | null
   clientNotes?: string | null
+  generalInfoOverride?: string | null
+  differentialsOverride?: string | null
   changeReason?: string | null
   immutable?: boolean
   createdAt?: Date | string
@@ -1254,6 +1306,8 @@ export type BudgetVersionUpdateWithoutCurrentOfBudgetInput = {
   total?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   clientNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  generalInfoOverride?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  differentialsOverride?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   changeReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   immutable?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1289,6 +1343,8 @@ export type BudgetVersionUncheckedUpdateWithoutCurrentOfBudgetInput = {
   total?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   clientNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  generalInfoOverride?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  differentialsOverride?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   changeReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   immutable?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1342,6 +1398,8 @@ export type BudgetVersionScalarWhereInput = {
   total?: Prisma.DecimalFilter<"BudgetVersion"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   internalNotes?: Prisma.StringNullableFilter<"BudgetVersion"> | string | null
   clientNotes?: Prisma.StringNullableFilter<"BudgetVersion"> | string | null
+  generalInfoOverride?: Prisma.StringNullableFilter<"BudgetVersion"> | string | null
+  differentialsOverride?: Prisma.StringNullableFilter<"BudgetVersion"> | string | null
   changeReason?: Prisma.StringNullableFilter<"BudgetVersion"> | string | null
   immutable?: Prisma.BoolFilter<"BudgetVersion"> | boolean
   createdAt?: Prisma.DateTimeFilter<"BudgetVersion"> | Date | string
@@ -1373,6 +1431,8 @@ export type BudgetVersionCreateWithoutItemsInput = {
   total?: runtime.Decimal | runtime.DecimalJsLike | number | string
   internalNotes?: string | null
   clientNotes?: string | null
+  generalInfoOverride?: string | null
+  differentialsOverride?: string | null
   changeReason?: string | null
   immutable?: boolean
   createdAt?: Date | string
@@ -1408,6 +1468,8 @@ export type BudgetVersionUncheckedCreateWithoutItemsInput = {
   total?: runtime.Decimal | runtime.DecimalJsLike | number | string
   internalNotes?: string | null
   clientNotes?: string | null
+  generalInfoOverride?: string | null
+  differentialsOverride?: string | null
   changeReason?: string | null
   immutable?: boolean
   createdAt?: Date | string
@@ -1457,6 +1519,8 @@ export type BudgetVersionUpdateWithoutItemsInput = {
   total?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   clientNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  generalInfoOverride?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  differentialsOverride?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   changeReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   immutable?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1492,6 +1556,8 @@ export type BudgetVersionUncheckedUpdateWithoutItemsInput = {
   total?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   clientNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  generalInfoOverride?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  differentialsOverride?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   changeReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   immutable?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1525,6 +1591,8 @@ export type BudgetVersionCreateWithoutProposalsInput = {
   total?: runtime.Decimal | runtime.DecimalJsLike | number | string
   internalNotes?: string | null
   clientNotes?: string | null
+  generalInfoOverride?: string | null
+  differentialsOverride?: string | null
   changeReason?: string | null
   immutable?: boolean
   createdAt?: Date | string
@@ -1560,6 +1628,8 @@ export type BudgetVersionUncheckedCreateWithoutProposalsInput = {
   total?: runtime.Decimal | runtime.DecimalJsLike | number | string
   internalNotes?: string | null
   clientNotes?: string | null
+  generalInfoOverride?: string | null
+  differentialsOverride?: string | null
   changeReason?: string | null
   immutable?: boolean
   createdAt?: Date | string
@@ -1609,6 +1679,8 @@ export type BudgetVersionUpdateWithoutProposalsInput = {
   total?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   clientNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  generalInfoOverride?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  differentialsOverride?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   changeReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   immutable?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1644,6 +1716,8 @@ export type BudgetVersionUncheckedUpdateWithoutProposalsInput = {
   total?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   clientNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  generalInfoOverride?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  differentialsOverride?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   changeReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   immutable?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1677,6 +1751,8 @@ export type BudgetVersionCreateManyBudgetInput = {
   total?: runtime.Decimal | runtime.DecimalJsLike | number | string
   internalNotes?: string | null
   clientNotes?: string | null
+  generalInfoOverride?: string | null
+  differentialsOverride?: string | null
   changeReason?: string | null
   immutable?: boolean
   createdAt?: Date | string
@@ -1708,6 +1784,8 @@ export type BudgetVersionUpdateWithoutBudgetInput = {
   total?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   clientNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  generalInfoOverride?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  differentialsOverride?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   changeReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   immutable?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1742,6 +1820,8 @@ export type BudgetVersionUncheckedUpdateWithoutBudgetInput = {
   total?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   clientNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  generalInfoOverride?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  differentialsOverride?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   changeReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   immutable?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1776,6 +1856,8 @@ export type BudgetVersionUncheckedUpdateManyWithoutBudgetInput = {
   total?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   clientNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  generalInfoOverride?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  differentialsOverride?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   changeReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   immutable?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1848,6 +1930,8 @@ export type BudgetVersionSelect<ExtArgs extends runtime.Types.Extensions.Interna
   total?: boolean
   internalNotes?: boolean
   clientNotes?: boolean
+  generalInfoOverride?: boolean
+  differentialsOverride?: boolean
   changeReason?: boolean
   immutable?: boolean
   createdAt?: boolean
@@ -1885,6 +1969,8 @@ export type BudgetVersionSelectCreateManyAndReturn<ExtArgs extends runtime.Types
   total?: boolean
   internalNotes?: boolean
   clientNotes?: boolean
+  generalInfoOverride?: boolean
+  differentialsOverride?: boolean
   changeReason?: boolean
   immutable?: boolean
   createdAt?: boolean
@@ -1918,6 +2004,8 @@ export type BudgetVersionSelectUpdateManyAndReturn<ExtArgs extends runtime.Types
   total?: boolean
   internalNotes?: boolean
   clientNotes?: boolean
+  generalInfoOverride?: boolean
+  differentialsOverride?: boolean
   changeReason?: boolean
   immutable?: boolean
   createdAt?: boolean
@@ -1951,6 +2039,8 @@ export type BudgetVersionSelectScalar = {
   total?: boolean
   internalNotes?: boolean
   clientNotes?: boolean
+  generalInfoOverride?: boolean
+  differentialsOverride?: boolean
   changeReason?: boolean
   immutable?: boolean
   createdAt?: boolean
@@ -1958,7 +2048,7 @@ export type BudgetVersionSelectScalar = {
   createdById?: boolean
 }
 
-export type BudgetVersionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "budgetId" | "versionNumber" | "validUntil" | "serviceType" | "scope" | "premises" | "exclusions" | "referenceDocuments" | "executionDeadline" | "deliveryMethod" | "paymentTerms" | "paymentSchedule" | "subtotal" | "discount" | "surcharge" | "taxes" | "estimatedRetentions" | "totalCost" | "grossMargin" | "marginPercent" | "total" | "internalNotes" | "clientNotes" | "changeReason" | "immutable" | "createdAt" | "updatedAt" | "createdById", ExtArgs["result"]["budgetVersion"]>
+export type BudgetVersionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "budgetId" | "versionNumber" | "validUntil" | "serviceType" | "scope" | "premises" | "exclusions" | "referenceDocuments" | "executionDeadline" | "deliveryMethod" | "paymentTerms" | "paymentSchedule" | "subtotal" | "discount" | "surcharge" | "taxes" | "estimatedRetentions" | "totalCost" | "grossMargin" | "marginPercent" | "total" | "internalNotes" | "clientNotes" | "generalInfoOverride" | "differentialsOverride" | "changeReason" | "immutable" | "createdAt" | "updatedAt" | "createdById", ExtArgs["result"]["budgetVersion"]>
 export type BudgetVersionInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   budget?: boolean | Prisma.BudgetDefaultArgs<ExtArgs>
   currentOfBudget?: boolean | Prisma.BudgetVersion$currentOfBudgetArgs<ExtArgs>
@@ -2006,6 +2096,13 @@ export type $BudgetVersionPayload<ExtArgs extends runtime.Types.Extensions.Inter
     total: runtime.Decimal
     internalNotes: string | null
     clientNotes: string | null
+    /**
+     * Sobrescreve o texto padrão da empresa (Configurações > Comercial) só
+     * para esta proposta. null = usa o padrão; string (mesmo vazia) = usa
+     * este texto, porque nem todo serviço se encaixa no texto genérico.
+     */
+    generalInfoOverride: string | null
+    differentialsOverride: string | null
     changeReason: string | null
     immutable: boolean
     createdAt: Date
@@ -2462,6 +2559,8 @@ export interface BudgetVersionFieldRefs {
   readonly total: Prisma.FieldRef<"BudgetVersion", 'Decimal'>
   readonly internalNotes: Prisma.FieldRef<"BudgetVersion", 'String'>
   readonly clientNotes: Prisma.FieldRef<"BudgetVersion", 'String'>
+  readonly generalInfoOverride: Prisma.FieldRef<"BudgetVersion", 'String'>
+  readonly differentialsOverride: Prisma.FieldRef<"BudgetVersion", 'String'>
   readonly changeReason: Prisma.FieldRef<"BudgetVersion", 'String'>
   readonly immutable: Prisma.FieldRef<"BudgetVersion", 'Boolean'>
   readonly createdAt: Prisma.FieldRef<"BudgetVersion", 'DateTime'>

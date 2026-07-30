@@ -81,6 +81,9 @@ export type EditorFields = {
   estimatedRetentions: string;
   internalNotes: string;
   clientNotes: string;
+  /** `null` = usa o texto padrão da empresa; string = sobrepõe (mesmo vazia, para omitir o bloco). */
+  generalInfoOverride: string | null;
+  differentialsOverride: string | null;
 };
 
 const EMPTY_ITEM: EditorItem = {
@@ -90,7 +93,7 @@ const EMPTY_ITEM: EditorItem = {
 
 export function BudgetEditor({
   budgetId, editable, initialFields, initialItems, services, aiEnabled, scopeTemplates,
-  priceSuggestions = [],
+  priceSuggestions = [], companyDefaults,
 }: {
   budgetId: string;
   editable: boolean;
@@ -101,6 +104,8 @@ export function BudgetEditor({
   scopeTemplates: TemplateOption[];
   /** Preços praticados por serviço, vindos dos orçamentos anteriores. */
   priceSuggestions?: PriceSuggestion[];
+  /** Textos padrão cadastrados em Configurações — usados quando não há sobreposição. */
+  companyDefaults: { generalInfo: string; differentials: string };
 }) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
@@ -148,13 +153,42 @@ export function BudgetEditor({
     if (aviso) setMessage({ kind: semCadastro ? 'err' : 'ok', text: aviso });
   }
 
+  /**
+   * Linha da tabela sem nenhum dado — sobra de "Adicionar item" que ninguém
+   * preencheu. Só essas podem ser descartadas em silêncio; uma linha com
+   * preço ou serviço mas sem descrição é um item real que ficaria incompleto.
+   */
+  function linhaEmBranco(i: EditorItem): boolean {
+    return (
+      !i.serviceCatalogId
+      && i.description.trim() === ''
+      && (i.unitPrice === '0' || i.unitPrice.trim() === '')
+      && (i.unitCost === '0' || i.unitCost.trim() === '')
+    );
+  }
+
   function save() {
     setMessage(null);
+
+    const semDescricao = items
+      .map((item, idx) => ({ item, numero: idx + 1 }))
+      .filter(({ item }) => !linhaEmBranco(item) && item.description.trim() === '');
+
+    if (semDescricao.length > 0) {
+      const linhas = semDescricao.map((i) => i.numero).join(', ');
+      const rotulo = semDescricao.length > 1 ? `os itens ${linhas}` : `o item ${linhas}`;
+      setMessage({
+        kind: 'err',
+        text: `Falta a descrição de ${rotulo} — sem ela, o item não é salvo.`,
+      });
+      return;
+    }
+
     startTransition(async () => {
       const result = await saveVersionAction(budgetId, {
         ...fields,
         items: items
-          .filter((i) => i.description.trim() !== '')
+          .filter((i) => !linhaEmBranco(i))
           .map((i) => ({
             serviceCatalogId: i.serviceCatalogId,
             description: i.description,
@@ -324,7 +358,11 @@ export function BudgetEditor({
                       onChange={(e) => setItem(idx, { description: e.target.value })}
                       disabled={!editable}
                       placeholder="Descrição do serviço/item"
-                      className={cellCls}
+                      className={
+                        !editable || item.description.trim() !== '' || linhaEmBranco(item)
+                          ? cellCls
+                          : `${cellCls} border-red-400 bg-red-50`
+                      }
                       aria-label={`Descrição do item ${idx + 1}`}
                     />
                   </td>
@@ -473,6 +511,22 @@ export function BudgetEditor({
             disabled={!editable} rows={2} spellCheck lang="pt-BR" className={inputCls}
           />
         </Field>
+        <OverridableCompanyText
+          label="Informações gerais"
+          hint="Texto padrão da empresa. Desligue quando ele não fizer sentido para este serviço."
+          value={fields.generalInfoOverride}
+          companyDefault={companyDefaults.generalInfo}
+          editable={editable}
+          onChange={(v) => setFields((f) => ({ ...f, generalInfoOverride: v }))}
+        />
+        <OverridableCompanyText
+          label="Diferenciais"
+          hint="Texto padrão da empresa. Desligue quando ele não fizer sentido para este serviço."
+          value={fields.differentialsOverride}
+          companyDefault={companyDefaults.differentials}
+          editable={editable}
+          onChange={(v) => setFields((f) => ({ ...f, differentialsOverride: v }))}
+        />
       </div>
 
       {message ? (
@@ -506,5 +560,61 @@ export function BudgetEditor({
         </p>
       )}
     </div>
+  );
+}
+
+/**
+ * Texto padrão da empresa (Informações gerais / Diferenciais) com opção de
+ * sobrepor por orçamento.
+ *
+ * Nem todo serviço se encaixa no texto genérico da empresa — um contrato de
+ * limpeza de módulos não tem os mesmos diferenciais de um projeto elétrico.
+ * "Usar o texto padrão" fica ligado por padrão; desligar revela um campo
+ * editável, semeado com o texto atual da empresa como ponto de partida.
+ */
+function OverridableCompanyText({
+  label, hint, value, companyDefault, editable, onChange,
+}: {
+  label: string;
+  hint: string;
+  /** `null` = usa o padrão da empresa; string = texto próprio deste orçamento. */
+  value: string | null;
+  companyDefault: string;
+  editable: boolean;
+  onChange: (value: string | null) => void;
+}) {
+  const usaPadrao = value === null;
+  const id = `f-${label.toLowerCase().replace(/\s+/g, '-')}`;
+
+  return (
+    <Field label={label} htmlFor={id} className="lg:col-span-2">
+      <label className="mb-1.5 flex items-center gap-2 text-xs text-slate-600">
+        <input
+          type="checkbox"
+          checked={usaPadrao}
+          disabled={!editable}
+          onChange={(e) => onChange(e.target.checked ? null : companyDefault)}
+          className="rounded border-slate-300"
+        />
+        Usar o texto padrão da empresa
+      </label>
+
+      {usaPadrao ? (
+        <p className="whitespace-pre-wrap rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-500">
+          {companyDefault.trim() || 'Nenhum texto padrão cadastrado em Configurações.'}
+        </p>
+      ) : (
+        <textarea
+          id={id}
+          value={value ?? ''}
+          onChange={(e) => onChange(e.target.value)}
+          disabled={!editable}
+          rows={4}
+          spellCheck
+          className={inputCls}
+        />
+      )}
+      <p className="mt-1 text-[11px] text-slate-500">{hint}</p>
+    </Field>
   );
 }

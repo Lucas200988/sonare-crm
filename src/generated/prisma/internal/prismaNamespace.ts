@@ -5330,6 +5330,8 @@ export const BudgetVersionScalarFieldEnum = {
   total: 'total',
   internalNotes: 'internalNotes',
   clientNotes: 'clientNotes',
+  generalInfoOverride: 'generalInfoOverride',
+  differentialsOverride: 'differentialsOverride',
   changeReason: 'changeReason',
   immutable: 'immutable',
   createdAt: 'createdAt',
