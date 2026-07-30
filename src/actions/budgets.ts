@@ -161,7 +161,7 @@ export async function cancelBudgetAction(
 
 export async function generateProposalAction(
   budgetId: string,
-): Promise<ActionState & { attachmentId?: string }> {
+): Promise<ActionState & { attachmentId?: string; fileName?: string }> {
   const user = await requirePermission('proposal:write');
   const result = await generateProposal(user, budgetId);
   if ('error' in result) return { error: result.error };
@@ -171,6 +171,7 @@ export async function generateProposalAction(
       ? `Proposta ${result.code} reemitida (${result.emissionCount}ª emissão).`
       : `Proposta ${result.code} gerada.`,
     attachmentId: result.attachmentId,
+    fileName: result.fileName,
   };
 }
 

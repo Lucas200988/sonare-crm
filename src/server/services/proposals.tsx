@@ -234,12 +234,17 @@ export async function generateProposal(user: SessionUser, budgetId: string) {
 
   const pdfBuffer = await renderToBuffer(<ProposalPdf data={pdfData} />);
 
+  // O mesmo nome vale para o arquivo guardado e para o download na tela.
+  const nomeDoArquivo = nomeArquivoProposta(
+    proposal.code, proposal.revision, budget.client.tradeName ?? budget.client.legalName,
+  );
+
   const saved = await saveFile({
     companyId: user.companyId,
     entityType: 'proposal',
     entityId: proposal.id,
     category: 'proposta',
-    fileName: nomeArquivoProposta(proposal.code, proposal.revision, budget.client.tradeName ?? budget.client.legalName),
+    fileName: nomeDoArquivo,
     mimeType: 'application/pdf',
     content: Buffer.from(pdfBuffer),
     createdById: user.id,
@@ -258,6 +263,7 @@ export async function generateProposal(user: SessionUser, budgetId: string) {
 
   return {
     proposalId: proposal.id, code: rotulo, attachmentId: saved.attachmentId,
+    fileName: nomeDoArquivo,
     emissionCount: proposal.emissionCount, reemitida: Boolean(existente),
   };
 }

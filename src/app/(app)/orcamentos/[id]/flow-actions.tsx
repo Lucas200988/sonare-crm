@@ -167,6 +167,7 @@ export function GenerateProposalButton({ budgetId, jaEmitida }: {
   const [msg, setMsg] = useState<string | null>(null);
   const [err, setErr] = useState<string | null>(null);
   const [attachmentId, setAttachmentId] = useState<string | null>(null);
+  const [nomeArquivo, setNomeArquivo] = useState('proposta.pdf');
 
   const rotulo = jaEmitida ? 'Reemitir proposta (PDF)' : 'Gerar proposta (PDF)';
 
@@ -182,6 +183,7 @@ export function GenerateProposalButton({ budgetId, jaEmitida }: {
           else {
             setMsg(r.info ?? 'Proposta gerada.');
             setAttachmentId(r.attachmentId ?? null);
+            if (r.fileName) setNomeArquivo(r.fileName);
             router.refresh();
           }
         })}
@@ -196,7 +198,7 @@ export function GenerateProposalButton({ budgetId, jaEmitida }: {
         <ViewDocumentButton
           attachmentId={attachmentId}
           title="Proposta"
-          fileName="proposta.pdf"
+          fileName={nomeArquivo}
           label="Abrir proposta"
         />
       ) : null}
