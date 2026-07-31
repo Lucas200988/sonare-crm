@@ -350,3 +350,13 @@ export type EquipmentMovement = Prisma.EquipmentMovementModel
  *  * arquivo duas vezes e nada duplica.
  */
 export type BankTransaction = Prisma.BankTransactionModel
+/**
+ * Model FollowUpEvent
+ * *
+ *  * Registro de cada toque de follow-up.
+ *  *
+ *  * A fila em si e calculada na hora (mesma escolha da cobranca e dos alertas:
+ *  * nada para manter em dia). Esta tabela guarda apenas o que JA foi feito --
+ *  * e ela que impede repetir o mesmo aviso e alimenta o historico da proposta.
+ */
+export type FollowUpEvent = Prisma.FollowUpEventModel

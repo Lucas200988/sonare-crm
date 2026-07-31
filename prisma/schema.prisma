@@ -754,6 +754,7 @@ model Proposal {
   budgetVersion BudgetVersion     @relation(fields: [budgetVersionId], references: [id])
   template      ProposalTemplate? @relation(fields: [templateId], references: [id], onDelete: SetNull)
   contracts     Contract[]
+  followUps     FollowUpEvent[]
 
   @@unique([companyId, code])
 }
@@ -1693,4 +1694,49 @@ model BankTransaction {
 
   @@unique([companyId, fitId])
   @@index([companyId, status])
+}
+
+// ============================================================
+// FOLLOW-UP COMERCIAL (automacoes)
+// ============================================================
+
+/** O que o sistema fez ou preparou sobre uma proposta. */
+enum FollowUpKind {
+  SEM_RETORNO // enviada ha N dias, cliente nao deu sinal
+  VISUALIZADA_SEM_DECISAO // abriu e nao respondeu
+  VALIDADE_PROXIMA // a proposta expira em breve
+  EXPIRADA // passou da validade sem decisao
+}
+
+enum FollowUpChannel {
+  EMAIL
+  WHATSAPP
+  /// Nenhum contato externo: so registrou o aviso interno.
+  INTERNO
+}
+
+/**
+ * Registro de cada toque de follow-up.
+ *
+ * A fila em si e calculada na hora (mesma escolha da cobranca e dos alertas:
+ * nada para manter em dia). Esta tabela guarda apenas o que JA foi feito --
+ * e ela que impede repetir o mesmo aviso e alimenta o historico da proposta.
+ */
+model FollowUpEvent {
+  id         String          @id @default(uuid(7))
+  companyId  String
+  proposalId String
+  kind       FollowUpKind
+  channel    FollowUpChannel
+  /// Para quem foi (e-mail do cliente) — nulo quando foi aviso interno.
+  recipient  String?
+  notes      String?
+  createdAt  DateTime        @default(now())
+  /// Quem aprovou o envio. Nulo = disparado pela rotina automatica.
+  createdById String?
+
+  proposal Proposal @relation(fields: [proposalId], references: [id], onDelete: Cascade)
+
+  @@index([companyId, proposalId])
+  @@index([proposalId, kind])
 }

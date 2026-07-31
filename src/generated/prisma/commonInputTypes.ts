@@ -834,6 +834,40 @@ export type EnumBankTransactionStatusWithAggregatesFilter<$PrismaModel = never> 
   _max?: Prisma.NestedEnumBankTransactionStatusFilter<$PrismaModel>
 }
 
+export type EnumFollowUpKindFilter<$PrismaModel = never> = {
+  equals?: $Enums.FollowUpKind | Prisma.EnumFollowUpKindFieldRefInput<$PrismaModel>
+  in?: $Enums.FollowUpKind[] | Prisma.ListEnumFollowUpKindFieldRefInput<$PrismaModel>
+  notIn?: $Enums.FollowUpKind[] | Prisma.ListEnumFollowUpKindFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumFollowUpKindFilter<$PrismaModel> | $Enums.FollowUpKind
+}
+
+export type EnumFollowUpChannelFilter<$PrismaModel = never> = {
+  equals?: $Enums.FollowUpChannel | Prisma.EnumFollowUpChannelFieldRefInput<$PrismaModel>
+  in?: $Enums.FollowUpChannel[] | Prisma.ListEnumFollowUpChannelFieldRefInput<$PrismaModel>
+  notIn?: $Enums.FollowUpChannel[] | Prisma.ListEnumFollowUpChannelFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumFollowUpChannelFilter<$PrismaModel> | $Enums.FollowUpChannel
+}
+
+export type EnumFollowUpKindWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.FollowUpKind | Prisma.EnumFollowUpKindFieldRefInput<$PrismaModel>
+  in?: $Enums.FollowUpKind[] | Prisma.ListEnumFollowUpKindFieldRefInput<$PrismaModel>
+  notIn?: $Enums.FollowUpKind[] | Prisma.ListEnumFollowUpKindFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumFollowUpKindWithAggregatesFilter<$PrismaModel> | $Enums.FollowUpKind
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumFollowUpKindFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumFollowUpKindFilter<$PrismaModel>
+}
+
+export type EnumFollowUpChannelWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.FollowUpChannel | Prisma.EnumFollowUpChannelFieldRefInput<$PrismaModel>
+  in?: $Enums.FollowUpChannel[] | Prisma.ListEnumFollowUpChannelFieldRefInput<$PrismaModel>
+  notIn?: $Enums.FollowUpChannel[] | Prisma.ListEnumFollowUpChannelFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumFollowUpChannelWithAggregatesFilter<$PrismaModel> | $Enums.FollowUpChannel
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumFollowUpChannelFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumFollowUpChannelFilter<$PrismaModel>
+}
+
 export type NestedStringFilter<$PrismaModel = never> = {
   equals?: string | Prisma.StringFieldRefInput<$PrismaModel>
   in?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
@@ -1611,6 +1645,40 @@ export type NestedEnumBankTransactionStatusWithAggregatesFilter<$PrismaModel = n
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumBankTransactionStatusFilter<$PrismaModel>
   _max?: Prisma.NestedEnumBankTransactionStatusFilter<$PrismaModel>
+}
+
+export type NestedEnumFollowUpKindFilter<$PrismaModel = never> = {
+  equals?: $Enums.FollowUpKind | Prisma.EnumFollowUpKindFieldRefInput<$PrismaModel>
+  in?: $Enums.FollowUpKind[] | Prisma.ListEnumFollowUpKindFieldRefInput<$PrismaModel>
+  notIn?: $Enums.FollowUpKind[] | Prisma.ListEnumFollowUpKindFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumFollowUpKindFilter<$PrismaModel> | $Enums.FollowUpKind
+}
+
+export type NestedEnumFollowUpChannelFilter<$PrismaModel = never> = {
+  equals?: $Enums.FollowUpChannel | Prisma.EnumFollowUpChannelFieldRefInput<$PrismaModel>
+  in?: $Enums.FollowUpChannel[] | Prisma.ListEnumFollowUpChannelFieldRefInput<$PrismaModel>
+  notIn?: $Enums.FollowUpChannel[] | Prisma.ListEnumFollowUpChannelFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumFollowUpChannelFilter<$PrismaModel> | $Enums.FollowUpChannel
+}
+
+export type NestedEnumFollowUpKindWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.FollowUpKind | Prisma.EnumFollowUpKindFieldRefInput<$PrismaModel>
+  in?: $Enums.FollowUpKind[] | Prisma.ListEnumFollowUpKindFieldRefInput<$PrismaModel>
+  notIn?: $Enums.FollowUpKind[] | Prisma.ListEnumFollowUpKindFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumFollowUpKindWithAggregatesFilter<$PrismaModel> | $Enums.FollowUpKind
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumFollowUpKindFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumFollowUpKindFilter<$PrismaModel>
+}
+
+export type NestedEnumFollowUpChannelWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.FollowUpChannel | Prisma.EnumFollowUpChannelFieldRefInput<$PrismaModel>
+  in?: $Enums.FollowUpChannel[] | Prisma.ListEnumFollowUpChannelFieldRefInput<$PrismaModel>
+  notIn?: $Enums.FollowUpChannel[] | Prisma.ListEnumFollowUpChannelFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumFollowUpChannelWithAggregatesFilter<$PrismaModel> | $Enums.FollowUpChannel
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumFollowUpChannelFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumFollowUpChannelFilter<$PrismaModel>
 }
 
 

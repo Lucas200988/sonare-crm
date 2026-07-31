@@ -342,3 +342,22 @@ export const BankTransactionStatus = {
 } as const
 
 export type BankTransactionStatus = (typeof BankTransactionStatus)[keyof typeof BankTransactionStatus]
+
+
+export const FollowUpKind = {
+  SEM_RETORNO: 'SEM_RETORNO',
+  VISUALIZADA_SEM_DECISAO: 'VISUALIZADA_SEM_DECISAO',
+  VALIDADE_PROXIMA: 'VALIDADE_PROXIMA',
+  EXPIRADA: 'EXPIRADA'
+} as const
+
+export type FollowUpKind = (typeof FollowUpKind)[keyof typeof FollowUpKind]
+
+
+export const FollowUpChannel = {
+  EMAIL: 'EMAIL',
+  WHATSAPP: 'WHATSAPP',
+  INTERNO: 'INTERNO'
+} as const
+
+export type FollowUpChannel = (typeof FollowUpChannel)[keyof typeof FollowUpChannel]

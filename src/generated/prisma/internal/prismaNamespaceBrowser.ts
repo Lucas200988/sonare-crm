@@ -110,7 +110,8 @@ export const ModelName = {
   ImportError: 'ImportError',
   Equipment: 'Equipment',
   EquipmentMovement: 'EquipmentMovement',
-  BankTransaction: 'BankTransaction'
+  BankTransaction: 'BankTransaction',
+  FollowUpEvent: 'FollowUpEvent'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -1291,6 +1292,21 @@ export const BankTransactionScalarFieldEnum = {
 } as const
 
 export type BankTransactionScalarFieldEnum = (typeof BankTransactionScalarFieldEnum)[keyof typeof BankTransactionScalarFieldEnum]
+
+
+export const FollowUpEventScalarFieldEnum = {
+  id: 'id',
+  companyId: 'companyId',
+  proposalId: 'proposalId',
+  kind: 'kind',
+  channel: 'channel',
+  recipient: 'recipient',
+  notes: 'notes',
+  createdAt: 'createdAt',
+  createdById: 'createdById'
+} as const
+
+export type FollowUpEventScalarFieldEnum = (typeof FollowUpEventScalarFieldEnum)[keyof typeof FollowUpEventScalarFieldEnum]
 
 
 export const SortOrder = {

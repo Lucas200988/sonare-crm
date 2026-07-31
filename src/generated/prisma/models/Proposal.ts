@@ -407,6 +407,7 @@ export type ProposalWhereInput = {
   budgetVersion?: Prisma.XOR<Prisma.BudgetVersionScalarRelationFilter, Prisma.BudgetVersionWhereInput>
   template?: Prisma.XOR<Prisma.ProposalTemplateNullableScalarRelationFilter, Prisma.ProposalTemplateWhereInput> | null
   contracts?: Prisma.ContractListRelationFilter
+  followUps?: Prisma.FollowUpEventListRelationFilter
 }
 
 export type ProposalOrderByWithRelationInput = {
@@ -441,6 +442,7 @@ export type ProposalOrderByWithRelationInput = {
   budgetVersion?: Prisma.BudgetVersionOrderByWithRelationInput
   template?: Prisma.ProposalTemplateOrderByWithRelationInput
   contracts?: Prisma.ContractOrderByRelationAggregateInput
+  followUps?: Prisma.FollowUpEventOrderByRelationAggregateInput
 }
 
 export type ProposalWhereUniqueInput = Prisma.AtLeast<{
@@ -479,6 +481,7 @@ export type ProposalWhereUniqueInput = Prisma.AtLeast<{
   budgetVersion?: Prisma.XOR<Prisma.BudgetVersionScalarRelationFilter, Prisma.BudgetVersionWhereInput>
   template?: Prisma.XOR<Prisma.ProposalTemplateNullableScalarRelationFilter, Prisma.ProposalTemplateWhereInput> | null
   contracts?: Prisma.ContractListRelationFilter
+  followUps?: Prisma.FollowUpEventListRelationFilter
 }, "id" | "verificationCode" | "companyId_code">
 
 export type ProposalOrderByWithAggregationInput = {
@@ -581,6 +584,7 @@ export type ProposalCreateInput = {
   budgetVersion: Prisma.BudgetVersionCreateNestedOneWithoutProposalsInput
   template?: Prisma.ProposalTemplateCreateNestedOneWithoutProposalsInput
   contracts?: Prisma.ContractCreateNestedManyWithoutProposalInput
+  followUps?: Prisma.FollowUpEventCreateNestedManyWithoutProposalInput
 }
 
 export type ProposalUncheckedCreateInput = {
@@ -613,6 +617,7 @@ export type ProposalUncheckedCreateInput = {
   createdById?: string | null
   deletedAt?: Date | string | null
   contracts?: Prisma.ContractUncheckedCreateNestedManyWithoutProposalInput
+  followUps?: Prisma.FollowUpEventUncheckedCreateNestedManyWithoutProposalInput
 }
 
 export type ProposalUpdateInput = {
@@ -645,6 +650,7 @@ export type ProposalUpdateInput = {
   budgetVersion?: Prisma.BudgetVersionUpdateOneRequiredWithoutProposalsNestedInput
   template?: Prisma.ProposalTemplateUpdateOneWithoutProposalsNestedInput
   contracts?: Prisma.ContractUpdateManyWithoutProposalNestedInput
+  followUps?: Prisma.FollowUpEventUpdateManyWithoutProposalNestedInput
 }
 
 export type ProposalUncheckedUpdateInput = {
@@ -677,6 +683,7 @@ export type ProposalUncheckedUpdateInput = {
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   contracts?: Prisma.ContractUncheckedUpdateManyWithoutProposalNestedInput
+  followUps?: Prisma.FollowUpEventUncheckedUpdateManyWithoutProposalNestedInput
 }
 
 export type ProposalCreateManyInput = {
@@ -893,6 +900,11 @@ export type ProposalNullableScalarRelationFilter = {
   isNot?: Prisma.ProposalWhereInput | null
 }
 
+export type ProposalScalarRelationFilter = {
+  is?: Prisma.ProposalWhereInput
+  isNot?: Prisma.ProposalWhereInput
+}
+
 export type ProposalCreateNestedManyWithoutBudgetVersionInput = {
   create?: Prisma.XOR<Prisma.ProposalCreateWithoutBudgetVersionInput, Prisma.ProposalUncheckedCreateWithoutBudgetVersionInput> | Prisma.ProposalCreateWithoutBudgetVersionInput[] | Prisma.ProposalUncheckedCreateWithoutBudgetVersionInput[]
   connectOrCreate?: Prisma.ProposalCreateOrConnectWithoutBudgetVersionInput | Prisma.ProposalCreateOrConnectWithoutBudgetVersionInput[]
@@ -1001,6 +1013,20 @@ export type ProposalUpdateOneWithoutContractsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.ProposalUpdateToOneWithWhereWithoutContractsInput, Prisma.ProposalUpdateWithoutContractsInput>, Prisma.ProposalUncheckedUpdateWithoutContractsInput>
 }
 
+export type ProposalCreateNestedOneWithoutFollowUpsInput = {
+  create?: Prisma.XOR<Prisma.ProposalCreateWithoutFollowUpsInput, Prisma.ProposalUncheckedCreateWithoutFollowUpsInput>
+  connectOrCreate?: Prisma.ProposalCreateOrConnectWithoutFollowUpsInput
+  connect?: Prisma.ProposalWhereUniqueInput
+}
+
+export type ProposalUpdateOneRequiredWithoutFollowUpsNestedInput = {
+  create?: Prisma.XOR<Prisma.ProposalCreateWithoutFollowUpsInput, Prisma.ProposalUncheckedCreateWithoutFollowUpsInput>
+  connectOrCreate?: Prisma.ProposalCreateOrConnectWithoutFollowUpsInput
+  upsert?: Prisma.ProposalUpsertWithoutFollowUpsInput
+  connect?: Prisma.ProposalWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ProposalUpdateToOneWithWhereWithoutFollowUpsInput, Prisma.ProposalUpdateWithoutFollowUpsInput>, Prisma.ProposalUncheckedUpdateWithoutFollowUpsInput>
+}
+
 export type ProposalCreateWithoutBudgetVersionInput = {
   id?: string
   companyId: string
@@ -1030,6 +1056,7 @@ export type ProposalCreateWithoutBudgetVersionInput = {
   deletedAt?: Date | string | null
   template?: Prisma.ProposalTemplateCreateNestedOneWithoutProposalsInput
   contracts?: Prisma.ContractCreateNestedManyWithoutProposalInput
+  followUps?: Prisma.FollowUpEventCreateNestedManyWithoutProposalInput
 }
 
 export type ProposalUncheckedCreateWithoutBudgetVersionInput = {
@@ -1061,6 +1088,7 @@ export type ProposalUncheckedCreateWithoutBudgetVersionInput = {
   createdById?: string | null
   deletedAt?: Date | string | null
   contracts?: Prisma.ContractUncheckedCreateNestedManyWithoutProposalInput
+  followUps?: Prisma.FollowUpEventUncheckedCreateNestedManyWithoutProposalInput
 }
 
 export type ProposalCreateOrConnectWithoutBudgetVersionInput = {
@@ -1152,6 +1180,7 @@ export type ProposalCreateWithoutTemplateInput = {
   deletedAt?: Date | string | null
   budgetVersion: Prisma.BudgetVersionCreateNestedOneWithoutProposalsInput
   contracts?: Prisma.ContractCreateNestedManyWithoutProposalInput
+  followUps?: Prisma.FollowUpEventCreateNestedManyWithoutProposalInput
 }
 
 export type ProposalUncheckedCreateWithoutTemplateInput = {
@@ -1183,6 +1212,7 @@ export type ProposalUncheckedCreateWithoutTemplateInput = {
   createdById?: string | null
   deletedAt?: Date | string | null
   contracts?: Prisma.ContractUncheckedCreateNestedManyWithoutProposalInput
+  followUps?: Prisma.FollowUpEventUncheckedCreateNestedManyWithoutProposalInput
 }
 
 export type ProposalCreateOrConnectWithoutTemplateInput = {
@@ -1240,6 +1270,7 @@ export type ProposalCreateWithoutContractsInput = {
   deletedAt?: Date | string | null
   budgetVersion: Prisma.BudgetVersionCreateNestedOneWithoutProposalsInput
   template?: Prisma.ProposalTemplateCreateNestedOneWithoutProposalsInput
+  followUps?: Prisma.FollowUpEventCreateNestedManyWithoutProposalInput
 }
 
 export type ProposalUncheckedCreateWithoutContractsInput = {
@@ -1271,6 +1302,7 @@ export type ProposalUncheckedCreateWithoutContractsInput = {
   updatedAt?: Date | string
   createdById?: string | null
   deletedAt?: Date | string | null
+  followUps?: Prisma.FollowUpEventUncheckedCreateNestedManyWithoutProposalInput
 }
 
 export type ProposalCreateOrConnectWithoutContractsInput = {
@@ -1318,6 +1350,7 @@ export type ProposalUpdateWithoutContractsInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   budgetVersion?: Prisma.BudgetVersionUpdateOneRequiredWithoutProposalsNestedInput
   template?: Prisma.ProposalTemplateUpdateOneWithoutProposalsNestedInput
+  followUps?: Prisma.FollowUpEventUpdateManyWithoutProposalNestedInput
 }
 
 export type ProposalUncheckedUpdateWithoutContractsInput = {
@@ -1349,6 +1382,151 @@ export type ProposalUncheckedUpdateWithoutContractsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  followUps?: Prisma.FollowUpEventUncheckedUpdateManyWithoutProposalNestedInput
+}
+
+export type ProposalCreateWithoutFollowUpsInput = {
+  id?: string
+  companyId: string
+  code: string
+  proposalType?: $Enums.ProposalType
+  status?: $Enums.ProposalStatus
+  pdfAttachmentId?: string | null
+  emissionCount?: number
+  revision?: number
+  lastEmittedAt?: Date | string | null
+  verificationCode?: string | null
+  signedElectronicallyAt?: Date | string | null
+  signerName?: string | null
+  signerRegistration?: string | null
+  documentHash?: string | null
+  sentAt?: Date | string | null
+  sentVia?: string | null
+  recipients?: string | null
+  viewedAt?: Date | string | null
+  acceptedAt?: Date | string | null
+  rejectedAt?: Date | string | null
+  rejectionReason?: string | null
+  negotiationNotes?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  createdById?: string | null
+  deletedAt?: Date | string | null
+  budgetVersion: Prisma.BudgetVersionCreateNestedOneWithoutProposalsInput
+  template?: Prisma.ProposalTemplateCreateNestedOneWithoutProposalsInput
+  contracts?: Prisma.ContractCreateNestedManyWithoutProposalInput
+}
+
+export type ProposalUncheckedCreateWithoutFollowUpsInput = {
+  id?: string
+  companyId: string
+  code: string
+  budgetVersionId: string
+  templateId?: string | null
+  proposalType?: $Enums.ProposalType
+  status?: $Enums.ProposalStatus
+  pdfAttachmentId?: string | null
+  emissionCount?: number
+  revision?: number
+  lastEmittedAt?: Date | string | null
+  verificationCode?: string | null
+  signedElectronicallyAt?: Date | string | null
+  signerName?: string | null
+  signerRegistration?: string | null
+  documentHash?: string | null
+  sentAt?: Date | string | null
+  sentVia?: string | null
+  recipients?: string | null
+  viewedAt?: Date | string | null
+  acceptedAt?: Date | string | null
+  rejectedAt?: Date | string | null
+  rejectionReason?: string | null
+  negotiationNotes?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  createdById?: string | null
+  deletedAt?: Date | string | null
+  contracts?: Prisma.ContractUncheckedCreateNestedManyWithoutProposalInput
+}
+
+export type ProposalCreateOrConnectWithoutFollowUpsInput = {
+  where: Prisma.ProposalWhereUniqueInput
+  create: Prisma.XOR<Prisma.ProposalCreateWithoutFollowUpsInput, Prisma.ProposalUncheckedCreateWithoutFollowUpsInput>
+}
+
+export type ProposalUpsertWithoutFollowUpsInput = {
+  update: Prisma.XOR<Prisma.ProposalUpdateWithoutFollowUpsInput, Prisma.ProposalUncheckedUpdateWithoutFollowUpsInput>
+  create: Prisma.XOR<Prisma.ProposalCreateWithoutFollowUpsInput, Prisma.ProposalUncheckedCreateWithoutFollowUpsInput>
+  where?: Prisma.ProposalWhereInput
+}
+
+export type ProposalUpdateToOneWithWhereWithoutFollowUpsInput = {
+  where?: Prisma.ProposalWhereInput
+  data: Prisma.XOR<Prisma.ProposalUpdateWithoutFollowUpsInput, Prisma.ProposalUncheckedUpdateWithoutFollowUpsInput>
+}
+
+export type ProposalUpdateWithoutFollowUpsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  companyId?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  proposalType?: Prisma.EnumProposalTypeFieldUpdateOperationsInput | $Enums.ProposalType
+  status?: Prisma.EnumProposalStatusFieldUpdateOperationsInput | $Enums.ProposalStatus
+  pdfAttachmentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emissionCount?: Prisma.IntFieldUpdateOperationsInput | number
+  revision?: Prisma.IntFieldUpdateOperationsInput | number
+  lastEmittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  verificationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  signedElectronicallyAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  signerName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  signerRegistration?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  documentHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sentVia?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  recipients?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  viewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  acceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  rejectedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  rejectionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  negotiationNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  budgetVersion?: Prisma.BudgetVersionUpdateOneRequiredWithoutProposalsNestedInput
+  template?: Prisma.ProposalTemplateUpdateOneWithoutProposalsNestedInput
+  contracts?: Prisma.ContractUpdateManyWithoutProposalNestedInput
+}
+
+export type ProposalUncheckedUpdateWithoutFollowUpsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  companyId?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  budgetVersionId?: Prisma.StringFieldUpdateOperationsInput | string
+  templateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  proposalType?: Prisma.EnumProposalTypeFieldUpdateOperationsInput | $Enums.ProposalType
+  status?: Prisma.EnumProposalStatusFieldUpdateOperationsInput | $Enums.ProposalStatus
+  pdfAttachmentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emissionCount?: Prisma.IntFieldUpdateOperationsInput | number
+  revision?: Prisma.IntFieldUpdateOperationsInput | number
+  lastEmittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  verificationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  signedElectronicallyAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  signerName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  signerRegistration?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  documentHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sentVia?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  recipients?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  viewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  acceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  rejectedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  rejectionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  negotiationNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  contracts?: Prisma.ContractUncheckedUpdateManyWithoutProposalNestedInput
 }
 
 export type ProposalCreateManyBudgetVersionInput = {
@@ -1410,6 +1588,7 @@ export type ProposalUpdateWithoutBudgetVersionInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   template?: Prisma.ProposalTemplateUpdateOneWithoutProposalsNestedInput
   contracts?: Prisma.ContractUpdateManyWithoutProposalNestedInput
+  followUps?: Prisma.FollowUpEventUpdateManyWithoutProposalNestedInput
 }
 
 export type ProposalUncheckedUpdateWithoutBudgetVersionInput = {
@@ -1441,6 +1620,7 @@ export type ProposalUncheckedUpdateWithoutBudgetVersionInput = {
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   contracts?: Prisma.ContractUncheckedUpdateManyWithoutProposalNestedInput
+  followUps?: Prisma.FollowUpEventUncheckedUpdateManyWithoutProposalNestedInput
 }
 
 export type ProposalUncheckedUpdateManyWithoutBudgetVersionInput = {
@@ -1532,6 +1712,7 @@ export type ProposalUpdateWithoutTemplateInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   budgetVersion?: Prisma.BudgetVersionUpdateOneRequiredWithoutProposalsNestedInput
   contracts?: Prisma.ContractUpdateManyWithoutProposalNestedInput
+  followUps?: Prisma.FollowUpEventUpdateManyWithoutProposalNestedInput
 }
 
 export type ProposalUncheckedUpdateWithoutTemplateInput = {
@@ -1563,6 +1744,7 @@ export type ProposalUncheckedUpdateWithoutTemplateInput = {
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   contracts?: Prisma.ContractUncheckedUpdateManyWithoutProposalNestedInput
+  followUps?: Prisma.FollowUpEventUncheckedUpdateManyWithoutProposalNestedInput
 }
 
 export type ProposalUncheckedUpdateManyWithoutTemplateInput = {
@@ -1602,10 +1784,12 @@ export type ProposalUncheckedUpdateManyWithoutTemplateInput = {
 
 export type ProposalCountOutputType = {
   contracts: number
+  followUps: number
 }
 
 export type ProposalCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   contracts?: boolean | ProposalCountOutputTypeCountContractsArgs
+  followUps?: boolean | ProposalCountOutputTypeCountFollowUpsArgs
 }
 
 /**
@@ -1623,6 +1807,13 @@ export type ProposalCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Ext
  */
 export type ProposalCountOutputTypeCountContractsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.ContractWhereInput
+}
+
+/**
+ * ProposalCountOutputType without action
+ */
+export type ProposalCountOutputTypeCountFollowUpsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.FollowUpEventWhereInput
 }
 
 
@@ -1658,6 +1849,7 @@ export type ProposalSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   budgetVersion?: boolean | Prisma.BudgetVersionDefaultArgs<ExtArgs>
   template?: boolean | Prisma.Proposal$templateArgs<ExtArgs>
   contracts?: boolean | Prisma.Proposal$contractsArgs<ExtArgs>
+  followUps?: boolean | Prisma.Proposal$followUpsArgs<ExtArgs>
   _count?: boolean | Prisma.ProposalCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["proposal"]>
 
@@ -1763,6 +1955,7 @@ export type ProposalInclude<ExtArgs extends runtime.Types.Extensions.InternalArg
   budgetVersion?: boolean | Prisma.BudgetVersionDefaultArgs<ExtArgs>
   template?: boolean | Prisma.Proposal$templateArgs<ExtArgs>
   contracts?: boolean | Prisma.Proposal$contractsArgs<ExtArgs>
+  followUps?: boolean | Prisma.Proposal$followUpsArgs<ExtArgs>
   _count?: boolean | Prisma.ProposalCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ProposalIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1780,6 +1973,7 @@ export type $ProposalPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     budgetVersion: Prisma.$BudgetVersionPayload<ExtArgs>
     template: Prisma.$ProposalTemplatePayload<ExtArgs> | null
     contracts: Prisma.$ContractPayload<ExtArgs>[]
+    followUps: Prisma.$FollowUpEventPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -2215,6 +2409,7 @@ export interface Prisma__ProposalClient<T, Null = never, ExtArgs extends runtime
   budgetVersion<T extends Prisma.BudgetVersionDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.BudgetVersionDefaultArgs<ExtArgs>>): Prisma.Prisma__BudgetVersionClient<runtime.Types.Result.GetResult<Prisma.$BudgetVersionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   template<T extends Prisma.Proposal$templateArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Proposal$templateArgs<ExtArgs>>): Prisma.Prisma__ProposalTemplateClient<runtime.Types.Result.GetResult<Prisma.$ProposalTemplatePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   contracts<T extends Prisma.Proposal$contractsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Proposal$contractsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ContractPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  followUps<T extends Prisma.Proposal$followUpsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Proposal$followUpsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FollowUpEventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2713,6 +2908,30 @@ export type Proposal$contractsArgs<ExtArgs extends runtime.Types.Extensions.Inte
   take?: number
   skip?: number
   distinct?: Prisma.ContractScalarFieldEnum | Prisma.ContractScalarFieldEnum[]
+}
+
+/**
+ * Proposal.followUps
+ */
+export type Proposal$followUpsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the FollowUpEvent
+   */
+  select?: Prisma.FollowUpEventSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the FollowUpEvent
+   */
+  omit?: Prisma.FollowUpEventOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.FollowUpEventInclude<ExtArgs> | null
+  where?: Prisma.FollowUpEventWhereInput
+  orderBy?: Prisma.FollowUpEventOrderByWithRelationInput | Prisma.FollowUpEventOrderByWithRelationInput[]
+  cursor?: Prisma.FollowUpEventWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.FollowUpEventScalarFieldEnum | Prisma.FollowUpEventScalarFieldEnum[]
 }
 
 /**

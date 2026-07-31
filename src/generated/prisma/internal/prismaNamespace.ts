@@ -456,7 +456,8 @@ export const ModelName = {
   ImportError: 'ImportError',
   Equipment: 'Equipment',
   EquipmentMovement: 'EquipmentMovement',
-  BankTransaction: 'BankTransaction'
+  BankTransaction: 'BankTransaction',
+  FollowUpEvent: 'FollowUpEvent'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -472,7 +473,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "company" | "user" | "role" | "permission" | "rolePermission" | "userRole" | "userPermission" | "session" | "passwordResetToken" | "auditLog" | "systemSetting" | "documentSequence" | "customField" | "customFieldValue" | "client" | "clientContact" | "clientUnit" | "leadSource" | "opportunityStage" | "opportunity" | "opportunityActivity" | "lossReason" | "serviceCatalog" | "budget" | "budgetVersion" | "budgetItem" | "budgetApproval" | "proposal" | "proposalTemplate" | "contract" | "contractVersion" | "contractAmendment" | "contractSignature" | "contractTemplate" | "project" | "projectStage" | "projectMember" | "task" | "taskChecklistItem" | "deliverable" | "deliverableRevision" | "timeEntry" | "technicalResponsibility" | "clientPendency" | "attachment" | "comment" | "receivable" | "receipt" | "financialRetention" | "invoice" | "invoiceReceivable" | "paymentMethod" | "payable" | "collectionEvent" | "notification" | "importJob" | "importError" | "equipment" | "equipmentMovement" | "bankTransaction"
+    modelProps: "company" | "user" | "role" | "permission" | "rolePermission" | "userRole" | "userPermission" | "session" | "passwordResetToken" | "auditLog" | "systemSetting" | "documentSequence" | "customField" | "customFieldValue" | "client" | "clientContact" | "clientUnit" | "leadSource" | "opportunityStage" | "opportunity" | "opportunityActivity" | "lossReason" | "serviceCatalog" | "budget" | "budgetVersion" | "budgetItem" | "budgetApproval" | "proposal" | "proposalTemplate" | "contract" | "contractVersion" | "contractAmendment" | "contractSignature" | "contractTemplate" | "project" | "projectStage" | "projectMember" | "task" | "taskChecklistItem" | "deliverable" | "deliverableRevision" | "timeEntry" | "technicalResponsibility" | "clientPendency" | "attachment" | "comment" | "receivable" | "receipt" | "financialRetention" | "invoice" | "invoiceReceivable" | "paymentMethod" | "payable" | "collectionEvent" | "notification" | "importJob" | "importError" | "equipment" | "equipmentMovement" | "bankTransaction" | "followUpEvent"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -4916,6 +4917,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    FollowUpEvent: {
+      payload: Prisma.$FollowUpEventPayload<ExtArgs>
+      fields: Prisma.FollowUpEventFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.FollowUpEventFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FollowUpEventPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.FollowUpEventFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FollowUpEventPayload>
+        }
+        findFirst: {
+          args: Prisma.FollowUpEventFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FollowUpEventPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.FollowUpEventFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FollowUpEventPayload>
+        }
+        findMany: {
+          args: Prisma.FollowUpEventFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FollowUpEventPayload>[]
+        }
+        create: {
+          args: Prisma.FollowUpEventCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FollowUpEventPayload>
+        }
+        createMany: {
+          args: Prisma.FollowUpEventCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.FollowUpEventCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FollowUpEventPayload>[]
+        }
+        delete: {
+          args: Prisma.FollowUpEventDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FollowUpEventPayload>
+        }
+        update: {
+          args: Prisma.FollowUpEventUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FollowUpEventPayload>
+        }
+        deleteMany: {
+          args: Prisma.FollowUpEventDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.FollowUpEventUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.FollowUpEventUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FollowUpEventPayload>[]
+        }
+        upsert: {
+          args: Prisma.FollowUpEventUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FollowUpEventPayload>
+        }
+        aggregate: {
+          args: Prisma.FollowUpEventAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateFollowUpEvent>
+        }
+        groupBy: {
+          args: Prisma.FollowUpEventGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.FollowUpEventGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.FollowUpEventCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.FollowUpEventCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -6119,6 +6194,21 @@ export const BankTransactionScalarFieldEnum = {
 export type BankTransactionScalarFieldEnum = (typeof BankTransactionScalarFieldEnum)[keyof typeof BankTransactionScalarFieldEnum]
 
 
+export const FollowUpEventScalarFieldEnum = {
+  id: 'id',
+  companyId: 'companyId',
+  proposalId: 'proposalId',
+  kind: 'kind',
+  channel: 'channel',
+  recipient: 'recipient',
+  notes: 'notes',
+  createdAt: 'createdAt',
+  createdById: 'createdById'
+} as const
+
+export type FollowUpEventScalarFieldEnum = (typeof FollowUpEventScalarFieldEnum)[keyof typeof FollowUpEventScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -6643,6 +6733,34 @@ export type ListEnumBankTransactionStatusFieldRefInput<$PrismaModel> = FieldRefI
 
 
 /**
+ * Reference to a field of type 'FollowUpKind'
+ */
+export type EnumFollowUpKindFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'FollowUpKind'>
+    
+
+
+/**
+ * Reference to a field of type 'FollowUpKind[]'
+ */
+export type ListEnumFollowUpKindFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'FollowUpKind[]'>
+    
+
+
+/**
+ * Reference to a field of type 'FollowUpChannel'
+ */
+export type EnumFollowUpChannelFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'FollowUpChannel'>
+    
+
+
+/**
+ * Reference to a field of type 'FollowUpChannel[]'
+ */
+export type ListEnumFollowUpChannelFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'FollowUpChannel[]'>
+    
+
+
+/**
  * Reference to a field of type 'Float'
  */
 export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
@@ -6866,6 +6984,7 @@ export type GlobalOmitConfig = {
   equipment?: Prisma.EquipmentOmit
   equipmentMovement?: Prisma.EquipmentMovementOmit
   bankTransaction?: Prisma.BankTransactionOmit
+  followUpEvent?: Prisma.FollowUpEventOmit
 }
 
 /* Types for Logging */

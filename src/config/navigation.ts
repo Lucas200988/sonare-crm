@@ -16,6 +16,7 @@ export const NAV_ITEMS: NavItem[] = [
   { label: 'Clientes', href: '/clientes', icon: 'Users', permission: 'client:read' },
   { label: 'CRM / Pipeline', href: '/crm', icon: 'KanbanSquare', permission: 'opportunity:read' },
   { label: 'Orçamentos', href: '/orcamentos', icon: 'Calculator', permission: 'budget:read' },
+  { label: 'Follow-up', href: '/orcamentos/followup', icon: 'Send', permission: 'proposal:read', child: true },
   { label: 'Contratos', href: '/contratos', icon: 'FileSignature', permission: 'contract:read' },
   { label: 'Projetos', href: '/projetos', icon: 'FolderKanban', permission: 'project:read' },
   { label: 'ART / RRT', href: '/art', icon: 'Stamp', permission: 'project:read', child: true },
