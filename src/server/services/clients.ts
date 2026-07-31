@@ -236,15 +236,59 @@ export async function updateClient(user: SessionUser, id: string, input: ClientI
   return { client };
 }
 
+/**
+ * O que impede a exclusão de um cliente.
+ *
+ * Contrato e projeto são compromissos firmados: o cliente sai da lista mas o
+ * documento continuaria apontando para ele, e a origem do trabalho se perde.
+ * Nesses casos o caminho é inativar. Orçamento e oportunidade não bloqueiam —
+ * são etapa comercial, e some junto quando o cliente não vingou.
+ *
+ * As contagens filtram excluídos: um contrato que já foi apagado não pode
+ * prender o cliente para sempre.
+ */
+export async function getClientDeleteBlockers(user: SessionUser, id: string) {
+  const cliente = await prisma.client.findFirst({
+    where: { id, companyId: user.companyId, deletedAt: null },
+    select: {
+      id: true,
+      _count: {
+        select: {
+          contracts: { where: { deletedAt: null } },
+          projects: { where: { deletedAt: null } },
+        },
+      },
+    },
+  });
+  if (!cliente) return null;
+  return { contratos: cliente._count.contracts, projetos: cliente._count.projects };
+}
+
 export async function softDeleteClient(user: SessionUser, id: string) {
   const before = await prisma.client.findFirst({
     where: { id, companyId: user.companyId, deletedAt: null },
-    include: { _count: { select: { contracts: true, projects: true } } },
+    include: {
+      _count: {
+        select: {
+          contracts: { where: { deletedAt: null } },
+          projects: { where: { deletedAt: null } },
+        },
+      },
+    },
   });
   if (!before) return { error: 'Cliente não encontrado.' };
-  if (before._count.contracts > 0 || before._count.projects > 0) {
-    return { error: 'Cliente possui contratos ou projetos vinculados. Inative-o em vez de excluir.' };
+
+  const impedimentos = [
+    before._count.contracts > 0 ? `${before._count.contracts} contrato(s)` : null,
+    before._count.projects > 0 ? `${before._count.projects} projeto(s)` : null,
+  ].filter(Boolean);
+  if (impedimentos.length > 0) {
+    return {
+      error: `Este cliente tem ${impedimentos.join(' e ')} vinculado(s). `
+        + 'Marque-o como Inativo na edição em vez de excluir — assim o histórico continua rastreável.',
+    };
   }
+
   await prisma.client.update({ where: { id }, data: { deletedAt: new Date(), updatedById: user.id } });
   await auditLog({
     companyId: user.companyId, userId: user.id,

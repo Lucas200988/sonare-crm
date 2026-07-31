@@ -3,13 +3,14 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Pencil } from 'lucide-react';
 import { requirePermissionPage } from '@/server/auth/guards';
-import { getClient } from '@/server/services/clients';
+import { getClient, getClientDeleteBlockers } from '@/server/services/clients';
 import { PageHeader, Card, Badge } from '@/components/ui';
 import { formatCNPJ, formatCPF, formatPhoneBR, formatCEP } from '@/lib/br';
 import { formatDateBR } from '@/lib/dates';
 import { formatBRL } from '@/lib/money';
 import { ContactsSection } from './contacts-section';
 import { UnitsSection } from './units-section';
+import { DeleteClientButton } from './delete-client';
 
 export const metadata: Metadata = { title: 'Cliente — SONARE CRM' };
 
@@ -35,6 +36,9 @@ export default async function ClientDetailPage(props: { params: Promise<{ id: st
   if (!client) notFound();
 
   const canWrite = user.permissions.has('client:write');
+  const canDelete = user.permissions.has('client:delete');
+  // contagem exata: a lista da ficha traz no maximo 10 de cada
+  const vinculos = canDelete ? await getClientDeleteBlockers(user, id) : null;
   const badge = STATUS_BADGE[client.status];
 
   return (
@@ -52,6 +56,14 @@ export default async function ClientDetailPage(props: { params: Promise<{ id: st
               >
                 <Pencil className="h-4 w-4" aria-hidden /> Editar
               </Link>
+            ) : null}
+            {canDelete && vinculos ? (
+              <DeleteClientButton
+                clientId={client.id}
+                nome={client.tradeName ?? client.legalName}
+                contratos={vinculos.contratos}
+                projetos={vinculos.projetos}
+              />
             ) : null}
           </div>
         }
