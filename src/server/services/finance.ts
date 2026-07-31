@@ -3,7 +3,7 @@ import { prisma } from '@/server/db';
 import { auditLog } from '@/server/audit/audit';
 import { nextCode } from '@/server/services/sequence';
 import { parseDateInput } from '@/lib/dates';
-import { enviarEmail, layoutEmail } from '@/server/mail';
+import { enviarEmail, layoutEmail, remetenteComCaixa } from '@/server/mail';
 import type { Prisma, ReceivableStatus, PayableStatus } from '@/generated/prisma/client';
 import type { SessionUser } from '@/server/auth/session';
 
@@ -734,6 +734,7 @@ export async function sendCollectionEmail(
 
   const envio = await enviarEmail({
     para: input.para,
+    remetente: remetenteComCaixa('financeiro'),
     // Comprovante e dúvidas voltam para quem cobrou
     responderPara: user.email,
     assunto: input.assunto,

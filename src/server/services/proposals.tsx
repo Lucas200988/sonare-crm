@@ -9,7 +9,7 @@ import { nextCode } from '@/server/services/sequence';
 import QRCode from 'qrcode';
 import { saveFile, readAttachment } from '@/server/storage';
 import { generateVerificationCode, verificationUrl } from '@/server/signature';
-import { enviarEmail, layoutEmail } from '@/server/mail';
+import { enviarEmail, layoutEmail, remetenteComCaixa } from '@/server/mail';
 import { formatCNPJ, formatCPF, formatCEP, formatPhoneBR } from '@/lib/br';
 import { formatDateBR } from '@/lib/dates';
 import { codigoProposta, nomeArquivoPrevia, nomeArquivoProposta } from '@/lib/proposta-codigo';
@@ -312,6 +312,8 @@ export async function sendProposalByEmail(
 
   const envio = await enviarEmail({
     para: input.para,
+    // Caixa com nome de gente do comercial, nao "nao-responda"
+    remetente: remetenteComCaixa('orcamentos'),
     // A resposta do cliente ("aprovado", "podemos ajustar o prazo?") vai para
     // quem enviou, não para o endereço de sistema que ninguém lê.
     responderPara: user.email,

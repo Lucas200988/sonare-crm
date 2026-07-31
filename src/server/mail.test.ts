@@ -5,6 +5,7 @@ type MensagemTeste = {
   assunto: string;
   texto: string;
   responderPara?: string | null;
+  remetente?: string | null;
 };
 
 /**
@@ -54,5 +55,46 @@ describe('enviarEmail — resposta do destinatário', () => {
       texto: 'Mensagem automática.',
     });
     expect(corpo).not.toHaveProperty('reply_to');
+  });
+
+  it('usa o remetente da mensagem no lugar do MAIL_FROM', async () => {
+    const corpo = await capturarEnvio({
+      para: 'cliente@empresa.com.br',
+      assunto: 'Proposta',
+      texto: 'Segue.',
+      remetente: 'SONARE Engenharia <orcamentos@sonare.com.br>',
+    });
+    expect(corpo.from).toBe('SONARE Engenharia <orcamentos@sonare.com.br>');
+  });
+});
+
+describe('remetenteComCaixa', () => {
+  const original = { ...process.env };
+  afterEach(() => { process.env = { ...original }; vi.resetModules(); });
+
+  async function carregar() {
+    vi.resetModules();
+    return (await import('./mail')).remetenteComCaixa;
+  }
+
+  it('troca só a caixa, preservando nome e domínio verificado', async () => {
+    process.env.MAIL_FROM = 'SONARE Engenharia <nao-responda@sonareengenharia.com.br>';
+    const remetenteComCaixa = await carregar();
+    expect(remetenteComCaixa('orcamentos'))
+      .toBe('SONARE Engenharia <orcamentos@sonareengenharia.com.br>');
+  });
+
+  it('aceita um rótulo próprio', async () => {
+    process.env.MAIL_FROM = 'SONARE Engenharia <nao-responda@sonare.com.br>';
+    const remetenteComCaixa = await carregar();
+    expect(remetenteComCaixa('financeiro', 'SONARE Financeiro'))
+      .toBe('SONARE Financeiro <financeiro@sonare.com.br>');
+  });
+
+  it('devolve o MAIL_FROM intacto quando o formato é inesperado', async () => {
+    // sem o "Nome <...>", não dá para trocar a caixa com segurança
+    process.env.MAIL_FROM = 'orcamentos@sonare.com.br';
+    const remetenteComCaixa = await carregar();
+    expect(remetenteComCaixa('orcamentos')).toBe('orcamentos@sonare.com.br');
   });
 });

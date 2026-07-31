@@ -25,7 +25,24 @@ export type Mensagem = {
    * cliente que responde "aprovado" à proposta escreve para o vazio.
    */
   responderPara?: string | null;
+  /** Remetente específico desta mensagem; sem ele, vale o MAIL_FROM. */
+  remetente?: string | null;
 };
+
+/**
+ * Remetente com outra caixa no mesmo domínio do MAIL_FROM.
+ *
+ * "nao-responda@" na proposta comercial passa a mensagem errada — parece que
+ * a empresa não quer conversa. Trocar só a parte antes do @ preserva o
+ * domínio verificado no provedor, que é o que autoriza o envio.
+ */
+export function remetenteComCaixa(caixa: string, rotulo?: string): string {
+  const base = process.env.MAIL_FROM ?? 'SONARE Engenharia <nao-responda@sonare.com.br>';
+  const m = /^(.*)<([^@>]+)@([^>]+)>\s*$/.exec(base);
+  if (!m) return base; // formato inesperado: melhor o padrão do que quebrar o envio
+  const nome = rotulo ?? m[1].trim();
+  return `${nome} <${caixa}@${m[3]}>`;
+}
 
 function smtpConfigurado(): boolean {
   return Boolean(process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS);
@@ -116,11 +133,11 @@ export async function enviarEmail(msg: Mensagem): Promise<{ ok: true } | { error
     return { ok: true };
   }
 
-  if (info.driver === 'resend') return enviarPeloResend(msg, info.from);
+  if (info.driver === 'resend') return enviarPeloResend(msg, msg.remetente ?? info.from);
 
   try {
     await transporte().sendMail({
-      from: info.from,
+      from: msg.remetente ?? info.from,
       to: msg.para,
       ...(msg.responderPara ? { replyTo: msg.responderPara } : {}),
       subject: msg.assunto,
