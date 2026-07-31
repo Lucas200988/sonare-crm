@@ -1,5 +1,6 @@
 import 'server-only';
-import { isEmptyRich } from '@/lib/html-text';
+import { htmlToText, isEmptyRich } from '@/lib/html-text';
+import { formatBRL } from '@/lib/money';
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { renderToBuffer } from '@react-pdf/renderer';
@@ -10,6 +11,7 @@ import QRCode from 'qrcode';
 import { saveFile, readAttachment } from '@/server/storage';
 import { generateVerificationCode, verificationUrl } from '@/server/signature';
 import { enviarEmail, layoutEmail, remetenteComCaixa } from '@/server/mail';
+import { montarEmailProposta } from '@/server/email-proposta';
 import { formatCNPJ, formatCPF, formatCEP, formatPhoneBR } from '@/lib/br';
 import { formatDateBR } from '@/lib/dates';
 import { codigoProposta, nomeArquivoPrevia, nomeArquivoProposta } from '@/lib/proposta-codigo';
@@ -290,7 +292,13 @@ export async function sendProposalByEmail(
     include: {
       budgetVersion: {
         include: {
-          budget: { include: { client: { select: { legalName: true, tradeName: true } } } },
+          budget: {
+            include: {
+              client: { select: { legalName: true, tradeName: true } },
+              contact: { select: { name: true } },
+              opportunity: { select: { primaryContact: { select: { name: true } } } },
+            },
+          },
         },
       },
     },
@@ -301,14 +309,53 @@ export async function sendProposalByEmail(
   const arquivo = await readAttachment(user.companyId, proposal.pdfAttachmentId);
   if (!arquivo) return { error: 'O PDF da proposta não foi encontrado. Reemita e tente de novo.' };
 
-  const company = await prisma.company.findUniqueOrThrow({ where: { id: user.companyId } });
-  const cliente = proposal.budgetVersion.budget.client;
+  const [company, settings] = await Promise.all([
+    prisma.company.findUniqueOrThrow({ where: { id: user.companyId } }),
+    prisma.systemSetting.findMany({
+      where: {
+        companyId: user.companyId,
+        key: { in: ['proposal.signerName', 'proposal.signerTitle', 'proposal.signerPhone'] },
+      },
+    }),
+  ]);
+  const setting = (key: string) => {
+    const s = settings.find((x) => x.key === key);
+    return typeof s?.value === 'string' && s.value.trim() !== '' ? s.value : null;
+  };
+
+  const cv = proposal.budgetVersion;
+  const budget = cv.budget;
+  const cliente = budget.client;
   const nomeCliente = cliente.tradeName ?? cliente.legalName;
-  const validade = proposal.budgetVersion.validUntil;
 
   const rotulo = codigoProposta(proposal.code, proposal.revision);
-  const corpo = input.mensagem?.trim()
-    || `Segue em anexo a proposta ${rotulo} para ${nomeCliente}.`;
+  // prazo em uma linha, sem os hífens de lista do editor
+  const prazo = cv.executionDeadline
+    ? isEmptyRich(cv.executionDeadline)
+      ? null
+      : htmlToText(cv.executionDeadline).split('\n')[0].replace(/^-\s*/, '').trim() || null
+    : null;
+
+  const { html, texto } = montarEmailProposta({
+    codigo: rotulo,
+    nomeContato: budget.contact?.name ?? budget.opportunity?.primaryContact?.name ?? null,
+    nomeCliente,
+    servico: cv.serviceType,
+    valorTotal: formatBRL(cv.total.toString()),
+    prazo,
+    validade: cv.validUntil ? formatDateBR(cv.validUntil) : null,
+    mensagem: input.mensagem?.trim() || null,
+    urlVisualizar: `${verificationUrl(proposal.verificationCode!)}/pdf`,
+    urlBaixar: `${verificationUrl(proposal.verificationCode!)}/pdf?baixar=1`,
+    urlAutenticidade: verificationUrl(proposal.verificationCode!),
+    assinante: {
+      nome: setting('proposal.signerName') ?? user.name,
+      titulo: setting('proposal.signerTitle'),
+      whatsapp: setting('proposal.signerPhone') ?? (company.whatsapp ? formatPhoneBR(company.whatsapp) : null),
+      email: user.email,
+      site: company.website,
+    },
+  });
 
   const envio = await enviarEmail({
     para: input.para,
@@ -318,24 +365,8 @@ export async function sendProposalByEmail(
     // quem enviou, não para o endereço de sistema que ninguém lê.
     responderPara: user.email,
     assunto: `Proposta ${rotulo} — ${company.tradeName ?? company.legalName}`,
-    texto:
-      `${corpo}\n\n`
-      + (validade ? `Validade da proposta: ${formatDateBR(validade)}.\n` : '')
-      + (proposal.verificationCode
-        ? `Conferência de autenticidade: ${verificationUrl(proposal.verificationCode)}\n`
-        : '')
-      + `\nQualquer dúvida, estamos à disposição.`,
-    html: layoutEmail(
-      `Proposta ${rotulo}`,
-      `<p>${corpo.replace(/\n/g, '<br>')}</p>
-       ${validade ? `<p><strong>Validade:</strong> ${formatDateBR(validade)}</p>` : ''}
-       <p style="font-size:12px;color:#64748b">
-         O documento segue em anexo.
-         ${proposal.verificationCode
-           ? `Autenticidade em <a href="${verificationUrl(proposal.verificationCode)}">${verificationUrl(proposal.verificationCode)}</a>.`
-           : ''}
-       </p>`,
-    ),
+    texto,
+    html,
     anexos: [{
       filename: nomeArquivoProposta(proposal.code, proposal.revision, nomeCliente),
       content: arquivo.content,

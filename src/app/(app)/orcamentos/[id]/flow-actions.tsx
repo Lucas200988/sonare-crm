@@ -332,6 +332,7 @@ export function SendProposalButton({
 
   return (
     <form action={formAction} className="mt-2 space-y-2 rounded-lg border border-slate-200 bg-slate-50 p-3">
+      <p className="text-xs font-semibold text-slate-700">Envio da proposta {codigo}</p>
       <div>
         <label htmlFor={`env-${proposalId}`} className="mb-1 block text-xs font-medium text-slate-600">
           Enviar para
@@ -350,13 +351,18 @@ export function SendProposalButton({
       </div>
       <div>
         <label htmlFor={`msg-${proposalId}`} className="mb-1 block text-xs font-medium text-slate-600">
-          Mensagem
+          Mensagem de abertura (opcional)
         </label>
         <textarea
           id={`msg-${proposalId}`} name="mensagem" rows={3}
-          defaultValue={`Prezados,\n\nSegue em anexo a proposta ${codigo} para apreciação.\n\nFicamos à disposição para esclarecimentos.`}
+          placeholder="Em branco, o e-mail usa a apresentação padrão, com o resumo da proposta e os botões de acesso."
           className={inputCls}
         />
+        <p className="mt-1 text-[11px] text-slate-500">
+          O e-mail sai com o resumo (serviço, valor, prazo e validade), o botão
+          “Visualizar proposta” e o PDF anexado — escreva aqui só se quiser um
+          recado pessoal no lugar do parágrafo de abertura.
+        </p>
       </div>
       <p className="text-[11px] text-slate-500">
         O PDF vai anexado e o envio fica registrado no histórico da proposta.
