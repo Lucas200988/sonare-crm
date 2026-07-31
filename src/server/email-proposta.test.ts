@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { montarEmailProposta, type DadosEmailProposta } from './email-proposta';
+import { linkWhatsApp, montarEmailProposta, type DadosEmailProposta } from './email-proposta';
 
 const BASE: DadosEmailProposta = {
   codigo: 'PROP-2026-018',
@@ -88,6 +88,22 @@ describe('montarEmailProposta', () => {
     expect(html).toContain('&lt;script&gt;');
   });
 
+  it('o WhatsApp é clicável e já abre a conversa citando a proposta', () => {
+    const { html } = montarEmailProposta(BASE);
+    expect(html).toContain('https://wa.me/5565984633872?text=');
+    expect(html).toContain(encodeURIComponent('proposta PROP-2026-018'));
+    expect(html).toContain('iniciar conversa');
+  });
+
+  it('sem WhatsApp cadastrado, a linha simplesmente não aparece', () => {
+    const { html } = montarEmailProposta({
+      ...BASE,
+      assinante: { ...BASE.assinante, whatsapp: null },
+    });
+    expect(html).not.toContain('WhatsApp');
+    expect(html).not.toContain('wa.me');
+  });
+
   it('a versão em texto puro carrega o essencial', () => {
     const { texto } = montarEmailProposta(BASE);
     for (const trecho of [
@@ -95,5 +111,26 @@ describe('montarEmailProposta', () => {
     ]) {
       expect(texto).toContain(trecho);
     }
+  });
+});
+
+describe('linkWhatsApp', () => {
+  it('converte o número exibido em link com o país na frente', () => {
+    expect(linkWhatsApp('(65) 98463-3872', 'Oi'))
+      .toBe('https://wa.me/5565984633872?text=Oi');
+  });
+
+  it('não duplica o 55 quando o número já vem completo', () => {
+    expect(linkWhatsApp('+55 65 98463-3872', 'Oi'))
+      .toBe('https://wa.me/5565984633872?text=Oi');
+  });
+
+  it('codifica a mensagem com acentos e espaços', () => {
+    const url = linkWhatsApp('(65) 98463-3872', 'Olá! Sobre a proposta.');
+    expect(url).toContain('text=Ol%C3%A1!%20Sobre%20a%20proposta.');
+  });
+
+  it('recusa número curto demais em vez de gerar link quebrado', () => {
+    expect(linkWhatsApp('4633-3872', 'Oi')).toBeNull();
   });
 });

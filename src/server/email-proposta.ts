@@ -43,6 +43,21 @@ function escapar(s: string): string {
   return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
+/**
+ * Link do WhatsApp com a conversa já começada no assunto certo.
+ *
+ * O wa.me exige o número em dígitos com o país na frente; o cadastro guarda
+ * "(65) 98463-3872". Sem os 55, o link abriria uma conversa com número
+ * inexistente — por isso o prefixo entra quando falta.
+ */
+export function linkWhatsApp(numeroExibido: string, mensagem: string): string | null {
+  const digitos = numeroExibido.replace(/\D/g, '');
+  // 10–11 dígitos = número nacional sem o país (fixo ou celular com o 9)
+  const completo = digitos.length >= 12 ? digitos : `55${digitos}`;
+  if (completo.length < 12) return null; // curto demais para ser um número real
+  return `https://wa.me/${completo}?text=${encodeURIComponent(mensagem)}`;
+}
+
 /** Linha do quadro de resumo; some quando o dado não existe. */
 function linhaResumo(rotulo: string, valor: string | null, destaque = false): string {
   if (!valor) return '';
@@ -58,6 +73,13 @@ function linhaResumo(rotulo: string, valor: string | null, destaque = false): st
 
 export function montarEmailProposta(d: DadosEmailProposta): { html: string; texto: string } {
   const saudacao = d.nomeContato ? `Olá, ${escapar(d.nomeContato)}.` : 'Prezados,';
+  // Quem clica é o cliente: a mensagem pronta já abre a conversa no assunto certo
+  const urlWhats = d.assinante.whatsapp
+    ? linkWhatsApp(
+        d.assinante.whatsapp,
+        `Olá! Recebi a proposta ${d.codigo} da SONARE Engenharia e gostaria de conversar sobre ela.`,
+      )
+    : null;
   const abertura = d.mensagem
     ? escapar(d.mensagem).replace(/\n/g, '<br>')
     : `Conforme solicitado, elaboramos nossa proposta comercial para <strong>${escapar(d.nomeCliente)}</strong>${
@@ -157,7 +179,11 @@ export function montarEmailProposta(d: DadosEmailProposta): { html: string; text
               <p style="margin:10px 0 0;font-size:15px;font-weight:bold;color:${TINTA}">${escapar(d.assinante.nome)}</p>
               ${d.assinante.titulo ? `<p style="margin:2px 0 0;font-size:13px;color:${CINZA}">${escapar(d.assinante.titulo)}</p>` : ''}
               <p style="margin:2px 0 0;font-size:13px;color:${CINZA}">SONARE Engenharia</p>
-              ${d.assinante.whatsapp ? `<p style="margin:8px 0 0;font-size:12px;color:${CINZA}">WhatsApp: ${escapar(d.assinante.whatsapp)}</p>` : ''}
+              ${d.assinante.whatsapp ? `<p style="margin:8px 0 0;font-size:12px;color:${CINZA}">WhatsApp: ${
+                urlWhats
+                  ? `<a href="${urlWhats}" style="color:#16a34a;font-weight:bold;text-decoration:none">${escapar(d.assinante.whatsapp)} — iniciar conversa</a>`
+                  : escapar(d.assinante.whatsapp)
+              }</p>` : ''}
               ${d.assinante.email ? `<p style="margin:2px 0 0;font-size:12px;color:${CINZA}">E-mail: <a href="mailto:${d.assinante.email}" style="color:${VERMELHO};text-decoration:none">${escapar(d.assinante.email)}</a></p>` : ''}
               ${d.assinante.site ? `<p style="margin:2px 0 0;font-size:12px;color:${CINZA}">Site: <a href="https://${escapar(d.assinante.site.replace(/^https?:\/\//, ''))}" style="color:${VERMELHO};text-decoration:none">${escapar(d.assinante.site.replace(/^https?:\/\//, ''))}</a></p>` : ''}
             </td></tr>
@@ -205,7 +231,9 @@ export function montarEmailProposta(d: DadosEmailProposta): { html: string; text
     d.assinante.nome,
     d.assinante.titulo,
     'SONARE Engenharia',
-    d.assinante.whatsapp ? `WhatsApp: ${d.assinante.whatsapp}` : null,
+    d.assinante.whatsapp
+      ? `WhatsApp: ${d.assinante.whatsapp}${urlWhats ? ` (${urlWhats})` : ''}`
+      : null,
     d.assinante.email ? `E-mail: ${d.assinante.email}` : null,
     d.assinante.site ? `Site: ${d.assinante.site}` : null,
     '',
