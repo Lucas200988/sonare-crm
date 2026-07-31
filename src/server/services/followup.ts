@@ -3,6 +3,7 @@ import { prisma } from '@/server/db';
 import { auditLog } from '@/server/audit/audit';
 import { enviarEmail, remetenteComCaixa } from '@/server/mail';
 import { notificar } from '@/server/services/notify';
+import { registrarEnvio } from '@/server/services/email-delivery';
 import { verificationUrl } from '@/server/signature';
 import { codigoProposta } from '@/lib/proposta-codigo';
 import { linkWhatsApp } from '@/server/email-proposta';
@@ -266,6 +267,12 @@ export async function enviarToque(
       </div>`,
   });
   if ('error' in envio) return { error: envio.error };
+
+  await registrarEnvio({
+    companyId: user.companyId, providerId: envio.providerId,
+    para: input.para, assunto: input.assunto,
+    entityType: 'proposal', entityId: input.proposalId,
+  });
 
   await registrarToque(user.companyId, {
     proposalId: input.proposalId, tipo: input.tipo,

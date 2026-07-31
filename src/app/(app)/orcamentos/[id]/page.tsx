@@ -11,6 +11,7 @@ import { formatDateBR, formatDateTimeBR } from '@/lib/dates';
 import { formatDecimalBR } from '@/lib/parse';
 import { getAiConfig } from '@/server/ai/scope-generator';
 import { getPriceSuggestions } from '@/server/services/price-history';
+import { getEntregas } from '@/server/services/email-delivery';
 import { codigoProposta, nomeArquivoProposta } from '@/lib/proposta-codigo';
 import { badgeDoOrcamento, PROPOSAL_STATUS_BADGE } from '../status-badge';
 import { BudgetEditor, type EditorFields, type EditorItem } from './budget-editor';
@@ -19,6 +20,7 @@ import {
   GenerateProposalButton, ProposalEventForm, DangerZone, PreviewButton, SendProposalButton,
 } from './flow-actions';
 import { ViewDocumentButton } from '@/components/pdf-viewer';
+import { DeliveryStatus } from './delivery-status';
 
 export const metadata: Metadata = { title: 'Orçamento — SONARE CRM' };
 
@@ -87,6 +89,10 @@ export default async function BudgetDetailPage(props: { params: Promise<{ id: st
 
   const allProposals = budget.currentVersion.proposals;
   const nomeCliente = budget.client.tradeName ?? budget.client.legalName;
+  // situacao de entrega dos e-mails de cada proposta desta versao
+  const entregas = await Promise.all(
+    allProposals.map((p) => getEntregas(user.companyId, 'proposal', p.id)),
+  );
 
   return (
     <div className="mx-auto max-w-6xl">
@@ -240,6 +246,12 @@ export default async function BudgetDetailPage(props: { params: Promise<{ id: st
                         {p.acceptedAt ? ` · aceita ${formatDateBR(p.acceptedAt)}` : ''}
                         {p.rejectedAt ? ` · recusada ${formatDateBR(p.rejectedAt)}` : ''}
                       </p>
+                      <DeliveryStatus
+                        entregas={(entregas[allProposals.indexOf(p)] ?? []).map((e) => ({
+                          id: e.id, para: e.para, status: e.status,
+                          detalhe: e.detalhe, sentAt: e.sentAt.toISOString(),
+                        }))}
+                      />
                       {p.rejectionReason ? (
                         <p className="mt-1 text-[11px] text-red-600">Motivo: {p.rejectionReason}</p>
                       ) : null}

@@ -1740,3 +1740,49 @@ model FollowUpEvent {
   @@index([companyId, proposalId])
   @@index([proposalId, kind])
 }
+
+// ============================================================
+// ENTREGA DE E-MAIL (webhook do provedor)
+// ============================================================
+
+enum EmailStatus {
+  ENVIADO // aceito pelo provedor
+  ENTREGUE // chegou na caixa do destinatario
+  ABERTO // pixel de rastreio disparou (indicativo, nao prova)
+  CLIQUE // clicou em um link da mensagem
+  REJEITADO // bounce: endereco inexistente, caixa cheia
+  SPAM // destinatario marcou como spam
+  ATRASADO // provedor tentando de novo
+}
+
+/**
+ * Situacao de entrega de cada e-mail enviado pelo sistema.
+ *
+ * Sem isto, digitar o e-mail errado do cliente e um erro silencioso: a
+ * proposta consta como enviada e ninguem descobre que voltou.
+ *
+ * O providerId e o identificador que o Resend devolve no envio; e por ele que
+ * o webhook encontra a mensagem depois.
+ */
+model EmailDelivery {
+  id         String      @id @default(uuid(7))
+  companyId  String
+  /// ID da mensagem no provedor (Resend).
+  providerId String      @unique
+  para       String
+  assunto    String
+  status     EmailStatus @default(ENVIADO)
+  /// A que se refere: proposal, receivable... — para achar pelo documento.
+  entityType String?
+  entityId   String?
+  /// Motivo da rejeicao, quando houver.
+  detalhe    String?
+  sentAt     DateTime    @default(now())
+  deliveredAt DateTime?
+  openedAt   DateTime?
+  failedAt   DateTime?
+  updatedAt  DateTime    @updatedAt
+
+  @@index([companyId, entityType, entityId])
+  @@index([companyId, status])
+}

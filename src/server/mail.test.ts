@@ -28,11 +28,16 @@ describe('enviarEmail — resposta do destinatário', () => {
   });
 
   async function capturarEnvio(msg: MensagemTeste) {
-    const fetchFalso = vi.fn().mockResolvedValue({ ok: true, text: async () => '' });
+    // o Resend devolve o id da mensagem, que o webhook de entrega usa depois
+    const fetchFalso = vi.fn().mockResolvedValue({
+      ok: true,
+      text: async () => '',
+      json: async () => ({ id: 'msg_resend_123' }),
+    });
     vi.stubGlobal('fetch', fetchFalso);
     const { enviarEmail } = await import('./mail');
     const r = await enviarEmail(msg);
-    expect(r).toEqual({ ok: true });
+    expect(r).toEqual({ ok: true, providerId: 'msg_resend_123' });
     return JSON.parse(fetchFalso.mock.calls[0][1].body as string);
   }
 

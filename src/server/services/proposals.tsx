@@ -12,6 +12,7 @@ import { saveFile, readAttachment } from '@/server/storage';
 import { generateVerificationCode, verificationUrl } from '@/server/signature';
 import { enviarEmail, layoutEmail, remetenteComCaixa } from '@/server/mail';
 import { montarEmailProposta } from '@/server/email-proposta';
+import { registrarEnvio } from '@/server/services/email-delivery';
 import { formatCNPJ, formatCPF, formatCEP, formatPhoneBR } from '@/lib/br';
 import { formatDateBR } from '@/lib/dates';
 import { codigoProposta, nomeArquivoPrevia, nomeArquivoProposta } from '@/lib/proposta-codigo';
@@ -375,6 +376,12 @@ export async function sendProposalByEmail(
   });
 
   if ('error' in envio) return { error: envio.error };
+
+  await registrarEnvio({
+    companyId: user.companyId, providerId: envio.providerId,
+    para: input.para, assunto: `Proposta ${rotulo}`,
+    entityType: 'proposal', entityId: proposalId,
+  });
 
   // Só registra o envio depois de a mensagem sair, para o histórico não mentir
   await prisma.proposal.update({

@@ -360,3 +360,15 @@ export type BankTransaction = Prisma.BankTransactionModel
  *  * e ela que impede repetir o mesmo aviso e alimenta o historico da proposta.
  */
 export type FollowUpEvent = Prisma.FollowUpEventModel
+/**
+ * Model EmailDelivery
+ * *
+ *  * Situacao de entrega de cada e-mail enviado pelo sistema.
+ *  *
+ *  * Sem isto, digitar o e-mail errado do cliente e um erro silencioso: a
+ *  * proposta consta como enviada e ninguem descobre que voltou.
+ *  *
+ *  * O providerId e o identificador que o Resend devolve no envio; e por ele que
+ *  * o webhook encontra a mensagem depois.
+ */
+export type EmailDelivery = Prisma.EmailDeliveryModel

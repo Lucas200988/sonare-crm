@@ -361,3 +361,16 @@ export const FollowUpChannel = {
 } as const
 
 export type FollowUpChannel = (typeof FollowUpChannel)[keyof typeof FollowUpChannel]
+
+
+export const EmailStatus = {
+  ENVIADO: 'ENVIADO',
+  ENTREGUE: 'ENTREGUE',
+  ABERTO: 'ABERTO',
+  CLIQUE: 'CLIQUE',
+  REJEITADO: 'REJEITADO',
+  SPAM: 'SPAM',
+  ATRASADO: 'ATRASADO'
+} as const
+
+export type EmailStatus = (typeof EmailStatus)[keyof typeof EmailStatus]

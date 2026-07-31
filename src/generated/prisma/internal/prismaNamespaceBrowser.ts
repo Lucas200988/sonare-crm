@@ -111,7 +111,8 @@ export const ModelName = {
   Equipment: 'Equipment',
   EquipmentMovement: 'EquipmentMovement',
   BankTransaction: 'BankTransaction',
-  FollowUpEvent: 'FollowUpEvent'
+  FollowUpEvent: 'FollowUpEvent',
+  EmailDelivery: 'EmailDelivery'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -1307,6 +1308,26 @@ export const FollowUpEventScalarFieldEnum = {
 } as const
 
 export type FollowUpEventScalarFieldEnum = (typeof FollowUpEventScalarFieldEnum)[keyof typeof FollowUpEventScalarFieldEnum]
+
+
+export const EmailDeliveryScalarFieldEnum = {
+  id: 'id',
+  companyId: 'companyId',
+  providerId: 'providerId',
+  para: 'para',
+  assunto: 'assunto',
+  status: 'status',
+  entityType: 'entityType',
+  entityId: 'entityId',
+  detalhe: 'detalhe',
+  sentAt: 'sentAt',
+  deliveredAt: 'deliveredAt',
+  openedAt: 'openedAt',
+  failedAt: 'failedAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type EmailDeliveryScalarFieldEnum = (typeof EmailDeliveryScalarFieldEnum)[keyof typeof EmailDeliveryScalarFieldEnum]
 
 
 export const SortOrder = {

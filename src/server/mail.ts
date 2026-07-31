@@ -76,7 +76,9 @@ export function mailInfo() {
 }
 
 /** Envio pela API do Resend — só uma chave, sem SMTP nem OAuth. */
-async function enviarPeloResend(msg: Mensagem, from: string): Promise<{ ok: true } | { error: string }> {
+async function enviarPeloResend(
+  msg: Mensagem, from: string,
+): Promise<{ ok: true; providerId: string | null } | { error: string }> {
   try {
     const res = await fetch('https://api.resend.com/emails', {
       method: 'POST',
@@ -104,7 +106,9 @@ async function enviarPeloResend(msg: Mensagem, from: string): Promise<{ ok: true
       // A causa mais comum é domínio ainda não verificado no painel
       return { error: `Resend ${res.status}: ${corpo.slice(0, 200)}` };
     }
-    return { ok: true };
+    // o id devolvido aqui e o que liga o webhook de entrega a esta mensagem
+    const corpo = await res.json().catch(() => null) as { id?: string } | null;
+    return { ok: true, providerId: corpo?.id ?? null };
   } catch (e) {
     const detalhe = e instanceof Error ? e.message : 'falha desconhecida';
     return { error: `Não foi possível enviar o e-mail: ${detalhe}` };
@@ -122,7 +126,9 @@ function transporte() {
   });
 }
 
-export async function enviarEmail(msg: Mensagem): Promise<{ ok: true } | { error: string }> {
+export async function enviarEmail(
+  msg: Mensagem,
+): Promise<{ ok: true; providerId?: string | null } | { error: string }> {
   const info = mailInfo();
 
   if (info.driver === 'console') {
