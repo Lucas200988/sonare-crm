@@ -2,6 +2,7 @@ import 'server-only';
 import { prisma } from '@/server/db';
 import { auditLog } from '@/server/audit/audit';
 import { nextCode } from '@/server/services/sequence';
+import { notificar } from '@/server/services/notify';
 import type { Prisma, ProjectStatus, StageStatus, TaskStatus } from '@/generated/prisma/client';
 import type { SessionUser } from '@/server/auth/session';
 import { parseDateInput } from '@/lib/dates';
@@ -220,8 +221,23 @@ export type ProjectInput = {
   memberIds: string[];
 };
 
+/**
+ * Quem responde pelo projeto, na ordem em que faz sentido cobrar:
+ * coordenador, senão o responsável técnico, senão quem criou o cartão.
+ */
+function gestorDoProjeto(p: {
+  coordinatorId: string | null;
+  technicalLeadId: string | null;
+  createdById: string | null;
+}): string | null {
+  return p.coordinatorId ?? p.technicalLeadId ?? p.createdById;
+}
+
 export async function updateProject(user: SessionUser, id: string, input: ProjectInput) {
-  const project = await prisma.project.findFirst({ where: { id, companyId: user.companyId, deletedAt: null } });
+  const project = await prisma.project.findFirst({
+    where: { id, companyId: user.companyId, deletedAt: null },
+    include: { members: { select: { userId: true } } },
+  });
   if (!project) return { error: 'Projeto não encontrado.' };
 
   await prisma.$transaction([
@@ -251,6 +267,44 @@ export async function updateProject(user: SessionUser, id: string, input: Projec
         })]
       : []),
   ]);
+
+  /*
+   * Avisa quem acabou de entrar no projeto — só os novos, para atribuição
+   * repetida não virar spam. Quem sai não é avisado: retirar alguém de um
+   * projeto é assunto de conversa, não de notificação automática.
+   */
+  const rotulo = `${project.code} — ${input.name}`;
+  const jaEram = new Set(project.members.map((m) => m.userId));
+  const avisos: Array<Promise<void>> = [];
+
+  if (input.technicalLeadId && input.technicalLeadId !== project.technicalLeadId) {
+    avisos.push(notificar(user, {
+      paraUserId: input.technicalLeadId,
+      kind: 'projeto_responsavel',
+      titulo: `Você é o responsável técnico de ${project.code}`,
+      corpo: `${user.name} definiu você como responsável técnico do projeto ${rotulo}.`,
+      link: `/projetos/${id}`,
+    }));
+  }
+  if (input.coordinatorId && input.coordinatorId !== project.coordinatorId) {
+    avisos.push(notificar(user, {
+      paraUserId: input.coordinatorId,
+      kind: 'projeto_coordenador',
+      titulo: `Você é o coordenador de ${project.code}`,
+      corpo: `${user.name} definiu você como coordenador do projeto ${rotulo}.`,
+      link: `/projetos/${id}`,
+    }));
+  }
+  for (const membroNovo of input.memberIds.filter((m) => !jaEram.has(m))) {
+    avisos.push(notificar(user, {
+      paraUserId: membroNovo,
+      kind: 'projeto_equipe',
+      titulo: `Você entrou na equipe de ${project.code}`,
+      corpo: `${user.name} adicionou você à equipe do projeto ${rotulo}.`,
+      link: `/projetos/${id}`,
+    }));
+  }
+  await Promise.all(avisos);
 
   return { ok: true };
 }
@@ -445,12 +499,22 @@ export async function createTask(user: SessionUser, projectId: string, input: Ta
       createdById: user.id,
     },
   });
+
+  await notificar(user, {
+    paraUserId: input.assigneeId,
+    kind: 'tarefa_atribuida',
+    titulo: `Nova tarefa para você em ${project.code}`,
+    corpo: `${user.name} atribuiu a você a tarefa "${input.title}" no projeto ${project.code} — ${project.name}.`,
+    link: `/projetos/${projectId}`,
+  });
+
   return { task };
 }
 
 export async function setTaskStatus(user: SessionUser, taskId: string, status: TaskStatus) {
   const task = await prisma.task.findFirst({
     where: { id: taskId, companyId: user.companyId, deletedAt: null },
+    include: { project: { select: { id: true, code: true, name: true, coordinatorId: true, technicalLeadId: true, createdById: true } } },
   });
   if (!task) return { error: 'Tarefa não encontrada.' };
 
@@ -458,11 +522,25 @@ export async function setTaskStatus(user: SessionUser, taskId: string, status: T
   if (status === 'CONCLUIDA') data.completedAt = new Date();
 
   await prisma.task.update({ where: { id: taskId }, data });
+
+  // O gestor fica sabendo da entrega sem precisar varrer projeto por projeto.
+  if (status === 'CONCLUIDA' && task.project) {
+    await notificar(user, {
+      paraUserId: gestorDoProjeto(task.project),
+      kind: 'tarefa_concluida',
+      titulo: `Tarefa concluída em ${task.project.code}`,
+      corpo: `${user.name} concluiu a tarefa "${task.title}" no projeto ${task.project.code} — ${task.project.name}.`,
+      link: `/projetos/${task.project.id}`,
+    });
+  }
   return { ok: true };
 }
 
 export async function updateTask(user: SessionUser, taskId: string, input: TaskInput) {
-  const task = await prisma.task.findFirst({ where: { id: taskId, companyId: user.companyId, deletedAt: null } });
+  const task = await prisma.task.findFirst({
+    where: { id: taskId, companyId: user.companyId, deletedAt: null },
+    include: { project: { select: { id: true, code: true, name: true } } },
+  });
   if (!task) return { error: 'Tarefa não encontrada.' };
 
   await prisma.task.update({
@@ -478,6 +556,17 @@ export async function updateTask(user: SessionUser, taskId: string, input: TaskI
       updatedById: user.id,
     },
   });
+
+  // Só o responsável NOVO é avisado; reatribuir para a mesma pessoa não repete
+  if (task.project && input.assigneeId && input.assigneeId !== task.assigneeId) {
+    await notificar(user, {
+      paraUserId: input.assigneeId,
+      kind: 'tarefa_atribuida',
+      titulo: `Tarefa para você em ${task.project.code}`,
+      corpo: `${user.name} atribuiu a você a tarefa "${input.title}" no projeto ${task.project.code} — ${task.project.name}.`,
+      link: `/projetos/${task.project.id}`,
+    });
+  }
   return { ok: true };
 }
 
@@ -512,6 +601,15 @@ export async function createDeliverable(user: SessionUser, projectId: string, in
       dueAt: parseDateInput(input.dueAt),
     },
   });
+
+  await notificar(user, {
+    paraUserId: input.responsibleId,
+    kind: 'entregavel_atribuido',
+    titulo: `Entregável sob sua responsabilidade em ${project.code}`,
+    corpo: `${user.name} definiu você como responsável pelo entregável "${input.name}" no projeto ${project.code} — ${project.name}.`,
+    link: `/projetos/${projectId}`,
+  });
+
   return { deliverable };
 }
 
@@ -523,7 +621,10 @@ export async function issueRevision(
 ) {
   const deliverable = await prisma.deliverable.findFirst({
     where: { id: deliverableId, project: { companyId: user.companyId, deletedAt: null } },
-    include: { revisions: { orderBy: { createdAt: 'desc' }, take: 1 } },
+    include: {
+      revisions: { orderBy: { createdAt: 'desc' }, take: 1 },
+      project: { select: { id: true, code: true, name: true, coordinatorId: true, technicalLeadId: true, createdById: true } },
+    },
   });
   if (!deliverable) return { error: 'Entregável não encontrado.' };
 
@@ -548,6 +649,15 @@ export async function issueRevision(
       data: { currentRevision: revisionCode, status: 'EMITIDO', issuedAt: new Date() },
     });
     return rev;
+  });
+
+  // A entrega chega ao gestor na hora, sem depender de reunião de status.
+  await notificar(user, {
+    paraUserId: gestorDoProjeto(deliverable.project),
+    kind: 'entregavel_emitido',
+    titulo: `Entrega em ${deliverable.project.code}: ${deliverable.name} ${revisionCode}`,
+    corpo: `${user.name} emitiu a revisão ${revisionCode} do entregável "${deliverable.name}" no projeto ${deliverable.project.code} — ${deliverable.project.name}.`,
+    link: `/projetos/${deliverable.project.id}`,
   });
 
   return { revision };

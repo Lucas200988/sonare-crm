@@ -6,6 +6,8 @@ import {
 import { requireAuth } from '@/server/auth/guards';
 import { prisma } from '@/server/db';
 import { getAlerts } from '@/server/services/alerts';
+import { getUnreadNotifications } from '@/server/services/notify';
+import { NotificationsPanel } from './notifications-panel';
 
 export const metadata: Metadata = { title: 'Dashboard — SONARE CRM' };
 
@@ -77,15 +79,23 @@ async function loadIndicators(companyId: string) {
 
 export default async function DashboardPage() {
   const user = await requireAuth();
-  const [data, alertas] = await Promise.all([
+  const [data, alertas, avisos] = await Promise.all([
     loadIndicators(user.companyId),
     getAlerts(user).catch(() => []),
+    getUnreadNotifications(user).catch(() => []),
   ]);
 
   return (
     <div>
       <h1 className="text-2xl font-bold text-slate-900">Dashboard</h1>
       <p className="mt-1 text-sm text-slate-500">Situação da operação em tempo real</p>
+
+      <NotificationsPanel
+        avisos={avisos.map((a) => ({
+          id: a.id, title: a.title, body: a.body, link: a.link,
+          createdAt: a.createdAt.toISOString(),
+        }))}
+      />
 
       {alertas.length > 0 ? (
         <section className="mt-6">
