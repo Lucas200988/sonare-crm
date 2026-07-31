@@ -7,7 +7,10 @@ import { listReceivables, refreshOverdue, type ReceivableFilter } from '@/server
 import { PageHeader, Card, EmptyState, Badge, inputCls } from '@/components/ui';
 import { formatBRL } from '@/lib/money';
 import { formatDateBR } from '@/lib/dates';
-import { NewReceivable, ReceiveButton, CancelReceivableButton } from './receivable-actions';
+import {
+  NewReceivable, ReceiveButton, CancelReceivableButton,
+  ReverseReceiptButton, DeleteReceivableButton,
+} from './receivable-actions';
 import { RECEIVABLE_BADGE } from '../status-badge';
 
 export const metadata: Metadata = { title: 'Contas a receber — SONARE CRM' };
@@ -123,6 +126,12 @@ export default async function ReceivablesPage(props: {
                           ) : null}
                           {recebido === 0 && r.status !== 'CANCELADO' ? (
                             <CancelReceivableButton receivableId={r.id} />
+                          ) : null}
+                          {recebido > 0 ? (
+                            <ReverseReceiptButton receivableId={r.id} valor={recebido.toFixed(2)} />
+                          ) : null}
+                          {recebido === 0 ? (
+                            <DeleteReceivableButton receivableId={r.id} />
                           ) : null}
                         </div>
                       </td>

@@ -4,7 +4,8 @@ import { useActionState, useEffect, useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { Check, Plus, X } from 'lucide-react';
 import {
-  createReceivableAction, registerReceiptAction, cancelReceivableAction, type ActionState,
+  createReceivableAction, registerReceiptAction, cancelReceivableAction,
+  reverseReceiptAction, deleteReceivableAction, type ActionState,
 } from '@/actions/finance';
 import { inputCls, Field, FormError, SubmitButton } from '@/components/ui';
 import { ClientSelect } from '@/components/client-select';
@@ -133,6 +134,65 @@ export function ReceiveButton({
           </form>
         </div>
       ) : null}
+    </>
+  );
+}
+
+/**
+ * Desfaz a última baixa lançada — o caminho para recebimento registrado por
+ * engano. O lançamento não some: fica no histórico como estornado.
+ */
+export function ReverseReceiptButton({ receivableId, valor }: { receivableId: string; valor: string }) {
+  const router = useRouter();
+  const [pending, startTransition] = useTransition();
+  const [erro, setErro] = useState<string | null>(null);
+
+  return (
+    <>
+      <button
+        type="button"
+        disabled={pending}
+        onClick={() => {
+          if (!confirm(`Estornar o último recebimento (R$ ${valor})? O lançamento fica no histórico como estornado.`)) return;
+          startTransition(async () => {
+            const r = await reverseReceiptAction(receivableId);
+            if (r.error) setErro(r.error);
+            else router.refresh();
+          });
+        }}
+        className="rounded-lg border border-amber-300 px-2 py-1 text-[11px] font-medium text-amber-700 hover:bg-amber-50 disabled:opacity-50"
+      >
+        {pending ? 'Estornando…' : 'Estornar'}
+      </button>
+      {erro ? <p role="alert" className="mt-1 text-[11px] text-red-600">{erro}</p> : null}
+    </>
+  );
+}
+
+/** Exclusão lógica: para o lançamento feito por engano, sem baixa nem NF. */
+export function DeleteReceivableButton({ receivableId }: { receivableId: string }) {
+  const router = useRouter();
+  const [pending, startTransition] = useTransition();
+  const [erro, setErro] = useState<string | null>(null);
+
+  return (
+    <>
+      <button
+        type="button"
+        disabled={pending}
+        onClick={() => {
+          if (!confirm('Excluir esta parcela? Ela sai das listas e dos totais; o registro fica preservado na auditoria.')) return;
+          startTransition(async () => {
+            const r = await deleteReceivableAction(receivableId);
+            if (r.error) setErro(r.error);
+            else router.refresh();
+          });
+        }}
+        className="rounded-lg border border-red-200 px-2 py-1 text-[11px] font-medium text-red-600 hover:bg-red-50 disabled:opacity-50"
+      >
+        Excluir
+      </button>
+      {erro ? <p role="alert" className="mt-1 text-[11px] text-red-600">{erro}</p> : null}
     </>
   );
 }

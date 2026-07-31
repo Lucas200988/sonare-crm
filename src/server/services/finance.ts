@@ -333,6 +333,85 @@ export async function cancelReceivable(user: SessionUser, id: string) {
 }
 
 /**
+ * Estorna o último recebimento da parcela.
+ *
+ * A baixa nunca é apagada: ganha `reversedAt` e sai das somas, mas continua
+ * no histórico — dinheiro que entrou errado precisa deixar rastro do erro e
+ * da correção. O status da parcela volta ao que os recebimentos restantes
+ * sustentam (quitada, parcial, a vencer ou vencida).
+ */
+export async function reverseLastReceipt(user: SessionUser, receivableId: string) {
+  const receivable = await prisma.receivable.findFirst({
+    where: { id: receivableId, companyId: user.companyId, deletedAt: null },
+    include: {
+      receipts: { where: { reversedAt: null }, orderBy: { receivedAt: 'desc' } },
+    },
+  });
+  if (!receivable) return { error: 'Parcela não encontrada.' };
+  const ultimo = receivable.receipts[0];
+  if (!ultimo) return { error: 'Esta parcela não tem recebimento para estornar.' };
+
+  const restante = receivable.receipts
+    .filter((r) => r.id !== ultimo.id)
+    .reduce((acc, r) => acc + Number(r.amount), 0);
+  const total = Number(receivable.netValue);
+  const statusNovo =
+    restante >= total - 0.01 ? 'RECEBIDO'
+    : restante > 0 ? 'PARCIALMENTE_RECEBIDO'
+    : receivable.dueDate < hoje() ? 'VENCIDO'
+    : 'A_VENCER';
+
+  await prisma.$transaction([
+    prisma.receipt.update({ where: { id: ultimo.id }, data: { reversedAt: new Date() } }),
+    prisma.receivable.update({
+      where: { id: receivableId },
+      data: { status: statusNovo, updatedById: user.id },
+    }),
+  ]);
+
+  await auditLog({
+    companyId: user.companyId, userId: user.id, action: 'receipt_reverse',
+    entityType: 'receivable', entityId: receivableId,
+    after: { valorEstornado: ultimo.amount.toString(), statusNovo },
+  });
+  return { ok: true as const, valorEstornado: ultimo.amount.toString() };
+}
+
+/**
+ * Exclusão (lógica) da parcela — o caminho para lançamento feito por engano.
+ *
+ * Parcela com recebimento ativo exige estorno antes, e parcela ligada a nota
+ * fiscal não sai: a NF é documento fiscal, some da lista quem não tem lastro.
+ */
+export async function deleteReceivable(user: SessionUser, id: string) {
+  const receivable = await prisma.receivable.findFirst({
+    where: { id, companyId: user.companyId, deletedAt: null },
+    include: {
+      receipts: { where: { reversedAt: null }, select: { id: true } },
+      invoiceLinks: { select: { invoiceId: true } },
+    },
+  });
+  if (!receivable) return { error: 'Parcela não encontrada.' };
+  if (receivable.receipts.length > 0) {
+    return { error: 'Esta parcela tem recebimento lançado. Estorne o recebimento antes de excluir.' };
+  }
+  if (receivable.invoiceLinks.length > 0) {
+    return { error: 'Esta parcela está vinculada a uma nota fiscal e não pode ser excluída.' };
+  }
+
+  await prisma.receivable.update({
+    where: { id },
+    data: { deletedAt: new Date(), updatedById: user.id },
+  });
+  await auditLog({
+    companyId: user.companyId, userId: user.id, action: 'delete',
+    entityType: 'receivable', entityId: id,
+    before: { code: receivable.code, valor: receivable.netValue.toString(), status: receivable.status },
+  });
+  return { ok: true as const };
+}
+
+/**
  * Situação financeira de um projeto: o que foi cobrado, recebido, ainda falta
  * e quanto saiu em despesas ligadas a ele.
  */

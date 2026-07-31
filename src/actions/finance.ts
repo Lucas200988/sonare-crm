@@ -157,6 +157,24 @@ export async function cancelReceivableAction(id: string): Promise<ActionState> {
   return { info: 'Parcela cancelada.' };
 }
 
+export async function reverseReceiptAction(receivableId: string): Promise<ActionState> {
+  const user = await requirePermission('finance:write');
+  const result = await finance.reverseLastReceipt(user, receivableId);
+  if ('error' in result) return { error: result.error };
+  revalidatePath('/financeiro/receber');
+  revalidatePath('/financeiro');
+  return { info: 'Recebimento estornado.' };
+}
+
+export async function deleteReceivableAction(id: string): Promise<ActionState> {
+  const user = await requirePermission('finance:write');
+  const result = await finance.deleteReceivable(user, id);
+  if ('error' in result) return { error: result.error };
+  revalidatePath('/financeiro/receber');
+  revalidatePath('/financeiro');
+  return { info: 'Parcela excluída.' };
+}
+
 // ---------- Contas a pagar ----------
 
 
