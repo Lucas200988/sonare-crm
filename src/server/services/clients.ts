@@ -252,16 +252,35 @@ export async function getClientDeleteBlockers(user: SessionUser, id: string) {
     where: { id, companyId: user.companyId, deletedAt: null },
     select: {
       id: true,
-      _count: {
-        select: {
-          contracts: { where: { deletedAt: null } },
-          projects: { where: { deletedAt: null } },
-        },
+      // Os registros em si, não só a contagem: a tela mostra qual documento
+      // está prendendo, com link — "1 projeto" sozinho manda caçar às cegas,
+      // ainda mais quando o projeto está arquivado e sumiu do quadro.
+      contracts: {
+        where: { deletedAt: null },
+        select: { id: true, code: true, subject: true },
+        take: 5,
+      },
+      projects: {
+        where: { deletedAt: null },
+        select: { id: true, code: true, name: true, archivedAt: true },
+        take: 5,
       },
     },
   });
   if (!cliente) return null;
-  return { contratos: cliente._count.contracts, projetos: cliente._count.projects };
+
+  return {
+    contratos: cliente.contracts.map((c) => ({
+      tipo: 'contrato' as const,
+      href: `/contratos/${c.id}`,
+      rotulo: `${c.code} — ${c.subject}`,
+    })),
+    projetos: cliente.projects.map((p) => ({
+      tipo: 'projeto' as const,
+      href: `/projetos/${p.id}`,
+      rotulo: `${p.code} — ${p.name}${p.archivedAt ? ' (arquivado)' : ''}`,
+    })),
+  };
 }
 
 export async function softDeleteClient(user: SessionUser, id: string) {

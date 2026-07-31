@@ -61,8 +61,7 @@ export default async function ClientDetailPage(props: { params: Promise<{ id: st
               <DeleteClientButton
                 clientId={client.id}
                 nome={client.tradeName ?? client.legalName}
-                contratos={vinculos.contratos}
-                projetos={vinculos.projetos}
+                vinculos={[...vinculos.contratos, ...vinculos.projetos]}
               />
             ) : null}
           </div>

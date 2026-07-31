@@ -6,7 +6,7 @@ import { listArchivedProjects } from '@/server/services/projects';
 import { PageHeader, Card, EmptyState, Badge, inputCls } from '@/components/ui';
 import { formatDateBR } from '@/lib/dates';
 import { PROJECT_STATUS_BADGE } from '../status-badge';
-import { UnarchiveButton } from './unarchive-button';
+import { DeleteProjectButton, UnarchiveButton } from './unarchive-button';
 
 export const metadata: Metadata = { title: 'Projetos arquivados — SONARE CRM' };
 
@@ -87,7 +87,12 @@ export default async function ArchivedProjectsPage(props: {
                 </div>
                 <div className="flex items-center gap-3">
                   <Badge color={badge.color}>{badge.label}</Badge>
-                  {canWrite ? <UnarchiveButton projectId={p.id} projectName={p.name} /> : null}
+                  {canWrite ? (
+                    <div className="flex flex-col items-end gap-1.5">
+                      <UnarchiveButton projectId={p.id} projectName={p.name} />
+                      <DeleteProjectButton projectId={p.id} projectName={p.name} />
+                    </div>
+                  ) : null}
                 </div>
               </Card>
             );

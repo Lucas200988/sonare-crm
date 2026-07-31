@@ -66,6 +66,15 @@ export async function setProjectArchivedAction(
   return { info: archived ? 'Cartão arquivado.' : 'Cartão restaurado.' };
 }
 
+export async function deleteProjectAction(projectId: string): Promise<ActionState> {
+  const user = await requirePermission('project:write');
+  const result = await projects.softDeleteProject(user, projectId);
+  if ('error' in result) return { error: result.error };
+  revalidatePath('/projetos');
+  revalidatePath('/projetos/arquivados');
+  return { info: `Projeto ${result.code} excluído.` };
+}
+
 export async function addProjectCommentAction(
   projectId: string, _prev: ActionState, formData: FormData,
 ): Promise<ActionState> {

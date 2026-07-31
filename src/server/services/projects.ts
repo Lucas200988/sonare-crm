@@ -375,6 +375,61 @@ export async function listArchivedProjects(user: SessionUser, search?: string) {
   });
 }
 
+/**
+ * Exclui (logicamente) um projeto arquivado.
+ *
+ * Só arquivado: arquivar é a decisão consciente de que o cartão saiu do
+ * fluxo, e serve de antessala da exclusão — some do quadro, e quem confirmar
+ * depois que não serve mais apaga de vez.
+ *
+ * Registro financeiro ou ART vinculada bloqueiam: são documentos que
+ * precisam continuar rastreáveis a partir do projeto que os originou.
+ */
+export async function softDeleteProject(user: SessionUser, id: string) {
+  const project = await prisma.project.findFirst({
+    where: { id, companyId: user.companyId, deletedAt: null },
+    select: {
+      id: true, code: true, name: true, archivedAt: true,
+      _count: {
+        select: {
+          receivables: { where: { deletedAt: null } },
+          invoices: { where: { deletedAt: null } },
+          payables: { where: { deletedAt: null } },
+          technicalResponsibilities: { where: { deletedAt: null } },
+        },
+      },
+    },
+  });
+  if (!project) return { error: 'Projeto não encontrado.' };
+  if (!project.archivedAt) {
+    return { error: 'Arquive o projeto antes de excluí-lo — assim ninguém apaga um cartão que ainda está no fluxo.' };
+  }
+
+  const impedimentos = [
+    project._count.receivables > 0 ? `${project._count.receivables} cobrança(s)` : null,
+    project._count.invoices > 0 ? `${project._count.invoices} nota(s) fiscal(is)` : null,
+    project._count.payables > 0 ? `${project._count.payables} conta(s) a pagar` : null,
+    project._count.technicalResponsibilities > 0 ? `${project._count.technicalResponsibilities} ART/RRT` : null,
+  ].filter(Boolean);
+  if (impedimentos.length > 0) {
+    return {
+      error: `Este projeto tem ${impedimentos.join(', ')} vinculada(s) e não pode ser excluído — `
+        + 'esses registros precisam continuar rastreáveis a partir dele.',
+    };
+  }
+
+  await prisma.project.update({
+    where: { id },
+    data: { deletedAt: new Date(), updatedById: user.id },
+  });
+  await auditLog({
+    companyId: user.companyId, userId: user.id, action: 'delete',
+    entityType: 'project', entityId: id,
+    before: { code: project.code, name: project.name },
+  });
+  return { ok: true as const, code: project.code };
+}
+
 /** Arquiva ou desarquiva o cartão — sai do quadro sem perder o histórico. */
 export async function setProjectArchived(user: SessionUser, id: string, archived: boolean) {
   const project = await prisma.project.findFirst({
