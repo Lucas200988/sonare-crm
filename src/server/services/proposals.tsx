@@ -570,6 +570,84 @@ async function moverCartaoDoPipeline(
   });
 }
 
+/**
+ * Sincronização inversa: o arrasto do cartão no pipeline atualiza a proposta.
+ *
+ * O caminho proposta → cartão já existia; sem este, mover o cartão para
+ * "Proposta enviada" deixava a aba de orçamentos parada em "Proposta gerada",
+ * como se as duas telas falassem de negócios diferentes.
+ *
+ * O status só anda para frente (gerada → enviada → visualizada → aceita):
+ * arrastar o cartão de volta não desfaz um aceite já registrado — correção de
+ * status fechado se faz na tela do orçamento, onde fica registrado o porquê.
+ */
+export async function sincronizarPropostaComEtapa(
+  user: SessionUser,
+  opportunityId: string,
+  etapa: { name: string; kind: string },
+) {
+  const budget = await prisma.budget.findFirst({
+    where: { opportunityId, companyId: user.companyId, deletedAt: null },
+    include: {
+      currentVersion: {
+        include: {
+          proposals: {
+            where: { deletedAt: null },
+            orderBy: { createdAt: 'desc' },
+            take: 1,
+          },
+        },
+      },
+    },
+  });
+  const proposta = budget?.currentVersion?.proposals[0];
+  if (!budget || !proposta) return;
+
+  // Ordem do funil; um evento só é aplicado se avança a proposta.
+  const ordem = ['RASCUNHO', 'ENVIADA', 'VISUALIZADA', 'ACEITA'] as const;
+
+  let evento: 'ENVIADA' | 'VISUALIZADA' | 'ACEITA' | 'RECUSADA' | null = null;
+  if (etapa.kind === 'PERDIDA') evento = 'RECUSADA';
+  else if (etapa.kind === 'GANHA' || etapa.name === 'Aprovado') evento = 'ACEITA';
+  else if (etapa.name === 'Aguardando retorno') evento = 'VISUALIZADA';
+  else if (etapa.name === 'Proposta enviada') evento = 'ENVIADA';
+  if (!evento) return;
+
+  if (evento === 'RECUSADA') {
+    if (proposta.status === 'RECUSADA' || proposta.status === 'ACEITA') return;
+  } else if (
+    ordem.indexOf(evento) <= ordem.indexOf(proposta.status as (typeof ordem)[number])
+  ) {
+    return; // já está nesse ponto ou além
+  }
+
+  const agora = new Date();
+  await prisma.proposal.update({
+    where: { id: proposta.id },
+    data: {
+      status: evento,
+      ...(evento === 'ENVIADA' ? { sentAt: agora, sentVia: 'pipeline' } : {}),
+      // mover direto para "Aguardando retorno"/"Aprovado" implica que foi enviada
+      ...(evento !== 'ENVIADA' && !proposta.sentAt ? { sentAt: agora, sentVia: 'pipeline' } : {}),
+      ...(evento === 'VISUALIZADA' ? { viewedAt: agora } : {}),
+      ...(evento === 'ACEITA' ? { acceptedAt: agora } : {}),
+      ...(evento === 'RECUSADA' ? { rejectedAt: agora } : {}),
+    },
+  });
+  if (evento === 'RECUSADA') {
+    await prisma.budget.update({
+      where: { id: budget.id },
+      data: { status: 'RECUSADO', updatedById: user.id },
+    });
+  }
+
+  await auditLog({
+    companyId: user.companyId, userId: user.id,
+    action: `proposal_${evento.toLowerCase()}`, entityType: 'proposal', entityId: proposta.id,
+    after: { origem: `cartão movido para "${etapa.name}"` },
+  });
+}
+
 export async function registerProposalEvent(
   user: SessionUser,
   proposalId: string,

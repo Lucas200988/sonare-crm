@@ -1,6 +1,7 @@
 import 'server-only';
 import { prisma } from '@/server/db';
 import { auditLog } from '@/server/audit/audit';
+import { sincronizarPropostaComEtapa } from '@/server/services/proposals';
 import { nextCode } from '@/server/services/sequence';
 import type { ActivityStatus, ActivityType, Prisma, PriorityLevel } from '@/generated/prisma/client';
 import type { SessionUser } from '@/server/auth/session';
@@ -225,6 +226,9 @@ export async function moveOpportunityStage(
       ...(isClosing ? { closedAt: new Date() } : { closedAt: null, ...(targetStage.kind === 'ABERTA' ? { lossReasonId: null, lossNotes: null } : {}) }),
     },
   });
+
+  // O arrasto manual também conta a história: proposta e orçamento acompanham
+  await sincronizarPropostaComEtapa(user, opportunityId, targetStage);
 
   await auditLog({
     companyId: user.companyId, userId: user.id,
