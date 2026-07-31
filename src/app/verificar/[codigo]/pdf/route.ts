@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/server/db';
 import { readAttachment } from '@/server/storage';
 import { nomeArquivoProposta } from '@/lib/proposta-codigo';
+import { registrarVisualizacaoPublica } from '@/server/services/proposals';
 
 /**
  * PDF público da proposta, acessado pelo código de verificação.
@@ -23,6 +24,7 @@ export async function GET(
   const proposal = await prisma.proposal.findUnique({
     where: { verificationCode: code },
     select: {
+      id: true,
       companyId: true,
       code: true,
       revision: true,
@@ -40,6 +42,10 @@ export async function GET(
 
   const arquivo = await readAttachment(proposal.companyId, proposal.pdfAttachmentId);
   if (!arquivo) return NextResponse.json({ error: 'Arquivo indisponível.' }, { status: 404 });
+
+  // Abrir a proposta é o sinal de leitura que interessa — registra sem
+  // atrapalhar a entrega do arquivo.
+  await registrarVisualizacaoPublica(proposal.id);
 
   const cliente = proposal.budgetVersion.budget.client;
   const nome = nomeArquivoProposta(

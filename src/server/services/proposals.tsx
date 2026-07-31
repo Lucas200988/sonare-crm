@@ -388,6 +388,15 @@ export async function sendProposalByEmail(
     },
   });
 
+  /*
+   * Enviar pelo sistema é o mesmo fato comercial que "registrar envio" — o
+   * cartão precisa sair de "Novo lead" nos dois caminhos. Sem isto, quem usa
+   * o envio automático via CRM tinha de mover o cartão à mão.
+   */
+  if (proposal.status === 'RASCUNHO') {
+    await moverCartaoDoPipeline({ companyId: user.companyId, id: user.id }, budget.opportunityId, 'ENVIADA');
+  }
+
   await auditLog({
     companyId: user.companyId, userId: user.id,
     action: 'send', entityType: 'proposal', entityId: proposalId,
@@ -554,29 +563,38 @@ export async function previewProposal(
 
 /** Registra evento do ciclo da proposta: envio, visualização, aceite ou recusa. */
 /**
- * Etapa do funil correspondente a cada evento da proposta.
+ * Etapas do funil que correspondem a cada evento da proposta, em ordem de
+ * preferência.
  *
- * As etapas são cadastráveis, então a busca é pelo nome e o resultado é
- * opcional: se a empresa renomeou ou removeu a etapa, o cartão simplesmente
- * fica onde está — mover para o lugar errado seria pior que não mover.
+ * As etapas são cadastráveis e a empresa desativa as que não usa — por isso
+ * uma lista, não um nome só: vale a primeira que estiver ativa. Se nenhuma
+ * estiver, o cartão fica onde está, porque mover para o lugar errado é pior
+ * que não mover.
  */
-const ETAPA_POR_EVENTO: Record<string, string> = {
-  ENVIADA: 'Proposta enviada',
-  VISUALIZADA: 'Aguardando retorno',
-  ACEITA: 'Aprovado',
-  RECUSADA: 'Perdido',
+const ETAPAS_POR_EVENTO: Record<string, string[]> = {
+  ENVIADA: ['Proposta enviada'],
+  // Sem "Aguardando retorno" ativa, ao menos garante que saiu de lead
+  VISUALIZADA: ['Aguardando retorno', 'Proposta enviada'],
+  ACEITA: ['Aprovado', 'Contrato em elaboração'],
+  RECUSADA: ['Perdido'],
 };
 
 async function moverCartaoDoPipeline(
-  user: SessionUser, opportunityId: string | null, event: string,
+  // companyId + userId em vez de SessionUser: o cliente que abre a proposta
+  // pelo link do e-mail nao esta logado, e mesmo assim move o cartao.
+  ator: { companyId: string; id: string | null },
+  opportunityId: string | null, event: string,
 ) {
+  const user = ator;
   if (!opportunityId) return;
-  const nomeEtapa = ETAPA_POR_EVENTO[event];
-  if (!nomeEtapa) return;
+  const candidatas = ETAPAS_POR_EVENTO[event];
+  if (!candidatas) return;
 
-  const etapa = await prisma.opportunityStage.findFirst({
-    where: { companyId: user.companyId, active: true, name: nomeEtapa },
+  const ativas = await prisma.opportunityStage.findMany({
+    where: { companyId: user.companyId, active: true, name: { in: candidatas } },
   });
+  // respeita a ordem de preferência, não a ordem que o banco devolveu
+  const etapa = candidatas.map((n) => ativas.find((e) => e.name === n)).find(Boolean);
   if (!etapa) return;
 
   const opp = await prisma.opportunity.findFirst({
@@ -599,6 +617,48 @@ async function moverCartaoDoPipeline(
     action: 'stage_change', entityType: 'opportunity', entityId: opportunityId,
     after: { etapa: etapa.name, origem: `proposta ${event.toLowerCase()}` },
   });
+}
+
+/**
+ * O cliente abriu a proposta pelo link do e-mail.
+ *
+ * Este é o sinal de leitura que vale: o pixel de rastreio de e-mail diz no
+ * máximo que a mensagem foi aberta — e o Gmail o carrega sozinho, então mente
+ * com frequência. Aqui a pessoa clicou no botão e baixou o documento, o que é
+ * primeira-parte, confiável e comercialmente relevante.
+ *
+ * Roda sem sessão (o cliente não é usuário do sistema) e nunca falha para o
+ * visitante: se algo der errado, o PDF é servido do mesmo jeito.
+ */
+export async function registrarVisualizacaoPublica(proposalId: string) {
+  try {
+    const proposal = await prisma.proposal.findFirst({
+      where: { id: proposalId, deletedAt: null },
+      select: {
+        id: true, companyId: true, status: true, viewedAt: true,
+        budgetVersion: { select: { budget: { select: { opportunityId: true } } } },
+      },
+    });
+    // Só a primeira abertura conta; e status já decidido não regride.
+    if (!proposal || proposal.status !== 'ENVIADA') return;
+
+    await prisma.proposal.update({
+      where: { id: proposalId },
+      data: { status: 'VISUALIZADA', viewedAt: proposal.viewedAt ?? new Date() },
+    });
+    await moverCartaoDoPipeline(
+      { companyId: proposal.companyId, id: null },
+      proposal.budgetVersion.budget.opportunityId,
+      'VISUALIZADA',
+    );
+    await auditLog({
+      companyId: proposal.companyId, userId: null,
+      action: 'proposal_visualizada', entityType: 'proposal', entityId: proposalId,
+      after: { origem: 'cliente abriu o link do e-mail' },
+    });
+  } catch (e) {
+    console.error('[visualização] não registrada:', e instanceof Error ? e.message : e);
+  }
 }
 
 /**
@@ -716,7 +776,7 @@ export async function registerProposalEvent(
     });
   }
 
-  await moverCartaoDoPipeline(user, proposal.budgetVersion.budget.opportunityId, event);
+  await moverCartaoDoPipeline({ companyId: user.companyId, id: user.id }, proposal.budgetVersion.budget.opportunityId, event);
 
   await auditLog({
     companyId: user.companyId, userId: user.id,
