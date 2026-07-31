@@ -333,3 +333,12 @@ export const EquipmentMovementKind = {
 } as const
 
 export type EquipmentMovementKind = (typeof EquipmentMovementKind)[keyof typeof EquipmentMovementKind]
+
+
+export const BankTransactionStatus = {
+  PENDENTE: 'PENDENTE',
+  CONCILIADA: 'CONCILIADA',
+  IGNORADA: 'IGNORADA'
+} as const
+
+export type BankTransactionStatus = (typeof BankTransactionStatus)[keyof typeof BankTransactionStatus]

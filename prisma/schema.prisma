@@ -1366,6 +1366,7 @@ model Receipt {
   createdById   String?
 
   receivable Receivable @relation(fields: [receivableId], references: [id], onDelete: Restrict)
+  bankTransactions BankTransaction[]
 
   @@index([receivableId])
 }
@@ -1477,6 +1478,7 @@ model Payable {
   deletedAt   DateTime?
 
   project Project? @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  bankTransactions BankTransaction[]
 
   @@index([companyId, status, dueDate])
 }
@@ -1649,4 +1651,46 @@ model EquipmentMovement {
 
   @@index([companyId, returnedAt])
   @@index([equipmentId, checkedOutAt])
+}
+
+// ============================================================
+// CONCILIACAO BANCARIA
+// ============================================================
+
+enum BankTransactionStatus {
+  PENDENTE // importada, ainda sem par no sistema
+  CONCILIADA // casada com um recebimento ou pagamento
+  IGNORADA // transferencia interna, tarifa ja lancada etc.
+}
+
+/**
+ * Linha do extrato bancário importado (OFX).
+ *
+ * O fitId e o identificador que o banco da a cada transacao: importa o mesmo
+ * arquivo duas vezes e nada duplica.
+ */
+model BankTransaction {
+  id          String                @id @default(uuid(7))
+  companyId   String
+  /// FITID do OFX — único por transação no banco.
+  fitId       String
+  postedAt    DateTime
+  /// Positivo = entrada, negativo = saída, como vem no extrato.
+  amount      Decimal               @db.Decimal(14, 2)
+  memo        String?
+  status      BankTransactionStatus @default(PENDENTE)
+  /// Preenchido quando a linha casa com uma baixa de recebimento…
+  receiptId   String?
+  /// …ou com uma conta paga.
+  payableId   String?
+  importedAt  DateTime              @default(now())
+  importedById String?
+  reconciledAt DateTime?
+  reconciledById String?
+
+  receipt Receipt? @relation(fields: [receiptId], references: [id], onDelete: SetNull)
+  payable Payable? @relation(fields: [payableId], references: [id], onDelete: SetNull)
+
+  @@unique([companyId, fitId])
+  @@index([companyId, status])
 }

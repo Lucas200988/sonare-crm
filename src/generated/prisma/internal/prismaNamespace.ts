@@ -455,7 +455,8 @@ export const ModelName = {
   ImportJob: 'ImportJob',
   ImportError: 'ImportError',
   Equipment: 'Equipment',
-  EquipmentMovement: 'EquipmentMovement'
+  EquipmentMovement: 'EquipmentMovement',
+  BankTransaction: 'BankTransaction'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -471,7 +472,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "company" | "user" | "role" | "permission" | "rolePermission" | "userRole" | "userPermission" | "session" | "passwordResetToken" | "auditLog" | "systemSetting" | "documentSequence" | "customField" | "customFieldValue" | "client" | "clientContact" | "clientUnit" | "leadSource" | "opportunityStage" | "opportunity" | "opportunityActivity" | "lossReason" | "serviceCatalog" | "budget" | "budgetVersion" | "budgetItem" | "budgetApproval" | "proposal" | "proposalTemplate" | "contract" | "contractVersion" | "contractAmendment" | "contractSignature" | "contractTemplate" | "project" | "projectStage" | "projectMember" | "task" | "taskChecklistItem" | "deliverable" | "deliverableRevision" | "timeEntry" | "technicalResponsibility" | "clientPendency" | "attachment" | "comment" | "receivable" | "receipt" | "financialRetention" | "invoice" | "invoiceReceivable" | "paymentMethod" | "payable" | "collectionEvent" | "notification" | "importJob" | "importError" | "equipment" | "equipmentMovement"
+    modelProps: "company" | "user" | "role" | "permission" | "rolePermission" | "userRole" | "userPermission" | "session" | "passwordResetToken" | "auditLog" | "systemSetting" | "documentSequence" | "customField" | "customFieldValue" | "client" | "clientContact" | "clientUnit" | "leadSource" | "opportunityStage" | "opportunity" | "opportunityActivity" | "lossReason" | "serviceCatalog" | "budget" | "budgetVersion" | "budgetItem" | "budgetApproval" | "proposal" | "proposalTemplate" | "contract" | "contractVersion" | "contractAmendment" | "contractSignature" | "contractTemplate" | "project" | "projectStage" | "projectMember" | "task" | "taskChecklistItem" | "deliverable" | "deliverableRevision" | "timeEntry" | "technicalResponsibility" | "clientPendency" | "attachment" | "comment" | "receivable" | "receipt" | "financialRetention" | "invoice" | "invoiceReceivable" | "paymentMethod" | "payable" | "collectionEvent" | "notification" | "importJob" | "importError" | "equipment" | "equipmentMovement" | "bankTransaction"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -4841,6 +4842,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    BankTransaction: {
+      payload: Prisma.$BankTransactionPayload<ExtArgs>
+      fields: Prisma.BankTransactionFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.BankTransactionFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BankTransactionPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.BankTransactionFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BankTransactionPayload>
+        }
+        findFirst: {
+          args: Prisma.BankTransactionFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BankTransactionPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.BankTransactionFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BankTransactionPayload>
+        }
+        findMany: {
+          args: Prisma.BankTransactionFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BankTransactionPayload>[]
+        }
+        create: {
+          args: Prisma.BankTransactionCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BankTransactionPayload>
+        }
+        createMany: {
+          args: Prisma.BankTransactionCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.BankTransactionCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BankTransactionPayload>[]
+        }
+        delete: {
+          args: Prisma.BankTransactionDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BankTransactionPayload>
+        }
+        update: {
+          args: Prisma.BankTransactionUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BankTransactionPayload>
+        }
+        deleteMany: {
+          args: Prisma.BankTransactionDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.BankTransactionUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.BankTransactionUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BankTransactionPayload>[]
+        }
+        upsert: {
+          args: Prisma.BankTransactionUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BankTransactionPayload>
+        }
+        aggregate: {
+          args: Prisma.BankTransactionAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateBankTransaction>
+        }
+        groupBy: {
+          args: Prisma.BankTransactionGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BankTransactionGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.BankTransactionCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BankTransactionCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -6025,6 +6100,25 @@ export const EquipmentMovementScalarFieldEnum = {
 export type EquipmentMovementScalarFieldEnum = (typeof EquipmentMovementScalarFieldEnum)[keyof typeof EquipmentMovementScalarFieldEnum]
 
 
+export const BankTransactionScalarFieldEnum = {
+  id: 'id',
+  companyId: 'companyId',
+  fitId: 'fitId',
+  postedAt: 'postedAt',
+  amount: 'amount',
+  memo: 'memo',
+  status: 'status',
+  receiptId: 'receiptId',
+  payableId: 'payableId',
+  importedAt: 'importedAt',
+  importedById: 'importedById',
+  reconciledAt: 'reconciledAt',
+  reconciledById: 'reconciledById'
+} as const
+
+export type BankTransactionScalarFieldEnum = (typeof BankTransactionScalarFieldEnum)[keyof typeof BankTransactionScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -6535,6 +6629,20 @@ export type ListEnumEquipmentMovementKindFieldRefInput<$PrismaModel> = FieldRefI
 
 
 /**
+ * Reference to a field of type 'BankTransactionStatus'
+ */
+export type EnumBankTransactionStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BankTransactionStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'BankTransactionStatus[]'
+ */
+export type ListEnumBankTransactionStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BankTransactionStatus[]'>
+    
+
+
+/**
  * Reference to a field of type 'Float'
  */
 export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
@@ -6757,6 +6865,7 @@ export type GlobalOmitConfig = {
   importError?: Prisma.ImportErrorOmit
   equipment?: Prisma.EquipmentOmit
   equipmentMovement?: Prisma.EquipmentMovementOmit
+  bankTransaction?: Prisma.BankTransactionOmit
 }
 
 /* Types for Logging */

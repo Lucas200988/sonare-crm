@@ -341,3 +341,12 @@ export type Equipment = Prisma.EquipmentModel
  *  * responde "quem está com o RE7000 e desde quando".
  */
 export type EquipmentMovement = Prisma.EquipmentMovementModel
+/**
+ * Model BankTransaction
+ * *
+ *  * Linha do extrato bancário importado (OFX).
+ *  *
+ *  * O fitId e o identificador que o banco da a cada transacao: importa o mesmo
+ *  * arquivo duas vezes e nada duplica.
+ */
+export type BankTransaction = Prisma.BankTransactionModel

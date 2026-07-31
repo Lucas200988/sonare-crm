@@ -109,7 +109,8 @@ export const ModelName = {
   ImportJob: 'ImportJob',
   ImportError: 'ImportError',
   Equipment: 'Equipment',
-  EquipmentMovement: 'EquipmentMovement'
+  EquipmentMovement: 'EquipmentMovement',
+  BankTransaction: 'BankTransaction'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -1271,6 +1272,25 @@ export const EquipmentMovementScalarFieldEnum = {
 } as const
 
 export type EquipmentMovementScalarFieldEnum = (typeof EquipmentMovementScalarFieldEnum)[keyof typeof EquipmentMovementScalarFieldEnum]
+
+
+export const BankTransactionScalarFieldEnum = {
+  id: 'id',
+  companyId: 'companyId',
+  fitId: 'fitId',
+  postedAt: 'postedAt',
+  amount: 'amount',
+  memo: 'memo',
+  status: 'status',
+  receiptId: 'receiptId',
+  payableId: 'payableId',
+  importedAt: 'importedAt',
+  importedById: 'importedById',
+  reconciledAt: 'reconciledAt',
+  reconciledById: 'reconciledById'
+} as const
+
+export type BankTransactionScalarFieldEnum = (typeof BankTransactionScalarFieldEnum)[keyof typeof BankTransactionScalarFieldEnum]
 
 
 export const SortOrder = {

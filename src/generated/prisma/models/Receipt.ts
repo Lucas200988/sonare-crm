@@ -321,6 +321,7 @@ export type ReceiptWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"Receipt"> | Date | string
   createdById?: Prisma.StringNullableFilter<"Receipt"> | string | null
   receivable?: Prisma.XOR<Prisma.ReceivableScalarRelationFilter, Prisma.ReceivableWhereInput>
+  bankTransactions?: Prisma.BankTransactionListRelationFilter
 }
 
 export type ReceiptOrderByWithRelationInput = {
@@ -341,6 +342,7 @@ export type ReceiptOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   createdById?: Prisma.SortOrderInput | Prisma.SortOrder
   receivable?: Prisma.ReceivableOrderByWithRelationInput
+  bankTransactions?: Prisma.BankTransactionOrderByRelationAggregateInput
 }
 
 export type ReceiptWhereUniqueInput = Prisma.AtLeast<{
@@ -364,6 +366,7 @@ export type ReceiptWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"Receipt"> | Date | string
   createdById?: Prisma.StringNullableFilter<"Receipt"> | string | null
   receivable?: Prisma.XOR<Prisma.ReceivableScalarRelationFilter, Prisma.ReceivableWhereInput>
+  bankTransactions?: Prisma.BankTransactionListRelationFilter
 }, "id">
 
 export type ReceiptOrderByWithAggregationInput = {
@@ -429,6 +432,7 @@ export type ReceiptCreateInput = {
   createdAt?: Date | string
   createdById?: string | null
   receivable: Prisma.ReceivableCreateNestedOneWithoutReceiptsInput
+  bankTransactions?: Prisma.BankTransactionCreateNestedManyWithoutReceiptInput
 }
 
 export type ReceiptUncheckedCreateInput = {
@@ -448,6 +452,7 @@ export type ReceiptUncheckedCreateInput = {
   reversalReason?: string | null
   createdAt?: Date | string
   createdById?: string | null
+  bankTransactions?: Prisma.BankTransactionUncheckedCreateNestedManyWithoutReceiptInput
 }
 
 export type ReceiptUpdateInput = {
@@ -467,6 +472,7 @@ export type ReceiptUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   receivable?: Prisma.ReceivableUpdateOneRequiredWithoutReceiptsNestedInput
+  bankTransactions?: Prisma.BankTransactionUpdateManyWithoutReceiptNestedInput
 }
 
 export type ReceiptUncheckedUpdateInput = {
@@ -486,6 +492,7 @@ export type ReceiptUncheckedUpdateInput = {
   reversalReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankTransactions?: Prisma.BankTransactionUncheckedUpdateManyWithoutReceiptNestedInput
 }
 
 export type ReceiptCreateManyInput = {
@@ -627,6 +634,11 @@ export type ReceiptSumOrderByAggregateInput = {
   retentionsTotal?: Prisma.SortOrder
 }
 
+export type ReceiptNullableScalarRelationFilter = {
+  is?: Prisma.ReceiptWhereInput | null
+  isNot?: Prisma.ReceiptWhereInput | null
+}
+
 export type ReceiptCreateNestedManyWithoutReceivableInput = {
   create?: Prisma.XOR<Prisma.ReceiptCreateWithoutReceivableInput, Prisma.ReceiptUncheckedCreateWithoutReceivableInput> | Prisma.ReceiptCreateWithoutReceivableInput[] | Prisma.ReceiptUncheckedCreateWithoutReceivableInput[]
   connectOrCreate?: Prisma.ReceiptCreateOrConnectWithoutReceivableInput | Prisma.ReceiptCreateOrConnectWithoutReceivableInput[]
@@ -669,6 +681,22 @@ export type ReceiptUncheckedUpdateManyWithoutReceivableNestedInput = {
   deleteMany?: Prisma.ReceiptScalarWhereInput | Prisma.ReceiptScalarWhereInput[]
 }
 
+export type ReceiptCreateNestedOneWithoutBankTransactionsInput = {
+  create?: Prisma.XOR<Prisma.ReceiptCreateWithoutBankTransactionsInput, Prisma.ReceiptUncheckedCreateWithoutBankTransactionsInput>
+  connectOrCreate?: Prisma.ReceiptCreateOrConnectWithoutBankTransactionsInput
+  connect?: Prisma.ReceiptWhereUniqueInput
+}
+
+export type ReceiptUpdateOneWithoutBankTransactionsNestedInput = {
+  create?: Prisma.XOR<Prisma.ReceiptCreateWithoutBankTransactionsInput, Prisma.ReceiptUncheckedCreateWithoutBankTransactionsInput>
+  connectOrCreate?: Prisma.ReceiptCreateOrConnectWithoutBankTransactionsInput
+  upsert?: Prisma.ReceiptUpsertWithoutBankTransactionsInput
+  disconnect?: Prisma.ReceiptWhereInput | boolean
+  delete?: Prisma.ReceiptWhereInput | boolean
+  connect?: Prisma.ReceiptWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ReceiptUpdateToOneWithWhereWithoutBankTransactionsInput, Prisma.ReceiptUpdateWithoutBankTransactionsInput>, Prisma.ReceiptUncheckedUpdateWithoutBankTransactionsInput>
+}
+
 export type ReceiptCreateWithoutReceivableInput = {
   id?: string
   companyId: string
@@ -685,6 +713,7 @@ export type ReceiptCreateWithoutReceivableInput = {
   reversalReason?: string | null
   createdAt?: Date | string
   createdById?: string | null
+  bankTransactions?: Prisma.BankTransactionCreateNestedManyWithoutReceiptInput
 }
 
 export type ReceiptUncheckedCreateWithoutReceivableInput = {
@@ -703,6 +732,7 @@ export type ReceiptUncheckedCreateWithoutReceivableInput = {
   reversalReason?: string | null
   createdAt?: Date | string
   createdById?: string | null
+  bankTransactions?: Prisma.BankTransactionUncheckedCreateNestedManyWithoutReceiptInput
 }
 
 export type ReceiptCreateOrConnectWithoutReceivableInput = {
@@ -753,6 +783,98 @@ export type ReceiptScalarWhereInput = {
   createdById?: Prisma.StringNullableFilter<"Receipt"> | string | null
 }
 
+export type ReceiptCreateWithoutBankTransactionsInput = {
+  id?: string
+  companyId: string
+  receivedAt: Date | string
+  amount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  interest?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  fine?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  bankFee?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  retentions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  retentionsTotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  notes?: string | null
+  reversedAt?: Date | string | null
+  reversalReason?: string | null
+  createdAt?: Date | string
+  createdById?: string | null
+  receivable: Prisma.ReceivableCreateNestedOneWithoutReceiptsInput
+}
+
+export type ReceiptUncheckedCreateWithoutBankTransactionsInput = {
+  id?: string
+  companyId: string
+  receivableId: string
+  receivedAt: Date | string
+  amount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  interest?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  fine?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  bankFee?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  retentions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  retentionsTotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  notes?: string | null
+  reversedAt?: Date | string | null
+  reversalReason?: string | null
+  createdAt?: Date | string
+  createdById?: string | null
+}
+
+export type ReceiptCreateOrConnectWithoutBankTransactionsInput = {
+  where: Prisma.ReceiptWhereUniqueInput
+  create: Prisma.XOR<Prisma.ReceiptCreateWithoutBankTransactionsInput, Prisma.ReceiptUncheckedCreateWithoutBankTransactionsInput>
+}
+
+export type ReceiptUpsertWithoutBankTransactionsInput = {
+  update: Prisma.XOR<Prisma.ReceiptUpdateWithoutBankTransactionsInput, Prisma.ReceiptUncheckedUpdateWithoutBankTransactionsInput>
+  create: Prisma.XOR<Prisma.ReceiptCreateWithoutBankTransactionsInput, Prisma.ReceiptUncheckedCreateWithoutBankTransactionsInput>
+  where?: Prisma.ReceiptWhereInput
+}
+
+export type ReceiptUpdateToOneWithWhereWithoutBankTransactionsInput = {
+  where?: Prisma.ReceiptWhereInput
+  data: Prisma.XOR<Prisma.ReceiptUpdateWithoutBankTransactionsInput, Prisma.ReceiptUncheckedUpdateWithoutBankTransactionsInput>
+}
+
+export type ReceiptUpdateWithoutBankTransactionsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  companyId?: Prisma.StringFieldUpdateOperationsInput | string
+  receivedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  amount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  interest?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  fine?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  bankFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  retentions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  retentionsTotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reversedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  reversalReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  receivable?: Prisma.ReceivableUpdateOneRequiredWithoutReceiptsNestedInput
+}
+
+export type ReceiptUncheckedUpdateWithoutBankTransactionsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  companyId?: Prisma.StringFieldUpdateOperationsInput | string
+  receivableId?: Prisma.StringFieldUpdateOperationsInput | string
+  receivedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  amount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  interest?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  fine?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  bankFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  retentions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  retentionsTotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reversedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  reversalReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+}
+
 export type ReceiptCreateManyReceivableInput = {
   id?: string
   companyId: string
@@ -787,6 +909,7 @@ export type ReceiptUpdateWithoutReceivableInput = {
   reversalReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankTransactions?: Prisma.BankTransactionUpdateManyWithoutReceiptNestedInput
 }
 
 export type ReceiptUncheckedUpdateWithoutReceivableInput = {
@@ -805,6 +928,7 @@ export type ReceiptUncheckedUpdateWithoutReceivableInput = {
   reversalReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankTransactions?: Prisma.BankTransactionUncheckedUpdateManyWithoutReceiptNestedInput
 }
 
 export type ReceiptUncheckedUpdateManyWithoutReceivableInput = {
@@ -826,6 +950,35 @@ export type ReceiptUncheckedUpdateManyWithoutReceivableInput = {
 }
 
 
+/**
+ * Count Type ReceiptCountOutputType
+ */
+
+export type ReceiptCountOutputType = {
+  bankTransactions: number
+}
+
+export type ReceiptCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  bankTransactions?: boolean | ReceiptCountOutputTypeCountBankTransactionsArgs
+}
+
+/**
+ * ReceiptCountOutputType without action
+ */
+export type ReceiptCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ReceiptCountOutputType
+   */
+  select?: Prisma.ReceiptCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * ReceiptCountOutputType without action
+ */
+export type ReceiptCountOutputTypeCountBankTransactionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.BankTransactionWhereInput
+}
+
 
 export type ReceiptSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -845,6 +998,8 @@ export type ReceiptSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   createdAt?: boolean
   createdById?: boolean
   receivable?: boolean | Prisma.ReceivableDefaultArgs<ExtArgs>
+  bankTransactions?: boolean | Prisma.Receipt$bankTransactionsArgs<ExtArgs>
+  _count?: boolean | Prisma.ReceiptCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["receipt"]>
 
 export type ReceiptSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -909,6 +1064,8 @@ export type ReceiptSelectScalar = {
 export type ReceiptOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "companyId" | "receivableId" | "receivedAt" | "amount" | "interest" | "fine" | "discount" | "bankFee" | "retentions" | "retentionsTotal" | "notes" | "reversedAt" | "reversalReason" | "createdAt" | "createdById", ExtArgs["result"]["receipt"]>
 export type ReceiptInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   receivable?: boolean | Prisma.ReceivableDefaultArgs<ExtArgs>
+  bankTransactions?: boolean | Prisma.Receipt$bankTransactionsArgs<ExtArgs>
+  _count?: boolean | Prisma.ReceiptCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ReceiptIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   receivable?: boolean | Prisma.ReceivableDefaultArgs<ExtArgs>
@@ -921,6 +1078,7 @@ export type $ReceiptPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
   name: "Receipt"
   objects: {
     receivable: Prisma.$ReceivablePayload<ExtArgs>
+    bankTransactions: Prisma.$BankTransactionPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1334,6 +1492,7 @@ readonly fields: ReceiptFieldRefs;
 export interface Prisma__ReceiptClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   receivable<T extends Prisma.ReceivableDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ReceivableDefaultArgs<ExtArgs>>): Prisma.Prisma__ReceivableClient<runtime.Types.Result.GetResult<Prisma.$ReceivablePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  bankTransactions<T extends Prisma.Receipt$bankTransactionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Receipt$bankTransactionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BankTransactionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1777,6 +1936,30 @@ export type ReceiptDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Inter
    * Limit how many Receipts to delete.
    */
   limit?: number
+}
+
+/**
+ * Receipt.bankTransactions
+ */
+export type Receipt$bankTransactionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the BankTransaction
+   */
+  select?: Prisma.BankTransactionSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the BankTransaction
+   */
+  omit?: Prisma.BankTransactionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BankTransactionInclude<ExtArgs> | null
+  where?: Prisma.BankTransactionWhereInput
+  orderBy?: Prisma.BankTransactionOrderByWithRelationInput | Prisma.BankTransactionOrderByWithRelationInput[]
+  cursor?: Prisma.BankTransactionWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.BankTransactionScalarFieldEnum | Prisma.BankTransactionScalarFieldEnum[]
 }
 
 /**
