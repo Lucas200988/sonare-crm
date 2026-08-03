@@ -416,7 +416,11 @@ export async function deleteReceivable(user: SessionUser, id: string) {
  * e quanto saiu em despesas ligadas a ele.
  */
 export async function getProjectFinance(user: SessionUser, projectId: string) {
-  const [receivables, payables] = await Promise.all([
+  const [projeto, receivables, payables] = await Promise.all([
+    prisma.project.findFirst({
+      where: { id: projectId, companyId: user.companyId, deletedAt: null },
+      select: { contractValue: true },
+    }),
     prisma.receivable.findMany({
       where: { projectId, companyId: user.companyId, deletedAt: null },
       include: { receipts: { where: { reversedAt: null }, select: { amount: true } } },
@@ -434,19 +438,52 @@ export async function getProjectFinance(user: SessionUser, projectId: string) {
     (acc, r) => acc + r.receipts.reduce((s, x) => s + Number(x.amount), 0),
     0,
   );
-  const despesas = payables
-    .filter((p) => p.status !== 'CANCELADO')
-    .reduce((acc, p) => acc + Number(p.paidAmount ?? p.amount), 0);
+  const despesasAtivas = payables.filter((p) => p.status !== 'CANCELADO');
+  const valor = (p: (typeof despesasAtivas)[number]) => Number(p.paidAmount ?? p.amount);
+  const despesas = despesasAtivas.reduce((acc, p) => acc + valor(p), 0);
+  // Imposto é despesa, mas de outra natureza: separar mostra o custo
+  // operacional real do projeto, sem a carga tributária escondida no meio.
+  const impostos = despesasAtivas
+    .filter((p) => (p.category ?? '').toLowerCase().includes('imposto'))
+    .reduce((acc, p) => acc + valor(p), 0);
+  const pago = despesasAtivas
+    .filter((p) => p.status === 'PAGO')
+    .reduce((acc, p) => acc + valor(p), 0);
+
+  /*
+   * A receita do projeto é o valor fechado com o cliente. Enquanto ele não
+   * estiver preenchido, o cobrado faz as vezes — é o melhor que se sabe.
+   */
+  const valorProjeto = projeto?.contractValue ? Number(projeto.contractValue) : null;
+  const receita = valorProjeto ?? cobrado;
+
+  /*
+   * Dois resultados, porque respondem perguntas diferentes:
+   * - previsto: o projeto fecha no azul quando tudo for cobrado e pago?
+   * - realizado: quanto já entrou menos quanto já saiu, hoje, no caixa.
+   */
+  const previsto = receita - despesas;
+  const realizado = recebido - pago;
 
   return {
     receivables,
     payables,
     resumo: {
+      valorProjeto: valorProjeto === null ? null : valorProjeto.toFixed(2),
+      // o que ainda falta faturar para chegar ao valor fechado
+      aCobrar: valorProjeto === null ? null : Math.max(0, valorProjeto - cobrado).toFixed(2),
       cobrado: cobrado.toFixed(2),
       recebido: recebido.toFixed(2),
       aReceber: Math.max(0, cobrado - recebido).toFixed(2),
       despesas: despesas.toFixed(2),
-      saldo: (recebido - despesas).toFixed(2),
+      impostos: impostos.toFixed(2),
+      despesasPagas: pago.toFixed(2),
+      aPagar: Math.max(0, despesas - pago).toFixed(2),
+      resultadoPrevisto: previsto.toFixed(2),
+      resultadoRealizado: realizado.toFixed(2),
+      // margem sobre a receita; sem receita não há margem a calcular
+      margemPercent: receita > 0 ? ((previsto / receita) * 100).toFixed(1) : null,
+      saldo: realizado.toFixed(2),
     },
   };
 }

@@ -189,6 +189,7 @@ export default async function ProjectDetailPage(props: {
             <ProjectFinanceSection
               projectId={project.id}
               clientId={project.clientId}
+              clientName={project.client.tradeName ?? project.client.legalName}
               resumo={financeiro.resumo}
               receivables={financeiro.receivables.map((r) => ({
                 id: r.id, code: r.code, description: r.description,
@@ -198,7 +199,9 @@ export default async function ProjectDetailPage(props: {
               }))}
               payables={financeiro.payables.map((p) => ({
                 id: p.id, description: p.description, supplier: p.supplier,
-                dueDate: p.dueDate.toISOString(), amount: p.amount.toString(), status: p.status,
+                category: p.category,
+                dueDate: p.dueDate.toISOString(),
+                amount: (p.paidAmount ?? p.amount).toString(), status: p.status,
               }))}
               canWrite={podeFinanceiro}
             />

@@ -233,6 +233,27 @@ function gestorDoProjeto(p: {
   return p.coordinatorId ?? p.technicalLeadId ?? p.createdById;
 }
 
+/** Grava o valor fechado do projeto; null limpa o campo. */
+export async function setProjectValue(user: SessionUser, id: string, valor: string | null) {
+  const project = await prisma.project.findFirst({
+    where: { id, companyId: user.companyId, deletedAt: null },
+    select: { id: true, contractValue: true },
+  });
+  if (!project) return { error: 'Projeto não encontrado.' };
+
+  await prisma.project.update({
+    where: { id },
+    data: { contractValue: valor, updatedById: user.id },
+  });
+  await auditLog({
+    companyId: user.companyId, userId: user.id, action: 'update',
+    entityType: 'project', entityId: id,
+    before: { contractValue: project.contractValue?.toString() ?? null },
+    after: { contractValue: valor },
+  });
+  return { ok: true as const };
+}
+
 export async function updateProject(user: SessionUser, id: string, input: ProjectInput) {
   const project = await prisma.project.findFirst({
     where: { id, companyId: user.companyId, deletedAt: null },

@@ -147,6 +147,29 @@ export async function updateProjectAction(
   return { info: 'Projeto atualizado.' };
 }
 
+/**
+ * Valor fechado do projeto — a base contra a qual o resultado é medido.
+ *
+ * Vem do contrato quando o projeto nasce de um, mas nem todo trabalho passa
+ * por contrato assinado; aqui dá para preencher direto na aba financeira.
+ */
+export async function setProjectValueAction(
+  projectId: string, _prev: ActionState, formData: FormData,
+): Promise<ActionState> {
+  const user = await requirePermission('finance:write');
+  const bruto = String(formData.get('contractValue') ?? '').trim();
+  const valor = bruto === '' ? null : parseDecimalBR(bruto);
+  if (valor !== null && !/^\d+(\.\d{1,2})?$/.test(valor)) {
+    return { error: 'Valor inválido.' };
+  }
+
+  const result = await projects.setProjectValue(user, projectId, valor);
+  if ('error' in result) return { error: result.error };
+
+  revalidatePath(`/projetos/${projectId}`);
+  return { info: 'Valor do projeto atualizado.' };
+}
+
 export async function setProjectStatusAction(projectId: string, status: string): Promise<ActionState> {
   const user = await requirePermission('project:write');
   const result = await projects.setProjectStatus(user, projectId, status as never);
