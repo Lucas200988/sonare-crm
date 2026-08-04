@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { CheckCircle2, KeyRound, Pencil, Plus, ShieldCheck, UserPlus, X } from 'lucide-react';
 import {
   createUserAction, updateUserAction, setUserActiveAction,
-  resetPasswordAction, setExtraPermissionsAction, type ActionState,
+  resetPasswordAction, setExtraPermissionsAction, setRolePermissionsAction, type ActionState,
 } from '@/actions/users';
 import { inputCls, Field, FormError, Badge } from '@/components/ui';
 import { formatDateTimeBR } from '@/lib/dates';
@@ -385,6 +385,101 @@ function ExtraPermissions({
       >
         {pending ? 'Salvando…' : 'Salvar permissões'}
       </button>
+    </div>
+  );
+}
+
+/**
+ * Permissões de um perfil.
+ *
+ * É aqui que se tira acesso: permissão extra só soma, então sem esta tela uma
+ * permissão concedida a um perfil ficaria valendo para sempre.
+ */
+export function RolePermissions({
+  role, permissions,
+}: {
+  role: { id: string; name: string; codes: string[]; userCount: number };
+  permissions: PermissionOption[];
+}) {
+  const router = useRouter();
+  const [aberto, setAberto] = useState(false);
+  const [selected, setSelected] = useState<string[]>(role.codes);
+  const [pending, startTransition] = useTransition();
+  const [msg, setMsg] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  const alterado = selected.length !== role.codes.length
+    || selected.some((c) => !role.codes.includes(c));
+
+  return (
+    <div className="rounded-lg border border-slate-200 p-3">
+      <div className="flex items-start justify-between gap-2">
+        <div>
+          <p className="text-sm font-semibold text-slate-900">{role.name}</p>
+          <p className="text-[11px] text-slate-500">
+            {role.userCount} usuário(s) · {selected.length} permissões
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={() => setAberto((v) => !v)}
+          className="rounded-lg border border-slate-300 px-2.5 py-1 text-[11px] font-medium text-slate-700 hover:bg-slate-50"
+        >
+          {aberto ? 'Fechar' : 'Editar'}
+        </button>
+      </div>
+
+      {aberto ? (
+        <>
+          <div className="mt-2 max-h-56 space-y-1 overflow-y-auto pr-1">
+            {permissions.map((p) => (
+              <label key={p.code} className="flex items-start gap-2 text-[11px] text-slate-700">
+                <input
+                  type="checkbox" checked={selected.includes(p.code)}
+                  onChange={(e) => setSelected((prev) =>
+                    e.target.checked ? [...prev, p.code] : prev.filter((c) => c !== p.code))}
+                  className="mt-0.5 rounded border-slate-300"
+                />
+                <span><code className="text-slate-500">{p.code}</code> — {p.description}</span>
+              </label>
+            ))}
+          </div>
+          <FormError message={error} />
+          {msg ? <p className="mt-1 text-[11px] text-green-700">{msg}</p> : null}
+          <div className="mt-2 flex items-center gap-2">
+            <button
+              type="button"
+              disabled={pending || !alterado}
+              onClick={() => startTransition(async () => {
+                setError(null); setMsg(null);
+                const r = await setRolePermissionsAction(role.id, selected);
+                if (r.error) setError(r.error);
+                else { setMsg(r.info ?? 'Salvo.'); router.refresh(); }
+              })}
+              className="rounded-lg bg-slate-900 px-3 py-1.5 text-xs font-semibold text-white hover:bg-slate-700 disabled:opacity-50"
+            >
+              {pending ? 'Salvando…' : 'Salvar perfil'}
+            </button>
+            {alterado ? (
+              <button
+                type="button"
+                onClick={() => { setSelected(role.codes); setError(null); setMsg(null); }}
+                className="text-[11px] text-slate-500 hover:underline"
+              >
+                Desfazer
+              </button>
+            ) : null}
+          </div>
+          <p className="mt-2 text-[11px] text-slate-500">
+            Vale para os {role.userCount} usuário(s) deste perfil. Quem tiver a permissão
+            concedida à parte continua com ela.
+          </p>
+        </>
+      ) : (
+        <ul className="mt-2 max-h-24 space-y-0.5 overflow-y-auto text-[10px] text-slate-500">
+          {selected.map((c) => <li key={c}>{c}</li>)}
+        </ul>
+      )}
     </div>
   );
 }

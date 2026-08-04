@@ -79,6 +79,19 @@ export async function resetPasswordAction(
   return { info: 'Senha redefinida. As sessões abertas foram encerradas.' };
 }
 
+export async function setRolePermissionsAction(
+  roleId: string, codes: string[],
+): Promise<ActionState> {
+  const admin = await requirePermission('user:manage');
+  const validas = codes.filter((c): c is PermissionCode =>
+    (ALL_PERMISSIONS as string[]).includes(c));
+
+  const result = await users.setRolePermissions(admin, roleId, validas);
+  if ('error' in result) return { error: result.error };
+  revalidatePath('/usuarios');
+  return { info: 'Permissões do perfil salvas.' };
+}
+
 export async function setExtraPermissionsAction(
   userId: string, codes: string[],
 ): Promise<ActionState> {

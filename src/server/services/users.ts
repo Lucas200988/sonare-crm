@@ -202,6 +202,71 @@ export async function resetPassword(user: SessionUser, userId: string, password:
   return { ok: true as const };
 }
 
+/**
+ * Permissões do perfil.
+ *
+ * É o único lugar onde dá para *tirar* acesso: permissão extra só soma, e sem
+ * isto uma permissão concedida a um perfil ficaria lá para sempre.
+ */
+export async function setRolePermissions(
+  user: SessionUser,
+  roleId: string,
+  codes: PermissionCode[],
+) {
+  const role = await prisma.role.findFirst({
+    where: { id: roleId, companyId: user.companyId },
+    include: { permissions: { include: { permission: true } } },
+  });
+  if (!role) return { error: 'Perfil não encontrado.' };
+
+  /*
+   * Trava contra se trancar para fora: se a mudança tirar a gestão de
+   * usuários de quem está salvando, ninguém consegue desfazer depois — a
+   * própria tela deixa de abrir.
+   */
+  if (!codes.includes('user:manage')) {
+    const eu = await prisma.user.findUnique({
+      where: { id: user.id },
+      include: {
+        roles: { include: { role: { include: { permissions: { include: { permission: true } } } } } },
+        extraPermissions: { include: { permission: true } },
+      },
+    });
+    const restantes = new Set<string>();
+    for (const r of eu?.roles ?? []) {
+      if (r.roleId === roleId) continue; // este perfil já vai perder a permissão
+      for (const p of r.role.permissions) restantes.add(p.permission.code);
+    }
+    for (const p of eu?.extraPermissions ?? []) restantes.add(p.permission.code);
+
+    if (!restantes.has('user:manage')) {
+      return {
+        error: 'Você perderia a gestão de usuários e ninguém poderia desfazer. '
+          + 'Dê a permissão a outro perfil seu antes de tirá-la deste.',
+      };
+    }
+  }
+
+  const permissions = await prisma.permission.findMany({ where: { code: { in: codes } } });
+
+  await prisma.$transaction([
+    prisma.rolePermission.deleteMany({ where: { roleId } }),
+    ...(permissions.length > 0
+      ? [prisma.rolePermission.createMany({
+          data: permissions.map((p) => ({ roleId, permissionId: p.id })),
+        })]
+      : []),
+  ]);
+
+  await auditLog({
+    companyId: user.companyId, userId: user.id,
+    action: 'update', entityType: 'role_permissions', entityId: roleId,
+    before: { permissions: role.permissions.map((p) => p.permission.code) },
+    after: { permissions: codes },
+  });
+  return { ok: true as const };
+}
+
 /** Permissões avulsas, além das que vêm do perfil. */
 export async function setExtraPermissions(
   user: SessionUser,
