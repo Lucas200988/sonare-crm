@@ -1,4 +1,5 @@
 import 'server-only';
+import { escopoDeProjetos } from '@/server/auth/project-scope';
 import { prisma } from '@/server/db';
 import type { SessionUser } from '@/server/auth/session';
 
@@ -115,7 +116,10 @@ export async function getConversionRate(user: SessionUser) {
 /** Situação da carteira de projetos, por coluna do quadro. */
 export async function getProjectsOverview(user: SessionUser) {
   const projetos = await prisma.project.findMany({
-    where: { companyId: user.companyId, deletedAt: null, archivedAt: null },
+    where: {
+      companyId: user.companyId, deletedAt: null, archivedAt: null,
+      ...escopoDeProjetos(user),
+    },
     select: {
       id: true, code: true, name: true, status: true, contractValue: true,
       contractualDeadline: true,
@@ -146,7 +150,10 @@ export async function getProjectsOverview(user: SessionUser) {
 /** Horas apontadas por projeto, com custo — base para saber se o projeto paga. */
 export async function getHoursByProject(user: SessionUser) {
   const entradas = await prisma.timeEntry.findMany({
-    where: { companyId: user.companyId, deletedAt: null },
+    where: {
+      companyId: user.companyId, deletedAt: null,
+      project: { companyId: user.companyId, deletedAt: null, ...escopoDeProjetos(user) },
+    },
     select: {
       hours: true, hourlyCost: true, billable: true,
       project: { select: { id: true, code: true, name: true, contractValue: true } },

@@ -34,6 +34,7 @@ export const PERMISSIONS = {
 
   // Projetos
   'project:read': 'Consultar projetos',
+  'project:read_all': 'Ver todos os projetos (sem esta, só os da própria equipe)',
   'project:write': 'Criar e editar projetos',
   'task:read': 'Consultar tarefas',
   'task:write': 'Criar e editar tarefas',
@@ -72,7 +73,7 @@ export const ROLE_DEFAULTS: Record<string, { name: string; permissions: Permissi
       'budget:read', 'budget:write',
       'proposal:read', 'proposal:write',
       'contract:read',
-      'project:read',
+      'project:read', 'project:read_all',
       'equipment:read',
       'dashboard:read', 'report:read',
     ],
@@ -96,7 +97,7 @@ export const ROLE_DEFAULTS: Record<string, { name: string; permissions: Permissi
     permissions: [
       'client:read',
       'contract:read',
-      'project:read',
+      'project:read', 'project:read_all',
       'equipment:read',
       'finance:read', 'finance:write',
       'invoice:read', 'invoice:write',
@@ -109,7 +110,7 @@ export const ROLE_DEFAULTS: Record<string, { name: string; permissions: Permissi
     permissions: [
       'client:read', 'opportunity:read', 'budget:read', 'budget:approve',
       'proposal:read', 'contract:read', 'contract:write', 'contract:sign',
-      'project:read', 'task:read', 'timeentry:approve',
+      'project:read', 'project:read_all', 'task:read', 'timeentry:approve',
       'equipment:read',
       'finance:read', 'invoice:read',
       'report:read', 'dashboard:read', 'audit:read',

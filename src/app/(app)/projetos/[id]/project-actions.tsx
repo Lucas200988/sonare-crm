@@ -153,7 +153,11 @@ export function ProjectForm({
       </Field>
 
       <div className="sm:col-span-2">
-        <span className="mb-1 block text-sm font-medium text-slate-700">Equipe do projeto</span>
+        <span className="block text-sm font-medium text-slate-700">Equipe do projeto</span>
+        <p className="mb-1.5 text-[11px] text-slate-500">
+          Também é quem tem acesso ao cartão. Quem não estiver aqui — nem como responsável
+          técnico ou coordenador — só vê este projeto se tiver a permissão de ver todos.
+        </p>
         <div className="flex flex-wrap gap-2">
           {users.map((u) => (
             <label key={u.id} className={`flex items-center gap-1.5 rounded-lg border px-2.5 py-1 text-xs ${memberIds.includes(u.id) ? 'border-brand bg-brand/5 text-brand' : 'border-slate-300 text-slate-600'}`}>

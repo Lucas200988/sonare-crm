@@ -1,4 +1,5 @@
 import 'server-only';
+import { escopoDeProjetos } from '@/server/auth/project-scope';
 import { prisma } from '@/server/db';
 import type { SessionUser } from '@/server/auth/session';
 
@@ -46,6 +47,7 @@ export async function getAlerts(user: SessionUser): Promise<Alerta[]> {
       ? prisma.project.findMany({
           where: {
             ...base, archivedAt: null,
+            ...escopoDeProjetos(user),
             contractualDeadline: { lt: hoje },
             status: { notIn: ['CONCLUIDO', 'ENCERRADO', 'CANCELADO'] },
           },

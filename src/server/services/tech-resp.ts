@@ -1,4 +1,5 @@
 import 'server-only';
+import { escopoDeProjetos } from '@/server/auth/project-scope';
 import { prisma } from '@/server/db';
 import { auditLog } from '@/server/audit/audit';
 import { parseDateInput } from '@/lib/dates';
@@ -25,6 +26,8 @@ export async function listTechResps(user: SessionUser, filter: TechRespFilter) {
   const pageSize = 30;
   const where: Prisma.TechnicalResponsibilityWhereInput = {
     companyId: user.companyId, deletedAt: null,
+    // ART pertence ao projeto: quem não vê o cartão não vê a ART dele
+    project: { companyId: user.companyId, deletedAt: null, ...escopoDeProjetos(user) },
   };
 
   if (filter.projectId) where.projectId = filter.projectId;
@@ -207,6 +210,7 @@ export async function getProjectsWithoutTechResp(user: SessionUser) {
   return prisma.project.findMany({
     where: {
       companyId: user.companyId, deletedAt: null, archivedAt: null,
+      ...escopoDeProjetos(user),
       status: { notIn: ['CANCELADO', 'ENCERRADO'] },
       technicalResponsibilities: { none: { deletedAt: null } },
     },

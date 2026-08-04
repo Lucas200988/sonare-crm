@@ -6,6 +6,26 @@ import { notificar } from '@/server/services/notify';
 import type { Prisma, ProjectStatus, StageStatus, TaskStatus } from '@/generated/prisma/client';
 import type { SessionUser } from '@/server/auth/session';
 import { parseDateInput } from '@/lib/dates';
+import { escopoDeProjetos } from '@/server/auth/project-scope';
+
+/**
+ * Recorte de um projeto que a pessoa pode ver.
+ *
+ * Vale para leitura e escrita: quem não enxerga o cartão também não o edita,
+ * e o serviço devolve "não encontrado" — a resposta não denuncia que existe.
+ */
+function doProjeto(user: SessionUser, id: string): Prisma.ProjectWhereInput {
+  return { id, companyId: user.companyId, deletedAt: null, ...escopoDeProjetos(user) };
+}
+
+/**
+ * O mesmo recorte para o que fica pendurado no projeto — tarefa, etapa,
+ * entregável, apontamento. Sem isto o cartão ficaria escondido e a tarefa
+ * dentro dele continuaria acessível pelo id.
+ */
+function noProjeto(user: SessionUser): Prisma.ProjectWhereInput {
+  return { companyId: user.companyId, deletedAt: null, ...escopoDeProjetos(user) };
+}
 
 // ---------- Listagem ----------
 
@@ -20,7 +40,9 @@ export async function listProjects(user: SessionUser, filter: ProjectListFilter)
   const page = Math.max(1, filter.page ?? 1);
   const pageSize = 20;
 
-  const where: Prisma.ProjectWhereInput = { companyId: user.companyId, deletedAt: null };
+  const where: Prisma.ProjectWhereInput = {
+    companyId: user.companyId, deletedAt: null, ...escopoDeProjetos(user),
+  };
   // Arquivados só aparecem quando pedidos explicitamente
   where.archivedAt = filter.status === 'ARQUIVADOS' ? { not: null } : null;
   if (filter.clientId) where.clientId = filter.clientId;
@@ -59,7 +81,7 @@ export async function listProjects(user: SessionUser, filter: ProjectListFilter)
 
 export async function getProject(user: SessionUser, id: string) {
   return prisma.project.findFirst({
-    where: { id, companyId: user.companyId, deletedAt: null },
+    where: doProjeto(user, id),
     include: {
       client: true,
       clientUnit: true,
@@ -98,7 +120,10 @@ export async function listAssignableUsers(user: SessionUser) {
 /** Projetos do quadro — arquivados ficam de fora (sem paginação: o quadro mostra tudo). */
 export async function listBoardProjects(user: SessionUser) {
   return prisma.project.findMany({
-    where: { companyId: user.companyId, deletedAt: null, archivedAt: null },
+    where: {
+      companyId: user.companyId, deletedAt: null, archivedAt: null,
+      ...escopoDeProjetos(user),
+    },
     include: {
       client: { select: { id: true, legalName: true, tradeName: true } },
       technicalLead: { select: { id: true, name: true } },
@@ -236,7 +261,7 @@ function gestorDoProjeto(p: {
 /** Grava o valor fechado do projeto; null limpa o campo. */
 export async function setProjectValue(user: SessionUser, id: string, valor: string | null) {
   const project = await prisma.project.findFirst({
-    where: { id, companyId: user.companyId, deletedAt: null },
+    where: doProjeto(user, id),
     select: { id: true, contractValue: true },
   });
   if (!project) return { error: 'Projeto não encontrado.' };
@@ -256,7 +281,7 @@ export async function setProjectValue(user: SessionUser, id: string, valor: stri
 
 export async function updateProject(user: SessionUser, id: string, input: ProjectInput) {
   const project = await prisma.project.findFirst({
-    where: { id, companyId: user.companyId, deletedAt: null },
+    where: doProjeto(user, id),
     include: { members: { select: { userId: true } } },
   });
   if (!project) return { error: 'Projeto não encontrado.' };
@@ -335,7 +360,7 @@ export async function moveProjectOnBoard(
   user: SessionUser, id: string, status: ProjectStatus, position: number,
 ) {
   const project = await prisma.project.findFirst({
-    where: { id, companyId: user.companyId, deletedAt: null },
+    where: doProjeto(user, id),
   });
   if (!project) return { error: 'Projeto não encontrado.' };
 
@@ -374,6 +399,7 @@ export async function listArchivedProjects(user: SessionUser, search?: string) {
     companyId: user.companyId,
     deletedAt: null,
     archivedAt: { not: null },
+    ...escopoDeProjetos(user),
   };
   if (search) {
     where.OR = [
@@ -408,7 +434,7 @@ export async function listArchivedProjects(user: SessionUser, search?: string) {
  */
 export async function softDeleteProject(user: SessionUser, id: string) {
   const project = await prisma.project.findFirst({
-    where: { id, companyId: user.companyId, deletedAt: null },
+    where: doProjeto(user, id),
     select: {
       id: true, code: true, name: true, archivedAt: true,
       _count: {
@@ -454,7 +480,7 @@ export async function softDeleteProject(user: SessionUser, id: string) {
 /** Arquiva ou desarquiva o cartão — sai do quadro sem perder o histórico. */
 export async function setProjectArchived(user: SessionUser, id: string, archived: boolean) {
   const project = await prisma.project.findFirst({
-    where: { id, companyId: user.companyId, deletedAt: null },
+    where: doProjeto(user, id),
     select: { id: true },
   });
   if (!project) return { error: 'Projeto não encontrado.' };
@@ -483,7 +509,7 @@ export async function listProjectComments(user: SessionUser, projectId: string) 
 
 export async function addProjectComment(user: SessionUser, projectId: string, body: string) {
   const project = await prisma.project.findFirst({
-    where: { id: projectId, companyId: user.companyId, deletedAt: null },
+    where: doProjeto(user, projectId),
     select: { id: true },
   });
   if (!project) return { error: 'Projeto não encontrado.' };
@@ -502,7 +528,7 @@ export async function listProjectAttachments(user: SessionUser, projectId: strin
 }
 
 export async function setProjectStatus(user: SessionUser, id: string, status: ProjectStatus) {
-  const project = await prisma.project.findFirst({ where: { id, companyId: user.companyId, deletedAt: null } });
+  const project = await prisma.project.findFirst({ where: doProjeto(user, id) });
   if (!project) return { error: 'Projeto não encontrado.' };
 
   const data: Prisma.ProjectUpdateInput = { status, updatedById: user.id };
@@ -519,7 +545,7 @@ export async function setProjectStatus(user: SessionUser, id: string, status: Pr
 // ---------- Etapas ----------
 
 export async function createStage(user: SessionUser, projectId: string, name: string) {
-  const project = await prisma.project.findFirst({ where: { id: projectId, companyId: user.companyId, deletedAt: null } });
+  const project = await prisma.project.findFirst({ where: doProjeto(user, projectId) });
   if (!project) return { error: 'Projeto não encontrado.' };
 
   const count = await prisma.projectStage.count({ where: { projectId } });
@@ -531,7 +557,7 @@ export async function createStage(user: SessionUser, projectId: string, name: st
 
 export async function setStageStatus(user: SessionUser, stageId: string, status: StageStatus) {
   const stage = await prisma.projectStage.findFirst({
-    where: { id: stageId, project: { companyId: user.companyId, deletedAt: null } },
+    where: { id: stageId, project: noProjeto(user) },
   });
   if (!stage) return { error: 'Etapa não encontrada.' };
 
@@ -556,7 +582,7 @@ export type TaskInput = {
 };
 
 export async function createTask(user: SessionUser, projectId: string, input: TaskInput) {
-  const project = await prisma.project.findFirst({ where: { id: projectId, companyId: user.companyId, deletedAt: null } });
+  const project = await prisma.project.findFirst({ where: doProjeto(user, projectId) });
   if (!project) return { error: 'Projeto não encontrado.' };
 
   const count = await prisma.task.count({ where: { projectId, deletedAt: null } });
@@ -589,7 +615,7 @@ export async function createTask(user: SessionUser, projectId: string, input: Ta
 
 export async function setTaskStatus(user: SessionUser, taskId: string, status: TaskStatus) {
   const task = await prisma.task.findFirst({
-    where: { id: taskId, companyId: user.companyId, deletedAt: null },
+    where: { id: taskId, companyId: user.companyId, deletedAt: null, project: noProjeto(user) },
     include: { project: { select: { id: true, code: true, name: true, coordinatorId: true, technicalLeadId: true, createdById: true } } },
   });
   if (!task) return { error: 'Tarefa não encontrada.' };
@@ -614,7 +640,7 @@ export async function setTaskStatus(user: SessionUser, taskId: string, status: T
 
 export async function updateTask(user: SessionUser, taskId: string, input: TaskInput) {
   const task = await prisma.task.findFirst({
-    where: { id: taskId, companyId: user.companyId, deletedAt: null },
+    where: { id: taskId, companyId: user.companyId, deletedAt: null, project: noProjeto(user) },
     include: { project: { select: { id: true, code: true, name: true } } },
   });
   if (!task) return { error: 'Tarefa não encontrada.' };
@@ -647,7 +673,7 @@ export async function updateTask(user: SessionUser, taskId: string, input: TaskI
 }
 
 export async function deleteTask(user: SessionUser, taskId: string) {
-  const task = await prisma.task.findFirst({ where: { id: taskId, companyId: user.companyId, deletedAt: null } });
+  const task = await prisma.task.findFirst({ where: { id: taskId, companyId: user.companyId, deletedAt: null, project: noProjeto(user) } });
   if (!task) return { error: 'Tarefa não encontrada.' };
   await prisma.task.update({ where: { id: taskId }, data: { deletedAt: new Date() } });
   return { ok: true };
@@ -664,7 +690,7 @@ export type DeliverableInput = {
 };
 
 export async function createDeliverable(user: SessionUser, projectId: string, input: DeliverableInput) {
-  const project = await prisma.project.findFirst({ where: { id: projectId, companyId: user.companyId, deletedAt: null } });
+  const project = await prisma.project.findFirst({ where: doProjeto(user, projectId) });
   if (!project) return { error: 'Projeto não encontrado.' };
 
   const deliverable = await prisma.deliverable.create({
@@ -696,7 +722,7 @@ export async function issueRevision(
   input: { reason?: string | null; changes?: string | null },
 ) {
   const deliverable = await prisma.deliverable.findFirst({
-    where: { id: deliverableId, project: { companyId: user.companyId, deletedAt: null } },
+    where: { id: deliverableId, project: noProjeto(user) },
     include: {
       revisions: { orderBy: { createdAt: 'desc' }, take: 1 },
       project: { select: { id: true, code: true, name: true, coordinatorId: true, technicalLeadId: true, createdById: true } },
@@ -743,7 +769,7 @@ export async function setDeliverableStatus(
   user: SessionUser, deliverableId: string, status: 'APROVADO' | 'REPROVADO',
 ) {
   const deliverable = await prisma.deliverable.findFirst({
-    where: { id: deliverableId, project: { companyId: user.companyId, deletedAt: null } },
+    where: { id: deliverableId, project: noProjeto(user) },
   });
   if (!deliverable) return { error: 'Entregável não encontrado.' };
 
@@ -765,7 +791,7 @@ export type TimeEntryInput = {
 };
 
 export async function createTimeEntry(user: SessionUser, projectId: string, input: TimeEntryInput) {
-  const project = await prisma.project.findFirst({ where: { id: projectId, companyId: user.companyId, deletedAt: null } });
+  const project = await prisma.project.findFirst({ where: doProjeto(user, projectId) });
   if (!project) return { error: 'Projeto não encontrado.' };
 
   const requester = await prisma.user.findUnique({
@@ -792,14 +818,14 @@ export async function createTimeEntry(user: SessionUser, projectId: string, inpu
 
 export async function listTimeEntries(user: SessionUser, projectId: string) {
   return prisma.timeEntry.findMany({
-    where: { projectId, companyId: user.companyId, deletedAt: null },
+    where: { projectId, companyId: user.companyId, deletedAt: null, project: noProjeto(user) },
     include: { user: { select: { name: true } }, task: { select: { title: true } } },
     orderBy: { workDate: 'desc' },
   });
 }
 
 export async function approveTimeEntry(user: SessionUser, entryId: string) {
-  const entry = await prisma.timeEntry.findFirst({ where: { id: entryId, companyId: user.companyId, deletedAt: null } });
+  const entry = await prisma.timeEntry.findFirst({ where: { id: entryId, companyId: user.companyId, deletedAt: null, project: noProjeto(user) } });
   if (!entry) return { error: 'Apontamento não encontrado.' };
   await prisma.timeEntry.update({
     where: { id: entryId },

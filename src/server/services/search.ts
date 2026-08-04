@@ -1,4 +1,5 @@
 import 'server-only';
+import { escopoDeProjetos } from '@/server/auth/project-scope';
 import { prisma } from '@/server/db';
 import type { SessionUser } from '@/server/auth/session';
 
@@ -81,6 +82,7 @@ export async function globalSearch(user: SessionUser, termo: string): Promise<Se
       ? prisma.project.findMany({
           where: {
             ...base,
+            ...escopoDeProjetos(user),
             OR: [{ code: contains }, { name: contains }, { client: { legalName: contains } }],
           },
           select: {

@@ -3,6 +3,7 @@ import { ExportButton } from '@/components/export-button';
 import Link from 'next/link';
 import { AlertTriangle } from 'lucide-react';
 import { requirePermissionPage } from '@/server/auth/guards';
+import { escopoDeProjetos } from '@/server/auth/project-scope';
 import { prisma } from '@/server/db';
 import {
   listTechResps, getProjectsWithoutTechResp, type TechRespFilter,
@@ -36,7 +37,10 @@ export default async function TechRespPage(props: {
         page: sp.pagina ? Number(sp.pagina) : 1,
       }),
       prisma.project.findMany({
-        where: { companyId: user.companyId, deletedAt: null, archivedAt: null },
+        where: {
+          companyId: user.companyId, deletedAt: null, archivedAt: null,
+          ...escopoDeProjetos(user),
+        },
         select: { id: true, code: true, name: true },
         orderBy: { code: 'desc' },
         take: 100,

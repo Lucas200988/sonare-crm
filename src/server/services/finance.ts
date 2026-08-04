@@ -3,6 +3,7 @@ import { prisma } from '@/server/db';
 import { auditLog } from '@/server/audit/audit';
 import { nextCode } from '@/server/services/sequence';
 import { parseDateInput } from '@/lib/dates';
+import { escopoDeProjetos } from '@/server/auth/project-scope';
 import { enviarEmail, layoutEmail, remetenteComCaixa } from '@/server/mail';
 import type { Prisma, ReceivableStatus, PayableStatus } from '@/generated/prisma/client';
 import type { SessionUser } from '@/server/auth/session';
@@ -418,7 +419,7 @@ export async function deleteReceivable(user: SessionUser, id: string) {
 export async function getProjectFinance(user: SessionUser, projectId: string) {
   const [projeto, receivables, payables] = await Promise.all([
     prisma.project.findFirst({
-      where: { id: projectId, companyId: user.companyId, deletedAt: null },
+      where: { id: projectId, companyId: user.companyId, deletedAt: null, ...escopoDeProjetos(user) },
       select: { contractValue: true },
     }),
     prisma.receivable.findMany({

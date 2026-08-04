@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { getSessionUser } from '@/server/auth/session';
 import { prisma } from '@/server/db';
 import { gerarCsv, numeroCsv, respostaCsv, type Coluna } from '@/lib/csv';
+import { escopoDeProjetos } from '@/server/auth/project-scope';
 import { formatDateBR } from '@/lib/dates';
 
 /**
@@ -143,7 +144,8 @@ export async function GET(_req: Request, ctx: RouteContext<'/api/exportar/[tipo]
   if (tipo === 'projetos') {
     if (!pode('project:read')) return negado();
     const dados = await prisma.project.findMany({
-      where: empresa,
+      // a exportação não é porta dos fundos: mesmo recorte da tela
+      where: { ...empresa, ...escopoDeProjetos(user) },
       include: {
         client: { select: { legalName: true, tradeName: true } },
         technicalLead: { select: { name: true } },
@@ -170,7 +172,7 @@ export async function GET(_req: Request, ctx: RouteContext<'/api/exportar/[tipo]
   if (tipo === 'art') {
     if (!pode('project:read')) return negado();
     const dados = await prisma.technicalResponsibility.findMany({
-      where: empresa,
+      where: { ...empresa, project: { ...empresa, ...escopoDeProjetos(user) } },
       include: {
         project: { select: { code: true } },
         professional: { select: { name: true } },
