@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { avancaEntrega, diasDesde, resumoEntrega, type Entrega } from './entrega-status';
+import {
+  abriuDepois, avancaEntrega, diasDesde, resumoEntrega, type Entrega,
+} from './entrega-status';
 
 const em = (dia: number) => new Date(`2026-08-${String(dia).padStart(2, '0')}T12:00:00Z`);
 
@@ -63,6 +65,28 @@ describe('resumoEntrega', () => {
       { status: 'ENVIADO', sentAt: em(6) },
     ];
     expect(resumoEntrega(lista)?.status).toBe('ABERTO');
+  });
+});
+
+describe('abriuDepois', () => {
+  const envio = new Date('2026-08-04T22:01:00Z');
+
+  it('proposta nunca aberta não conta', () => {
+    expect(abriuDepois(null, envio)).toBe(false);
+  });
+
+  it('abertura depois do envio conta', () => {
+    expect(abriuDepois(new Date('2026-08-04T22:40:00Z'), envio)).toBe(true);
+  });
+
+  it('abertura de antes do reenvio não conta', () => {
+    // proposta renegociada e mandada de novo: interessa se voltaram a olhar
+    expect(abriuDepois(new Date('2026-07-30T17:05:00Z'), envio)).toBe(false);
+  });
+
+  it('tolera a folga de relógio entre gravar o envio e o clique', () => {
+    expect(abriuDepois(new Date('2026-08-04T21:50:00Z'), envio)).toBe(true);
+    expect(abriuDepois(new Date('2026-08-04T21:20:00Z'), envio)).toBe(false);
   });
 });
 

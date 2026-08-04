@@ -1,7 +1,9 @@
 import 'server-only';
 import { prisma } from '@/server/db';
 export { assinaturaValida } from '@/lib/webhook-assinatura';
-import { avancaEntrega, resumoEntrega, type StatusEntrega } from '@/lib/entrega-status';
+import {
+  abriuDepois, avancaEntrega, resumoEntrega, type StatusEntrega,
+} from '@/lib/entrega-status';
 import type { EmailStatus } from '@/generated/prisma/client';
 
 /**
@@ -105,6 +107,8 @@ export type EntregaResumida = {
   propostaCode: string;
 };
 
+type Origem = { chave: string; code: string; lastViewedAt: Date | null };
+
 /**
  * Busca as entregas das propostas informadas e resume uma por chave.
  *
@@ -112,7 +116,7 @@ export type EntregaResumida = {
  * pertence; o resto da regra é a mesma nos dois casos.
  */
 async function resumirPorChave(
-  companyId: string, daProposta: Map<string, { chave: string; code: string }>,
+  companyId: string, daProposta: Map<string, Origem>,
 ): Promise<Map<string, EntregaResumida>> {
   const resultado = new Map<string, EntregaResumida>();
   if (daProposta.size === 0) return resultado;
@@ -128,7 +132,9 @@ async function resumirPorChave(
     if (!origem) continue;
     const lista = agrupado.get(origem.chave) ?? [];
     lista.push({
-      status: e.status as StatusEntrega,
+      // Abertura registrada por nós vale mais que o rastreio do provedor: o
+      // cliente carregou o PDF do nosso servidor, é fato, não pixel.
+      status: abriuDepois(origem.lastViewedAt, e.sentAt) ? 'CLIQUE' : (e.status as StatusEntrega),
       para: e.para, sentAt: e.sentAt, propostaCode: origem.code,
     });
     agrupado.set(origem.chave, lista);
@@ -155,19 +161,21 @@ async function propostasEnviadas(
         select: {
           proposals: {
             where: { deletedAt: null, sentAt: { not: null } },
-            select: { id: true, code: true },
+            select: { id: true, code: true, lastViewedAt: true },
           },
         },
       },
     },
   });
 
-  const daProposta = new Map<string, { chave: string; code: string }>();
+  const daProposta = new Map<string, Origem>();
   for (const b of budgets) {
     const chave = chaveDe(b);
     if (!chave) continue;
     for (const v of b.versions) {
-      for (const p of v.proposals) daProposta.set(p.id, { chave, code: p.code });
+      for (const p of v.proposals) {
+        daProposta.set(p.id, { chave, code: p.code, lastViewedAt: p.lastViewedAt });
+      }
     }
   }
   return daProposta;

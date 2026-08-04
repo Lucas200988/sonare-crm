@@ -742,6 +742,10 @@ model Proposal {
   sentVia          String?
   recipients       String?
   viewedAt         DateTime?
+  /// Toda abertura do link público conta, não só a primeira: depois de uma
+  /// renegociação o que importa é se o cliente voltou a olhar a proposta.
+  lastViewedAt     DateTime?
+  viewCount        Int            @default(0)
   acceptedAt       DateTime?
   rejectedAt       DateTime?
   rejectionReason  String?

@@ -646,18 +646,32 @@ export async function registrarVisualizacaoPublica(proposalId: string) {
         budgetVersion: { select: { budget: { select: { opportunityId: true } } } },
       },
     });
-    // Só a primeira abertura conta; e status já decidido não regride.
-    if (!proposal || proposal.status !== 'ENVIADA') return;
+    if (!proposal) return;
 
+    const agora = new Date();
+    /*
+     * A abertura sempre é registrada — é o sinal mais confiável que temos de
+     * que o cliente olhou a proposta, e vale de novo depois de uma
+     * renegociação. Só o status é que não regride: aceita não volta a
+     * visualizada porque alguém reabriu o PDF.
+     */
     await prisma.proposal.update({
       where: { id: proposalId },
-      data: { status: 'VISUALIZADA', viewedAt: proposal.viewedAt ?? new Date() },
+      data: {
+        lastViewedAt: agora,
+        viewCount: { increment: 1 },
+        viewedAt: proposal.viewedAt ?? agora,
+        ...(proposal.status === 'ENVIADA' ? { status: 'VISUALIZADA' as const } : {}),
+      },
     });
-    await moverCartaoDoPipeline(
-      { companyId: proposal.companyId, id: null },
-      proposal.budgetVersion.budget.opportunityId,
-      'VISUALIZADA',
-    );
+
+    if (proposal.status === 'ENVIADA') {
+      await moverCartaoDoPipeline(
+        { companyId: proposal.companyId, id: null },
+        proposal.budgetVersion.budget.opportunityId,
+        'VISUALIZADA',
+      );
+    }
     await auditLog({
       companyId: proposal.companyId, userId: null,
       action: 'proposal_visualizada', entityType: 'proposal', entityId: proposalId,

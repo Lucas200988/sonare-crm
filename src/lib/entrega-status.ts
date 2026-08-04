@@ -51,6 +51,21 @@ export function resumoEntrega<T extends Entrega>(entregas: T[]): T | null {
   return melhor;
 }
 
+/**
+ * O cliente abriu a proposta depois deste envio?
+ *
+ * Vale mais que o rastreio do provedor: a abertura é registrada quando o PDF
+ * é carregado do nosso servidor — é fato, não pixel que o Gmail carrega
+ * sozinho. Uma abertura anterior a um reenvio não conta: se a proposta foi
+ * renegociada e mandada de novo, o que interessa é se voltaram a olhar.
+ * Meia hora de folga cobre o relógio do servidor e o intervalo entre o envio
+ * ser gravado e o cliente clicar.
+ */
+export function abriuDepois(lastViewedAt: Date | null, sentAt: Date): boolean {
+  if (!lastViewedAt) return false;
+  return lastViewedAt.getTime() > sentAt.getTime() - 30 * 60_000;
+}
+
 /** Rótulos curtos, do tamanho de um cartão de pipeline. */
 export const ROTULO_ENTREGA: Record<StatusEntrega, string> = {
   ENVIADO: 'E-mail enviado',

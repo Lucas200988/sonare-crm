@@ -5624,6 +5624,8 @@ export const ProposalScalarFieldEnum = {
   sentVia: 'sentVia',
   recipients: 'recipients',
   viewedAt: 'viewedAt',
+  lastViewedAt: 'lastViewedAt',
+  viewCount: 'viewCount',
   acceptedAt: 'acceptedAt',
   rejectedAt: 'rejectedAt',
   rejectionReason: 'rejectionReason',

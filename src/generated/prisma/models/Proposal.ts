@@ -29,11 +29,13 @@ export type AggregateProposal = {
 export type ProposalAvgAggregateOutputType = {
   emissionCount: number | null
   revision: number | null
+  viewCount: number | null
 }
 
 export type ProposalSumAggregateOutputType = {
   emissionCount: number | null
   revision: number | null
+  viewCount: number | null
 }
 
 export type ProposalMinAggregateOutputType = {
@@ -57,6 +59,8 @@ export type ProposalMinAggregateOutputType = {
   sentVia: string | null
   recipients: string | null
   viewedAt: Date | null
+  lastViewedAt: Date | null
+  viewCount: number | null
   acceptedAt: Date | null
   rejectedAt: Date | null
   rejectionReason: string | null
@@ -88,6 +92,8 @@ export type ProposalMaxAggregateOutputType = {
   sentVia: string | null
   recipients: string | null
   viewedAt: Date | null
+  lastViewedAt: Date | null
+  viewCount: number | null
   acceptedAt: Date | null
   rejectedAt: Date | null
   rejectionReason: string | null
@@ -119,6 +125,8 @@ export type ProposalCountAggregateOutputType = {
   sentVia: number
   recipients: number
   viewedAt: number
+  lastViewedAt: number
+  viewCount: number
   acceptedAt: number
   rejectedAt: number
   rejectionReason: number
@@ -134,11 +142,13 @@ export type ProposalCountAggregateOutputType = {
 export type ProposalAvgAggregateInputType = {
   emissionCount?: true
   revision?: true
+  viewCount?: true
 }
 
 export type ProposalSumAggregateInputType = {
   emissionCount?: true
   revision?: true
+  viewCount?: true
 }
 
 export type ProposalMinAggregateInputType = {
@@ -162,6 +172,8 @@ export type ProposalMinAggregateInputType = {
   sentVia?: true
   recipients?: true
   viewedAt?: true
+  lastViewedAt?: true
+  viewCount?: true
   acceptedAt?: true
   rejectedAt?: true
   rejectionReason?: true
@@ -193,6 +205,8 @@ export type ProposalMaxAggregateInputType = {
   sentVia?: true
   recipients?: true
   viewedAt?: true
+  lastViewedAt?: true
+  viewCount?: true
   acceptedAt?: true
   rejectedAt?: true
   rejectionReason?: true
@@ -224,6 +238,8 @@ export type ProposalCountAggregateInputType = {
   sentVia?: true
   recipients?: true
   viewedAt?: true
+  lastViewedAt?: true
+  viewCount?: true
   acceptedAt?: true
   rejectedAt?: true
   rejectionReason?: true
@@ -342,6 +358,8 @@ export type ProposalGroupByOutputType = {
   sentVia: string | null
   recipients: string | null
   viewedAt: Date | null
+  lastViewedAt: Date | null
+  viewCount: number
   acceptedAt: Date | null
   rejectedAt: Date | null
   rejectionReason: string | null
@@ -396,6 +414,8 @@ export type ProposalWhereInput = {
   sentVia?: Prisma.StringNullableFilter<"Proposal"> | string | null
   recipients?: Prisma.StringNullableFilter<"Proposal"> | string | null
   viewedAt?: Prisma.DateTimeNullableFilter<"Proposal"> | Date | string | null
+  lastViewedAt?: Prisma.DateTimeNullableFilter<"Proposal"> | Date | string | null
+  viewCount?: Prisma.IntFilter<"Proposal"> | number
   acceptedAt?: Prisma.DateTimeNullableFilter<"Proposal"> | Date | string | null
   rejectedAt?: Prisma.DateTimeNullableFilter<"Proposal"> | Date | string | null
   rejectionReason?: Prisma.StringNullableFilter<"Proposal"> | string | null
@@ -431,6 +451,8 @@ export type ProposalOrderByWithRelationInput = {
   sentVia?: Prisma.SortOrderInput | Prisma.SortOrder
   recipients?: Prisma.SortOrderInput | Prisma.SortOrder
   viewedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  lastViewedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  viewCount?: Prisma.SortOrder
   acceptedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   rejectedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   rejectionReason?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -470,6 +492,8 @@ export type ProposalWhereUniqueInput = Prisma.AtLeast<{
   sentVia?: Prisma.StringNullableFilter<"Proposal"> | string | null
   recipients?: Prisma.StringNullableFilter<"Proposal"> | string | null
   viewedAt?: Prisma.DateTimeNullableFilter<"Proposal"> | Date | string | null
+  lastViewedAt?: Prisma.DateTimeNullableFilter<"Proposal"> | Date | string | null
+  viewCount?: Prisma.IntFilter<"Proposal"> | number
   acceptedAt?: Prisma.DateTimeNullableFilter<"Proposal"> | Date | string | null
   rejectedAt?: Prisma.DateTimeNullableFilter<"Proposal"> | Date | string | null
   rejectionReason?: Prisma.StringNullableFilter<"Proposal"> | string | null
@@ -505,6 +529,8 @@ export type ProposalOrderByWithAggregationInput = {
   sentVia?: Prisma.SortOrderInput | Prisma.SortOrder
   recipients?: Prisma.SortOrderInput | Prisma.SortOrder
   viewedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  lastViewedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  viewCount?: Prisma.SortOrder
   acceptedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   rejectedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   rejectionReason?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -544,6 +570,8 @@ export type ProposalScalarWhereWithAggregatesInput = {
   sentVia?: Prisma.StringNullableWithAggregatesFilter<"Proposal"> | string | null
   recipients?: Prisma.StringNullableWithAggregatesFilter<"Proposal"> | string | null
   viewedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Proposal"> | Date | string | null
+  lastViewedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Proposal"> | Date | string | null
+  viewCount?: Prisma.IntWithAggregatesFilter<"Proposal"> | number
   acceptedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Proposal"> | Date | string | null
   rejectedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Proposal"> | Date | string | null
   rejectionReason?: Prisma.StringNullableWithAggregatesFilter<"Proposal"> | string | null
@@ -573,6 +601,8 @@ export type ProposalCreateInput = {
   sentVia?: string | null
   recipients?: string | null
   viewedAt?: Date | string | null
+  lastViewedAt?: Date | string | null
+  viewCount?: number
   acceptedAt?: Date | string | null
   rejectedAt?: Date | string | null
   rejectionReason?: string | null
@@ -608,6 +638,8 @@ export type ProposalUncheckedCreateInput = {
   sentVia?: string | null
   recipients?: string | null
   viewedAt?: Date | string | null
+  lastViewedAt?: Date | string | null
+  viewCount?: number
   acceptedAt?: Date | string | null
   rejectedAt?: Date | string | null
   rejectionReason?: string | null
@@ -639,6 +671,8 @@ export type ProposalUpdateInput = {
   sentVia?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   recipients?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   viewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastViewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  viewCount?: Prisma.IntFieldUpdateOperationsInput | number
   acceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   rejectedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   rejectionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -674,6 +708,8 @@ export type ProposalUncheckedUpdateInput = {
   sentVia?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   recipients?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   viewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastViewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  viewCount?: Prisma.IntFieldUpdateOperationsInput | number
   acceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   rejectedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   rejectionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -707,6 +743,8 @@ export type ProposalCreateManyInput = {
   sentVia?: string | null
   recipients?: string | null
   viewedAt?: Date | string | null
+  lastViewedAt?: Date | string | null
+  viewCount?: number
   acceptedAt?: Date | string | null
   rejectedAt?: Date | string | null
   rejectionReason?: string | null
@@ -736,6 +774,8 @@ export type ProposalUpdateManyMutationInput = {
   sentVia?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   recipients?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   viewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastViewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  viewCount?: Prisma.IntFieldUpdateOperationsInput | number
   acceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   rejectedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   rejectionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -767,6 +807,8 @@ export type ProposalUncheckedUpdateManyInput = {
   sentVia?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   recipients?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   viewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastViewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  viewCount?: Prisma.IntFieldUpdateOperationsInput | number
   acceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   rejectedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   rejectionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -813,6 +855,8 @@ export type ProposalCountOrderByAggregateInput = {
   sentVia?: Prisma.SortOrder
   recipients?: Prisma.SortOrder
   viewedAt?: Prisma.SortOrder
+  lastViewedAt?: Prisma.SortOrder
+  viewCount?: Prisma.SortOrder
   acceptedAt?: Prisma.SortOrder
   rejectedAt?: Prisma.SortOrder
   rejectionReason?: Prisma.SortOrder
@@ -826,6 +870,7 @@ export type ProposalCountOrderByAggregateInput = {
 export type ProposalAvgOrderByAggregateInput = {
   emissionCount?: Prisma.SortOrder
   revision?: Prisma.SortOrder
+  viewCount?: Prisma.SortOrder
 }
 
 export type ProposalMaxOrderByAggregateInput = {
@@ -849,6 +894,8 @@ export type ProposalMaxOrderByAggregateInput = {
   sentVia?: Prisma.SortOrder
   recipients?: Prisma.SortOrder
   viewedAt?: Prisma.SortOrder
+  lastViewedAt?: Prisma.SortOrder
+  viewCount?: Prisma.SortOrder
   acceptedAt?: Prisma.SortOrder
   rejectedAt?: Prisma.SortOrder
   rejectionReason?: Prisma.SortOrder
@@ -880,6 +927,8 @@ export type ProposalMinOrderByAggregateInput = {
   sentVia?: Prisma.SortOrder
   recipients?: Prisma.SortOrder
   viewedAt?: Prisma.SortOrder
+  lastViewedAt?: Prisma.SortOrder
+  viewCount?: Prisma.SortOrder
   acceptedAt?: Prisma.SortOrder
   rejectedAt?: Prisma.SortOrder
   rejectionReason?: Prisma.SortOrder
@@ -893,6 +942,7 @@ export type ProposalMinOrderByAggregateInput = {
 export type ProposalSumOrderByAggregateInput = {
   emissionCount?: Prisma.SortOrder
   revision?: Prisma.SortOrder
+  viewCount?: Prisma.SortOrder
 }
 
 export type ProposalNullableScalarRelationFilter = {
@@ -1046,6 +1096,8 @@ export type ProposalCreateWithoutBudgetVersionInput = {
   sentVia?: string | null
   recipients?: string | null
   viewedAt?: Date | string | null
+  lastViewedAt?: Date | string | null
+  viewCount?: number
   acceptedAt?: Date | string | null
   rejectedAt?: Date | string | null
   rejectionReason?: string | null
@@ -1079,6 +1131,8 @@ export type ProposalUncheckedCreateWithoutBudgetVersionInput = {
   sentVia?: string | null
   recipients?: string | null
   viewedAt?: Date | string | null
+  lastViewedAt?: Date | string | null
+  viewCount?: number
   acceptedAt?: Date | string | null
   rejectedAt?: Date | string | null
   rejectionReason?: string | null
@@ -1141,6 +1195,8 @@ export type ProposalScalarWhereInput = {
   sentVia?: Prisma.StringNullableFilter<"Proposal"> | string | null
   recipients?: Prisma.StringNullableFilter<"Proposal"> | string | null
   viewedAt?: Prisma.DateTimeNullableFilter<"Proposal"> | Date | string | null
+  lastViewedAt?: Prisma.DateTimeNullableFilter<"Proposal"> | Date | string | null
+  viewCount?: Prisma.IntFilter<"Proposal"> | number
   acceptedAt?: Prisma.DateTimeNullableFilter<"Proposal"> | Date | string | null
   rejectedAt?: Prisma.DateTimeNullableFilter<"Proposal"> | Date | string | null
   rejectionReason?: Prisma.StringNullableFilter<"Proposal"> | string | null
@@ -1170,6 +1226,8 @@ export type ProposalCreateWithoutTemplateInput = {
   sentVia?: string | null
   recipients?: string | null
   viewedAt?: Date | string | null
+  lastViewedAt?: Date | string | null
+  viewCount?: number
   acceptedAt?: Date | string | null
   rejectedAt?: Date | string | null
   rejectionReason?: string | null
@@ -1203,6 +1261,8 @@ export type ProposalUncheckedCreateWithoutTemplateInput = {
   sentVia?: string | null
   recipients?: string | null
   viewedAt?: Date | string | null
+  lastViewedAt?: Date | string | null
+  viewCount?: number
   acceptedAt?: Date | string | null
   rejectedAt?: Date | string | null
   rejectionReason?: string | null
@@ -1260,6 +1320,8 @@ export type ProposalCreateWithoutContractsInput = {
   sentVia?: string | null
   recipients?: string | null
   viewedAt?: Date | string | null
+  lastViewedAt?: Date | string | null
+  viewCount?: number
   acceptedAt?: Date | string | null
   rejectedAt?: Date | string | null
   rejectionReason?: string | null
@@ -1294,6 +1356,8 @@ export type ProposalUncheckedCreateWithoutContractsInput = {
   sentVia?: string | null
   recipients?: string | null
   viewedAt?: Date | string | null
+  lastViewedAt?: Date | string | null
+  viewCount?: number
   acceptedAt?: Date | string | null
   rejectedAt?: Date | string | null
   rejectionReason?: string | null
@@ -1340,6 +1404,8 @@ export type ProposalUpdateWithoutContractsInput = {
   sentVia?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   recipients?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   viewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastViewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  viewCount?: Prisma.IntFieldUpdateOperationsInput | number
   acceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   rejectedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   rejectionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1374,6 +1440,8 @@ export type ProposalUncheckedUpdateWithoutContractsInput = {
   sentVia?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   recipients?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   viewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastViewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  viewCount?: Prisma.IntFieldUpdateOperationsInput | number
   acceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   rejectedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   rejectionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1404,6 +1472,8 @@ export type ProposalCreateWithoutFollowUpsInput = {
   sentVia?: string | null
   recipients?: string | null
   viewedAt?: Date | string | null
+  lastViewedAt?: Date | string | null
+  viewCount?: number
   acceptedAt?: Date | string | null
   rejectedAt?: Date | string | null
   rejectionReason?: string | null
@@ -1438,6 +1508,8 @@ export type ProposalUncheckedCreateWithoutFollowUpsInput = {
   sentVia?: string | null
   recipients?: string | null
   viewedAt?: Date | string | null
+  lastViewedAt?: Date | string | null
+  viewCount?: number
   acceptedAt?: Date | string | null
   rejectedAt?: Date | string | null
   rejectionReason?: string | null
@@ -1484,6 +1556,8 @@ export type ProposalUpdateWithoutFollowUpsInput = {
   sentVia?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   recipients?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   viewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastViewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  viewCount?: Prisma.IntFieldUpdateOperationsInput | number
   acceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   rejectedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   rejectionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1518,6 +1592,8 @@ export type ProposalUncheckedUpdateWithoutFollowUpsInput = {
   sentVia?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   recipients?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   viewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastViewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  viewCount?: Prisma.IntFieldUpdateOperationsInput | number
   acceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   rejectedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   rejectionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1549,6 +1625,8 @@ export type ProposalCreateManyBudgetVersionInput = {
   sentVia?: string | null
   recipients?: string | null
   viewedAt?: Date | string | null
+  lastViewedAt?: Date | string | null
+  viewCount?: number
   acceptedAt?: Date | string | null
   rejectedAt?: Date | string | null
   rejectionReason?: string | null
@@ -1578,6 +1656,8 @@ export type ProposalUpdateWithoutBudgetVersionInput = {
   sentVia?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   recipients?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   viewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastViewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  viewCount?: Prisma.IntFieldUpdateOperationsInput | number
   acceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   rejectedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   rejectionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1611,6 +1691,8 @@ export type ProposalUncheckedUpdateWithoutBudgetVersionInput = {
   sentVia?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   recipients?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   viewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastViewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  viewCount?: Prisma.IntFieldUpdateOperationsInput | number
   acceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   rejectedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   rejectionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1643,6 +1725,8 @@ export type ProposalUncheckedUpdateManyWithoutBudgetVersionInput = {
   sentVia?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   recipients?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   viewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastViewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  viewCount?: Prisma.IntFieldUpdateOperationsInput | number
   acceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   rejectedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   rejectionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1673,6 +1757,8 @@ export type ProposalCreateManyTemplateInput = {
   sentVia?: string | null
   recipients?: string | null
   viewedAt?: Date | string | null
+  lastViewedAt?: Date | string | null
+  viewCount?: number
   acceptedAt?: Date | string | null
   rejectedAt?: Date | string | null
   rejectionReason?: string | null
@@ -1702,6 +1788,8 @@ export type ProposalUpdateWithoutTemplateInput = {
   sentVia?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   recipients?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   viewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastViewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  viewCount?: Prisma.IntFieldUpdateOperationsInput | number
   acceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   rejectedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   rejectionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1735,6 +1823,8 @@ export type ProposalUncheckedUpdateWithoutTemplateInput = {
   sentVia?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   recipients?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   viewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastViewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  viewCount?: Prisma.IntFieldUpdateOperationsInput | number
   acceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   rejectedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   rejectionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1767,6 +1857,8 @@ export type ProposalUncheckedUpdateManyWithoutTemplateInput = {
   sentVia?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   recipients?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   viewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastViewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  viewCount?: Prisma.IntFieldUpdateOperationsInput | number
   acceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   rejectedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   rejectionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1838,6 +1930,8 @@ export type ProposalSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   sentVia?: boolean
   recipients?: boolean
   viewedAt?: boolean
+  lastViewedAt?: boolean
+  viewCount?: boolean
   acceptedAt?: boolean
   rejectedAt?: boolean
   rejectionReason?: boolean
@@ -1874,6 +1968,8 @@ export type ProposalSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   sentVia?: boolean
   recipients?: boolean
   viewedAt?: boolean
+  lastViewedAt?: boolean
+  viewCount?: boolean
   acceptedAt?: boolean
   rejectedAt?: boolean
   rejectionReason?: boolean
@@ -1907,6 +2003,8 @@ export type ProposalSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   sentVia?: boolean
   recipients?: boolean
   viewedAt?: boolean
+  lastViewedAt?: boolean
+  viewCount?: boolean
   acceptedAt?: boolean
   rejectedAt?: boolean
   rejectionReason?: boolean
@@ -1940,6 +2038,8 @@ export type ProposalSelectScalar = {
   sentVia?: boolean
   recipients?: boolean
   viewedAt?: boolean
+  lastViewedAt?: boolean
+  viewCount?: boolean
   acceptedAt?: boolean
   rejectedAt?: boolean
   rejectionReason?: boolean
@@ -1950,7 +2050,7 @@ export type ProposalSelectScalar = {
   deletedAt?: boolean
 }
 
-export type ProposalOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "companyId" | "code" | "budgetVersionId" | "templateId" | "proposalType" | "status" | "pdfAttachmentId" | "emissionCount" | "revision" | "lastEmittedAt" | "verificationCode" | "signedElectronicallyAt" | "signerName" | "signerRegistration" | "documentHash" | "sentAt" | "sentVia" | "recipients" | "viewedAt" | "acceptedAt" | "rejectedAt" | "rejectionReason" | "negotiationNotes" | "createdAt" | "updatedAt" | "createdById" | "deletedAt", ExtArgs["result"]["proposal"]>
+export type ProposalOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "companyId" | "code" | "budgetVersionId" | "templateId" | "proposalType" | "status" | "pdfAttachmentId" | "emissionCount" | "revision" | "lastEmittedAt" | "verificationCode" | "signedElectronicallyAt" | "signerName" | "signerRegistration" | "documentHash" | "sentAt" | "sentVia" | "recipients" | "viewedAt" | "lastViewedAt" | "viewCount" | "acceptedAt" | "rejectedAt" | "rejectionReason" | "negotiationNotes" | "createdAt" | "updatedAt" | "createdById" | "deletedAt", ExtArgs["result"]["proposal"]>
 export type ProposalInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   budgetVersion?: boolean | Prisma.BudgetVersionDefaultArgs<ExtArgs>
   template?: boolean | Prisma.Proposal$templateArgs<ExtArgs>
@@ -2004,6 +2104,12 @@ export type $ProposalPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     sentVia: string | null
     recipients: string | null
     viewedAt: Date | null
+    /**
+     * Toda abertura do link público conta, não só a primeira: depois de uma
+     * renegociação o que importa é se o cliente voltou a olhar a proposta.
+     */
+    lastViewedAt: Date | null
+    viewCount: number
     acceptedAt: Date | null
     rejectedAt: Date | null
     rejectionReason: string | null
@@ -2459,6 +2565,8 @@ export interface ProposalFieldRefs {
   readonly sentVia: Prisma.FieldRef<"Proposal", 'String'>
   readonly recipients: Prisma.FieldRef<"Proposal", 'String'>
   readonly viewedAt: Prisma.FieldRef<"Proposal", 'DateTime'>
+  readonly lastViewedAt: Prisma.FieldRef<"Proposal", 'DateTime'>
+  readonly viewCount: Prisma.FieldRef<"Proposal", 'Int'>
   readonly acceptedAt: Prisma.FieldRef<"Proposal", 'DateTime'>
   readonly rejectedAt: Prisma.FieldRef<"Proposal", 'DateTime'>
   readonly rejectionReason: Prisma.FieldRef<"Proposal", 'String'>
