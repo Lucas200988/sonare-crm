@@ -3,7 +3,7 @@
 import { useState, useTransition } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Archive, ArchiveRestore, CalendarClock, Pencil, Users } from 'lucide-react';
+import { Archive, ArchiveRestore, CalendarClock, Pencil } from 'lucide-react';
 import { setProjectStatusAction, setProjectArchivedAction } from '@/actions/projects';
 import { Badge, FormError } from '@/components/ui';
 import { formatBRL } from '@/lib/money';
@@ -11,6 +11,7 @@ import { formatDateBR } from '@/lib/dates';
 import { BOARD_COLUMNS, columnForStatus } from '@/config/project-board';
 import { ProjectForm, type ProjectFormValues } from './project-actions';
 import { FolderLink } from './folder-link';
+import { MembersPanel } from './members-panel';
 
 const PRIORITY_LABEL: Record<string, { label: string; color: string }> = {
   BAIXA: { label: 'Baixa', color: 'slate' },
@@ -26,7 +27,7 @@ const PRIORITY_LABEL: Record<string, { label: string; color: string }> = {
 export function CardHeader({
   projectId, code, name, status, priority, archived, clientName, contract,
   contractValue, contractualDeadline, technicalLead, members, disciplines, folderPath,
-  canWrite, initial, clientUnits, users,
+  canWrite, initial, clientUnits, users, responsaveis, acessoRestrito,
 }: {
   projectId: string;
   code: string;
@@ -46,6 +47,8 @@ export function CardHeader({
   initial: ProjectFormValues;
   clientUnits: { id: string; name: string }[];
   users: { id: string; name: string }[];
+  responsaveis: { id: string; name: string; papel: string }[];
+  acessoRestrito: boolean;
 }) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
@@ -166,14 +169,17 @@ export function CardHeader({
           <span className="text-xs text-slate-500">Resp. técnico: {technicalLead}</span>
         ) : null}
 
-        {members.length > 0 ? (
-          <span className="inline-flex items-center gap-1 text-xs text-slate-500" title={members.map((m) => m.name).join(', ')}>
-            <Users className="h-3 w-3" aria-hidden /> {members.length}
-          </span>
-        ) : null}
-
         {disciplines.map((d) => <Badge key={d} color="violet">{d}</Badge>)}
       </div>
+
+      <MembersPanel
+        projectId={projectId}
+        members={members}
+        users={users}
+        canWrite={canWrite}
+        restrito={acessoRestrito}
+        responsaveis={responsaveis}
+      />
 
       {folderPath ? <div className="mt-3"><FolderLink path={folderPath} /></div> : null}
 

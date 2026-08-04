@@ -170,6 +170,19 @@ export async function setProjectValueAction(
   return { info: 'Valor do projeto atualizado.' };
 }
 
+/** Equipe do cartão — salva na hora, sem abrir o formulário de edição. */
+export async function setProjectMembersAction(
+  projectId: string, memberIds: string[],
+): Promise<ActionState> {
+  const user = await requirePermission('project:write');
+  const result = await projects.setProjectMembers(user, projectId, memberIds);
+  if ('error' in result) return { error: result.error };
+
+  revalidatePath(`/projetos/${projectId}`);
+  revalidatePath('/projetos');
+  return { info: 'Equipe atualizada.' };
+}
+
 export async function setProjectStatusAction(projectId: string, status: string): Promise<ActionState> {
   const user = await requirePermission('project:write');
   const result = await projects.setProjectStatus(user, projectId, status as never);

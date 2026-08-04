@@ -279,6 +279,59 @@ export async function setProjectValue(user: SessionUser, id: string, valor: stri
   return { ok: true as const };
 }
 
+/**
+ * Equipe do cartão, editada direto no cabeçalho.
+ *
+ * A equipe é também quem tem acesso ao projeto, então precisa ser mexida no
+ * lugar onde se olha o cartão — não escondida dentro do formulário de edição.
+ */
+export async function setProjectMembers(user: SessionUser, id: string, memberIds: string[]) {
+  const project = await prisma.project.findFirst({
+    where: doProjeto(user, id),
+    select: { id: true, code: true, name: true, members: { select: { userId: true } } },
+  });
+  if (!project) return { error: 'Projeto não encontrado.' };
+
+  // só usuários ativos da empresa; id solto no formulário não entra
+  const validos = memberIds.length
+    ? await prisma.user.findMany({
+        where: { id: { in: memberIds }, companyId: user.companyId, active: true, deletedAt: null },
+        select: { id: true },
+      })
+    : [];
+
+  await prisma.$transaction([
+    prisma.projectMember.deleteMany({ where: { projectId: id } }),
+    ...(validos.length
+      ? [prisma.projectMember.createMany({
+          data: validos.map((u) => ({ projectId: id, userId: u.id })),
+          skipDuplicates: true,
+        })]
+      : []),
+    prisma.project.update({ where: { id }, data: { updatedById: user.id } }),
+  ]);
+
+  // Só os novos são avisados; tirar alguém é assunto de conversa.
+  const jaEram = new Set(project.members.map((m) => m.userId));
+  for (const novo of validos.filter((u) => !jaEram.has(u.id))) {
+    await notificar(user, {
+      paraUserId: novo.id,
+      kind: 'projeto_equipe',
+      titulo: `Você entrou na equipe de ${project.code}`,
+      corpo: `${user.name} adicionou você à equipe do projeto ${project.code} — ${project.name}.`,
+      link: `/projetos/${id}`,
+    });
+  }
+
+  await auditLog({
+    companyId: user.companyId, userId: user.id, action: 'update',
+    entityType: 'project_members', entityId: id,
+    before: { membros: [...jaEram] },
+    after: { membros: validos.map((u) => u.id) },
+  });
+  return { ok: true as const };
+}
+
 export async function updateProject(user: SessionUser, id: string, input: ProjectInput) {
   const project = await prisma.project.findFirst({
     where: doProjeto(user, id),

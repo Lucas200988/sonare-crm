@@ -15,6 +15,7 @@ import { CommentsSection, AttachmentsSection } from './activity-sections';
 import { TaskBoard } from './task-board';
 import { ProjectFinanceSection } from './finance-section';
 import { getProjectFinance } from '@/server/services/finance';
+import { existeAcessoRestrito } from '@/server/auth/project-scope';
 
 export const metadata: Metadata = { title: 'Projeto — SONARE CRM' };
 
@@ -41,7 +42,7 @@ export default async function ProjectDetailPage(props: {
   const veFinanceiro = user.permissions.has('finance:read');
   const podeFinanceiro = user.permissions.has('finance:write');
 
-  const [clientUnits, comments, attachments, timeEntries, financeiro] = await Promise.all([
+  const [clientUnits, comments, attachments, timeEntries, financeiro, acessoRestrito] = await Promise.all([
     prisma.clientUnit.findMany({
       where: { clientId: project.clientId, deletedAt: null },
       select: { id: true, name: true },
@@ -51,6 +52,7 @@ export default async function ProjectDetailPage(props: {
     listProjectAttachments(user, id),
     veHoras ? listTimeEntries(user, id) : Promise.resolve([]),
     veFinanceiro ? getProjectFinance(user, id) : Promise.resolve(null),
+    existeAcessoRestrito(user.companyId),
   ]);
 
   const stageOptions = project.stages.map((s) => ({ id: s.id, name: s.name }));
@@ -74,6 +76,13 @@ export default async function ProjectDetailPage(props: {
         contractualDeadline={project.contractualDeadline ? project.contractualDeadline.toISOString() : null}
         technicalLead={project.technicalLead?.name ?? null}
         members={project.members.map((m) => m.user)}
+        responsaveis={[
+          project.technicalLead
+            ? { ...project.technicalLead, papel: 'Responsável técnico' } : null,
+          project.coordinator
+            ? { ...project.coordinator, papel: 'Coordenador' } : null,
+        ].filter((r) => r !== null)}
+        acessoRestrito={acessoRestrito}
         disciplines={project.disciplines}
         folderPath={project.folderPath}
         canWrite={canWrite}
