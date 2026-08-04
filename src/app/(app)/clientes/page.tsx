@@ -16,6 +16,12 @@ const STATUS_BADGE: Record<string, { color: string; label: string }> = {
   BLOQUEADO: { color: 'red', label: 'Bloqueado' },
 };
 
+/** Documento formatado do cliente, ou null quando o cadastro não tem. */
+function documento(c: { personType: PersonType; cnpj: string | null; cpf: string | null }): string | null {
+  if (c.personType === 'JURIDICA') return c.cnpj ? formatCNPJ(c.cnpj) : null;
+  return c.cpf ? formatCPF(c.cpf) : null;
+}
+
 export default async function ClientsPage(props: {
   searchParams: Promise<Record<string, string | undefined>>;
 }) {
@@ -26,8 +32,9 @@ export default async function ClientsPage(props: {
     listClients(user, {
       search: sp.q,
       status: (sp.status as ClientStatus | 'TODOS') ?? 'TODOS',
-      personType: (sp.tipo as PersonType | 'TODOS') ?? 'TODOS',
+      personType: sp.tipo === 'JURIDICA' || sp.tipo === 'FISICA' ? sp.tipo : 'TODOS',
       leadSourceId: sp.origem || undefined,
+      semDocumento: sp.tipo === 'SEM_DOC',
       page: sp.pagina ? Number(sp.pagina) : 1,
     }),
     prisma.leadSource.findMany({ where: { companyId: user.companyId, active: true }, orderBy: { sortOrder: 'asc' } }),
@@ -67,6 +74,7 @@ export default async function ClientsPage(props: {
             <option value="TODOS">PF e PJ</option>
             <option value="JURIDICA">Pessoa Jurídica</option>
             <option value="FISICA">Pessoa Física</option>
+            <option value="SEM_DOC">Sem CNPJ/CPF</option>
           </select>
           <div className="flex gap-2">
             <select name="origem" defaultValue={sp.origem ?? ''} className={inputCls} aria-label="Origem">
@@ -88,11 +96,12 @@ export default async function ClientsPage(props: {
         />
       ) : (
         <Card className="overflow-x-auto">
-          <table className="w-full min-w-[760px] text-left text-sm">
+          <table className="w-full min-w-[820px] text-left text-sm">
             <thead className="border-b border-slate-200 bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
               <tr>
                 <th className="px-4 py-3 font-medium">Cliente</th>
-                <th className="px-4 py-3 font-medium">Documento</th>
+                <th className="px-4 py-3 font-medium">Tipo</th>
+                <th className="px-4 py-3 font-medium">CNPJ / CPF</th>
                 <th className="px-4 py-3 font-medium">Contato</th>
                 <th className="px-4 py-3 font-medium">Cidade/UF</th>
                 <th className="px-4 py-3 font-medium">Responsável</th>
@@ -111,10 +120,16 @@ export default async function ClientsPage(props: {
                       </Link>
                       {c.tradeName ? <p className="text-xs text-slate-500">{c.tradeName}</p> : null}
                     </td>
-                    <td className="px-4 py-3 text-slate-600">
-                      {c.personType === 'JURIDICA'
-                        ? (c.cnpj ? formatCNPJ(c.cnpj) : 'PJ')
-                        : (c.cpf ? formatCPF(c.cpf) : 'PF')}
+                    <td className="px-4 py-3">
+                      <span className="rounded border border-slate-200 bg-slate-50 px-1.5 py-0.5 text-[11px] font-semibold text-slate-600">
+                        {c.personType === 'JURIDICA' ? 'PJ' : 'PF'}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3 tabular-nums text-slate-600">
+                      {documento(c) ?? (
+                        // sem documento não se emite nota: o cadastro precisa voltar
+                        <span className="text-xs italic text-amber-600">não informado</span>
+                      )}
                     </td>
                     <td className="px-4 py-3 text-slate-600">
                       <p>{formatPhoneBR(c.phone ?? c.whatsapp)}</p>

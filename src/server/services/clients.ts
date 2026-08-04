@@ -10,6 +10,8 @@ export type ClientListParams = {
   status?: ClientStatus | 'TODOS';
   personType?: PersonType | 'TODOS';
   leadSourceId?: string;
+  /** Só os cadastros sem CNPJ/CPF — os que travam emissão de nota. */
+  semDocumento?: boolean;
   page?: number;
   pageSize?: number;
 };
@@ -25,6 +27,14 @@ export async function listClients(user: SessionUser, params: ClientListParams) {
   if (params.status && params.status !== 'TODOS') where.status = params.status;
   if (params.personType && params.personType !== 'TODOS') where.personType = params.personType;
   if (params.leadSourceId) where.leadSourceId = params.leadSourceId;
+  // Em AND para não disputar o OR da busca por texto, logo abaixo.
+  // O documento que importa depende do tipo: PJ sem CNPJ, PF sem CPF.
+  if (params.semDocumento) {
+    where.AND = [{ OR: [
+      { personType: 'JURIDICA', cnpj: null },
+      { personType: 'FISICA', cpf: null },
+    ] }];
+  }
   if (params.search) {
     const s = params.search.trim();
     const digits = onlyDigits(s);
