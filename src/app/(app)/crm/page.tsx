@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Plus } from 'lucide-react';
 import { requirePermissionPage } from '@/server/auth/guards';
 import { getBoard } from '@/server/services/opportunities';
+import { getEntregasPorOportunidade } from '@/server/services/email-delivery';
 import { prisma } from '@/server/db';
 import { PageHeader, PrimaryLink, inputCls } from '@/components/ui';
 import { KanbanBoard, type BoardCard } from './kanban-board';
@@ -15,6 +16,7 @@ export default async function CrmPage(props: {
   const sp = await props.searchParams;
 
   const [{ stages, opportunities }, users, lossReasons] = await Promise.all([
+
     getBoard(user, {
       commercialOwnerId: sp.responsavel || undefined,
       leadSourceId: sp.origem || undefined,
@@ -33,6 +35,11 @@ export default async function CrmPage(props: {
     }),
   ]);
 
+  // depende dos ids do quadro, então só pode vir depois da consulta acima
+  const entregas = await getEntregasPorOportunidade(
+    user.companyId, opportunities.map((o) => o.id),
+  );
+
   const cards: BoardCard[] = opportunities.map((o) => ({
     id: o.id,
     code: o.code,
@@ -46,6 +53,10 @@ export default async function CrmPage(props: {
     nextActivity: o.activities[0]
       ? { title: o.activities[0].title, dueAt: o.activities[0].dueAt?.toISOString() ?? null }
       : null,
+    entrega: (() => {
+      const e = entregas.get(o.id);
+      return e ? { ...e, sentAt: e.sentAt.toISOString() } : null;
+    })(),
   }));
 
   const canWrite = user.permissions.has('opportunity:write');

@@ -3,6 +3,8 @@ import Link from 'next/link';
 import { Plus } from 'lucide-react';
 import { requirePermissionPage } from '@/server/auth/guards';
 import { listBudgets, type BudgetListFilter } from '@/server/services/budgets';
+import { getEntregasPorOrcamento } from '@/server/services/email-delivery';
+import { EntregaChip } from '@/components/entrega-chip';
 import { PageHeader, PrimaryLink, Card, EmptyState, Badge, inputCls } from '@/components/ui';
 import { formatBRL } from '@/lib/money';
 import { formatDateBR } from '@/lib/dates';
@@ -22,6 +24,9 @@ export default async function BudgetsPage(props: {
     status: (sp.status as BudgetListFilter['status']) ?? 'TODOS',
     page: sp.pagina ? Number(sp.pagina) : 1,
   });
+
+  // depende dos ids da página atual, então vem depois da listagem
+  const entregas = await getEntregasPorOrcamento(user.companyId, items.map((b) => b.id));
 
   const canWrite = user.permissions.has('budget:write');
 
@@ -64,7 +69,7 @@ export default async function BudgetsPage(props: {
         />
       ) : (
         <Card className="overflow-x-auto">
-          <table className="w-full min-w-[760px] text-left text-sm">
+          <table className="w-full min-w-[900px] text-left text-sm">
             <thead className="border-b border-slate-200 bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
               <tr>
                 <th className="px-4 py-3 font-medium">Código</th>
@@ -73,12 +78,14 @@ export default async function BudgetsPage(props: {
                 <th className="px-4 py-3 font-medium">Versão</th>
                 <th className="px-4 py-3 font-medium">Valor</th>
                 <th className="px-4 py-3 font-medium">Validade</th>
+                <th className="px-4 py-3 font-medium">E-mail</th>
                 <th className="px-4 py-3 font-medium">Status</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
               {items.map((b) => {
                 const badge = badgeDoOrcamento(b.status, b.currentVersion?.proposals);
+                const entrega = entregas.get(b.id);
                 return (
                   <tr key={b.id} className="hover:bg-slate-50">
                     <td className="px-4 py-3">
@@ -96,6 +103,13 @@ export default async function BudgetsPage(props: {
                     </td>
                     <td className="px-4 py-3 text-slate-500">
                       {b.currentVersion?.validUntil ? formatDateBR(b.currentVersion.validUntil) : '—'}
+                    </td>
+                    <td className="px-4 py-3">
+                      {entrega ? (
+                        <EntregaChip entrega={{ ...entrega, sentAt: entrega.sentAt.toISOString() }} />
+                      ) : (
+                        <span className="text-slate-400">—</span>
+                      )}
                     </td>
                     <td className="px-4 py-3"><Badge color={badge.color}>{badge.label}</Badge></td>
                   </tr>

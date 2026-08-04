@@ -11,6 +11,7 @@ import { CalendarClock, User } from 'lucide-react';
 import { moveStageAction } from '@/actions/opportunities';
 import { formatBRL } from '@/lib/money';
 import { formatDateBR } from '@/lib/dates';
+import { EntregaChip, type EntregaChipDados } from '@/components/entrega-chip';
 
 export type BoardStage = { id: string; name: string; kind: string; color: string | null };
 export type BoardCard = {
@@ -24,6 +25,7 @@ export type BoardCard = {
   client: { id: string; legalName: string; tradeName: string | null };
   commercialOwner: { id: string; name: string } | null;
   nextActivity: { title: string; dueAt: string | null } | null;
+  entrega: EntregaChipDados | null;
 };
 export type LossReasonOption = { id: string; name: string };
 
@@ -33,6 +35,7 @@ const PRIORITY_DOT: Record<string, string> = {
   ALTA: 'bg-amber-400',
   URGENTE: 'bg-red-500',
 };
+
 
 function OpportunityCard({ card, overlay }: { card: BoardCard; overlay?: boolean }) {
   return (
@@ -56,6 +59,9 @@ function OpportunityCard({ card, overlay }: { card: BoardCard; overlay?: boolean
           </span>
         ) : null}
       </div>
+      {card.entrega ? (
+        <p className="mt-2"><EntregaChip entrega={card.entrega} /></p>
+      ) : null}
       {card.nextActivity ? (
         <p className="mt-2 flex items-center gap-1 rounded bg-amber-50 px-1.5 py-1 text-[11px] text-amber-800">
           <CalendarClock className="h-3 w-3 shrink-0" aria-hidden />

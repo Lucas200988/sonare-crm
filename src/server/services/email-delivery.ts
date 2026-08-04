@@ -1,6 +1,7 @@
 import 'server-only';
 import { prisma } from '@/server/db';
 export { assinaturaValida } from '@/lib/webhook-assinatura';
+import { avancaEntrega, resumoEntrega, type StatusEntrega } from '@/lib/entrega-status';
 import type { EmailStatus } from '@/generated/prisma/client';
 
 /**
@@ -54,14 +55,10 @@ const EVENTOS: Record<string, EmailStatus> = {
 /**
  * Só avança: entregue não volta a enviado quando um evento chega fora de
  * ordem — a rede não garante ordem, e o histórico não pode andar para trás.
- * Rejeição e spam sobrepõem tudo: são o desfecho que importa.
+ * A regra mora em lib/ porque o cartão do pipeline resume por ela também.
  */
-const ORDEM: EmailStatus[] = ['ENVIADO', 'ATRASADO', 'ENTREGUE', 'ABERTO', 'CLIQUE'];
-
 function deveAtualizar(atual: EmailStatus, novo: EmailStatus): boolean {
-  if (novo === 'REJEITADO' || novo === 'SPAM') return true;
-  if (atual === 'REJEITADO' || atual === 'SPAM') return false;
-  return ORDEM.indexOf(novo) > ORDEM.indexOf(atual);
+  return avancaEntrega(atual as StatusEntrega, novo as StatusEntrega);
 }
 
 /** Aplica um evento do provedor à mensagem correspondente. */
@@ -99,6 +96,109 @@ export async function getEntregas(companyId: string, entityType: string, entityI
     where: { companyId, entityType, entityId },
     orderBy: { sentAt: 'desc' },
   });
+}
+
+export type EntregaResumida = {
+  status: StatusEntrega;
+  para: string;
+  sentAt: Date;
+  propostaCode: string;
+};
+
+/**
+ * Busca as entregas das propostas informadas e resume uma por chave.
+ *
+ * `daProposta` diz a que chave — oportunidade ou orçamento — cada proposta
+ * pertence; o resto da regra é a mesma nos dois casos.
+ */
+async function resumirPorChave(
+  companyId: string, daProposta: Map<string, { chave: string; code: string }>,
+): Promise<Map<string, EntregaResumida>> {
+  const resultado = new Map<string, EntregaResumida>();
+  if (daProposta.size === 0) return resultado;
+
+  const entregas = await prisma.emailDelivery.findMany({
+    where: { companyId, entityType: 'proposal', entityId: { in: [...daProposta.keys()] } },
+    select: { entityId: true, status: true, para: true, sentAt: true },
+  });
+
+  const agrupado = new Map<string, EntregaResumida[]>();
+  for (const e of entregas) {
+    const origem = e.entityId ? daProposta.get(e.entityId) : undefined;
+    if (!origem) continue;
+    const lista = agrupado.get(origem.chave) ?? [];
+    lista.push({
+      status: e.status as StatusEntrega,
+      para: e.para, sentAt: e.sentAt, propostaCode: origem.code,
+    });
+    agrupado.set(origem.chave, lista);
+  }
+
+  for (const [chave, lista] of agrupado) {
+    const melhor = resumoEntrega(lista);
+    if (melhor) resultado.set(chave, melhor);
+  }
+  return resultado;
+}
+
+/** Propostas já enviadas dos orçamentos indicados, com a chave escolhida. */
+async function propostasEnviadas(
+  companyId: string,
+  where: { opportunityId?: { in: string[] }; id?: { in: string[] } },
+  chaveDe: (b: { id: string; opportunityId: string | null }) => string | null,
+) {
+  const budgets = await prisma.budget.findMany({
+    where: { companyId, deletedAt: null, ...where },
+    select: {
+      id: true, opportunityId: true,
+      versions: {
+        select: {
+          proposals: {
+            where: { deletedAt: null, sentAt: { not: null } },
+            select: { id: true, code: true },
+          },
+        },
+      },
+    },
+  });
+
+  const daProposta = new Map<string, { chave: string; code: string }>();
+  for (const b of budgets) {
+    const chave = chaveDe(b);
+    if (!chave) continue;
+    for (const v of b.versions) {
+      for (const p of v.proposals) daProposta.set(p.id, { chave, code: p.code });
+    }
+  }
+  return daProposta;
+}
+
+/**
+ * Situação do último envio de proposta de cada oportunidade do quadro.
+ *
+ * O caminho é oportunidade → orçamento → versão → proposta → entrega. Sem
+ * isto o comercial teria que abrir orçamento por orçamento para saber se o
+ * cliente recebeu, que é justamente a informação que decide o próximo passo.
+ */
+export async function getEntregasPorOportunidade(
+  companyId: string, opportunityIds: string[],
+): Promise<Map<string, EntregaResumida>> {
+  if (opportunityIds.length === 0) return new Map();
+  const daProposta = await propostasEnviadas(
+    companyId, { opportunityId: { in: opportunityIds } }, (b) => b.opportunityId,
+  );
+  return resumirPorChave(companyId, daProposta);
+}
+
+/** A mesma situação, indexada por orçamento — para a coluna da listagem. */
+export async function getEntregasPorOrcamento(
+  companyId: string, budgetIds: string[],
+): Promise<Map<string, EntregaResumida>> {
+  if (budgetIds.length === 0) return new Map();
+  const daProposta = await propostasEnviadas(
+    companyId, { id: { in: budgetIds } }, (b) => b.id,
+  );
+  return resumirPorChave(companyId, daProposta);
 }
 
 /** Falhas recentes: o que precisa de correção de cadastro. */
