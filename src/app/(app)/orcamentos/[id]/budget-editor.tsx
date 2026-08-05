@@ -94,7 +94,7 @@ const EMPTY_ITEM: EditorItem = {
 };
 
 export function BudgetEditor({
-  budgetId, editable, initialFields, initialItems, services, aiEnabled, scopeTemplates,
+  budgetId, editable, initialFields, initialItems, services, aiEnabled, clienteNome, scopeTemplates,
   priceSuggestions = [], companyDefaults, contatos,
 }: {
   budgetId: string;
@@ -103,6 +103,7 @@ export function BudgetEditor({
   initialItems: EditorItem[];
   services: ServiceOption[];
   aiEnabled: boolean;
+  clienteNome: string;
   scopeTemplates: TemplateOption[];
   /** Preços praticados por serviço, vindos dos orçamentos anteriores. */
   priceSuggestions?: PriceSuggestion[];
@@ -279,6 +280,7 @@ export function BudgetEditor({
       {editable ? (
         <ScopeAssistant
           aiEnabled={aiEnabled}
+          clienteNome={clienteNome}
           templates={scopeTemplates}
           defaultServiceType={fields.serviceType}
           hasContent={!isEmptyRich(fields.scope)}

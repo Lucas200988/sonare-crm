@@ -93,13 +93,30 @@ export async function getAiStatusAction(): Promise<{
 
 // ---------- Geração de escopo ----------
 
+/** Campo livre opcional do briefing. O teto protege o custo da chamada. */
+const campo = z.string().trim().max(4_000).optional();
+
 const briefingSchema = z.object({
   serviceType: z.string().trim().min(3, 'Informe o tipo de serviço.'),
   description: z.string().trim().min(10, 'Descreva a demanda com um pouco mais de detalhe.'),
-  discipline: z.string().trim().optional(),
-  clientType: z.string().trim().optional(),
-  area: z.string().trim().optional(),
-  extraContext: z.string().trim().optional(),
+  cliente: campo,
+  empreendimento: campo,
+  local: campo,
+  objetivo: campo,
+  discipline: campo,
+  clientType: campo,
+  area: campo,
+  // termo de referência inteiro cabe aqui; por isso o teto é bem maior
+  documentos: z.string().trim().max(60_000, 'Documento longo demais — cole as partes relevantes.').optional(),
+  informacoesTecnicas: campo,
+  quantidades: campo,
+  visitas: campo,
+  prazoSolicitado: campo,
+  aprovacoes: campo,
+  entregaveisCombinados: campo,
+  exclusoesConhecidas: campo,
+  observacoesComerciais: campo,
+  extraContext: campo,
   nivel: z.enum(['resumido', 'padrao', 'detalhado']).optional(),
 });
 

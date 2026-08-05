@@ -1,47 +1,65 @@
 import { describe, expect, it } from 'vitest';
 import { promptDoNivel } from './scope-prompt';
 
+/**
+ * O prompt é o que determina o que sai na proposta do cliente. Estes testes
+ * travam as regras que protegem a contratação — se alguém as remover editando
+ * o texto, a suíte avisa.
+ */
 describe('promptDoNivel', () => {
+  const NIVEIS = ['resumido', 'padrao', 'detalhado'] as const;
+
   it('usa o nível padrão quando nenhum é informado', () => {
     expect(promptDoNivel()).toBe(promptDoNivel('padrao'));
   });
 
-  it('pede escopo curto no resumido', () => {
-    const p = promptDoNivel('resumido');
-    expect(p).toContain('entre 5 e 8 linhas');
-    expect(p).not.toContain('emissão de ART/RRT do serviço');
+  it('nunca deixa o marcador de nível cru no prompt', () => {
+    for (const n of NIVEIS) expect(promptDoNivel(n), n).not.toContain('{{NIVEL}}');
+    expect(promptDoNivel('inexistente' as never)).not.toContain('{{NIVEL}}');
   });
 
-  it('exige as etapas mínimas de engenharia no padrão', () => {
+  it('mantém as regras que impedem a IA de inventar', () => {
+    for (const n of NIVEIS) {
+      const p = promptDoNivel(n);
+      expect(p, n).toContain('Não inventar informações');
+      expect(p, n).toContain('Não ampliar indevidamente o escopo');
+      expect(p, n).toContain('Nunca prometa');
+    }
+  });
+
+  it('mantém as travas de responsabilidade em todos os níveis', () => {
+    for (const n of NIVEIS) {
+      const p = promptDoNivel(n);
+      // sem estas, a proposta assume obrigação que ninguém vendeu
+      expect(p, n).toContain('aprovação garantida');
+      expect(p, n).toContain('Não considere revisões ilimitadas');
+      expect(p, n).toContain('Quando o prazo não estiver informado, não invente');
+    }
+  });
+
+  it('descreve o JSON de saída com os campos que a tela consome', () => {
     const p = promptDoNivel('padrao');
-    expect(p).toContain('entre 12 e 18 linhas');
-    for (const etapa of ['levantamento de dados de campo', 'memorial descritivo', 'compatibilização', 'ART/RRT']) {
-      expect(p, etapa).toContain(etapa);
+    for (const campo of [
+      'escopo_detalhado', 'entregaveis', 'premissas', 'responsabilidades_contratante',
+      'exclusoes', 'perguntas_necessarias', 'riscos_orcamentarios', 'servicos_opcionais',
+      'observacoes_internas', 'resumo_whatsapp',
+    ]) {
+      expect(p, campo).toContain(campo);
     }
   });
 
-  it('pede nível de memorial no detalhado', () => {
-    const p = promptDoNivel('detalhado');
-    expect(p).toContain('entre 22 e 35 linhas');
-    expect(p).toContain('memorial descritivo');
+  it('limita as perguntas a cinco', () => {
+    expect(promptDoNivel('padrao')).toContain('no máximo cinco perguntas');
   });
 
-  it('preserva as regras gerais em todos os níveis', () => {
-    for (const nivel of ['resumido', 'padrao', 'detalhado'] as const) {
-      const p = promptDoNivel(nivel);
-      expect(p, nivel).toContain('Premissas: 3 a 6 linhas');
-      expect(p, nivel).toContain('Exclusões: 3 a 6 linhas');
-      expect(p, nivel).toContain('Responda SOMENTE com JSON válido');
-      // a instrução de não inventar dados é o que protege a proposta
-      expect(p, nivel).toContain('NUNCA invente valores monetários');
-    }
+  it('a profundidade cresce com o nível', () => {
+    expect(promptDoNivel('resumido')).toContain('2 a 4 etapas');
+    expect(promptDoNivel('padrao')).toContain('4 a 7 etapas');
+    expect(promptDoNivel('detalhado')).toContain('6 a 10 etapas');
   });
 
-  it('exige mais linhas conforme o nível sobe', () => {
-    const linhas = (p: string) => Number(/entre (\d+) e \d+ linhas/.exec(p)![1]);
-    expect(linhas(promptDoNivel('resumido')))
-      .toBeLessThan(linhas(promptDoNivel('padrao')));
-    expect(linhas(promptDoNivel('padrao')))
-      .toBeLessThan(linhas(promptDoNivel('detalhado')));
+  it('só o detalhado pede o nível de memorial', () => {
+    expect(promptDoNivel('detalhado')).toContain('memorial descritivo: 6 a 10 etapas');
+    expect(promptDoNivel('resumido')).not.toContain('6 a 10 etapas');
   });
 });

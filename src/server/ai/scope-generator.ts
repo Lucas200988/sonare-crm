@@ -3,6 +3,7 @@ import { prisma } from '@/server/db';
 import { decryptSecret } from '@/server/crypto';
 import { splitForReview } from '@/lib/split-review';
 import { promptDoNivel, type NivelDetalhe } from './scope-prompt';
+import { parseEscopo, paraOrcamento, type GeneratedScope } from './scope-schema';
 
 // Geração assistida de escopo de proposta.
 // Suporta OpenAI (padrão) e Anthropic; a chave fica criptografada em SystemSetting
@@ -44,51 +45,76 @@ export async function getAiConfig(companyId: string): Promise<AiConfig> {
 
 export type ScopeBriefing = {
   serviceType: string; // ex.: "Projeto elétrico"
-  description: string; // briefing livre do usuário
+  description: string; // descrição recebida do cliente
+  cliente?: string | null;
+  empreendimento?: string | null;
+  local?: string | null;
+  objetivo?: string | null;
   discipline?: string | null;
   clientType?: string | null; // condomínio, indústria, residencial…
   area?: string | null; // ex.: "450 m²"
+  /** Termo de referência, edital, memorial — o texto que o cliente mandou. */
+  documentos?: string | null;
+  informacoesTecnicas?: string | null;
+  quantidades?: string | null;
+  visitas?: string | null;
+  prazoSolicitado?: string | null;
+  aprovacoes?: string | null;
+  entregaveisCombinados?: string | null;
+  exclusoesConhecidas?: string | null;
+  observacoesComerciais?: string | null;
   extraContext?: string | null;
   nivel?: NivelDetalhe;
 };
 
-export type GeneratedScope = {
-  scope: string;
-  premises: string;
-  exclusions: string;
-  executionDeadline: string;
-  items: Array<{ description: string; unit: string; quantity: string }>;
-};
+export type { GeneratedScope, AnaliseComercial } from './scope-schema';
 
+/**
+ * Briefing no formato que o prompt de sistema espera.
+ *
+ * Campo vazio é omitido em vez de virar "não informado": linha em branco não
+ * ajuda o modelo e ainda gasta contexto — e o próprio prompt manda evitar a
+ * repetição de "não informado".
+ */
 function buildUserPrompt(b: ScopeBriefing): string {
-  const lines = [
-    `Tipo de serviço: ${b.serviceType}`,
-    b.discipline ? `Disciplina: ${b.discipline}` : null,
-    b.clientType ? `Tipo de cliente/edificação: ${b.clientType}` : null,
-    b.area ? `Área / porte: ${b.area}` : null,
-    `Briefing: ${b.description}`,
-    b.extraContext ? `Contexto adicional: ${b.extraContext}` : null,
-  ].filter(Boolean);
-  return lines.join('\n');
-}
+  const campos: Array<[string, string | null | undefined]> = [
+    ['Cliente', b.cliente],
+    ['Empreendimento', b.empreendimento],
+    ['Local', b.local],
+    ['Tipo de serviço informado', b.serviceType],
+    ['Disciplina', b.discipline],
+    ['Tipo de cliente/edificação', b.clientType],
+    ['Área / porte', b.area],
+    ['Descrição recebida do cliente', b.description],
+    ['Objetivo informado', b.objetivo],
+    ['Documentos disponibilizados', b.documentos],
+    ['Informações técnicas conhecidas', b.informacoesTecnicas],
+    ['Quantidade de unidades, sistemas ou áreas', b.quantidades],
+    ['Visitas previstas', b.visitas],
+    ['Prazo solicitado pelo cliente', b.prazoSolicitado],
+    ['Aprovações ou protocolos envolvidos', b.aprovacoes],
+    ['Entregáveis previamente combinados', b.entregaveisCombinados],
+    ['Itens expressamente excluídos', b.exclusoesConhecidas],
+    ['Observações comerciais', b.observacoesComerciais],
+    ['Contexto adicional', b.extraContext],
+  ];
 
-function parseResponse(raw: string): GeneratedScope {
-  // Modelos às vezes devolvem o JSON dentro de bloco markdown
-  const cleaned = raw.trim().replace(/^```(?:json)?\s*/i, '').replace(/```$/, '').trim();
-  const parsed = JSON.parse(cleaned) as Partial<GeneratedScope>;
-  return {
-    scope: String(parsed.scope ?? '').trim(),
-    premises: String(parsed.premises ?? '').trim(),
-    exclusions: String(parsed.exclusions ?? '').trim(),
-    executionDeadline: String(parsed.executionDeadline ?? '').trim(),
-    items: Array.isArray(parsed.items)
-      ? parsed.items.slice(0, 30).map((i) => ({
-          description: String(i.description ?? '').trim(),
-          unit: String(i.unit ?? 'vb').trim(),
-          quantity: String(i.quantity ?? '1').trim(),
-        })).filter((i) => i.description !== '')
-      : [],
-  };
+  const dados = campos
+    .filter(([, v]) => typeof v === 'string' && v.trim() !== '')
+    .map(([rotulo, v]) => `${rotulo}:\n${(v as string).trim()}`)
+    .join('\n\n');
+
+  return `Elabore o escopo técnico e comercial com base nas informações abaixo.
+
+DADOS DA SOLICITAÇÃO
+${dados}
+
+INSTRUÇÕES ESPECÍFICAS
+1. Identifique eventuais lacunas ou contradições.
+2. Não inclua atividades de execução, fornecimento, aprovação ou fiscalização que não tenham sido solicitadas.
+3. Quando possível, gere o escopo utilizando premissas, sem interromper o processo.
+4. Faça perguntas apenas quando a resposta alterar substancialmente preço, prazo, entregáveis ou responsabilidade.
+5. Retorne exclusivamente no formato JSON estabelecido no prompt de sistema.`;
 }
 
 async function callOpenAI(config: AiConfig, briefing: ScopeBriefing): Promise<string> {
@@ -107,7 +133,7 @@ async function callOpenAI(config: AiConfig, briefing: ScopeBriefing): Promise<st
         { role: 'user', content: buildUserPrompt(briefing) },
       ],
     }),
-    signal: AbortSignal.timeout(60_000),
+    signal: AbortSignal.timeout(180_000),
   });
   if (!res.ok) {
     const body = await res.text();
@@ -127,12 +153,12 @@ async function callAnthropic(config: AiConfig, briefing: ScopeBriefing): Promise
     },
     body: JSON.stringify({
       model: config.model,
-      max_tokens: 4000,
+      max_tokens: 8000, // o JSON da proposta é longo; 4000 truncava
       temperature: 0.4,
       system: promptDoNivel(briefing.nivel),
       messages: [{ role: 'user', content: buildUserPrompt(briefing) }],
     }),
-    signal: AbortSignal.timeout(60_000),
+    signal: AbortSignal.timeout(180_000),
   });
   if (!res.ok) {
     const body = await res.text();
@@ -159,7 +185,7 @@ export async function generateScope(
       ? await callAnthropic(config, briefing)
       : await callOpenAI(config, briefing);
     if (!raw.trim()) return { error: 'A IA retornou uma resposta vazia. Tente novamente.' };
-    return { scope: parseResponse(raw) };
+    return { scope: paraOrcamento(parseEscopo(raw)) };
   } catch (e) {
     const message = e instanceof Error ? e.message : 'erro desconhecido';
     if (message.includes('401')) return { error: 'Chave de API inválida ou expirada.' };

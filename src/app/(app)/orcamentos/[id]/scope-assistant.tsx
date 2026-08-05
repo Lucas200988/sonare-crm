@@ -1,10 +1,27 @@
 'use client';
 
 import { useState, useTransition } from 'react';
-import { BookmarkPlus, FileStack, Plus, Sparkles, Trash2, X } from 'lucide-react';
+import {
+  BookmarkPlus, ChevronDown, ChevronUp, Copy, FileStack, FileText,
+  Plus, Sparkles, Trash2, X,
+} from 'lucide-react';
 import { generateScopeAction, saveScopeTemplateAction } from '@/actions/ai';
 import { inputCls, Field, FormError } from '@/components/ui';
 import { ReviewableTextarea } from '@/components/text-field';
+
+export type AnaliseComercial = {
+  status: 'pronto' | 'pronto_com_premissas' | 'requer_informacoes';
+  titulo: string;
+  resumoExecutivo: string;
+  perguntas: string[];
+  pontosAConfirmar: string[];
+  informacoesInferidas: string[];
+  riscos: Array<{ item: string; impacto: 'baixo' | 'medio' | 'alto'; justificativa: string }>;
+  servicosOpcionais: Array<{ servico: string; motivo: string }>;
+  beneficios: string[];
+  resumoWhatsapp: string;
+  observacoesInternas: string[];
+};
 
 export type ScopeResult = {
   scope: string;
@@ -12,6 +29,8 @@ export type ScopeResult = {
   exclusions: string;
   executionDeadline: string;
   items: Array<{ description: string; unit: string; quantity: string; unitPrice?: string }>;
+  /** Só existe quando veio da IA — modelo do catálogo não analisa nada. */
+  analise?: AnaliseComercial;
 };
 
 export type TemplateOption = {
@@ -32,18 +51,37 @@ const NIVEIS: Array<{ value: NivelDetalhe; label: string; hint: string }> = [
   {
     value: 'resumido',
     label: 'Resumido',
-    hint: '5 a 8 linhas — serviço simples, orçamento rápido.',
+    hint: '2 a 4 etapas — serviço simples, orçamento rápido.',
   },
   {
     value: 'padrao',
     label: 'Padrão',
-    hint: '12 a 18 linhas cobrindo as etapas mínimas de um projeto de engenharia.',
+    hint: '4 a 7 etapas, com 3 a 6 atividades cada — proposta de engenharia.',
   },
   {
     value: 'detalhado',
     label: 'Detalhado',
-    hint: '22 a 35 linhas, nível de memorial — concorrência e órgão público.',
+    hint: '6 a 10 etapas, nível de memorial — concorrência e órgão público.',
   },
+];
+
+/**
+ * Campos do briefing que a IA usa para não supor.
+ *
+ * São os que mudam preço, prazo ou responsabilidade — os outros dados da
+ * seção "dados da solicitação" o sistema já conhece (cliente, empreendimento)
+ * ou cabem no termo de referência colado.
+ */
+const CAMPOS: Array<{ chave: string; rotulo: string; placeholder: string }> = [
+  { chave: 'objetivo', rotulo: 'Objetivo informado', placeholder: 'Objetivo: o que o cliente quer resolver' },
+  { chave: 'informacoesTecnicas', rotulo: 'Informações técnicas conhecidas', placeholder: 'Informações técnicas (potência, tensão, cargas…)' },
+  { chave: 'quantidades', rotulo: 'Quantidades', placeholder: 'Quantidade de unidades, sistemas ou áreas' },
+  { chave: 'visitas', rotulo: 'Visitas previstas', placeholder: 'Visitas previstas (ex.: 1 visita técnica)' },
+  { chave: 'prazoSolicitado', rotulo: 'Prazo solicitado', placeholder: 'Prazo solicitado pelo cliente' },
+  { chave: 'aprovacoes', rotulo: 'Aprovações envolvidas', placeholder: 'Aprovações ou protocolos (concessionária, bombeiros…)' },
+  { chave: 'entregaveisCombinados', rotulo: 'Entregáveis combinados', placeholder: 'Entregáveis já combinados' },
+  { chave: 'exclusoesConhecidas', rotulo: 'Itens excluídos', placeholder: 'O que já se sabe que está fora' },
+  { chave: 'observacoesComerciais', rotulo: 'Observações comerciais', placeholder: 'Observações comerciais' },
 ];
 
 /** Como o conteúdo gerado entra no orçamento. */
@@ -66,11 +104,12 @@ export type ApplyOptions = {
  * que já existe, com um subtítulo separando os serviços.
  */
 export function ScopeAssistant({
-  aiEnabled, templates, defaultServiceType, hasContent, onApply,
+  aiEnabled, templates, defaultServiceType, clienteNome, hasContent, onApply,
 }: {
   aiEnabled: boolean;
   templates: TemplateOption[];
   defaultServiceType: string;
+  clienteNome: string;
   /** Já existe escopo preenchido? Define o modo padrão. */
   hasContent: boolean;
   onApply: (result: ScopeResult, options: ApplyOptions) => void;
@@ -86,6 +125,12 @@ export function ScopeAssistant({
   const [description, setDescription] = useState('');
   const [clientType, setClientType] = useState('');
   const [area, setArea] = useState('');
+  const [detalhes, setDetalhes] = useState(false);
+  const [documentos, setDocumentos] = useState('');
+  const [extras, setExtras] = useState<Record<string, string>>({});
+
+  const preenchidos = (documentos.trim() ? 1 : 0)
+    + Object.values(extras).filter((v) => v.trim() !== '').length;
   // Padrão: o escopo curto demais era a queixa; o mínimo de engenharia vira o normal.
   const [nivel, setNivel] = useState<NivelDetalhe>('padrao');
 
@@ -94,6 +139,11 @@ export function ScopeAssistant({
     startTransition(async () => {
       const result = await generateScopeAction({
         serviceType, description, clientType: clientType || undefined, area: area || undefined,
+        cliente: clienteNome || undefined,
+        documentos: documentos.trim() || undefined,
+        ...Object.fromEntries(
+          Object.entries(extras).filter(([, v]) => v.trim() !== ''),
+        ),
         nivel,
       });
       if ('error' in result) setError(result.error);
@@ -208,9 +258,54 @@ export function ScopeAssistant({
               />
               <textarea
                 value={description} onChange={(e) => setDescription(e.target.value)} rows={2}
-                placeholder="Briefing: descreva a demanda em uma ou duas frases."
-                className={inputCls} aria-label="Briefing da demanda"
+                placeholder="Descrição recebida do cliente: o que ele pediu, com as palavras dele."
+                className={inputCls} aria-label="Descrição recebida do cliente"
               />
+
+              {/*
+                Termo de referência, edital, memorial. É o campo que mais muda a
+                qualidade do escopo: com o documento em mãos a IA para de supor.
+              */}
+              <div>
+                <button
+                  type="button"
+                  onClick={() => setDetalhes((v) => !v)}
+                  className="flex w-full items-center justify-between rounded-lg border border-dashed border-slate-300 px-2.5 py-1.5 text-[11px] font-medium text-slate-600 hover:border-slate-400"
+                >
+                  <span className="inline-flex items-center gap-1.5">
+                    <FileText className="h-3.5 w-3.5" aria-hidden />
+                    Termo de referência e detalhes da solicitação
+                    {preenchidos > 0 ? (
+                      <span className="rounded bg-brand/10 px-1.5 py-0.5 text-[10px] font-semibold text-brand">
+                        {preenchidos}
+                      </span>
+                    ) : null}
+                  </span>
+                  {detalhes ? <ChevronUp className="h-3.5 w-3.5" aria-hidden /> : <ChevronDown className="h-3.5 w-3.5" aria-hidden />}
+                </button>
+
+                {detalhes ? (
+                  <div className="mt-2 space-y-2 rounded-lg border border-slate-200 bg-slate-50 p-2.5">
+                    <textarea
+                      value={documentos} onChange={(e) => setDocumentos(e.target.value)} rows={6}
+                      placeholder="Cole aqui o termo de referência, o edital, o memorial ou o e-mail do cliente. Quanto mais completo, menos a IA precisa supor."
+                      className={inputCls} aria-label="Termo de referência ou documentos"
+                    />
+                    <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                      {CAMPOS.map((c) => (
+                        <input
+                          key={c.chave}
+                          value={extras[c.chave] ?? ''}
+                          onChange={(e) => setExtras((p) => ({ ...p, [c.chave]: e.target.value }))}
+                          placeholder={c.placeholder}
+                          aria-label={c.rotulo}
+                          className={inputCls}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                ) : null}
+              </div>
 
               <fieldset>
                 <legend className="mb-1 text-[11px] font-medium text-slate-600">
@@ -395,6 +490,8 @@ function ScopeDraftEditor({
         <p className="rounded-lg border border-green-200 bg-green-50 px-3 py-2 text-xs text-green-800">{saveMsg}</p>
       ) : null}
 
+      {draft.analise ? <PainelAnalise analise={draft.analise} /> : null}
+
       <Field label="Escopo dos serviços" htmlFor="d-scope">
         <ReviewableTextarea
           id="d-scope" value={draft.scope} onChange={(v) => onChange({ ...draft, scope: v })}
@@ -418,6 +515,7 @@ function ScopeDraftEditor({
       <Field label="Prazo de execução" htmlFor="d-deadline">
         <input id="d-deadline" value={draft.executionDeadline} onChange={set('executionDeadline')} className={inputCls} />
       </Field>
+
 
       <div>
         <div className="mb-1 flex items-center justify-between">
@@ -558,6 +656,129 @@ function ScopeDraftEditor({
       <p className="text-[10px] text-slate-400">
         Revise tecnicamente o conteúdo antes de enviar a proposta ao cliente.
       </p>
+    </div>
+  );
+}
+
+const STATUS_ANALISE: Record<AnaliseComercial['status'], { rotulo: string; classe: string }> = {
+  pronto: { rotulo: 'Pronto', classe: 'bg-green-100 text-green-800' },
+  pronto_com_premissas: { rotulo: 'Pronto, com premissas', classe: 'bg-amber-100 text-amber-800' },
+  requer_informacoes: { rotulo: 'Faltam informações', classe: 'bg-red-100 text-red-800' },
+};
+
+const IMPACTO_CLASSE: Record<string, string> = {
+  baixo: 'bg-slate-100 text-slate-600',
+  medio: 'bg-amber-100 text-amber-800',
+  alto: 'bg-red-100 text-red-800',
+};
+
+function ListaAnalise({ titulo, itens }: { titulo: string; itens: string[] }) {
+  if (itens.length === 0) return null;
+  return (
+    <div>
+      <p className="text-[11px] font-semibold text-slate-700">{titulo}</p>
+      <ul className="mt-0.5 list-disc space-y-0.5 pl-4 text-[11px] text-slate-600">
+        {itens.map((i, idx) => <li key={idx}>{i}</li>)}
+      </ul>
+    </div>
+  );
+}
+
+/**
+ * O que a IA percebeu e não entra na proposta.
+ *
+ * Perguntas, riscos e oportunidades são para quem vai precificar — mandar
+ * isso ao cliente seria mostrar as próprias dúvidas. Fica visível na tela,
+ * separado do texto que será aplicado ao orçamento.
+ */
+export function PainelAnalise({ analise }: { analise: AnaliseComercial }) {
+  const [copiado, setCopiado] = useState(false);
+  const s = STATUS_ANALISE[analise.status] ?? STATUS_ANALISE.pronto_com_premissas;
+
+  const temAlgo = analise.perguntas.length > 0 || analise.pontosAConfirmar.length > 0
+    || analise.riscos.length > 0 || analise.servicosOpcionais.length > 0
+    || analise.informacoesInferidas.length > 0 || analise.observacoesInternas.length > 0
+    || analise.resumoWhatsapp !== '';
+  if (!temAlgo && !analise.resumoExecutivo) return null;
+
+  return (
+    <div className="rounded-lg border border-slate-300 bg-white p-3">
+      <div className="mb-2 flex flex-wrap items-center gap-2">
+        <span className="text-xs font-semibold text-slate-800">Análise interna</span>
+        <span className={`rounded px-1.5 py-0.5 text-[10px] font-semibold ${s.classe}`}>{s.rotulo}</span>
+        <span className="text-[10px] text-slate-400">não vai para o cliente</span>
+      </div>
+
+      {analise.resumoExecutivo ? (
+        <p className="mb-2 text-[11px] text-slate-600">{analise.resumoExecutivo}</p>
+      ) : null}
+
+      <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
+        {analise.perguntas.length > 0 ? (
+          <div className="rounded bg-amber-50 p-2 sm:col-span-2">
+            <p className="text-[11px] font-semibold text-amber-900">
+              Perguntar ao cliente antes de fechar o preço
+            </p>
+            <ul className="mt-0.5 list-disc space-y-0.5 pl-4 text-[11px] text-amber-900">
+              {analise.perguntas.map((p, i) => <li key={i}>{p}</li>)}
+            </ul>
+          </div>
+        ) : null}
+
+        <ListaAnalise titulo="A confirmar" itens={analise.pontosAConfirmar} />
+        <ListaAnalise titulo="Inferido tecnicamente" itens={analise.informacoesInferidas} />
+
+        {analise.riscos.length > 0 ? (
+          <div className="sm:col-span-2">
+            <p className="text-[11px] font-semibold text-slate-700">Riscos para o orçamento</p>
+            <ul className="mt-0.5 space-y-1">
+              {analise.riscos.map((r, i) => (
+                <li key={i} className="flex items-start gap-1.5 text-[11px] text-slate-600">
+                  <span className={`shrink-0 rounded px-1 py-0.5 text-[9px] font-bold uppercase ${IMPACTO_CLASSE[r.impacto] ?? IMPACTO_CLASSE.medio}`}>
+                    {r.impacto}
+                  </span>
+                  <span><strong>{r.item}</strong>{r.justificativa ? ` — ${r.justificativa}` : ''}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ) : null}
+
+        {analise.servicosOpcionais.length > 0 ? (
+          <div className="sm:col-span-2 rounded bg-sky-50 p-2">
+            <p className="text-[11px] font-semibold text-sky-900">
+              Serviços que cabem nesta venda (não incluídos)
+            </p>
+            <ul className="mt-0.5 list-disc space-y-0.5 pl-4 text-[11px] text-sky-900">
+              {analise.servicosOpcionais.map((o, i) => (
+                <li key={i}><strong>{o.servico}</strong>{o.motivo ? ` — ${o.motivo}` : ''}</li>
+              ))}
+            </ul>
+          </div>
+        ) : null}
+
+        <ListaAnalise titulo="Observações internas" itens={analise.observacoesInternas} />
+      </div>
+
+      {analise.resumoWhatsapp ? (
+        <div className="mt-2 rounded border border-slate-200 bg-slate-50 p-2">
+          <div className="flex items-center justify-between gap-2">
+            <p className="text-[11px] font-semibold text-slate-700">Resumo para WhatsApp</p>
+            <button
+              type="button"
+              onClick={() => {
+                navigator.clipboard.writeText(analise.resumoWhatsapp);
+                setCopiado(true);
+                setTimeout(() => setCopiado(false), 2000);
+              }}
+              className="inline-flex items-center gap-1 rounded border border-slate-300 px-2 py-0.5 text-[10px] text-slate-600 hover:bg-white"
+            >
+              <Copy className="h-3 w-3" aria-hidden /> {copiado ? 'Copiado' : 'Copiar'}
+            </button>
+          </div>
+          <p className="mt-1 whitespace-pre-wrap text-[11px] text-slate-600">{analise.resumoWhatsapp}</p>
+        </div>
+      ) : null}
     </div>
   );
 }

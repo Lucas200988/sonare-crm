@@ -132,6 +132,7 @@ export default async function BudgetDetailPage(props: { params: Promise<{ id: st
               generalInfo: companySetting('proposal.infoGerais'),
               differentials: companySetting('proposal.diferenciais'),
             }}
+            clienteNome={nomeCliente}
             aiEnabled={aiConfig.enabled}
             scopeTemplates={services
               .filter((s) => s.scopeTemplate)
