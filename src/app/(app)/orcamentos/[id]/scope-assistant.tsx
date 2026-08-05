@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useTransition } from 'react';
+import { useEffect, useState, useTransition } from 'react';
 import {
   BookmarkPlus, ChevronDown, ChevronUp, Copy, FileStack, FileText,
   Plus, Sparkles, Trash2, X,
@@ -134,10 +134,50 @@ export function ScopeAssistant({
   // Padrão: o escopo curto demais era a queixa; o mínimo de engenharia vira o normal.
   const [nivel, setNivel] = useState<NivelDetalhe>('padrao');
 
+  /*
+   * Contador de segundos enquanto gera. Sem ele "Gerando…" parado é
+   * indistinguível de travado, e o usuário recarrega a página no meio.
+   */
+  const [segundos, setSegundos] = useState(0);
+  useEffect(() => {
+    if (!pending) return;
+    const t = setInterval(() => setSegundos((s) => s + 1), 1000);
+    return () => clearInterval(t);
+  }, [pending]);
+
+  /**
+   * Espera máxima do lado do navegador.
+   *
+   * A função do servidor tem teto próprio, mas se ela for encerrada no meio
+   * a ação nunca retorna e o botão fica em "Gerando…" para sempre. Esta
+   * corrida garante que a tela sempre volta, com mensagem.
+   */
+  function comLimite<T>(promessa: Promise<T>, limiteSegundos: number): Promise<T> {
+    return Promise.race([
+      promessa,
+      new Promise<T>((_, rejeitar) =>
+        setTimeout(() => rejeitar(new Error('sem-resposta')), limiteSegundos * 1000)),
+    ]);
+  }
+
   function runAi() {
     setError(null);
+    setSegundos(0);
     startTransition(async () => {
-      const result = await generateScopeAction({
+      try {
+        await gerar();
+      } catch {
+        setError(
+          'O servidor não respondeu a tempo. Tente o nível "Resumido", ou confira o modelo '
+          + 'em Configurações → Inteligência artificial (o botão "Testar conexão" mostra se ele existe).',
+        );
+      }
+    });
+  }
+
+  async function gerar() {
+    const result = await comLimite(
+      generateScopeAction({
         serviceType, description, clientType: clientType || undefined, area: area || undefined,
         cliente: clienteNome || undefined,
         documentos: documentos.trim() || undefined,
@@ -145,13 +185,15 @@ export function ScopeAssistant({
           Object.entries(extras).filter(([, v]) => v.trim() !== ''),
         ),
         nivel,
-      });
-      if ('error' in result) setError(result.error);
-      else {
-        setDraft(result.scope);
-        setSourceTemplateId('');
-      }
-    });
+      }),
+      70,
+    );
+
+    if ('error' in result) setError(result.error);
+    else {
+      setDraft(result.scope);
+      setSourceTemplateId('');
+    }
   }
 
   function applyTemplate(templateId: string) {
@@ -340,7 +382,7 @@ export function ScopeAssistant({
                 className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-brand px-4 py-2 text-xs font-semibold text-white transition hover:bg-brand-dark disabled:cursor-not-allowed disabled:opacity-50"
               >
                 <Sparkles className="h-3.5 w-3.5" aria-hidden />
-                {pending ? 'Gerando…' : 'Gerar escopo'}
+                {pending ? `Gerando… ${segundos}s` : 'Gerar escopo'}
               </button>
             </div>
           )}
