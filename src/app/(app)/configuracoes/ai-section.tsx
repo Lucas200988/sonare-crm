@@ -8,15 +8,29 @@ import {
 import { inputCls, Field, FormError } from '@/components/ui';
 
 /**
- * Modelos sugeridos por provedor. O primeiro é o padrão ao trocar de
+ * Modelos oferecidos por provedor. O primeiro é o padrão ao trocar de
  * provedor — e é um modelo forte de propósito: o prompt de escopo tem treze
  * seções de regras, e modelo pequeno obedece mal justamente na parte de não
  * ampliar o escopo.
+ *
+ * A lista envelhece; por isso existe a opção de digitar um nome à mão, para
+ * não travar quem quiser usar um modelo lançado depois desta tela.
  */
-const MODEL_HINTS: Record<string, string[]> = {
-  openai: ['gpt-4o', 'gpt-4.1', 'gpt-4o-mini'],
-  anthropic: ['claude-sonnet-4-5', 'claude-opus-4-5', 'claude-haiku-4-5'],
+const MODELOS: Record<string, Array<{ id: string; rotulo: string }>> = {
+  openai: [
+    { id: 'gpt-4o', rotulo: 'GPT-4o — equilibrado, recomendado' },
+    { id: 'gpt-4.1', rotulo: 'GPT-4.1 — mais capaz, mais caro' },
+    { id: 'gpt-4o-mini', rotulo: 'GPT-4o mini — barato, obedece mal a prompt longo' },
+    { id: 'gpt-4.1-mini', rotulo: 'GPT-4.1 mini — barato' },
+  ],
+  anthropic: [
+    { id: 'claude-sonnet-5', rotulo: 'Claude Sonnet 5 — equilibrado, recomendado' },
+    { id: 'claude-opus-5', rotulo: 'Claude Opus 5 — o mais capaz, mais caro' },
+    { id: 'claude-haiku-4-5', rotulo: 'Claude Haiku 4.5 — rápido e barato' },
+  ],
 };
+
+const OUTRO = '__outro__';
 
 /** Prefixos que identificam a que provedor um modelo pertence. */
 const PREFIXOS: Record<string, string> = { openai: 'gpt', anthropic: 'claude' };
@@ -36,13 +50,36 @@ export function AiSection({
   const [provider, setProvider] = useState(status.provider);
   // Controlado: com defaultValue, trocar de provedor deixava o modelo antigo
   // no campo — e "Anthropic + gpt-4" só falha lá na frente, na chamada.
-  const [model, setModel] = useState(status.model || MODEL_HINTS[status.provider]?.[0] || '');
+  const [model, setModel] = useState(
+    status.model || MODELOS[status.provider]?.[0]?.id || '',
+  );
   const [testing, startTest] = useTransition();
   const [testResult, setTestResult] = useState<AiActionState | null>(null);
 
+  /*
+   * "Outro" precisa de estado próprio: deduzir pelo valor faria o campo
+   * voltar sozinho para o primeiro da lista assim que o usuário apagasse o
+   * texto para digitar outro nome.
+   */
+  const [personalizado, setPersonalizado] = useState(() => {
+    const lista = MODELOS[status.provider] ?? [];
+    return Boolean(status.model) && !lista.some((m) => m.id === status.model);
+  });
+
+  const daLista = MODELOS[provider] ?? [];
+
+  function escolherModelo(valor: string) {
+    if (valor === OUTRO) { setPersonalizado(true); setModel(''); return; }
+    setPersonalizado(false);
+    setModel(valor);
+  }
+
   function trocarProvedor(novo: string) {
     setProvider(novo);
-    if (!modeloCombina(novo, model)) setModel(MODEL_HINTS[novo]?.[0] ?? '');
+    if (!modeloCombina(novo, model)) {
+      setPersonalizado(false);
+      setModel(MODELOS[novo]?.[0]?.id ?? '');
+    }
   }
 
   return (
@@ -67,14 +104,31 @@ export function AiSection({
             </select>
           </Field>
           <Field label="Modelo" htmlFor="ai-model">
-            <input
-              id="ai-model" name="model" list="ai-models"
-              value={model} onChange={(e) => setModel(e.target.value)}
+            {/*
+              Lista fechada, não autocompletar: o datalist anterior filtrava as
+              sugestões pelo texto já digitado, então o campo parecia ter uma
+              opção só. O valor enviado vai no input escondido.
+            */}
+            <select
+              id="ai-model"
+              value={personalizado ? OUTRO : model}
+              onChange={(e) => escolherModelo(e.target.value)}
               className={inputCls}
-            />
-            <datalist id="ai-models">
-              {(MODEL_HINTS[provider] ?? []).map((m) => <option key={m} value={m} />)}
-            </datalist>
+            >
+              {daLista.map((m) => <option key={m.id} value={m.id}>{m.rotulo}</option>)}
+              <option value={OUTRO}>Outro — digitar o nome do modelo</option>
+            </select>
+            <input type="hidden" name="model" value={model} />
+
+            {personalizado ? (
+              <input
+                aria-label="Nome do modelo"
+                value={model} onChange={(e) => setModel(e.target.value)}
+                placeholder={provider === 'openai' ? 'gpt-…' : 'claude-…'}
+                className={`${inputCls} mt-1.5`}
+              />
+            ) : null}
+
             {!modeloCombina(provider, model) ? (
               <p className="mt-1 text-[11px] text-amber-700">
                 “{model}” não parece um modelo da {provider === 'openai' ? 'OpenAI' : 'Anthropic'} —
