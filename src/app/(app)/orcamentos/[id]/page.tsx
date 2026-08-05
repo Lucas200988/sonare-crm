@@ -18,6 +18,7 @@ import { BudgetEditor, type EditorFields, type EditorItem } from './budget-edito
 import {
   SubmitBudgetButton, ApprovalDecision, NewVersionForm,
   GenerateProposalButton, ProposalEventForm, DangerZone, PreviewButton, SendProposalButton,
+  ChangeClientButton,
 } from './flow-actions';
 import { ViewDocumentButton } from '@/components/pdf-viewer';
 import { DeliveryStatus } from './delivery-status';
@@ -97,6 +98,20 @@ export default async function BudgetDetailPage(props: { params: Promise<{ id: st
 
   const allProposals = budget.currentVersion.proposals;
   const nomeCliente = budget.client.tradeName ?? budget.client.legalName;
+
+  /*
+   * Trocar o cliente é correção de engano de cadastro. Depois de emitida a
+   * proposta o nome já saiu no PDF e no código de verificação, então a opção
+   * some — o caminho passa a ser um orçamento novo.
+   */
+  const podeTrocarCliente = editable && allProposals.length === 0;
+  const clientes = podeTrocarCliente
+    ? await prisma.client.findMany({
+        where: { companyId: user.companyId, deletedAt: null, status: 'ATIVO' },
+        select: { id: true, legalName: true, tradeName: true },
+        orderBy: { legalName: 'asc' },
+      })
+    : [];
   // situacao de entrega dos e-mails de cada proposta desta versao
   const entregas = await Promise.all(
     allProposals.map((p) => getEntregas(user.companyId, 'proposal', p.id)),
@@ -106,7 +121,16 @@ export default async function BudgetDetailPage(props: { params: Promise<{ id: st
     <div className="mx-auto max-w-6xl">
       <PageHeader
         title={`${budget.code} — V${String(cv.versionNumber).padStart(2, '0')}`}
-        subtitle={budget.client.tradeName ?? budget.client.legalName}
+        subtitle={
+          <span className="flex flex-wrap items-center gap-2">
+            {nomeCliente}
+            {podeTrocarCliente ? (
+              <ChangeClientButton
+                budgetId={budget.id} clientId={budget.clientId} clients={clientes}
+              />
+            ) : null}
+          </span>
+        }
         actions={
           <div className="flex items-center gap-3">
             {cv.immutable ? <Badge color="slate">Versão congelada</Badge> : null}

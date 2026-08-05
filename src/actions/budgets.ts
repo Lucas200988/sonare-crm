@@ -114,6 +114,21 @@ export async function newVersionAction(budgetId: string, _prev: ActionState, for
   return {};
 }
 
+/** Corrige o cliente de um orçamento ainda sem proposta emitida. */
+export async function changeBudgetClientAction(
+  budgetId: string, clientId: string,
+): Promise<ActionState> {
+  const user = await requirePermission('budget:write');
+  if (!clientId) return { error: 'Selecione o cliente.' };
+
+  const result = await budgets.changeBudgetClient(user, budgetId, clientId);
+  if ('error' in result) return { error: result.error };
+
+  revalidatePath(`/orcamentos/${budgetId}`);
+  revalidatePath('/orcamentos');
+  return { info: 'Cliente alterado. Confira o solicitante e a unidade.' };
+}
+
 export async function submitBudgetAction(budgetId: string): Promise<ActionState> {
   const user = await requirePermission('budget:write');
   const result = await budgets.submitBudget(user, budgetId);

@@ -7,11 +7,12 @@ import { PdfViewer, ViewDocumentButton } from '@/components/pdf-viewer';
 import {
   submitBudgetAction, decideApprovalAction, newVersionAction,
   generateProposalAction, proposalEventAction, deleteBudgetAction, cancelBudgetAction,
-  sendProposalAction,
+  sendProposalAction, changeBudgetClientAction,
   type ActionState,
 } from '@/actions/budgets';
 import { inputCls, FormError } from '@/components/ui';
 import { nomeArquivoPrevia } from '@/lib/proposta-codigo';
+import { ClientSelect, type ClientOption } from '@/components/client-select';
 
 /** Mostra o PDF como a proposta ficará, na própria tela, sem emitir documento. */
 export function PreviewButton({ budgetId, budgetCode, cliente }: {
@@ -421,5 +422,84 @@ export function ProposalEventForm({ proposalId, budgetId, status }: { proposalId
       </button>
       <FormError message={state.error} />
     </form>
+  );
+}
+
+/**
+ * Troca o cliente do orçamento.
+ *
+ * Fica fechado por padrão, ao lado do nome no cabeçalho: é correção de
+ * engano, não parte do fluxo normal. Some depois que a proposta é emitida,
+ * porque aí o documento já saiu com o nome do cliente.
+ */
+export function ChangeClientButton({
+  budgetId, clientId, clients,
+}: {
+  budgetId: string;
+  clientId: string;
+  clients: ClientOption[];
+}) {
+  const router = useRouter();
+  const [aberto, setAberto] = useState(false);
+  const [escolhido, setEscolhido] = useState(clientId);
+  const [pending, startTransition] = useTransition();
+  const [erro, setErro] = useState<string | null>(null);
+
+  function salvar() {
+    startTransition(async () => {
+      setErro(null);
+      const r = await changeBudgetClientAction(budgetId, escolhido);
+      if (r.error) setErro(r.error);
+      else { setAberto(false); router.refresh(); }
+    });
+  }
+
+  if (!aberto) {
+    return (
+      <button
+        type="button"
+        onClick={() => setAberto(true)}
+        className="text-xs font-medium text-brand hover:underline"
+      >
+        Trocar cliente
+      </button>
+    );
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/50 p-4" role="dialog" aria-modal="true" aria-label="Trocar cliente do orçamento">
+      <div className="w-full max-w-lg rounded-xl bg-white p-5 shadow-2xl">
+        <h3 className="text-base font-semibold text-slate-900">Trocar o cliente</h3>
+        <p className="mt-1 text-xs text-slate-500">
+          A unidade, o solicitante e a oportunidade vinculada serão desfeitos — eles
+          pertencem ao cliente atual. O escopo, os itens e os preços continuam como estão.
+        </p>
+
+        <div className="mt-3">
+          <ClientSelect
+            id="troca-cliente" name="clientId" clients={clients}
+            defaultValue={clientId} onSelect={setEscolhido}
+          />
+        </div>
+
+        <FormError message={erro} />
+
+        <div className="mt-4 flex justify-end gap-2">
+          <button
+            type="button" onClick={() => setAberto(false)}
+            className="rounded-lg border border-slate-300 px-4 py-2 text-sm text-slate-600 hover:bg-slate-50"
+          >
+            Cancelar
+          </button>
+          <button
+            type="button" onClick={salvar}
+            disabled={pending || escolhido === clientId || !escolhido}
+            className="rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-white hover:bg-brand-dark disabled:opacity-50"
+          >
+            {pending ? 'Salvando…' : 'Trocar cliente'}
+          </button>
+        </div>
+      </div>
+    </div>
   );
 }

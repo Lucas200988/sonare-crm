@@ -131,6 +131,76 @@ export async function getBudget(user: SessionUser, id: string) {
   });
 }
 
+/**
+ * Troca o cliente de um orçamento já criado.
+ *
+ * Acontece por engano de digitação na criação, ou quando a mesma demanda
+ * acaba sendo contratada por outra empresa do grupo. Refazer o orçamento do
+ * zero só para corrigir o cabeçalho é perda de trabalho.
+ *
+ * Unidade, solicitante e oportunidade pertencem ao cliente antigo, então são
+ * desvinculados junto — deixá-los apontaria a proposta para o contato errado.
+ */
+export async function changeBudgetClient(
+  user: SessionUser,
+  budgetId: string,
+  clientId: string,
+) {
+  const budget = await prisma.budget.findFirst({
+    where: { id: budgetId, companyId: user.companyId, deletedAt: null },
+    include: {
+      client: { select: { legalName: true } },
+      currentVersion: { select: { immutable: true } },
+      versions: {
+        select: { proposals: { where: { deletedAt: null }, select: { code: true } } },
+      },
+    },
+  });
+  if (!budget) return { error: 'Orçamento não encontrado.' };
+
+  /*
+   * Proposta emitida carrega o nome do cliente no PDF, no código de
+   * verificação e no histórico de envio. Trocar o cliente depois disso faria
+   * o documento mentir — o caminho é criar outro orçamento.
+   */
+  const emitidas = budget.versions.flatMap((v) => v.proposals);
+  if (emitidas.length > 0) {
+    return {
+      error: `Este orçamento já gerou a proposta ${emitidas[0].code}. `
+        + 'Para outro cliente, crie um orçamento novo.',
+    };
+  }
+  if (budget.currentVersion?.immutable) {
+    return { error: 'Esta versão está congelada e não aceita mais alterações.' };
+  }
+  if (budget.clientId === clientId) return { ok: true as const };
+
+  const novo = await prisma.client.findFirst({
+    where: { id: clientId, companyId: user.companyId, deletedAt: null },
+    select: { id: true, legalName: true },
+  });
+  if (!novo) return { error: 'Cliente não encontrado.' };
+
+  await prisma.budget.update({
+    where: { id: budgetId },
+    data: {
+      clientId: novo.id,
+      clientUnitId: null,
+      contactId: null,
+      opportunityId: null,
+      updatedById: user.id,
+    },
+  });
+
+  await auditLog({
+    companyId: user.companyId, userId: user.id, action: 'update',
+    entityType: 'budget', entityId: budgetId,
+    before: { cliente: budget.client.legalName },
+    after: { cliente: novo.legalName },
+  });
+  return { ok: true as const };
+}
+
 // ---------- Criação ----------
 
 export async function createBudget(user: SessionUser, input: {
