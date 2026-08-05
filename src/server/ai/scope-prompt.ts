@@ -285,8 +285,16 @@ const REGRAS_POR_NIVEL: Record<NivelDetalhe, string> = {
   resumido: `
 14. PROFUNDIDADE DESTA RODADA — RESUMIDO
 Produza o escopo detalhado com 2 a 4 etapas e poucas atividades por etapa,
-suficiente para um orçamento rápido de serviço simples. Mantenha todos os
-demais campos do JSON.`,
+suficiente para um orçamento rápido de serviço simples.
+
+Este nível existe para responder rápido. Devolva vazios os campos de
+análise, que não entram na proposta e podem ser obtidos depois em outra
+rodada: resumo_executivo, contexto_justificativa, beneficios_contratante,
+informacoes_confirmadas, informacoes_inferidas, riscos_orcamentarios,
+servicos_opcionais, resumo_whatsapp e observacoes_internas.
+Continue preenchendo perguntas_necessarias e pontos_a_confirmar quando
+houver dúvida que mude preço, prazo ou responsabilidade — essas não podem
+esperar.`,
   padrao: `
 14. PROFUNDIDADE DESTA RODADA — PADRÃO
 Produza o escopo detalhado com 4 a 7 etapas e de 3 a 6 atividades por etapa.

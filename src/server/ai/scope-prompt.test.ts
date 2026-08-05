@@ -58,6 +58,16 @@ describe('promptDoNivel', () => {
     expect(promptDoNivel('detalhado')).toContain('6 a 10 etapas');
   });
 
+  it('o resumido dispensa os campos de análise, para responder rápido', () => {
+    // são o grosso da saída e não entram na proposta; podem vir noutra rodada
+    const p = promptDoNivel('resumido');
+    for (const campo of ['resumo_whatsapp', 'riscos_orcamentarios', 'beneficios_contratante']) {
+      expect(p, campo).toContain(campo);
+    }
+    // o que muda preço ou responsabilidade continua obrigatório
+    expect(p).toContain('Continue preenchendo perguntas_necessarias');
+  });
+
   it('só o detalhado pede o nível de memorial', () => {
     expect(promptDoNivel('detalhado')).toContain('memorial descritivo: 6 a 10 etapas');
     expect(promptDoNivel('resumido')).not.toContain('6 a 10 etapas');

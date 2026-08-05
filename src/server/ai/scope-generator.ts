@@ -269,10 +269,15 @@ export async function generateScope(
     if (message.includes('401')) return { error: 'Chave de API inválida ou expirada.' };
     if (message.includes('429')) return { error: 'Limite de uso da API atingido. Tente novamente em instantes.' };
     if (message.toLowerCase().includes('timeout') || message.includes('aborted')) {
+      // O modelo é o fator que mais pesa aqui: os de raciocínio gastam
+      // dezenas de segundos antes da primeira palavra.
+      const lento = ehRaciocinio(config.model)
+        ? ` O modelo "${config.model}" é de raciocínio e costuma não caber no tempo desta tela.`
+        : '';
       return {
-        error: 'A IA passou de 50 segundos e a geração foi interrompida. '
-          + 'Tente o nível "Resumido", ou um modelo mais rápido em '
-          + 'Configurações → Inteligência artificial.',
+        error: 'A IA passou de 50 segundos e a geração foi interrompida.' + lento
+          + ' Troque por um modelo direto (GPT-4o, por exemplo) em Configurações →'
+          + ' Inteligência artificial, ou use o nível "Resumido".',
       };
     }
     return { error: `Falha ao gerar escopo: ${message}` };

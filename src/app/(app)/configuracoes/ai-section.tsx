@@ -18,19 +18,30 @@ import { inputCls, Field, FormError } from '@/components/ui';
  */
 const MODELOS: Record<string, Array<{ id: string; rotulo: string }>> = {
   openai: [
-    { id: 'gpt-4o', rotulo: 'GPT-4o — equilibrado, recomendado' },
-    { id: 'gpt-4.1', rotulo: 'GPT-4.1 — mais capaz, mais caro' },
+    { id: 'gpt-4o', rotulo: 'GPT-4o — rápido e equilibrado, recomendado' },
+    { id: 'gpt-4.1', rotulo: 'GPT-4.1 — mais capaz, ainda rápido' },
+    { id: 'gpt-4.1-mini', rotulo: 'GPT-4.1 mini — o mais barato' },
     { id: 'gpt-4o-mini', rotulo: 'GPT-4o mini — barato, obedece mal a prompt longo' },
-    { id: 'gpt-4.1-mini', rotulo: 'GPT-4.1 mini — barato' },
   ],
   anthropic: [
     { id: 'claude-sonnet-5', rotulo: 'Claude Sonnet 5 — equilibrado, recomendado' },
-    { id: 'claude-opus-5', rotulo: 'Claude Opus 5 — o mais capaz, mais caro' },
-    { id: 'claude-haiku-4-5', rotulo: 'Claude Haiku 4.5 — rápido e barato' },
+    { id: 'claude-haiku-4-5', rotulo: 'Claude Haiku 4.5 — o mais rápido' },
+    { id: 'claude-opus-5', rotulo: 'Claude Opus 5 — o mais capaz, mais lento' },
   ],
 };
 
 const OUTRO = '__outro__';
+
+/**
+ * Modelo de raciocínio (série o, família GPT-5)?
+ *
+ * Eles "pensam" antes de responder, o que aqui é só espera: a geração de
+ * escopo pede obediência a um prompt longo, com a estrutura da resposta já
+ * definida. Na prática estouram o tempo da requisição.
+ */
+function ehRaciocinio(model: string): boolean {
+  return /^(o\d|gpt-5)/i.test(model.trim());
+}
 
 /** Prefixos que identificam a que provedor um modelo pertence. */
 const PREFIXOS: Record<string, string> = { openai: 'gpt', anthropic: 'claude' };
@@ -133,6 +144,12 @@ export function AiSection({
               <p className="mt-1 text-[11px] text-amber-700">
                 “{model}” não parece um modelo da {provider === 'openai' ? 'OpenAI' : 'Anthropic'} —
                 a chamada vai falhar na hora de gerar.
+              </p>
+            ) : ehRaciocinio(model) ? (
+              <p className="mt-1 rounded bg-amber-50 px-2 py-1.5 text-[11px] text-amber-800">
+                <strong>“{model}” é um modelo de raciocínio.</strong> Ele pensa antes de escrever,
+                e a geração de escopo costuma passar do tempo da requisição — a tela devolve erro
+                em vez do texto. Para esta função, prefira um modelo direto como GPT-4o.
               </p>
             ) : null}
           </Field>
