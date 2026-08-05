@@ -127,14 +127,30 @@ INSTRUÇÕES ESPECÍFICAS
 const LIMITE_GERACAO_MS = 50_000;
 
 /**
- * Modelos de raciocínio recusam `temperature` diferente de 1.
+ * Modelo de raciocínio (série o, família GPT-5)?
  *
- * A tentativa e o reenvio abaixo resolvem o caso geral, mas cada rodada
- * perdida custa uma chamada e vários segundos — e o tempo é curto. Este
- * atalho evita o desperdício nos que já se sabe que recusam.
+ * Eles gastam tokens "pensando" antes de escrever. Para conversa isso é
+ * ótimo; aqui é latência pura — o que se pede é obediência a um prompt
+ * longo, e a estrutura da resposta já vem definida.
  */
-function aceitaTemperature(model: string): boolean {
-  return !/^(o\d|gpt-5)/i.test(model.trim());
+function ehRaciocinio(model: string): boolean {
+  return /^(o\d|gpt-5)/i.test(model.trim());
+}
+
+/**
+ * Ajustes que só valem para modelos de raciocínio.
+ *
+ * Eles recusam `temperature` diferente de 1, e sem limitar o esforço a
+ * geração passa do tempo da função e a tela fica esperando por nada. O
+ * reenvio automático continua como rede de segurança se o nome do
+ * parâmetro mudar.
+ */
+function ajustarParaModelo(model: string, corpo: Record<string, unknown>): Record<string, unknown> {
+  if (!ehRaciocinio(model)) return corpo;
+  const semTemperatura = Object.fromEntries(
+    Object.entries(corpo).filter(([chave]) => chave !== 'temperature'),
+  );
+  return { ...semTemperatura, reasoning_effort: 'low' };
 }
 
 /** O modelo recusou algum parâmetro do corpo? Devolve o nome dele. */
@@ -162,8 +178,10 @@ async function postOpenAI(
   corpo: Record<string, unknown>,
   timeoutMs: number,
 ): Promise<string> {
-  let payload: Record<string, unknown> = { ...corpo, model: config.model };
-  if (!aceitaTemperature(config.model)) delete payload.temperature;
+  let payload: Record<string, unknown> = {
+    ...ajustarParaModelo(config.model, corpo),
+    model: config.model,
+  };
 
   for (let tentativa = 0; tentativa < 3; tentativa++) {
     const res = await fetch('https://api.openai.com/v1/chat/completions', {

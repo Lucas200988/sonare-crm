@@ -80,24 +80,40 @@ describe('chamada ao OpenAI — parâmetro recusado pelo modelo', () => {
     expect('scope' in r && r.scope.scope).toContain('Projeto elétrico.');
   });
 
-  it('nem manda temperature para modelo de raciocínio', async () => {
+  it('ajusta o pedido para modelo de raciocínio já na primeira tentativa', async () => {
     /*
-     * O reenvio resolve o caso geral, mas custa uma chamada e vários
-     * segundos — e o limite da função é curto. Nos modelos que já se sabe
-     * que recusam, o parâmetro sai antes da primeira tentativa.
+     * Sem limitar o esforço, a geração passa do tempo da função e a tela
+     * espera por nada. E o temperature sai antes de ser recusado — cada
+     * rodada perdida custa uma chamada e vários segundos.
      */
     const fetchFalso = vi.fn().mockResolvedValue(respostaBoa);
     vi.stubGlobal('fetch', fetchFalso);
 
-    const { generateScope } = await carregar('gpt-5');
+    const { generateScope } = await carregar('gpt-5.5');
     await generateScope('empresa-1', {
       serviceType: 'Projeto elétrico',
       description: 'Subestação de 300 kVA para unidade industrial.',
     });
 
     expect(fetchFalso).toHaveBeenCalledTimes(1);
-    expect(JSON.parse(fetchFalso.mock.calls[0][1].body as string))
-      .not.toHaveProperty('temperature');
+    const corpo = JSON.parse(fetchFalso.mock.calls[0][1].body as string);
+    expect(corpo).not.toHaveProperty('temperature');
+    expect(corpo.reasoning_effort).toBe('low');
+  });
+
+  it('modelo comum continua recebendo temperature e nenhum esforço', async () => {
+    const fetchFalso = vi.fn().mockResolvedValue(respostaBoa);
+    vi.stubGlobal('fetch', fetchFalso);
+
+    const { generateScope } = await carregar('gpt-4o');
+    await generateScope('empresa-1', {
+      serviceType: 'Projeto elétrico',
+      description: 'Subestação de 300 kVA para unidade industrial.',
+    });
+
+    const corpo = JSON.parse(fetchFalso.mock.calls[0][1].body as string);
+    expect(corpo.temperature).toBe(0.4);
+    expect(corpo).not.toHaveProperty('reasoning_effort');
   });
 
   it('não repete a chamada quando o erro é outro', async () => {
