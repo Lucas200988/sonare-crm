@@ -1,11 +1,13 @@
 'use client';
 
-import { useEffect, useState, useTransition } from 'react';
+import { useEffect, useRef, useState, useTransition } from 'react';
 import {
   BookmarkPlus, ChevronDown, ChevronUp, Copy, FileStack, FileText,
-  Plus, Sparkles, Trash2, X,
+  Plus, Sparkles, Trash2, Upload, X,
 } from 'lucide-react';
-import { generateScopeAction, saveScopeTemplateAction } from '@/actions/ai';
+import {
+  extrairDocumentoAction, generateScopeAction, saveScopeTemplateAction,
+} from '@/actions/ai';
 import { inputCls, Field, FormError } from '@/components/ui';
 import { ReviewableTextarea } from '@/components/text-field';
 
@@ -127,6 +129,7 @@ export function ScopeAssistant({
   const [area, setArea] = useState('');
   const [detalhes, setDetalhes] = useState(false);
   const [documentos, setDocumentos] = useState('');
+  const [nomeDocumento, setNomeDocumento] = useState('');
   const [extras, setExtras] = useState<Record<string, string>>({});
 
   const preenchidos = (documentos.trim() ? 1 : 0)
@@ -328,10 +331,10 @@ export function ScopeAssistant({
 
                 {detalhes ? (
                   <div className="mt-2 space-y-2 rounded-lg border border-slate-200 bg-slate-50 p-2.5">
-                    <textarea
-                      value={documentos} onChange={(e) => setDocumentos(e.target.value)} rows={6}
-                      placeholder="Cole aqui o termo de referência, o edital, o memorial ou o e-mail do cliente. Quanto mais completo, menos a IA precisa supor."
-                      className={inputCls} aria-label="Termo de referência ou documentos"
+                    <DocumentoAnexo
+                      atual={documentos ? { nome: nomeDocumento, caracteres: documentos.length } : null}
+                      onLido={(texto, nome) => { setDocumentos(texto); setNomeDocumento(nome); }}
+                      onRemover={() => { setDocumentos(''); setNomeDocumento(''); }}
                     />
                     <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                       {CAMPOS.map((c) => (
@@ -821,6 +824,97 @@ export function PainelAnalise({ analise }: { analise: AnaliseComercial }) {
           <p className="mt-1 whitespace-pre-wrap text-[11px] text-slate-600">{analise.resumoWhatsapp}</p>
         </div>
       ) : null}
+    </div>
+  );
+}
+
+/**
+ * Termo de referência anexado.
+ *
+ * O arquivo não é guardado: o servidor extrai o texto, devolve, e é o texto
+ * que entra no briefing da IA. A leitura é um passo separado da geração de
+ * propósito — um PDF digitalizado, sem camada de texto, aparece na hora, e
+ * não depois de quarenta segundos esperando o escopo.
+ */
+function DocumentoAnexo({
+  atual, onLido, onRemover,
+}: {
+  atual: { nome: string; caracteres: number } | null;
+  onLido: (texto: string, nome: string) => void;
+  onRemover: () => void;
+}) {
+  const [lendo, setLendo] = useState(false);
+  const [erro, setErro] = useState<string | null>(null);
+  const [aviso, setAviso] = useState<string | null>(null);
+  const campo = useRef<HTMLInputElement>(null);
+
+  async function enviar(arquivo: File) {
+    setErro(null);
+    setAviso(null);
+    setLendo(true);
+    try {
+      const dados = new FormData();
+      dados.append('arquivo', arquivo);
+      const r = await extrairDocumentoAction(dados);
+      if ('error' in r) { setErro(r.error); return; }
+      onLido(r.texto, r.nome);
+      if (r.cortado) {
+        setAviso(
+          `Documento longo (${r.caracteres.toLocaleString('pt-BR')} caracteres). `
+          + 'Foram usados os primeiros 60 mil — normalmente é onde está o objeto do serviço.',
+        );
+      }
+    } catch {
+      setErro('Falha ao enviar o arquivo. Tente novamente.');
+    } finally {
+      setLendo(false);
+      if (campo.current) campo.current.value = '';
+    }
+  }
+
+  if (atual) {
+    return (
+      <div>
+        <div className="flex items-center gap-2 rounded-lg border border-green-200 bg-green-50 px-2.5 py-2">
+          <FileText className="h-4 w-4 shrink-0 text-green-700" aria-hidden />
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-xs font-medium text-green-900">{atual.nome}</p>
+            <p className="text-[11px] text-green-800">
+              {atual.caracteres.toLocaleString('pt-BR')} caracteres lidos
+            </p>
+          </div>
+          <button
+            type="button" onClick={onRemover}
+            className="rounded p-1 text-green-700 hover:bg-green-100"
+            aria-label="Remover documento"
+          >
+            <X className="h-3.5 w-3.5" aria-hidden />
+          </button>
+        </div>
+        {aviso ? <p className="mt-1 text-[11px] text-amber-700">{aviso}</p> : null}
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      <input
+        ref={campo} type="file" accept=".pdf,.docx,.txt,.md" className="hidden"
+        onChange={(e) => { const f = e.target.files?.[0]; if (f) void enviar(f); }}
+      />
+      <button
+        type="button"
+        disabled={lendo}
+        onClick={() => campo.current?.click()}
+        className="flex w-full items-center justify-center gap-2 rounded-lg border border-dashed border-slate-300 px-3 py-4 text-xs font-medium text-slate-600 hover:border-brand hover:text-brand disabled:opacity-60"
+      >
+        <Upload className="h-4 w-4" aria-hidden />
+        {lendo ? 'Lendo o documento…' : 'Anexar termo de referência, edital ou memorial'}
+      </button>
+      <p className="mt-1 text-center text-[10px] text-slate-400">
+        PDF, Word (.docx) ou texto, até 15 MB. O arquivo não é guardado — só o texto é lido.
+      </p>
+      {erro ? <p className="mt-1 text-[11px] text-red-600">{erro}</p> : null}
     </div>
   );
 }

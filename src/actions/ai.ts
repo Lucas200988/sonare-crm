@@ -6,6 +6,7 @@ import { requirePermission } from '@/server/auth/guards';
 import { prisma } from '@/server/db';
 import { encryptSecret, decryptSecret, maskSecret } from '@/server/crypto';
 import { generateScope, reviewText, testAiConnection, type GeneratedScope } from '@/server/ai/scope-generator';
+import { extrairTexto } from '@/server/ai/extrair-documento';
 import { auditLog } from '@/server/audit/audit';
 
 export type AiActionState = { error?: string; info?: string };
@@ -119,6 +120,25 @@ const briefingSchema = z.object({
   extraContext: campo,
   nivel: z.enum(['resumido', 'padrao', 'detalhado']).optional(),
 });
+
+/**
+ * Lê o termo de referência anexado e devolve o texto para o briefing.
+ *
+ * É um passo separado da geração de propósito: o usuário vê o que foi lido
+ * antes de gastar uma chamada de IA, e um PDF ilegível aparece na hora — não
+ * depois de quarenta segundos de espera.
+ */
+export async function extrairDocumentoAction(
+  formData: FormData,
+): Promise<{ error: string } | { texto: string; nome: string; cortado: boolean; caracteres: number }> {
+  await requirePermission('budget:write');
+  const arquivo = formData.get('arquivo');
+  if (!(arquivo instanceof File)) return { error: 'Nenhum arquivo enviado.' };
+
+  const r = await extrairTexto(arquivo);
+  if ('erro' in r) return { error: r.erro };
+  return { texto: r.texto, nome: r.nome, cortado: r.cortado, caracteres: r.caracteres };
+}
 
 export async function generateScopeAction(
   input: unknown,
