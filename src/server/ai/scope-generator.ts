@@ -117,30 +117,69 @@ INSTRUÇÕES ESPECÍFICAS
 5. Retorne exclusivamente no formato JSON estabelecido no prompt de sistema.`;
 }
 
-async function callOpenAI(config: AiConfig, briefing: ScopeBriefing): Promise<string> {
-  const res = await fetch('https://api.openai.com/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${config.apiKey}`,
-    },
-    body: JSON.stringify({
-      model: config.model,
-      temperature: 0.4,
-      response_format: { type: 'json_object' },
-      messages: [
-        { role: 'system', content: promptDoNivel(briefing.nivel) },
-        { role: 'user', content: buildUserPrompt(briefing) },
-      ],
-    }),
-    signal: AbortSignal.timeout(180_000),
-  });
-  if (!res.ok) {
-    const body = await res.text();
-    throw new Error(`OpenAI ${res.status}: ${body.slice(0, 300)}`);
+/** O modelo recusou algum parâmetro do corpo? Devolve o nome dele. */
+function parametroRecusado(corpo: string): string | null {
+  try {
+    const j = JSON.parse(corpo) as { error?: { code?: string; param?: string } };
+    if (j.error?.code !== 'unsupported_value' && j.error?.code !== 'unsupported_parameter') {
+      return null;
+    }
+    return j.error?.param ?? null;
+  } catch {
+    return null;
   }
-  const json = await res.json();
-  return json.choices?.[0]?.message?.content ?? '';
+}
+
+/**
+ * Chamada ao OpenAI que se ajusta ao modelo.
+ *
+ * Os modelos de raciocínio recusam `temperature` diferente de 1 e devolvem
+ * 400. Em vez de manter uma lista de quais aceitam o quê — que envelhece a
+ * cada lançamento —, a chamada tira o parâmetro recusado e tenta de novo.
+ */
+async function postOpenAI(
+  config: AiConfig,
+  corpo: Record<string, unknown>,
+  timeoutMs: number,
+): Promise<string> {
+  let payload: Record<string, unknown> = { ...corpo, model: config.model };
+
+  for (let tentativa = 0; tentativa < 3; tentativa++) {
+    const res = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${config.apiKey}` },
+      body: JSON.stringify(payload),
+      signal: AbortSignal.timeout(timeoutMs),
+    });
+
+    if (res.ok) {
+      const json = await res.json();
+      return json.choices?.[0]?.message?.content ?? '';
+    }
+
+    const body = await res.text();
+    const recusado = res.status === 400 ? parametroRecusado(body) : null;
+    // sem parâmetro para remover — ou já removido — o erro é real
+    if (!recusado || !(recusado in payload)) {
+      throw new Error(`OpenAI ${res.status}: ${body.slice(0, 300)}`);
+    }
+    payload = Object.fromEntries(
+      Object.entries(payload).filter(([chave]) => chave !== recusado),
+    );
+  }
+
+  throw new Error('OpenAI: o modelo recusou parâmetros demais na requisição.');
+}
+
+async function callOpenAI(config: AiConfig, briefing: ScopeBriefing): Promise<string> {
+  return postOpenAI(config, {
+    temperature: 0.4,
+    response_format: { type: 'json_object' },
+    messages: [
+      { role: 'system', content: promptDoNivel(briefing.nivel) },
+      { role: 'user', content: buildUserPrompt(briefing) },
+    ],
+  }, 180_000);
 }
 
 async function callAnthropic(config: AiConfig, briefing: ScopeBriefing): Promise<string> {
@@ -237,22 +276,13 @@ async function callTextModel(config: AiConfig, systemPrompt: string, userText: s
     return json.content?.[0]?.text ?? '';
   }
 
-  const res = await fetch('https://api.openai.com/v1/chat/completions', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${config.apiKey}` },
-    body: JSON.stringify({
-      model: config.model,
-      temperature: 0,
-      messages: [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: userText },
-      ],
-    }),
-    signal: AbortSignal.timeout(60_000),
-  });
-  if (!res.ok) throw new Error(`OpenAI ${res.status}: ${(await res.text()).slice(0, 300)}`);
-  const json = await res.json();
-  return json.choices?.[0]?.message?.content ?? '';
+  return postOpenAI(config, {
+    temperature: 0,
+    messages: [
+      { role: 'system', content: systemPrompt },
+      { role: 'user', content: userText },
+    ],
+  }, 60_000);
 }
 
 /**
