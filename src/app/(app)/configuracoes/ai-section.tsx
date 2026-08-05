@@ -7,10 +7,25 @@ import {
 } from '@/actions/ai';
 import { inputCls, Field, FormError } from '@/components/ui';
 
+/**
+ * Modelos sugeridos por provedor. O primeiro é o padrão ao trocar de
+ * provedor — e é um modelo forte de propósito: o prompt de escopo tem treze
+ * seções de regras, e modelo pequeno obedece mal justamente na parte de não
+ * ampliar o escopo.
+ */
 const MODEL_HINTS: Record<string, string[]> = {
-  openai: ['gpt-4o-mini', 'gpt-4o', 'gpt-4.1-mini'],
-  anthropic: ['claude-sonnet-4-5', 'claude-haiku-4-5'],
+  openai: ['gpt-4o', 'gpt-4.1', 'gpt-4o-mini'],
+  anthropic: ['claude-sonnet-4-5', 'claude-opus-4-5', 'claude-haiku-4-5'],
 };
+
+/** Prefixos que identificam a que provedor um modelo pertence. */
+const PREFIXOS: Record<string, string> = { openai: 'gpt', anthropic: 'claude' };
+
+function modeloCombina(provider: string, model: string): boolean {
+  const prefixo = PREFIXOS[provider];
+  if (!prefixo || !model.trim()) return true;
+  return model.trim().toLowerCase().startsWith(prefixo);
+}
 
 export function AiSection({
   status,
@@ -19,8 +34,16 @@ export function AiSection({
 }) {
   const [state, formAction, pending] = useActionState<AiActionState, FormData>(saveAiConfigAction, {});
   const [provider, setProvider] = useState(status.provider);
+  // Controlado: com defaultValue, trocar de provedor deixava o modelo antigo
+  // no campo — e "Anthropic + gpt-4" só falha lá na frente, na chamada.
+  const [model, setModel] = useState(status.model || MODEL_HINTS[status.provider]?.[0] || '');
   const [testing, startTest] = useTransition();
   const [testResult, setTestResult] = useState<AiActionState | null>(null);
+
+  function trocarProvedor(novo: string) {
+    setProvider(novo);
+    if (!modeloCombina(novo, model)) setModel(MODEL_HINTS[novo]?.[0] ?? '');
+  }
 
   return (
     <div>
@@ -37,7 +60,7 @@ export function AiSection({
           <Field label="Provedor" htmlFor="ai-provider">
             <select
               id="ai-provider" name="provider" value={provider}
-              onChange={(e) => setProvider(e.target.value)} className={inputCls}
+              onChange={(e) => trocarProvedor(e.target.value)} className={inputCls}
             >
               <option value="openai">OpenAI (ChatGPT)</option>
               <option value="anthropic">Anthropic (Claude)</option>
@@ -46,18 +69,26 @@ export function AiSection({
           <Field label="Modelo" htmlFor="ai-model">
             <input
               id="ai-model" name="model" list="ai-models"
-              defaultValue={status.model || MODEL_HINTS[provider]?.[0]}
+              value={model} onChange={(e) => setModel(e.target.value)}
               className={inputCls}
             />
             <datalist id="ai-models">
               {(MODEL_HINTS[provider] ?? []).map((m) => <option key={m} value={m} />)}
             </datalist>
+            {!modeloCombina(provider, model) ? (
+              <p className="mt-1 text-[11px] text-amber-700">
+                “{model}” não parece um modelo da {provider === 'openai' ? 'OpenAI' : 'Anthropic'} —
+                a chamada vai falhar na hora de gerar.
+              </p>
+            ) : null}
           </Field>
         </div>
 
         <Field label={status.configured ? 'Nova chave de API (deixe vazio para manter a atual)' : 'Chave de API'} htmlFor="ai-key">
           <input
-            id="ai-key" name="apiKey" type="password" autoComplete="off"
+            // "new-password" porque o Chrome ignora "off" e preenche o campo
+            // com a senha salva do site — que sobrescreveria a chave da API
+            id="ai-key" name="apiKey" type="password" autoComplete="new-password"
             placeholder={provider === 'openai' ? 'sk-proj-…' : 'sk-ant-…'}
             className={inputCls}
           />
@@ -82,6 +113,12 @@ export function AiSection({
           />
           Ativar geração de escopo por IA
         </label>
+        {!status.configured ? (
+          <p className="rounded-lg bg-amber-50 px-3 py-2 text-[11px] text-amber-800">
+            Sem chave, a geração fica desligada mesmo com esta caixa marcada. Provedor e modelo
+            podem ser salvos agora; a chave pode vir depois.
+          </p>
+        ) : null}
 
         <FormError message={state.error} />
         {state.info ? (
