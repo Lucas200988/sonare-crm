@@ -41,13 +41,13 @@ describe('chamada ao OpenAI — parâmetro recusado pelo modelo', () => {
   };
 
   /** Carrega o gerador com a configuração de IA vinda do ambiente. */
-  async function carregar() {
+  async function carregar(modelo = 'gpt-4o') {
     vi.doMock('@/server/db', () => ({
       prisma: {
         systemSetting: {
           findMany: async () => [
             { key: 'ai.provider', value: 'openai' },
-            { key: 'ai.model', value: 'gpt-5' },
+            { key: 'ai.model', value: modelo },
             { key: 'ai.enabled', value: true },
           ],
         },
@@ -74,10 +74,30 @@ describe('chamada ao OpenAI — parâmetro recusado pelo modelo', () => {
     expect(primeira.temperature).toBe(0.4);
     expect(segunda).not.toHaveProperty('temperature');
     // o resto do pedido continua igual — só o parâmetro recusado sai
-    expect(segunda.model).toBe('gpt-5');
+    expect(segunda.model).toBe('gpt-4o');
     expect(segunda.messages).toHaveLength(2);
 
     expect('scope' in r && r.scope.scope).toContain('Projeto elétrico.');
+  });
+
+  it('nem manda temperature para modelo de raciocínio', async () => {
+    /*
+     * O reenvio resolve o caso geral, mas custa uma chamada e vários
+     * segundos — e o limite da função é curto. Nos modelos que já se sabe
+     * que recusam, o parâmetro sai antes da primeira tentativa.
+     */
+    const fetchFalso = vi.fn().mockResolvedValue(respostaBoa);
+    vi.stubGlobal('fetch', fetchFalso);
+
+    const { generateScope } = await carregar('gpt-5');
+    await generateScope('empresa-1', {
+      serviceType: 'Projeto elétrico',
+      description: 'Subestação de 300 kVA para unidade industrial.',
+    });
+
+    expect(fetchFalso).toHaveBeenCalledTimes(1);
+    expect(JSON.parse(fetchFalso.mock.calls[0][1].body as string))
+      .not.toHaveProperty('temperature');
   });
 
   it('não repete a chamada quando o erro é outro', async () => {

@@ -24,6 +24,14 @@ import { DeliveryStatus } from './delivery-status';
 
 export const metadata: Metadata = { title: 'Orçamento — SONARE CRM' };
 
+/**
+ * As Server Actions desta tela rodam na função desta rota, e a geração de
+ * escopo por IA leva dezenas de segundos. No padrão da plataforma a função
+ * era encerrada antes da resposta chegar — a tela ficava em "Gerando…" para
+ * sempre, porque a ação nunca retornava. 60 s é o teto do plano atual.
+ */
+export const maxDuration = 60;
+
 export default async function BudgetDetailPage(props: { params: Promise<{ id: string }> }) {
   const user = await requirePermissionPage('budget:read');
   const { id } = await props.params;

@@ -117,6 +117,26 @@ INSTRUÇÕES ESPECÍFICAS
 5. Retorne exclusivamente no formato JSON estabelecido no prompt de sistema.`;
 }
 
+/**
+ * Teto de espera de uma geração.
+ *
+ * Fica abaixo do `maxDuration` da rota de propósito: assim quem estoura o
+ * tempo recebe a nossa mensagem, em vez de a função ser encerrada no meio e
+ * a tela ficar em "Gerando…" para sempre.
+ */
+const LIMITE_GERACAO_MS = 50_000;
+
+/**
+ * Modelos de raciocínio recusam `temperature` diferente de 1.
+ *
+ * A tentativa e o reenvio abaixo resolvem o caso geral, mas cada rodada
+ * perdida custa uma chamada e vários segundos — e o tempo é curto. Este
+ * atalho evita o desperdício nos que já se sabe que recusam.
+ */
+function aceitaTemperature(model: string): boolean {
+  return !/^(o\d|gpt-5)/i.test(model.trim());
+}
+
 /** O modelo recusou algum parâmetro do corpo? Devolve o nome dele. */
 function parametroRecusado(corpo: string): string | null {
   try {
@@ -143,6 +163,7 @@ async function postOpenAI(
   timeoutMs: number,
 ): Promise<string> {
   let payload: Record<string, unknown> = { ...corpo, model: config.model };
+  if (!aceitaTemperature(config.model)) delete payload.temperature;
 
   for (let tentativa = 0; tentativa < 3; tentativa++) {
     const res = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -179,7 +200,7 @@ async function callOpenAI(config: AiConfig, briefing: ScopeBriefing): Promise<st
       { role: 'system', content: promptDoNivel(briefing.nivel) },
       { role: 'user', content: buildUserPrompt(briefing) },
     ],
-  }, 180_000);
+  }, LIMITE_GERACAO_MS);
 }
 
 async function callAnthropic(config: AiConfig, briefing: ScopeBriefing): Promise<string> {
@@ -197,7 +218,7 @@ async function callAnthropic(config: AiConfig, briefing: ScopeBriefing): Promise
       system: promptDoNivel(briefing.nivel),
       messages: [{ role: 'user', content: buildUserPrompt(briefing) }],
     }),
-    signal: AbortSignal.timeout(180_000),
+    signal: AbortSignal.timeout(LIMITE_GERACAO_MS),
   });
   if (!res.ok) {
     const body = await res.text();
@@ -230,7 +251,11 @@ export async function generateScope(
     if (message.includes('401')) return { error: 'Chave de API inválida ou expirada.' };
     if (message.includes('429')) return { error: 'Limite de uso da API atingido. Tente novamente em instantes.' };
     if (message.toLowerCase().includes('timeout') || message.includes('aborted')) {
-      return { error: 'A IA demorou demais para responder. Tente novamente.' };
+      return {
+        error: 'A IA passou de 50 segundos e a geração foi interrompida. '
+          + 'Tente o nível "Resumido", ou um modelo mais rápido em '
+          + 'Configurações → Inteligência artificial.',
+      };
     }
     return { error: `Falha ao gerar escopo: ${message}` };
   }
