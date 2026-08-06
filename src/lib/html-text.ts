@@ -6,10 +6,17 @@
  * pela revisão por IA e pelos orçamentos antigos, que foram salvos sem marcação.
  */
 
-/** Campo sem conteúdo real — o editor guarda "<p></p>" quando está vazio. */
+/**
+ * Campo sem conteúdo real.
+ *
+ * O editor guarda "<p></p>" quando está vazio, e um item de lista sem texto
+ * vira só o marcador — que renderizaria um traço solto embaixo do título da
+ * seção, na proposta que vai para o cliente. Marcador sem texto não é
+ * conteúdo.
+ */
 export function isEmptyRich(value: string | null | undefined): boolean {
   if (!value) return true;
-  return htmlToText(value).trim() === '';
+  return htmlToText(value).replace(/^[-•]\s*$/gm, '').trim() === '';
 }
 
 /** Um valor salvo antes do editor rico não tem tags — é tratado como texto puro. */

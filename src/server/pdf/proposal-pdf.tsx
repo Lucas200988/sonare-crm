@@ -5,7 +5,7 @@ import { formatBRL } from '@/lib/money';
 import { formatDateBR, formatDateTimeBR } from '@/lib/dates';
 import { parseInline, classifyLine } from '@/lib/rich-text';
 import { htmlToBlocks, type InlineRun } from '@/lib/html-blocks';
-import { isHtml } from '@/lib/html-text';
+import { isEmptyRich, isHtml } from '@/lib/html-text';
 
 const BRAND = '#e22020';
 const INK = '#111111';
@@ -249,8 +249,17 @@ export function ouNegociar(texto?: string | null): string {
   return semTags.trim() === '' ? 'A negociar.' : texto;
 }
 
+/**
+ * Campo do editor rico vazio não chega como string vazia: chega como
+ * parágrafo sem conteúdo. Testar a verdade da string deixava passar título
+ * de seção sem nada embaixo, na proposta que vai para o cliente.
+ */
+function temTexto(valor?: string | null): valor is string {
+  return !isEmptyRich(valor);
+}
+
 function TextBlock({ text }: { text?: string | null }) {
-  if (!text) return null;
+  if (!temTexto(text)) return null;
   // Conteúdo do editor rico; os orçamentos antigos seguem pelo caminho de texto puro
   if (isHtml(text)) return <HtmlBlock html={text} />;
   const lines = text.split('\n').map((l) => l.trim()).filter(Boolean);
@@ -378,13 +387,13 @@ export function ProposalPdf({ data }: { data: ProposalPdfData }) {
 
         <Section number={1} title="DESCRIÇÃO DOS SERVIÇOS" keepTogether={false}>
           <TextBlock text={data.scope} />
-          {data.premises ? (
+          {temTexto(data.premises) ? (
             <View>
               <Text style={styles.subHeading}>Premissas</Text>
               <TextBlock text={data.premises} />
             </View>
           ) : null}
-          {data.exclusions ? (
+          {temTexto(data.exclusions) ? (
             <View>
               <Text style={styles.subHeading}>Não fazem parte desta proposta</Text>
               <TextBlock text={data.exclusions} />
@@ -433,7 +442,7 @@ export function ProposalPdf({ data }: { data: ProposalPdfData }) {
 
         <Section number={4} title="PREVISÃO DE ENTREGA (PRAZO)">
           <TextBlock text={ouNegociar(data.executionDeadline)} />
-          {data.deliveryMethod ? <TextBlock text={`- Forma de entrega: ${data.deliveryMethod}`} /> : null}
+          {temTexto(data.deliveryMethod) ? <TextBlock text={`- Forma de entrega: ${data.deliveryMethod}`} /> : null}
         </Section>
 
         <Section number={5} title="VALIDADE DA PROPOSTA">
@@ -442,14 +451,14 @@ export function ProposalPdf({ data }: { data: ProposalPdfData }) {
           </Text>
         </Section>
 
-        {data.generalInfo || data.clientNotes ? (
+        {temTexto(data.generalInfo) || temTexto(data.clientNotes) ? (
           <Section number={6} title="INFORMAÇÕES GERAIS" keepTogether={false}>
             <TextBlock text={data.generalInfo} />
             <TextBlock text={data.clientNotes} />
           </Section>
         ) : null}
 
-        {data.differentials ? (
+        {temTexto(data.differentials) ? (
           <Section number={7} title="DIFERENCIAIS">
             <TextBlock text={data.differentials} />
           </Section>
