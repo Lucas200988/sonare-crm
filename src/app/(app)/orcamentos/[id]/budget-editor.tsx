@@ -530,9 +530,11 @@ export function BudgetEditor({
           />
         </Field>
         <Field label="Observações para o cliente (saem na proposta)" htmlFor="f-notas-cliente">
-          <ReviewableTextarea
-            id="f-notas-cliente" value={fields.clientNotes} onChange={(v) => setFields((f) => ({ ...f, clientNotes: v }))}
-            disabled={!editable} rows={2} context="observações de proposta comercial"
+          {/* Sai no PDF junto das informações gerais, então precisa da mesma
+              formatação dos demais textos que o cliente lê. */}
+          <RichEditor
+            value={fields.clientNotes} onChange={(v) => setFields((f) => ({ ...f, clientNotes: v }))}
+            disabled={!editable} minHeight={90} context="observações de proposta comercial"
           />
         </Field>
         <Field label="Notas internas (não saem na proposta)" htmlFor="f-notas-internas">
