@@ -3,16 +3,25 @@
 import { useActionState, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { AlertTriangle, CheckCircle2, HelpCircle, Stamp } from 'lucide-react';
+import { AlertTriangle, CheckCircle2, Clock, HelpCircle, Stamp } from 'lucide-react';
 import { setProjectArtAction } from '@/actions/projects';
+import { emitirTechRespAction } from '@/actions/tech-resp';
 import { inputCls, FormError, SubmitButton } from '@/components/ui';
 import { situacaoArt, type ArtRegistrada, type ArtStatus } from '@/lib/art-projeto';
 import { formatDateBR } from '@/lib/dates';
 
 const ESTILO = {
   ok: { classe: 'border-green-200 bg-green-50 text-green-900', Icone: CheckCircle2 },
+  emitindo: { classe: 'border-amber-200 bg-amber-50 text-amber-900', Icone: Clock },
   pendente: { classe: 'border-red-200 bg-red-50 text-red-900', Icone: AlertTriangle },
   indefinido: { classe: 'border-amber-200 bg-amber-50 text-amber-900', Icone: HelpCircle },
+};
+
+const STATUS_ART: Record<string, string> = {
+  PENDENTE: 'pendente de emissão',
+  EMITIDA: 'emitida',
+  BAIXADA: 'baixada',
+  CANCELADA: 'cancelada',
 };
 
 export type ArtDoProjeto = ArtRegistrada & {
@@ -77,15 +86,18 @@ export function ArtPanel({
       </div>
 
       {arts.length > 0 ? (
-        <ul className="mt-2 space-y-0.5 border-t border-current/20 pt-2">
+        <ul className="mt-2 space-y-1 border-t border-current/20 pt-2">
           {arts.map((a) => (
-            <li key={a.id} className="flex items-center gap-1.5 text-xs">
+            <li key={a.id} className="flex flex-wrap items-center gap-1.5 text-xs">
               <Stamp className="h-3 w-3 shrink-0 opacity-70" aria-hidden />
               <span className="font-medium">{a.docType} {a.numero}</span>
               <span className="opacity-70">
-                · {a.status.toLowerCase()}
+                · {STATUS_ART[a.status] ?? a.status.toLowerCase()}
                 {a.issuedAt ? ` · ${formatDateBR(a.issuedAt)}` : ''}
               </span>
+              {canWrite && a.status === 'PENDENTE' ? (
+                <EmitirArt artId={a.id} projectId={projectId} />
+              ) : null}
             </li>
           ))}
         </ul>
@@ -142,5 +154,60 @@ export function ArtPanel({
         </form>
       ) : null}
     </div>
+  );
+}
+
+/**
+ * Passa a ART de "pendente" para "emitida", sem sair do projeto.
+ *
+ * Faltava esse caminho: o registro nascia pendente e só dava para cancelar,
+ * então o projeto ficava marcado como coberto por um documento que ainda
+ * não existia no conselho.
+ */
+function EmitirArt({ artId, projectId }: { artId: string; projectId: string }) {
+  const router = useRouter();
+  const [aberto, setAberto] = useState(false);
+  const acao = emitirTechRespAction.bind(null, artId, projectId);
+  const [state, formAction, pending] = useActionState(acao, {});
+
+  useEffect(() => {
+    if (state.info) { setAberto(false); router.refresh(); }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state]);
+
+  if (!aberto) {
+    return (
+      <button
+        type="button"
+        onClick={() => setAberto(true)}
+        className="rounded border border-current/30 bg-white/70 px-1.5 py-0.5 text-[11px] font-medium hover:bg-white"
+      >
+        Marcar como emitida
+      </button>
+    );
+  }
+
+  return (
+    <form action={formAction} className="flex flex-wrap items-center gap-1.5">
+      <input
+        name="issuedAt" type="date" required
+        defaultValue={new Date().toISOString().slice(0, 10)}
+        aria-label="Data de emissão"
+        className="rounded border border-slate-300 px-1.5 py-0.5 text-[11px]"
+      />
+      <button
+        type="submit" disabled={pending}
+        className="rounded bg-slate-900 px-2 py-0.5 text-[11px] font-medium text-white hover:bg-slate-700 disabled:opacity-60"
+      >
+        {pending ? 'Salvando…' : 'Confirmar'}
+      </button>
+      <button
+        type="button" onClick={() => setAberto(false)}
+        className="text-[11px] underline opacity-70"
+      >
+        Cancelar
+      </button>
+      {state.error ? <span className="text-[11px] text-red-700">{state.error}</span> : null}
+    </form>
   );
 }

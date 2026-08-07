@@ -180,6 +180,43 @@ export async function dischargeTechResp(user: SessionUser, id: string, dataBaixa
   return { ok: true };
 }
 
+/**
+ * Passa a ART de pendente para emitida.
+ *
+ * A data importa: é dela que se conta a vigência e é ela que aparece no
+ * projeto. Sem informar, assume hoje — que é o caso comum de quem acabou de
+ * emitir no portal do conselho.
+ */
+export async function marcarEmitida(user: SessionUser, id: string, emitidaEm: string | null) {
+  const registro = await prisma.technicalResponsibility.findFirst({
+    where: { id, companyId: user.companyId, deletedAt: null },
+    select: { id: true, number: true, docType: true, status: true },
+  });
+  if (!registro) return { error: 'Registro não encontrado.' };
+  if (registro.status === 'CANCELADA') {
+    return { error: 'Esta ART está cancelada. Cadastre outra no lugar.' };
+  }
+  if (registro.status === 'BAIXADA') {
+    return { error: 'Esta ART já foi baixada.' };
+  }
+
+  const data = emitidaEm ? parseDateInput(emitidaEm) : new Date();
+  if (!data) return { error: 'Data de emissão inválida.' };
+  if (data > new Date()) return { error: 'A data de emissão não pode ser futura.' };
+
+  await prisma.technicalResponsibility.update({
+    where: { id },
+    data: { status: 'EMITIDA', issuedAt: data },
+  });
+  await auditLog({
+    companyId: user.companyId, userId: user.id, action: 'update',
+    entityType: 'tech_resp', entityId: id,
+    before: { status: registro.status },
+    after: { status: 'EMITIDA', documento: `${registro.docType} ${registro.number}` },
+  });
+  return { ok: true as const };
+}
+
 export async function setTechRespStatus(user: SessionUser, id: string, status: TechRespStatus) {
   const registro = await prisma.technicalResponsibility.findFirst({
     where: { id, companyId: user.companyId, deletedAt: null },

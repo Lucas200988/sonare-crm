@@ -4,7 +4,7 @@ import { useActionState, useEffect, useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { CheckCircle2, Plus, Trash2, X } from 'lucide-react';
 import {
-  createTechRespAction, dischargeTechRespAction, cancelTechRespAction,
+  createTechRespAction, dischargeTechRespAction, cancelTechRespAction, emitirTechRespAction,
   deleteTechRespAction, type ActionState,
 } from '@/actions/tech-resp';
 import { inputCls, Field, FormError, SubmitButton } from '@/components/ui';
@@ -192,6 +192,23 @@ export function TechRespRowActions({ id, status }: { id: string; status: string 
 
   return (
     <div className="flex items-center justify-end gap-1.5">
+      {/* Sem isto o registro nascia pendente e não saía mais desse estado —
+          só dava para cancelar. */}
+      {status === 'PENDENTE' ? (
+        <button
+          type="button"
+          disabled={pending}
+          onClick={() => startTransition(async () => {
+            const fd = new FormData();
+            fd.set('issuedAt', new Date().toISOString().slice(0, 10));
+            await emitirTechRespAction(id, null, {}, fd);
+            router.refresh();
+          })}
+          className="rounded-lg border border-green-300 px-2 py-1 text-[11px] font-medium text-green-700 hover:bg-green-50 disabled:opacity-50"
+        >
+          Marcar emitida
+        </button>
+      ) : null}
       {status !== 'CANCELADA' ? (
         <button
           type="button"

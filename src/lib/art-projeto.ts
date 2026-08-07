@@ -14,8 +14,11 @@ export type ArtRegistrada = {
 };
 
 export type SituacaoArt = {
-  /** 'ok' não pede ação; 'pendente' e 'indefinido' aparecem como alerta. */
-  nivel: 'ok' | 'pendente' | 'indefinido';
+  /**
+   * 'ok' não pede ação. 'emitindo' é a ART cadastrada que ainda não foi
+   * emitida no conselho — tem número, mas ainda não cobre o serviço.
+   */
+  nivel: 'ok' | 'emitindo' | 'pendente' | 'indefinido';
   rotulo: string;
   detalhe: string;
 };
@@ -23,6 +26,15 @@ export type SituacaoArt = {
 /** ART cancelada não cobre nada — não conta como registrada. */
 function valem(arts: ArtRegistrada[]): ArtRegistrada[] {
   return arts.filter((a) => a.status !== 'CANCELADA');
+}
+
+/** Só a ART emitida (ou já baixada) cobre o serviço de fato. */
+function emitidas(arts: ArtRegistrada[]): ArtRegistrada[] {
+  return arts.filter((a) => a.status === 'EMITIDA' || a.status === 'BAIXADA');
+}
+
+function numeros(arts: ArtRegistrada[]): string {
+  return arts.map((a) => a.numero).join(', ');
 }
 
 export function situacaoArt(status: ArtStatus, arts: ArtRegistrada[]): SituacaoArt {
@@ -36,6 +48,8 @@ export function situacaoArt(status: ArtStatus, arts: ArtRegistrada[]): SituacaoA
     };
   }
 
+  const prontas = emitidas(validas);
+
   if (status === 'NECESSARIA') {
     if (validas.length === 0) {
       return {
@@ -44,24 +58,42 @@ export function situacaoArt(status: ArtStatus, arts: ArtRegistrada[]): SituacaoA
         detalhe: 'Este projeto exige ART e nenhuma foi registrada ainda.',
       };
     }
-    const numeros = validas.map((a) => a.numero).join(', ');
+    /*
+     * Cadastrada mas ainda não emitida no conselho: o número existe, a
+     * cobertura não. Mostrar isso como resolvido daria uma segurança que o
+     * projeto ainda não tem.
+     */
+    if (prontas.length === 0) {
+      return {
+        nivel: 'emitindo',
+        rotulo: `ART ${numeros(validas)} — falta emitir`,
+        detalhe: 'A ART está cadastrada, mas ainda consta como pendente de emissão.',
+      };
+    }
     return {
       nivel: 'ok',
-      rotulo: validas.length > 1 ? `${validas.length} ARTs registradas` : `ART ${numeros}`,
-      detalhe: `Registrada${validas.length > 1 ? 's' : ''}: ${numeros}.`,
+      rotulo: prontas.length > 1 ? `${prontas.length} ARTs emitidas` : `ART ${numeros(prontas)}`,
+      detalhe: `Emitida${prontas.length > 1 ? 's' : ''}: ${numeros(prontas)}.`,
     };
   }
 
   /*
-   * Não informado com ART registrada não é alerta: alguém já emitiu, a
+   * Não informado com ART emitida não é alerta: alguém já emitiu, a
    * necessidade está demonstrada na prática. Só falta o registro formal da
    * decisão, e cobrar isso seria burocracia.
    */
-  if (validas.length > 0) {
+  if (prontas.length > 0) {
     return {
       nivel: 'ok',
-      rotulo: `ART ${validas.map((a) => a.numero).join(', ')}`,
-      detalhe: 'Há ART registrada para este projeto.',
+      rotulo: `ART ${numeros(prontas)}`,
+      detalhe: 'Há ART emitida para este projeto.',
+    };
+  }
+  if (validas.length > 0) {
+    return {
+      nivel: 'emitindo',
+      rotulo: `ART ${numeros(validas)} — falta emitir`,
+      detalhe: 'A ART está cadastrada, mas ainda consta como pendente de emissão.',
     };
   }
 
@@ -86,7 +118,10 @@ export function alertaArt(
   arts: Array<{ number: string; status: string }>,
 ): 'pendente' | 'indefinido' | null {
   const nivel = situacaoArt(status, arts.map((a) => ({ numero: a.number, status: a.status }))).nivel;
-  return nivel === 'ok' ? null : nivel;
+  // "falta emitir" fica fora do quadro: o número existe e alguém está com
+  // isso na mão — o lugar de resolver é dentro do cartão.
+  if (nivel === 'ok' || nivel === 'emitindo') return null;
+  return nivel;
 }
 
 export const ROTULO_ART: Record<ArtStatus, string> = {

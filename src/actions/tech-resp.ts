@@ -71,6 +71,28 @@ export async function dischargeTechRespAction(
   return { info: 'Baixa registrada.' };
 }
 
+/**
+ * Marca a ART como emitida no conselho.
+ *
+ * Faltava: o registro nascia PENDENTE e não havia como sair desse estado —
+ * só dava para cancelar. Enquanto isso o projeto aparecia como coberto por
+ * um documento que ainda não existia de fato.
+ */
+export async function emitirTechRespAction(
+  id: string, projectId: string | null, _prev: ActionState, formData: FormData,
+): Promise<ActionState> {
+  const user = await requirePermission('techresp:write');
+  const emitidaEm = String(formData.get('issuedAt') ?? '').trim();
+
+  const result = await techResp.marcarEmitida(user, id, emitidaEm || null);
+  if ('error' in result) return { error: result.error };
+
+  revalidatePath('/art');
+  if (projectId) revalidatePath(`/projetos/${projectId}`);
+  revalidatePath('/projetos');
+  return { info: 'ART marcada como emitida.' };
+}
+
 export async function cancelTechRespAction(id: string): Promise<ActionState> {
   const user = await requirePermission('techresp:write');
   const result = await techResp.setTechRespStatus(user, id, 'CANCELADA');
