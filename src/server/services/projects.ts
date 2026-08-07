@@ -90,6 +90,11 @@ export async function getProject(user: SessionUser, id: string) {
       technicalLead: { select: { id: true, name: true } },
       coordinator: { select: { id: true, name: true } },
       members: { include: { user: { select: { id: true, name: true } } } },
+      technicalResponsibilities: {
+        where: { deletedAt: null },
+        select: { id: true, number: true, docType: true, status: true, issuedAt: true },
+        orderBy: { createdAt: 'desc' },
+      },
       stages: { orderBy: { sortOrder: 'asc' } },
       tasks: {
         where: { deletedAt: null },
@@ -128,6 +133,11 @@ export async function listBoardProjects(user: SessionUser) {
       client: { select: { id: true, legalName: true, tradeName: true } },
       technicalLead: { select: { id: true, name: true } },
       members: { include: { user: { select: { id: true, name: true } } } },
+      // a pendência de ART precisa aparecer no quadro, não só dentro do cartão
+      technicalResponsibilities: {
+        where: { deletedAt: null },
+        select: { number: true, status: true },
+      },
       _count: { select: { tasks: true, deliverables: true } },
     },
     orderBy: { boardPosition: 'asc' },
@@ -275,6 +285,48 @@ export async function setProjectValue(user: SessionUser, id: string, valor: stri
     entityType: 'project', entityId: id,
     before: { contractValue: project.contractValue?.toString() ?? null },
     after: { contractValue: valor },
+  });
+  return { ok: true as const };
+}
+
+/**
+ * Decisão sobre a responsabilidade técnica do projeto.
+ *
+ * Fica no cartão porque quem sabe se o serviço exige ART é quem conduz o
+ * projeto, não quem cadastra a ART depois. A justificativa é exigida na
+ * dispensa: é a decisão que alguém vai ter que defender um dia.
+ */
+export async function setProjectArt(
+  user: SessionUser,
+  id: string,
+  status: 'NAO_INFORMADO' | 'NECESSARIA' | 'DISPENSADA',
+  notes: string | null,
+) {
+  const project = await prisma.project.findFirst({
+    where: doProjeto(user, id),
+    select: { id: true, code: true, artStatus: true },
+  });
+  if (!project) return { error: 'Projeto não encontrado.' };
+
+  if (status === 'DISPENSADA' && !notes?.trim()) {
+    return { error: 'Explique por que este projeto dispensa ART.' };
+  }
+
+  await prisma.project.update({
+    where: { id },
+    data: {
+      artStatus: status,
+      // a justificativa só faz sentido junto da dispensa
+      artNotes: status === 'DISPENSADA' ? notes!.trim() : null,
+      updatedById: user.id,
+    },
+  });
+
+  await auditLog({
+    companyId: user.companyId, userId: user.id, action: 'update',
+    entityType: 'project_art', entityId: id,
+    before: { art: project.artStatus },
+    after: { art: status, justificativa: status === 'DISPENSADA' ? notes : null },
   });
   return { ok: true as const };
 }

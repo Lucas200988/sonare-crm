@@ -60,6 +60,8 @@ export type ProjectMinAggregateOutputType = {
   boardPosition: number | null
   archivedAt: Date | null
   folderPath: string | null
+  artStatus: $Enums.ArtStatus | null
+  artNotes: string | null
   risks: string | null
   notes: string | null
   createdAt: Date | null
@@ -91,6 +93,8 @@ export type ProjectMaxAggregateOutputType = {
   boardPosition: number | null
   archivedAt: Date | null
   folderPath: string | null
+  artStatus: $Enums.ArtStatus | null
+  artNotes: string | null
   risks: string | null
   notes: string | null
   createdAt: Date | null
@@ -123,6 +127,8 @@ export type ProjectCountAggregateOutputType = {
   boardPosition: number
   archivedAt: number
   folderPath: number
+  artStatus: number
+  artNotes: number
   risks: number
   notes: number
   createdAt: number
@@ -168,6 +174,8 @@ export type ProjectMinAggregateInputType = {
   boardPosition?: true
   archivedAt?: true
   folderPath?: true
+  artStatus?: true
+  artNotes?: true
   risks?: true
   notes?: true
   createdAt?: true
@@ -199,6 +207,8 @@ export type ProjectMaxAggregateInputType = {
   boardPosition?: true
   archivedAt?: true
   folderPath?: true
+  artStatus?: true
+  artNotes?: true
   risks?: true
   notes?: true
   createdAt?: true
@@ -231,6 +241,8 @@ export type ProjectCountAggregateInputType = {
   boardPosition?: true
   archivedAt?: true
   folderPath?: true
+  artStatus?: true
+  artNotes?: true
   risks?: true
   notes?: true
   createdAt?: true
@@ -350,6 +362,8 @@ export type ProjectGroupByOutputType = {
   boardPosition: number
   archivedAt: Date | null
   folderPath: string | null
+  artStatus: $Enums.ArtStatus
+  artNotes: string | null
   risks: string | null
   notes: string | null
   createdAt: Date
@@ -405,6 +419,8 @@ export type ProjectWhereInput = {
   boardPosition?: Prisma.IntFilter<"Project"> | number
   archivedAt?: Prisma.DateTimeNullableFilter<"Project"> | Date | string | null
   folderPath?: Prisma.StringNullableFilter<"Project"> | string | null
+  artStatus?: Prisma.EnumArtStatusFilter<"Project"> | $Enums.ArtStatus
+  artNotes?: Prisma.StringNullableFilter<"Project"> | string | null
   risks?: Prisma.StringNullableFilter<"Project"> | string | null
   notes?: Prisma.StringNullableFilter<"Project"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Project"> | Date | string
@@ -454,6 +470,8 @@ export type ProjectOrderByWithRelationInput = {
   boardPosition?: Prisma.SortOrder
   archivedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   folderPath?: Prisma.SortOrderInput | Prisma.SortOrder
+  artStatus?: Prisma.SortOrder
+  artNotes?: Prisma.SortOrderInput | Prisma.SortOrder
   risks?: Prisma.SortOrderInput | Prisma.SortOrder
   notes?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -507,6 +525,8 @@ export type ProjectWhereUniqueInput = Prisma.AtLeast<{
   boardPosition?: Prisma.IntFilter<"Project"> | number
   archivedAt?: Prisma.DateTimeNullableFilter<"Project"> | Date | string | null
   folderPath?: Prisma.StringNullableFilter<"Project"> | string | null
+  artStatus?: Prisma.EnumArtStatusFilter<"Project"> | $Enums.ArtStatus
+  artNotes?: Prisma.StringNullableFilter<"Project"> | string | null
   risks?: Prisma.StringNullableFilter<"Project"> | string | null
   notes?: Prisma.StringNullableFilter<"Project"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Project"> | Date | string
@@ -556,6 +576,8 @@ export type ProjectOrderByWithAggregationInput = {
   boardPosition?: Prisma.SortOrder
   archivedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   folderPath?: Prisma.SortOrderInput | Prisma.SortOrder
+  artStatus?: Prisma.SortOrder
+  artNotes?: Prisma.SortOrderInput | Prisma.SortOrder
   risks?: Prisma.SortOrderInput | Prisma.SortOrder
   notes?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -596,6 +618,8 @@ export type ProjectScalarWhereWithAggregatesInput = {
   boardPosition?: Prisma.IntWithAggregatesFilter<"Project"> | number
   archivedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Project"> | Date | string | null
   folderPath?: Prisma.StringNullableWithAggregatesFilter<"Project"> | string | null
+  artStatus?: Prisma.EnumArtStatusWithAggregatesFilter<"Project"> | $Enums.ArtStatus
+  artNotes?: Prisma.StringNullableWithAggregatesFilter<"Project"> | string | null
   risks?: Prisma.StringNullableWithAggregatesFilter<"Project"> | string | null
   notes?: Prisma.StringNullableWithAggregatesFilter<"Project"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Project"> | Date | string
@@ -622,6 +646,8 @@ export type ProjectCreateInput = {
   boardPosition?: number
   archivedAt?: Date | string | null
   folderPath?: string | null
+  artStatus?: $Enums.ArtStatus
+  artNotes?: string | null
   risks?: string | null
   notes?: string | null
   createdAt?: Date | string
@@ -671,6 +697,8 @@ export type ProjectUncheckedCreateInput = {
   boardPosition?: number
   archivedAt?: Date | string | null
   folderPath?: string | null
+  artStatus?: $Enums.ArtStatus
+  artNotes?: string | null
   risks?: string | null
   notes?: string | null
   createdAt?: Date | string
@@ -708,6 +736,8 @@ export type ProjectUpdateInput = {
   boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
   archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  artStatus?: Prisma.EnumArtStatusFieldUpdateOperationsInput | $Enums.ArtStatus
+  artNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -757,6 +787,8 @@ export type ProjectUncheckedUpdateInput = {
   boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
   archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  artStatus?: Prisma.EnumArtStatusFieldUpdateOperationsInput | $Enums.ArtStatus
+  artNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -800,6 +832,8 @@ export type ProjectCreateManyInput = {
   boardPosition?: number
   archivedAt?: Date | string | null
   folderPath?: string | null
+  artStatus?: $Enums.ArtStatus
+  artNotes?: string | null
   risks?: string | null
   notes?: string | null
   createdAt?: Date | string
@@ -826,6 +860,8 @@ export type ProjectUpdateManyMutationInput = {
   boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
   archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  artStatus?: Prisma.EnumArtStatusFieldUpdateOperationsInput | $Enums.ArtStatus
+  artNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -858,6 +894,8 @@ export type ProjectUncheckedUpdateManyInput = {
   boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
   archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  artStatus?: Prisma.EnumArtStatusFieldUpdateOperationsInput | $Enums.ArtStatus
+  artNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -905,6 +943,8 @@ export type ProjectCountOrderByAggregateInput = {
   boardPosition?: Prisma.SortOrder
   archivedAt?: Prisma.SortOrder
   folderPath?: Prisma.SortOrder
+  artStatus?: Prisma.SortOrder
+  artNotes?: Prisma.SortOrder
   risks?: Prisma.SortOrder
   notes?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -942,6 +982,8 @@ export type ProjectMaxOrderByAggregateInput = {
   boardPosition?: Prisma.SortOrder
   archivedAt?: Prisma.SortOrder
   folderPath?: Prisma.SortOrder
+  artStatus?: Prisma.SortOrder
+  artNotes?: Prisma.SortOrder
   risks?: Prisma.SortOrder
   notes?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -973,6 +1015,8 @@ export type ProjectMinOrderByAggregateInput = {
   boardPosition?: Prisma.SortOrder
   archivedAt?: Prisma.SortOrder
   folderPath?: Prisma.SortOrder
+  artStatus?: Prisma.SortOrder
+  artNotes?: Prisma.SortOrder
   risks?: Prisma.SortOrder
   notes?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -1263,6 +1307,10 @@ export type EnumProjectStatusFieldUpdateOperationsInput = {
   set?: $Enums.ProjectStatus
 }
 
+export type EnumArtStatusFieldUpdateOperationsInput = {
+  set?: $Enums.ArtStatus
+}
+
 export type ProjectCreateNestedOneWithoutStagesInput = {
   create?: Prisma.XOR<Prisma.ProjectCreateWithoutStagesInput, Prisma.ProjectUncheckedCreateWithoutStagesInput>
   connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutStagesInput
@@ -1446,6 +1494,8 @@ export type ProjectCreateWithoutTechnicalLeadInput = {
   boardPosition?: number
   archivedAt?: Date | string | null
   folderPath?: string | null
+  artStatus?: $Enums.ArtStatus
+  artNotes?: string | null
   risks?: string | null
   notes?: string | null
   createdAt?: Date | string
@@ -1493,6 +1543,8 @@ export type ProjectUncheckedCreateWithoutTechnicalLeadInput = {
   boardPosition?: number
   archivedAt?: Date | string | null
   folderPath?: string | null
+  artStatus?: $Enums.ArtStatus
+  artNotes?: string | null
   risks?: string | null
   notes?: string | null
   createdAt?: Date | string
@@ -1540,6 +1592,8 @@ export type ProjectCreateWithoutCoordinatorInput = {
   boardPosition?: number
   archivedAt?: Date | string | null
   folderPath?: string | null
+  artStatus?: $Enums.ArtStatus
+  artNotes?: string | null
   risks?: string | null
   notes?: string | null
   createdAt?: Date | string
@@ -1587,6 +1641,8 @@ export type ProjectUncheckedCreateWithoutCoordinatorInput = {
   boardPosition?: number
   archivedAt?: Date | string | null
   folderPath?: string | null
+  artStatus?: $Enums.ArtStatus
+  artNotes?: string | null
   risks?: string | null
   notes?: string | null
   createdAt?: Date | string
@@ -1659,6 +1715,8 @@ export type ProjectScalarWhereInput = {
   boardPosition?: Prisma.IntFilter<"Project"> | number
   archivedAt?: Prisma.DateTimeNullableFilter<"Project"> | Date | string | null
   folderPath?: Prisma.StringNullableFilter<"Project"> | string | null
+  artStatus?: Prisma.EnumArtStatusFilter<"Project"> | $Enums.ArtStatus
+  artNotes?: Prisma.StringNullableFilter<"Project"> | string | null
   risks?: Prisma.StringNullableFilter<"Project"> | string | null
   notes?: Prisma.StringNullableFilter<"Project"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Project"> | Date | string
@@ -1701,6 +1759,8 @@ export type ProjectCreateWithoutClientInput = {
   boardPosition?: number
   archivedAt?: Date | string | null
   folderPath?: string | null
+  artStatus?: $Enums.ArtStatus
+  artNotes?: string | null
   risks?: string | null
   notes?: string | null
   createdAt?: Date | string
@@ -1748,6 +1808,8 @@ export type ProjectUncheckedCreateWithoutClientInput = {
   boardPosition?: number
   archivedAt?: Date | string | null
   folderPath?: string | null
+  artStatus?: $Enums.ArtStatus
+  artNotes?: string | null
   risks?: string | null
   notes?: string | null
   createdAt?: Date | string
@@ -1811,6 +1873,8 @@ export type ProjectCreateWithoutClientUnitInput = {
   boardPosition?: number
   archivedAt?: Date | string | null
   folderPath?: string | null
+  artStatus?: $Enums.ArtStatus
+  artNotes?: string | null
   risks?: string | null
   notes?: string | null
   createdAt?: Date | string
@@ -1858,6 +1922,8 @@ export type ProjectUncheckedCreateWithoutClientUnitInput = {
   boardPosition?: number
   archivedAt?: Date | string | null
   folderPath?: string | null
+  artStatus?: $Enums.ArtStatus
+  artNotes?: string | null
   risks?: string | null
   notes?: string | null
   createdAt?: Date | string
@@ -1921,6 +1987,8 @@ export type ProjectCreateWithoutBudgetInput = {
   boardPosition?: number
   archivedAt?: Date | string | null
   folderPath?: string | null
+  artStatus?: $Enums.ArtStatus
+  artNotes?: string | null
   risks?: string | null
   notes?: string | null
   createdAt?: Date | string
@@ -1968,6 +2036,8 @@ export type ProjectUncheckedCreateWithoutBudgetInput = {
   boardPosition?: number
   archivedAt?: Date | string | null
   folderPath?: string | null
+  artStatus?: $Enums.ArtStatus
+  artNotes?: string | null
   risks?: string | null
   notes?: string | null
   createdAt?: Date | string
@@ -2031,6 +2101,8 @@ export type ProjectCreateWithoutContractInput = {
   boardPosition?: number
   archivedAt?: Date | string | null
   folderPath?: string | null
+  artStatus?: $Enums.ArtStatus
+  artNotes?: string | null
   risks?: string | null
   notes?: string | null
   createdAt?: Date | string
@@ -2078,6 +2150,8 @@ export type ProjectUncheckedCreateWithoutContractInput = {
   boardPosition?: number
   archivedAt?: Date | string | null
   folderPath?: string | null
+  artStatus?: $Enums.ArtStatus
+  artNotes?: string | null
   risks?: string | null
   notes?: string | null
   createdAt?: Date | string
@@ -2141,6 +2215,8 @@ export type ProjectCreateWithoutStagesInput = {
   boardPosition?: number
   archivedAt?: Date | string | null
   folderPath?: string | null
+  artStatus?: $Enums.ArtStatus
+  artNotes?: string | null
   risks?: string | null
   notes?: string | null
   createdAt?: Date | string
@@ -2189,6 +2265,8 @@ export type ProjectUncheckedCreateWithoutStagesInput = {
   boardPosition?: number
   archivedAt?: Date | string | null
   folderPath?: string | null
+  artStatus?: $Enums.ArtStatus
+  artNotes?: string | null
   risks?: string | null
   notes?: string | null
   createdAt?: Date | string
@@ -2241,6 +2319,8 @@ export type ProjectUpdateWithoutStagesInput = {
   boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
   archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  artStatus?: Prisma.EnumArtStatusFieldUpdateOperationsInput | $Enums.ArtStatus
+  artNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2289,6 +2369,8 @@ export type ProjectUncheckedUpdateWithoutStagesInput = {
   boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
   archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  artStatus?: Prisma.EnumArtStatusFieldUpdateOperationsInput | $Enums.ArtStatus
+  artNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2325,6 +2407,8 @@ export type ProjectCreateWithoutMembersInput = {
   boardPosition?: number
   archivedAt?: Date | string | null
   folderPath?: string | null
+  artStatus?: $Enums.ArtStatus
+  artNotes?: string | null
   risks?: string | null
   notes?: string | null
   createdAt?: Date | string
@@ -2373,6 +2457,8 @@ export type ProjectUncheckedCreateWithoutMembersInput = {
   boardPosition?: number
   archivedAt?: Date | string | null
   folderPath?: string | null
+  artStatus?: $Enums.ArtStatus
+  artNotes?: string | null
   risks?: string | null
   notes?: string | null
   createdAt?: Date | string
@@ -2425,6 +2511,8 @@ export type ProjectUpdateWithoutMembersInput = {
   boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
   archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  artStatus?: Prisma.EnumArtStatusFieldUpdateOperationsInput | $Enums.ArtStatus
+  artNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2473,6 +2561,8 @@ export type ProjectUncheckedUpdateWithoutMembersInput = {
   boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
   archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  artStatus?: Prisma.EnumArtStatusFieldUpdateOperationsInput | $Enums.ArtStatus
+  artNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2509,6 +2599,8 @@ export type ProjectCreateWithoutTasksInput = {
   boardPosition?: number
   archivedAt?: Date | string | null
   folderPath?: string | null
+  artStatus?: $Enums.ArtStatus
+  artNotes?: string | null
   risks?: string | null
   notes?: string | null
   createdAt?: Date | string
@@ -2557,6 +2649,8 @@ export type ProjectUncheckedCreateWithoutTasksInput = {
   boardPosition?: number
   archivedAt?: Date | string | null
   folderPath?: string | null
+  artStatus?: $Enums.ArtStatus
+  artNotes?: string | null
   risks?: string | null
   notes?: string | null
   createdAt?: Date | string
@@ -2609,6 +2703,8 @@ export type ProjectUpdateWithoutTasksInput = {
   boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
   archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  artStatus?: Prisma.EnumArtStatusFieldUpdateOperationsInput | $Enums.ArtStatus
+  artNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2657,6 +2753,8 @@ export type ProjectUncheckedUpdateWithoutTasksInput = {
   boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
   archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  artStatus?: Prisma.EnumArtStatusFieldUpdateOperationsInput | $Enums.ArtStatus
+  artNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2693,6 +2791,8 @@ export type ProjectCreateWithoutDeliverablesInput = {
   boardPosition?: number
   archivedAt?: Date | string | null
   folderPath?: string | null
+  artStatus?: $Enums.ArtStatus
+  artNotes?: string | null
   risks?: string | null
   notes?: string | null
   createdAt?: Date | string
@@ -2741,6 +2841,8 @@ export type ProjectUncheckedCreateWithoutDeliverablesInput = {
   boardPosition?: number
   archivedAt?: Date | string | null
   folderPath?: string | null
+  artStatus?: $Enums.ArtStatus
+  artNotes?: string | null
   risks?: string | null
   notes?: string | null
   createdAt?: Date | string
@@ -2793,6 +2895,8 @@ export type ProjectUpdateWithoutDeliverablesInput = {
   boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
   archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  artStatus?: Prisma.EnumArtStatusFieldUpdateOperationsInput | $Enums.ArtStatus
+  artNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2841,6 +2945,8 @@ export type ProjectUncheckedUpdateWithoutDeliverablesInput = {
   boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
   archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  artStatus?: Prisma.EnumArtStatusFieldUpdateOperationsInput | $Enums.ArtStatus
+  artNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2877,6 +2983,8 @@ export type ProjectCreateWithoutTimeEntriesInput = {
   boardPosition?: number
   archivedAt?: Date | string | null
   folderPath?: string | null
+  artStatus?: $Enums.ArtStatus
+  artNotes?: string | null
   risks?: string | null
   notes?: string | null
   createdAt?: Date | string
@@ -2925,6 +3033,8 @@ export type ProjectUncheckedCreateWithoutTimeEntriesInput = {
   boardPosition?: number
   archivedAt?: Date | string | null
   folderPath?: string | null
+  artStatus?: $Enums.ArtStatus
+  artNotes?: string | null
   risks?: string | null
   notes?: string | null
   createdAt?: Date | string
@@ -2977,6 +3087,8 @@ export type ProjectUpdateWithoutTimeEntriesInput = {
   boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
   archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  artStatus?: Prisma.EnumArtStatusFieldUpdateOperationsInput | $Enums.ArtStatus
+  artNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3025,6 +3137,8 @@ export type ProjectUncheckedUpdateWithoutTimeEntriesInput = {
   boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
   archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  artStatus?: Prisma.EnumArtStatusFieldUpdateOperationsInput | $Enums.ArtStatus
+  artNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3061,6 +3175,8 @@ export type ProjectCreateWithoutTechnicalResponsibilitiesInput = {
   boardPosition?: number
   archivedAt?: Date | string | null
   folderPath?: string | null
+  artStatus?: $Enums.ArtStatus
+  artNotes?: string | null
   risks?: string | null
   notes?: string | null
   createdAt?: Date | string
@@ -3109,6 +3225,8 @@ export type ProjectUncheckedCreateWithoutTechnicalResponsibilitiesInput = {
   boardPosition?: number
   archivedAt?: Date | string | null
   folderPath?: string | null
+  artStatus?: $Enums.ArtStatus
+  artNotes?: string | null
   risks?: string | null
   notes?: string | null
   createdAt?: Date | string
@@ -3161,6 +3279,8 @@ export type ProjectUpdateWithoutTechnicalResponsibilitiesInput = {
   boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
   archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  artStatus?: Prisma.EnumArtStatusFieldUpdateOperationsInput | $Enums.ArtStatus
+  artNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3209,6 +3329,8 @@ export type ProjectUncheckedUpdateWithoutTechnicalResponsibilitiesInput = {
   boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
   archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  artStatus?: Prisma.EnumArtStatusFieldUpdateOperationsInput | $Enums.ArtStatus
+  artNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3245,6 +3367,8 @@ export type ProjectCreateWithoutPendenciesInput = {
   boardPosition?: number
   archivedAt?: Date | string | null
   folderPath?: string | null
+  artStatus?: $Enums.ArtStatus
+  artNotes?: string | null
   risks?: string | null
   notes?: string | null
   createdAt?: Date | string
@@ -3293,6 +3417,8 @@ export type ProjectUncheckedCreateWithoutPendenciesInput = {
   boardPosition?: number
   archivedAt?: Date | string | null
   folderPath?: string | null
+  artStatus?: $Enums.ArtStatus
+  artNotes?: string | null
   risks?: string | null
   notes?: string | null
   createdAt?: Date | string
@@ -3345,6 +3471,8 @@ export type ProjectUpdateWithoutPendenciesInput = {
   boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
   archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  artStatus?: Prisma.EnumArtStatusFieldUpdateOperationsInput | $Enums.ArtStatus
+  artNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3393,6 +3521,8 @@ export type ProjectUncheckedUpdateWithoutPendenciesInput = {
   boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
   archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  artStatus?: Prisma.EnumArtStatusFieldUpdateOperationsInput | $Enums.ArtStatus
+  artNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3429,6 +3559,8 @@ export type ProjectCreateWithoutReceivablesInput = {
   boardPosition?: number
   archivedAt?: Date | string | null
   folderPath?: string | null
+  artStatus?: $Enums.ArtStatus
+  artNotes?: string | null
   risks?: string | null
   notes?: string | null
   createdAt?: Date | string
@@ -3477,6 +3609,8 @@ export type ProjectUncheckedCreateWithoutReceivablesInput = {
   boardPosition?: number
   archivedAt?: Date | string | null
   folderPath?: string | null
+  artStatus?: $Enums.ArtStatus
+  artNotes?: string | null
   risks?: string | null
   notes?: string | null
   createdAt?: Date | string
@@ -3529,6 +3663,8 @@ export type ProjectUpdateWithoutReceivablesInput = {
   boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
   archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  artStatus?: Prisma.EnumArtStatusFieldUpdateOperationsInput | $Enums.ArtStatus
+  artNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3577,6 +3713,8 @@ export type ProjectUncheckedUpdateWithoutReceivablesInput = {
   boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
   archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  artStatus?: Prisma.EnumArtStatusFieldUpdateOperationsInput | $Enums.ArtStatus
+  artNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3613,6 +3751,8 @@ export type ProjectCreateWithoutInvoicesInput = {
   boardPosition?: number
   archivedAt?: Date | string | null
   folderPath?: string | null
+  artStatus?: $Enums.ArtStatus
+  artNotes?: string | null
   risks?: string | null
   notes?: string | null
   createdAt?: Date | string
@@ -3661,6 +3801,8 @@ export type ProjectUncheckedCreateWithoutInvoicesInput = {
   boardPosition?: number
   archivedAt?: Date | string | null
   folderPath?: string | null
+  artStatus?: $Enums.ArtStatus
+  artNotes?: string | null
   risks?: string | null
   notes?: string | null
   createdAt?: Date | string
@@ -3713,6 +3855,8 @@ export type ProjectUpdateWithoutInvoicesInput = {
   boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
   archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  artStatus?: Prisma.EnumArtStatusFieldUpdateOperationsInput | $Enums.ArtStatus
+  artNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3761,6 +3905,8 @@ export type ProjectUncheckedUpdateWithoutInvoicesInput = {
   boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
   archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  artStatus?: Prisma.EnumArtStatusFieldUpdateOperationsInput | $Enums.ArtStatus
+  artNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3797,6 +3943,8 @@ export type ProjectCreateWithoutPayablesInput = {
   boardPosition?: number
   archivedAt?: Date | string | null
   folderPath?: string | null
+  artStatus?: $Enums.ArtStatus
+  artNotes?: string | null
   risks?: string | null
   notes?: string | null
   createdAt?: Date | string
@@ -3845,6 +3993,8 @@ export type ProjectUncheckedCreateWithoutPayablesInput = {
   boardPosition?: number
   archivedAt?: Date | string | null
   folderPath?: string | null
+  artStatus?: $Enums.ArtStatus
+  artNotes?: string | null
   risks?: string | null
   notes?: string | null
   createdAt?: Date | string
@@ -3897,6 +4047,8 @@ export type ProjectUpdateWithoutPayablesInput = {
   boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
   archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  artStatus?: Prisma.EnumArtStatusFieldUpdateOperationsInput | $Enums.ArtStatus
+  artNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3945,6 +4097,8 @@ export type ProjectUncheckedUpdateWithoutPayablesInput = {
   boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
   archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  artStatus?: Prisma.EnumArtStatusFieldUpdateOperationsInput | $Enums.ArtStatus
+  artNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3981,6 +4135,8 @@ export type ProjectCreateWithoutEquipmentMovementsInput = {
   boardPosition?: number
   archivedAt?: Date | string | null
   folderPath?: string | null
+  artStatus?: $Enums.ArtStatus
+  artNotes?: string | null
   risks?: string | null
   notes?: string | null
   createdAt?: Date | string
@@ -4029,6 +4185,8 @@ export type ProjectUncheckedCreateWithoutEquipmentMovementsInput = {
   boardPosition?: number
   archivedAt?: Date | string | null
   folderPath?: string | null
+  artStatus?: $Enums.ArtStatus
+  artNotes?: string | null
   risks?: string | null
   notes?: string | null
   createdAt?: Date | string
@@ -4081,6 +4239,8 @@ export type ProjectUpdateWithoutEquipmentMovementsInput = {
   boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
   archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  artStatus?: Prisma.EnumArtStatusFieldUpdateOperationsInput | $Enums.ArtStatus
+  artNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -4129,6 +4289,8 @@ export type ProjectUncheckedUpdateWithoutEquipmentMovementsInput = {
   boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
   archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  artStatus?: Prisma.EnumArtStatusFieldUpdateOperationsInput | $Enums.ArtStatus
+  artNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -4170,6 +4332,8 @@ export type ProjectCreateManyTechnicalLeadInput = {
   boardPosition?: number
   archivedAt?: Date | string | null
   folderPath?: string | null
+  artStatus?: $Enums.ArtStatus
+  artNotes?: string | null
   risks?: string | null
   notes?: string | null
   createdAt?: Date | string
@@ -4201,6 +4365,8 @@ export type ProjectCreateManyCoordinatorInput = {
   boardPosition?: number
   archivedAt?: Date | string | null
   folderPath?: string | null
+  artStatus?: $Enums.ArtStatus
+  artNotes?: string | null
   risks?: string | null
   notes?: string | null
   createdAt?: Date | string
@@ -4227,6 +4393,8 @@ export type ProjectUpdateWithoutTechnicalLeadInput = {
   boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
   archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  artStatus?: Prisma.EnumArtStatusFieldUpdateOperationsInput | $Enums.ArtStatus
+  artNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -4274,6 +4442,8 @@ export type ProjectUncheckedUpdateWithoutTechnicalLeadInput = {
   boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
   archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  artStatus?: Prisma.EnumArtStatusFieldUpdateOperationsInput | $Enums.ArtStatus
+  artNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -4316,6 +4486,8 @@ export type ProjectUncheckedUpdateManyWithoutTechnicalLeadInput = {
   boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
   archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  artStatus?: Prisma.EnumArtStatusFieldUpdateOperationsInput | $Enums.ArtStatus
+  artNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -4342,6 +4514,8 @@ export type ProjectUpdateWithoutCoordinatorInput = {
   boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
   archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  artStatus?: Prisma.EnumArtStatusFieldUpdateOperationsInput | $Enums.ArtStatus
+  artNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -4389,6 +4563,8 @@ export type ProjectUncheckedUpdateWithoutCoordinatorInput = {
   boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
   archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  artStatus?: Prisma.EnumArtStatusFieldUpdateOperationsInput | $Enums.ArtStatus
+  artNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -4431,6 +4607,8 @@ export type ProjectUncheckedUpdateManyWithoutCoordinatorInput = {
   boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
   archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  artStatus?: Prisma.EnumArtStatusFieldUpdateOperationsInput | $Enums.ArtStatus
+  artNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -4462,6 +4640,8 @@ export type ProjectCreateManyClientInput = {
   boardPosition?: number
   archivedAt?: Date | string | null
   folderPath?: string | null
+  artStatus?: $Enums.ArtStatus
+  artNotes?: string | null
   risks?: string | null
   notes?: string | null
   createdAt?: Date | string
@@ -4488,6 +4668,8 @@ export type ProjectUpdateWithoutClientInput = {
   boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
   archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  artStatus?: Prisma.EnumArtStatusFieldUpdateOperationsInput | $Enums.ArtStatus
+  artNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -4535,6 +4717,8 @@ export type ProjectUncheckedUpdateWithoutClientInput = {
   boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
   archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  artStatus?: Prisma.EnumArtStatusFieldUpdateOperationsInput | $Enums.ArtStatus
+  artNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -4577,6 +4761,8 @@ export type ProjectUncheckedUpdateManyWithoutClientInput = {
   boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
   archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  artStatus?: Prisma.EnumArtStatusFieldUpdateOperationsInput | $Enums.ArtStatus
+  artNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -4608,6 +4794,8 @@ export type ProjectCreateManyClientUnitInput = {
   boardPosition?: number
   archivedAt?: Date | string | null
   folderPath?: string | null
+  artStatus?: $Enums.ArtStatus
+  artNotes?: string | null
   risks?: string | null
   notes?: string | null
   createdAt?: Date | string
@@ -4634,6 +4822,8 @@ export type ProjectUpdateWithoutClientUnitInput = {
   boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
   archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  artStatus?: Prisma.EnumArtStatusFieldUpdateOperationsInput | $Enums.ArtStatus
+  artNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -4681,6 +4871,8 @@ export type ProjectUncheckedUpdateWithoutClientUnitInput = {
   boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
   archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  artStatus?: Prisma.EnumArtStatusFieldUpdateOperationsInput | $Enums.ArtStatus
+  artNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -4723,6 +4915,8 @@ export type ProjectUncheckedUpdateManyWithoutClientUnitInput = {
   boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
   archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  artStatus?: Prisma.EnumArtStatusFieldUpdateOperationsInput | $Enums.ArtStatus
+  artNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -4754,6 +4948,8 @@ export type ProjectCreateManyBudgetInput = {
   boardPosition?: number
   archivedAt?: Date | string | null
   folderPath?: string | null
+  artStatus?: $Enums.ArtStatus
+  artNotes?: string | null
   risks?: string | null
   notes?: string | null
   createdAt?: Date | string
@@ -4780,6 +4976,8 @@ export type ProjectUpdateWithoutBudgetInput = {
   boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
   archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  artStatus?: Prisma.EnumArtStatusFieldUpdateOperationsInput | $Enums.ArtStatus
+  artNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -4827,6 +5025,8 @@ export type ProjectUncheckedUpdateWithoutBudgetInput = {
   boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
   archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  artStatus?: Prisma.EnumArtStatusFieldUpdateOperationsInput | $Enums.ArtStatus
+  artNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -4869,6 +5069,8 @@ export type ProjectUncheckedUpdateManyWithoutBudgetInput = {
   boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
   archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  artStatus?: Prisma.EnumArtStatusFieldUpdateOperationsInput | $Enums.ArtStatus
+  artNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -4900,6 +5102,8 @@ export type ProjectCreateManyContractInput = {
   boardPosition?: number
   archivedAt?: Date | string | null
   folderPath?: string | null
+  artStatus?: $Enums.ArtStatus
+  artNotes?: string | null
   risks?: string | null
   notes?: string | null
   createdAt?: Date | string
@@ -4926,6 +5130,8 @@ export type ProjectUpdateWithoutContractInput = {
   boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
   archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  artStatus?: Prisma.EnumArtStatusFieldUpdateOperationsInput | $Enums.ArtStatus
+  artNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -4973,6 +5179,8 @@ export type ProjectUncheckedUpdateWithoutContractInput = {
   boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
   archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  artStatus?: Prisma.EnumArtStatusFieldUpdateOperationsInput | $Enums.ArtStatus
+  artNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -5015,6 +5223,8 @@ export type ProjectUncheckedUpdateManyWithoutContractInput = {
   boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
   archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  artStatus?: Prisma.EnumArtStatusFieldUpdateOperationsInput | $Enums.ArtStatus
+  artNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -5168,6 +5378,8 @@ export type ProjectSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   boardPosition?: boolean
   archivedAt?: boolean
   folderPath?: boolean
+  artStatus?: boolean
+  artNotes?: boolean
   risks?: boolean
   notes?: boolean
   createdAt?: boolean
@@ -5218,6 +5430,8 @@ export type ProjectSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   boardPosition?: boolean
   archivedAt?: boolean
   folderPath?: boolean
+  artStatus?: boolean
+  artNotes?: boolean
   risks?: boolean
   notes?: boolean
   createdAt?: boolean
@@ -5256,6 +5470,8 @@ export type ProjectSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   boardPosition?: boolean
   archivedAt?: boolean
   folderPath?: boolean
+  artStatus?: boolean
+  artNotes?: boolean
   risks?: boolean
   notes?: boolean
   createdAt?: boolean
@@ -5294,6 +5510,8 @@ export type ProjectSelectScalar = {
   boardPosition?: boolean
   archivedAt?: boolean
   folderPath?: boolean
+  artStatus?: boolean
+  artNotes?: boolean
   risks?: boolean
   notes?: boolean
   createdAt?: boolean
@@ -5303,7 +5521,7 @@ export type ProjectSelectScalar = {
   deletedAt?: boolean
 }
 
-export type ProjectOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "companyId" | "code" | "name" | "clientId" | "clientUnitId" | "contractId" | "budgetId" | "technicalLeadId" | "coordinatorId" | "disciplines" | "startDate" | "contractualDeadline" | "expectedEndDate" | "actualEndDate" | "contractValue" | "status" | "priority" | "progressPercent" | "boardPosition" | "archivedAt" | "folderPath" | "risks" | "notes" | "createdAt" | "updatedAt" | "createdById" | "updatedById" | "deletedAt", ExtArgs["result"]["project"]>
+export type ProjectOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "companyId" | "code" | "name" | "clientId" | "clientUnitId" | "contractId" | "budgetId" | "technicalLeadId" | "coordinatorId" | "disciplines" | "startDate" | "contractualDeadline" | "expectedEndDate" | "actualEndDate" | "contractValue" | "status" | "priority" | "progressPercent" | "boardPosition" | "archivedAt" | "folderPath" | "artStatus" | "artNotes" | "risks" | "notes" | "createdAt" | "updatedAt" | "createdById" | "updatedById" | "deletedAt", ExtArgs["result"]["project"]>
 export type ProjectInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   client?: boolean | Prisma.ClientDefaultArgs<ExtArgs>
   clientUnit?: boolean | Prisma.Project$clientUnitArgs<ExtArgs>
@@ -5388,6 +5606,16 @@ export type $ProjectPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
      * Pasta de rede com os documentos do projeto (ex.: Z:\SONARE\Projetos\...)
      */
     folderPath: string | null
+    /**
+     * O projeto exige ART/RRT? O número fica no módulo de ART; aqui mora só a
+     * decisão, que é do gestor. "Não informado" é estado de alerta: projeto
+     * entregue sem ART e sem alguém ter dito que não precisava é risco.
+     */
+    artStatus: $Enums.ArtStatus
+    /**
+     * Por que foi dispensada — protege a decisão de quem assinou por ela.
+     */
+    artNotes: string | null
     risks: string | null
     notes: string | null
     createdAt: Date
@@ -5857,6 +6085,8 @@ export interface ProjectFieldRefs {
   readonly boardPosition: Prisma.FieldRef<"Project", 'Int'>
   readonly archivedAt: Prisma.FieldRef<"Project", 'DateTime'>
   readonly folderPath: Prisma.FieldRef<"Project", 'String'>
+  readonly artStatus: Prisma.FieldRef<"Project", 'ArtStatus'>
+  readonly artNotes: Prisma.FieldRef<"Project", 'String'>
   readonly risks: Prisma.FieldRef<"Project", 'String'>
   readonly notes: Prisma.FieldRef<"Project", 'String'>
   readonly createdAt: Prisma.FieldRef<"Project", 'DateTime'>

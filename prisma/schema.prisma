@@ -988,6 +988,12 @@ model Project {
   archivedAt          DateTime?
   /// Pasta de rede com os documentos do projeto (ex.: Z:\SONARE\Projetos\...)
   folderPath          String?
+  /// O projeto exige ART/RRT? O número fica no módulo de ART; aqui mora só a
+  /// decisão, que é do gestor. "Não informado" é estado de alerta: projeto
+  /// entregue sem ART e sem alguém ter dito que não precisava é risco.
+  artStatus           ArtStatus @default(NAO_INFORMADO)
+  /// Por que foi dispensada — protege a decisão de quem assinou por ela.
+  artNotes            String?
   risks               String?
   notes               String?
   createdAt           DateTime      @default(now())
@@ -1204,6 +1210,13 @@ enum TechRespStatus {
   EMITIDA
   BAIXADA
   CANCELADA
+}
+
+/// Decisão do gestor sobre a necessidade de ART/RRT no projeto.
+enum ArtStatus {
+  NAO_INFORMADO
+  NECESSARIA
+  DISPENSADA
 }
 
 model TechnicalResponsibility {

@@ -35,7 +35,7 @@ export async function getAlerts(user: SessionUser): Promise<Alerta[]> {
   const base = { companyId: user.companyId, deletedAt: null };
 
   const [
-    parcelasVencidas, projetosAtrasados, propostasVencendo,
+    parcelasVencidas, projetosAtrasados, projetosSemArt, propostasVencendo,
     tarefasAtrasadas, contasVencidas, orcamentosParados,
   ] = await Promise.all([
     pode('finance:read')
@@ -52,6 +52,24 @@ export async function getAlerts(user: SessionUser): Promise<Alerta[]> {
             status: { notIn: ['CONCLUIDO', 'ENCERRADO', 'CANCELADO'] },
           },
           select: { id: true, code: true, name: true },
+          take: 5,
+        })
+      : [],
+    /*
+     * Projeto em andamento sem ART e sem alguém ter dito que não precisa.
+     * Entregar sem responsabilidade técnica é risco do engenheiro que
+     * assina, não do sistema — então isto tem que aparecer sozinho.
+     */
+    pode('project:read')
+      ? prisma.project.findMany({
+          where: {
+            ...base, archivedAt: null,
+            ...escopoDeProjetos(user),
+            status: { notIn: ['CONCLUIDO', 'ENCERRADO', 'CANCELADO'] },
+            artStatus: { not: 'DISPENSADA' },
+            technicalResponsibilities: { none: { deletedAt: null, status: { not: 'CANCELADA' } } },
+          },
+          select: { id: true, code: true, name: true, artStatus: true },
           take: 5,
         })
       : [],
@@ -121,6 +139,22 @@ export async function getAlerts(user: SessionUser): Promise<Alerta[]> {
       gravidade: 'alta',
       titulo: `Prazo vencido: ${p.name}`,
       detalhe: `${p.code} passou do prazo contratual`,
+      href: `/projetos/${p.id}`,
+    });
+  }
+
+  for (const p of projetosSemArt) {
+    const naoInformado = p.artStatus === 'NAO_INFORMADO';
+    alertas.push({
+      id: `art-${p.id}`,
+      // exigir ART e não ter é pior que ainda não ter decidido
+      gravidade: naoInformado ? 'media' : 'alta',
+      titulo: naoInformado
+        ? `${p.code} sem informação de ART`
+        : `${p.code} exige ART e não tem`,
+      detalhe: naoInformado
+        ? `Ninguém informou se ${p.name} precisa de ART`
+        : `${p.name} está em andamento sem responsabilidade técnica registrada`,
       href: `/projetos/${p.id}`,
     });
   }

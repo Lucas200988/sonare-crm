@@ -170,6 +170,30 @@ export async function setProjectValueAction(
   return { info: 'Valor do projeto atualizado.' };
 }
 
+const artSchema = z.object({
+  status: z.enum(['NAO_INFORMADO', 'NECESSARIA', 'DISPENSADA']),
+  notes: z.string().trim().max(500).optional(),
+});
+
+/** Registra se o projeto precisa de ART — e por que não, quando dispensada. */
+export async function setProjectArtAction(
+  projectId: string, _prev: ActionState, formData: FormData,
+): Promise<ActionState> {
+  const user = await requirePermission('project:write');
+  const parsed = artSchema.safeParse(Object.fromEntries(formData.entries()));
+  if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? 'Dados inválidos.' };
+
+  const result = await projects.setProjectArt(
+    user, projectId, parsed.data.status, parsed.data.notes ?? null,
+  );
+  if ('error' in result) return { error: result.error };
+
+  revalidatePath(`/projetos/${projectId}`);
+  revalidatePath('/projetos');
+  revalidatePath('/art');
+  return { info: 'Responsabilidade técnica atualizada.' };
+}
+
 /** Equipe do cartão — salva na hora, sem abrir o formulário de edição. */
 export async function setProjectMembersAction(
   projectId: string, memberIds: string[],

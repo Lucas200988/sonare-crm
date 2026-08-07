@@ -7,6 +7,7 @@ import { listBoardProjects, listProjects, type ProjectListFilter } from '@/serve
 import { PageHeader, Card, EmptyState, Badge, inputCls } from '@/components/ui';
 import { formatDateBR } from '@/lib/dates';
 import { PROJECT_STATUS_BADGE } from './status-badge';
+import { alertaArt } from '@/lib/art-projeto';
 import { ProjectBoard } from './project-board';
 
 export const metadata: Metadata = { title: 'Projetos — SONARE CRM' };
@@ -71,6 +72,7 @@ export default async function ProjectsPage(props: {
             members: p.members.map((m) => m.user),
             taskCount: p._count.tasks,
             deliverableCount: p._count.deliverables,
+            artAlerta: alertaArt(p.artStatus, p.technicalResponsibilities),
           }))}
           clients={clients}
           canWrite={canWrite}

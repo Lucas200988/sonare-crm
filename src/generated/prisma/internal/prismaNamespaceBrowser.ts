@@ -811,6 +811,8 @@ export const ProjectScalarFieldEnum = {
   boardPosition: 'boardPosition',
   archivedAt: 'archivedAt',
   folderPath: 'folderPath',
+  artStatus: 'artStatus',
+  artNotes: 'artNotes',
   risks: 'risks',
   notes: 'notes',
   createdAt: 'createdAt',

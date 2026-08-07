@@ -14,6 +14,7 @@ import { StagesSection, DeliverablesSection, TimeEntriesSection } from './projec
 import { CommentsSection, AttachmentsSection } from './activity-sections';
 import { TaskBoard } from './task-board';
 import { ProjectFinanceSection } from './finance-section';
+import { ArtPanel } from './art-panel';
 import { getProjectFinance } from '@/server/services/finance';
 import { existeAcessoRestrito } from '@/server/auth/project-scope';
 
@@ -121,6 +122,16 @@ export default async function ProjectDetailPage(props: {
       <div className="mt-4 space-y-4">
         {aba === 'visao' ? (
           <>
+            <ArtPanel
+              projectId={project.id}
+              status={project.artStatus}
+              notes={project.artNotes}
+              arts={project.technicalResponsibilities.map((t) => ({
+                id: t.id, numero: t.number, docType: t.docType, status: t.status,
+                issuedAt: t.issuedAt ? t.issuedAt.toISOString() : null,
+              }))}
+              canWrite={canWrite}
+            />
             <Card className="p-4">
               <StagesSection
                 projectId={project.id}

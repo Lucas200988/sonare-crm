@@ -242,6 +242,15 @@ export const TechRespStatus = {
 export type TechRespStatus = (typeof TechRespStatus)[keyof typeof TechRespStatus]
 
 
+export const ArtStatus = {
+  NAO_INFORMADO: 'NAO_INFORMADO',
+  NECESSARIA: 'NECESSARIA',
+  DISPENSADA: 'DISPENSADA'
+} as const
+
+export type ArtStatus = (typeof ArtStatus)[keyof typeof ArtStatus]
+
+
 export const PendencyStatus = {
   ABERTA: 'ABERTA',
   RECEBIDA: 'RECEBIDA',

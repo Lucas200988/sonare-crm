@@ -7,7 +7,9 @@ import {
   DndContext, DragOverlay, PointerSensor, useDraggable, useDroppable,
   useSensor, useSensors, type DragEndEvent, type DragStartEvent,
 } from '@dnd-kit/core';
-import { Archive, CalendarClock, CheckSquare, FileStack, FolderOpen, Plus, Users } from 'lucide-react';
+import {
+  Archive, CalendarClock, CheckSquare, FileStack, FolderOpen, Plus, Stamp, Users,
+} from 'lucide-react';
 import {
   createProjectAction, moveProjectAction, setProjectArchivedAction, type ActionState,
 } from '@/actions/projects';
@@ -29,6 +31,8 @@ export type BoardProject = {
   members: { id: string; name: string }[];
   taskCount: number;
   deliverableCount: number;
+  /** Só quando pede ação: 'pendente' ou 'indefinido'. */
+  artAlerta: 'pendente' | 'indefinido' | null;
 };
 
 export type ClientOption = { id: string; legalName: string; tradeName: string | null };
@@ -92,6 +96,23 @@ function ProjectCard({ project, overlay, onArchive }: {
             <span className={`flex items-center gap-1 ${deadlineTone(project.contractualDeadline, project.status)}`}>
               <CalendarClock className="h-3 w-3" aria-hidden />
               {formatDateBR(project.contractualDeadline)}
+            </span>
+          ) : null}
+          {/* Falta de ART é risco de responsabilidade técnica, não detalhe
+              administrativo — por isso vem antes das contagens. */}
+          {project.artAlerta ? (
+            <span
+              className={`flex items-center gap-1 rounded px-1.5 py-0.5 font-medium ${
+                project.artAlerta === 'pendente'
+                  ? 'bg-red-50 text-red-700'
+                  : 'bg-amber-50 text-amber-700'
+              }`}
+              title={project.artAlerta === 'pendente'
+                ? 'Este projeto exige ART e nenhuma foi registrada'
+                : 'Ninguém informou se este projeto precisa de ART'}
+            >
+              <Stamp className="h-3 w-3" aria-hidden />
+              {project.artAlerta === 'pendente' ? 'ART pendente' : 'ART?'}
             </span>
           ) : null}
           {project.taskCount > 0 ? (
