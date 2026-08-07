@@ -410,6 +410,11 @@ model OpportunityStage {
   color     String?
   sortOrder Int       @default(0)
   active    Boolean   @default(true)
+  /// Comemora na tela quando um cartão chega aqui. É escolha de cada
+  /// empresa: a vitória é o "sim" do cliente, e o que vem depois costuma
+  /// ser trâmite — mas onde exatamente isso acontece muda de quadro
+  /// para quadro.
+  celebrate Boolean   @default(false)
 
   opportunities Opportunity[]
 

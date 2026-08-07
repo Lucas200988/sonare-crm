@@ -4,6 +4,7 @@ import { Fragment, useActionState, useState } from 'react';
 import { Plus } from 'lucide-react';
 import {
   addCatalogItemAction, toggleCatalogItemAction, addStageAction, toggleStageAction,
+  setStageCelebrateAction,
   saveServiceAction, toggleServiceAction, updateRetentionAction, type ActionState,
 } from '@/actions/catalogs';
 import { inputCls, FormError } from '@/components/ui';
@@ -52,7 +53,10 @@ export function SimpleCatalogSection({
   );
 }
 
-type StageItem = { id: string; name: string; kind: string; color: string | null; active: boolean };
+type StageItem = {
+  id: string; name: string; kind: string; color: string | null;
+  active: boolean; celebrate: boolean;
+};
 
 const KIND_LABEL: Record<string, string> = {
   ABERTA: 'Aberta', GANHA: 'Ganho', PERDIDA: 'Perda', SUSPENSA: 'Suspensa',
@@ -66,6 +70,7 @@ export function StagesSection({ stages }: { stages: StageItem[] }) {
       <h2 className="text-base font-semibold text-slate-900">Etapas do pipeline</h2>
       <p className="mt-1 text-xs text-slate-500">
         A ordem define o quadro Kanban. Etapas de ganho/perda encerram a oportunidade.
+        A etapa marcada com 🎉 comemora na tela quando um cartão chega nela.
       </p>
       <form action={formAction} className="mt-3 flex flex-wrap gap-2">
         <input name="name" placeholder="Nova etapa…" required className={`${inputCls} flex-1`} aria-label="Nome da etapa" />
@@ -86,7 +91,21 @@ export function StagesSection({ stages }: { stages: StageItem[] }) {
               <span className={s.active ? 'text-slate-800' : 'text-slate-400 line-through'}>{s.name}</span>
               <span className="rounded bg-slate-100 px-1.5 py-0.5 text-[10px] font-medium text-slate-500">{KIND_LABEL[s.kind]}</span>
             </span>
-            <button
+            <span className="flex items-center gap-1">
+              <button
+                type="button"
+                onClick={() => void setStageCelebrateAction(s.id, !s.celebrate)}
+                title={s.celebrate
+                  ? 'Comemora quando um cartão chega aqui'
+                  : 'Marcar como a etapa da comemoração'}
+                aria-pressed={s.celebrate}
+                className={`rounded px-2 py-0.5 text-xs ${
+                  s.celebrate ? 'bg-green-50' : 'opacity-30 grayscale hover:opacity-70'
+                }`}
+              >
+                🎉
+              </button>
+              <button
               type="button"
               onClick={() => void toggleStageAction(s.id, !s.active)}
               className={`rounded px-2 py-0.5 text-xs font-medium ${
@@ -94,7 +113,8 @@ export function StagesSection({ stages }: { stages: StageItem[] }) {
               }`}
             >
               {s.active ? 'Desativar' : 'Reativar'}
-            </button>
+              </button>
+            </span>
           </li>
         ))}
       </ul>

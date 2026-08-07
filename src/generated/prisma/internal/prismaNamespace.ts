@@ -5404,7 +5404,8 @@ export const OpportunityStageScalarFieldEnum = {
   kind: 'kind',
   color: 'color',
   sortOrder: 'sortOrder',
-  active: 'active'
+  active: 'active',
+  celebrate: 'celebrate'
 } as const
 
 export type OpportunityStageScalarFieldEnum = (typeof OpportunityStageScalarFieldEnum)[keyof typeof OpportunityStageScalarFieldEnum]

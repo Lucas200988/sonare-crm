@@ -14,7 +14,11 @@ import { formatDateBR } from '@/lib/dates';
 import { EntregaChip, type EntregaChipDados } from '@/components/entrega-chip';
 import { Comemoracao } from '@/components/comemoracao';
 
-export type BoardStage = { id: string; name: string; kind: string; color: string | null };
+export type BoardStage = {
+  id: string; name: string; kind: string; color: string | null;
+  /** Comemora quando um cartão chega aqui. Configurável por empresa. */
+  celebrate: boolean;
+};
 export type BoardCard = {
   id: string;
   code: string;
@@ -156,14 +160,16 @@ export function KanbanBoard({
   }
 
   /**
-   * Comemora quando o cartão cai numa etapa de ganho.
+   * Comemora quando o cartão cai na etapa marcada para isso.
    *
-   * Amarrado ao tipo da etapa, não ao nome: o quadro é configurável, e
-   * "Aprovado" pode virar "Fechado" amanhã sem que ninguém lembre daqui.
+   * Não é o tipo "ganha": a etapa de ganho costuma ser o fim do trâmite —
+   * contrato assinado, papel guardado. A vitória que se comemora é o "sim"
+   * do cliente, e qual etapa representa esse momento é escolha de quem
+   * montou o quadro.
    */
   function comemorarSeGanhou(targetStageId: string, card: BoardCard) {
     const etapa = stages.find((s) => s.id === targetStageId);
-    if (etapa?.kind !== 'GANHA') return;
+    if (!etapa?.celebrate) return;
     setGanho({
       titulo: card.title,
       cliente: card.client.tradeName ?? card.client.legalName,

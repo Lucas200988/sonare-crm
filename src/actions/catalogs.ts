@@ -54,6 +54,22 @@ export async function addStageAction(_prev: ActionState, formData: FormData): Pr
   return {};
 }
 
+/**
+ * Marca a etapa que comemora na tela.
+ *
+ * Só uma por vez: comemorar duas vezes o mesmo negócio esvazia o gesto.
+ */
+export async function setStageCelebrateAction(
+  id: string, celebrate: boolean,
+): Promise<ActionState> {
+  const user = await requirePermission('settings:manage');
+  const result = await catalogs.setStageCelebrate(user, id, celebrate);
+  if (result.error) return { error: result.error };
+  revalidatePath('/configuracoes');
+  revalidatePath('/crm');
+  return {};
+}
+
 export async function toggleStageAction(id: string, active: boolean): Promise<ActionState> {
   const user = await requirePermission('settings:manage');
   const result = await catalogs.updateStage(user, id, { active });

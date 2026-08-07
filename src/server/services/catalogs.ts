@@ -79,6 +79,37 @@ export async function addStage(user: SessionUser, input: StageInput) {
   return { ok: true };
 }
 
+/**
+ * Define a etapa que dispara a comemoração no quadro.
+ *
+ * Exclusiva por empresa: a mesma venda passando por duas etapas festivas
+ * transformaria a comemoração em ruído. Marcar uma desmarca a anterior.
+ */
+export async function setStageCelebrate(user: SessionUser, id: string, celebrate: boolean) {
+  const stage = await prisma.opportunityStage.findFirst({
+    where: { id, companyId: user.companyId },
+    select: { id: true, name: true },
+  });
+  if (!stage) return { error: 'Etapa não encontrada.' };
+
+  await prisma.$transaction([
+    ...(celebrate
+      ? [prisma.opportunityStage.updateMany({
+          where: { companyId: user.companyId, celebrate: true },
+          data: { celebrate: false },
+        })]
+      : []),
+    prisma.opportunityStage.update({ where: { id }, data: { celebrate } }),
+  ]);
+
+  await auditLog({
+    companyId: user.companyId, userId: user.id,
+    action: 'update', entityType: 'opportunity_stage', entityId: id,
+    after: { etapa: stage.name, comemora: celebrate },
+  });
+  return { ok: true as const };
+}
+
 export async function updateStage(
   user: SessionUser, id: string,
   data: Partial<StageInput> & { active?: boolean; sortOrder?: number },

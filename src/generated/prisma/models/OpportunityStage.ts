@@ -42,6 +42,7 @@ export type OpportunityStageMinAggregateOutputType = {
   color: string | null
   sortOrder: number | null
   active: boolean | null
+  celebrate: boolean | null
 }
 
 export type OpportunityStageMaxAggregateOutputType = {
@@ -52,6 +53,7 @@ export type OpportunityStageMaxAggregateOutputType = {
   color: string | null
   sortOrder: number | null
   active: boolean | null
+  celebrate: boolean | null
 }
 
 export type OpportunityStageCountAggregateOutputType = {
@@ -62,6 +64,7 @@ export type OpportunityStageCountAggregateOutputType = {
   color: number
   sortOrder: number
   active: number
+  celebrate: number
   _all: number
 }
 
@@ -82,6 +85,7 @@ export type OpportunityStageMinAggregateInputType = {
   color?: true
   sortOrder?: true
   active?: true
+  celebrate?: true
 }
 
 export type OpportunityStageMaxAggregateInputType = {
@@ -92,6 +96,7 @@ export type OpportunityStageMaxAggregateInputType = {
   color?: true
   sortOrder?: true
   active?: true
+  celebrate?: true
 }
 
 export type OpportunityStageCountAggregateInputType = {
@@ -102,6 +107,7 @@ export type OpportunityStageCountAggregateInputType = {
   color?: true
   sortOrder?: true
   active?: true
+  celebrate?: true
   _all?: true
 }
 
@@ -199,6 +205,7 @@ export type OpportunityStageGroupByOutputType = {
   color: string | null
   sortOrder: number
   active: boolean
+  celebrate: boolean
   _count: OpportunityStageCountAggregateOutputType | null
   _avg: OpportunityStageAvgAggregateOutputType | null
   _sum: OpportunityStageSumAggregateOutputType | null
@@ -232,6 +239,7 @@ export type OpportunityStageWhereInput = {
   color?: Prisma.StringNullableFilter<"OpportunityStage"> | string | null
   sortOrder?: Prisma.IntFilter<"OpportunityStage"> | number
   active?: Prisma.BoolFilter<"OpportunityStage"> | boolean
+  celebrate?: Prisma.BoolFilter<"OpportunityStage"> | boolean
   opportunities?: Prisma.OpportunityListRelationFilter
 }
 
@@ -243,6 +251,7 @@ export type OpportunityStageOrderByWithRelationInput = {
   color?: Prisma.SortOrderInput | Prisma.SortOrder
   sortOrder?: Prisma.SortOrder
   active?: Prisma.SortOrder
+  celebrate?: Prisma.SortOrder
   opportunities?: Prisma.OpportunityOrderByRelationAggregateInput
 }
 
@@ -258,6 +267,7 @@ export type OpportunityStageWhereUniqueInput = Prisma.AtLeast<{
   color?: Prisma.StringNullableFilter<"OpportunityStage"> | string | null
   sortOrder?: Prisma.IntFilter<"OpportunityStage"> | number
   active?: Prisma.BoolFilter<"OpportunityStage"> | boolean
+  celebrate?: Prisma.BoolFilter<"OpportunityStage"> | boolean
   opportunities?: Prisma.OpportunityListRelationFilter
 }, "id" | "companyId_name">
 
@@ -269,6 +279,7 @@ export type OpportunityStageOrderByWithAggregationInput = {
   color?: Prisma.SortOrderInput | Prisma.SortOrder
   sortOrder?: Prisma.SortOrder
   active?: Prisma.SortOrder
+  celebrate?: Prisma.SortOrder
   _count?: Prisma.OpportunityStageCountOrderByAggregateInput
   _avg?: Prisma.OpportunityStageAvgOrderByAggregateInput
   _max?: Prisma.OpportunityStageMaxOrderByAggregateInput
@@ -287,6 +298,7 @@ export type OpportunityStageScalarWhereWithAggregatesInput = {
   color?: Prisma.StringNullableWithAggregatesFilter<"OpportunityStage"> | string | null
   sortOrder?: Prisma.IntWithAggregatesFilter<"OpportunityStage"> | number
   active?: Prisma.BoolWithAggregatesFilter<"OpportunityStage"> | boolean
+  celebrate?: Prisma.BoolWithAggregatesFilter<"OpportunityStage"> | boolean
 }
 
 export type OpportunityStageCreateInput = {
@@ -297,6 +309,7 @@ export type OpportunityStageCreateInput = {
   color?: string | null
   sortOrder?: number
   active?: boolean
+  celebrate?: boolean
   opportunities?: Prisma.OpportunityCreateNestedManyWithoutStageInput
 }
 
@@ -308,6 +321,7 @@ export type OpportunityStageUncheckedCreateInput = {
   color?: string | null
   sortOrder?: number
   active?: boolean
+  celebrate?: boolean
   opportunities?: Prisma.OpportunityUncheckedCreateNestedManyWithoutStageInput
 }
 
@@ -319,6 +333,7 @@ export type OpportunityStageUpdateInput = {
   color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  celebrate?: Prisma.BoolFieldUpdateOperationsInput | boolean
   opportunities?: Prisma.OpportunityUpdateManyWithoutStageNestedInput
 }
 
@@ -330,6 +345,7 @@ export type OpportunityStageUncheckedUpdateInput = {
   color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  celebrate?: Prisma.BoolFieldUpdateOperationsInput | boolean
   opportunities?: Prisma.OpportunityUncheckedUpdateManyWithoutStageNestedInput
 }
 
@@ -341,6 +357,7 @@ export type OpportunityStageCreateManyInput = {
   color?: string | null
   sortOrder?: number
   active?: boolean
+  celebrate?: boolean
 }
 
 export type OpportunityStageUpdateManyMutationInput = {
@@ -351,6 +368,7 @@ export type OpportunityStageUpdateManyMutationInput = {
   color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  celebrate?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type OpportunityStageUncheckedUpdateManyInput = {
@@ -361,6 +379,7 @@ export type OpportunityStageUncheckedUpdateManyInput = {
   color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  celebrate?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type OpportunityStageCompanyIdNameCompoundUniqueInput = {
@@ -376,6 +395,7 @@ export type OpportunityStageCountOrderByAggregateInput = {
   color?: Prisma.SortOrder
   sortOrder?: Prisma.SortOrder
   active?: Prisma.SortOrder
+  celebrate?: Prisma.SortOrder
 }
 
 export type OpportunityStageAvgOrderByAggregateInput = {
@@ -390,6 +410,7 @@ export type OpportunityStageMaxOrderByAggregateInput = {
   color?: Prisma.SortOrder
   sortOrder?: Prisma.SortOrder
   active?: Prisma.SortOrder
+  celebrate?: Prisma.SortOrder
 }
 
 export type OpportunityStageMinOrderByAggregateInput = {
@@ -400,6 +421,7 @@ export type OpportunityStageMinOrderByAggregateInput = {
   color?: Prisma.SortOrder
   sortOrder?: Prisma.SortOrder
   active?: Prisma.SortOrder
+  celebrate?: Prisma.SortOrder
 }
 
 export type OpportunityStageSumOrderByAggregateInput = {
@@ -437,6 +459,7 @@ export type OpportunityStageCreateWithoutOpportunitiesInput = {
   color?: string | null
   sortOrder?: number
   active?: boolean
+  celebrate?: boolean
 }
 
 export type OpportunityStageUncheckedCreateWithoutOpportunitiesInput = {
@@ -447,6 +470,7 @@ export type OpportunityStageUncheckedCreateWithoutOpportunitiesInput = {
   color?: string | null
   sortOrder?: number
   active?: boolean
+  celebrate?: boolean
 }
 
 export type OpportunityStageCreateOrConnectWithoutOpportunitiesInput = {
@@ -473,6 +497,7 @@ export type OpportunityStageUpdateWithoutOpportunitiesInput = {
   color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  celebrate?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type OpportunityStageUncheckedUpdateWithoutOpportunitiesInput = {
@@ -483,6 +508,7 @@ export type OpportunityStageUncheckedUpdateWithoutOpportunitiesInput = {
   color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  celebrate?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 
@@ -524,6 +550,7 @@ export type OpportunityStageSelect<ExtArgs extends runtime.Types.Extensions.Inte
   color?: boolean
   sortOrder?: boolean
   active?: boolean
+  celebrate?: boolean
   opportunities?: boolean | Prisma.OpportunityStage$opportunitiesArgs<ExtArgs>
   _count?: boolean | Prisma.OpportunityStageCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["opportunityStage"]>
@@ -536,6 +563,7 @@ export type OpportunityStageSelectCreateManyAndReturn<ExtArgs extends runtime.Ty
   color?: boolean
   sortOrder?: boolean
   active?: boolean
+  celebrate?: boolean
 }, ExtArgs["result"]["opportunityStage"]>
 
 export type OpportunityStageSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -546,6 +574,7 @@ export type OpportunityStageSelectUpdateManyAndReturn<ExtArgs extends runtime.Ty
   color?: boolean
   sortOrder?: boolean
   active?: boolean
+  celebrate?: boolean
 }, ExtArgs["result"]["opportunityStage"]>
 
 export type OpportunityStageSelectScalar = {
@@ -556,9 +585,10 @@ export type OpportunityStageSelectScalar = {
   color?: boolean
   sortOrder?: boolean
   active?: boolean
+  celebrate?: boolean
 }
 
-export type OpportunityStageOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "companyId" | "name" | "kind" | "color" | "sortOrder" | "active", ExtArgs["result"]["opportunityStage"]>
+export type OpportunityStageOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "companyId" | "name" | "kind" | "color" | "sortOrder" | "active" | "celebrate", ExtArgs["result"]["opportunityStage"]>
 export type OpportunityStageInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   opportunities?: boolean | Prisma.OpportunityStage$opportunitiesArgs<ExtArgs>
   _count?: boolean | Prisma.OpportunityStageCountOutputTypeDefaultArgs<ExtArgs>
@@ -579,6 +609,13 @@ export type $OpportunityStagePayload<ExtArgs extends runtime.Types.Extensions.In
     color: string | null
     sortOrder: number
     active: boolean
+    /**
+     * Comemora na tela quando um cartão chega aqui. É escolha de cada
+     * empresa: a vitória é o "sim" do cliente, e o que vem depois costuma
+     * ser trâmite — mas onde exatamente isso acontece muda de quadro
+     * para quadro.
+     */
+    celebrate: boolean
   }, ExtArgs["result"]["opportunityStage"]>
   composites: {}
 }
@@ -1010,6 +1047,7 @@ export interface OpportunityStageFieldRefs {
   readonly color: Prisma.FieldRef<"OpportunityStage", 'String'>
   readonly sortOrder: Prisma.FieldRef<"OpportunityStage", 'Int'>
   readonly active: Prisma.FieldRef<"OpportunityStage", 'Boolean'>
+  readonly celebrate: Prisma.FieldRef<"OpportunityStage", 'Boolean'>
 }
     
 

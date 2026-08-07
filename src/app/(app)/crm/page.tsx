@@ -87,7 +87,9 @@ export default async function CrmPage(props: {
       </form>
 
       <KanbanBoard
-        stages={stages.map((s) => ({ id: s.id, name: s.name, kind: s.kind, color: s.color }))}
+        stages={stages.map((s) => ({
+          id: s.id, name: s.name, kind: s.kind, color: s.color, celebrate: s.celebrate,
+        }))}
         cards={cards}
         lossReasons={lossReasons}
         canWrite={canWrite}
