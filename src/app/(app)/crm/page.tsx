@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { Plus } from 'lucide-react';
 import { requirePermissionPage } from '@/server/auth/guards';
-import { getBoard } from '@/server/services/opportunities';
+import { getBoard, getResumoPorOportunidade } from '@/server/services/opportunities';
 import { getEntregasPorOportunidade } from '@/server/services/email-delivery';
 import { prisma } from '@/server/db';
 import { PageHeader, PrimaryLink, inputCls } from '@/components/ui';
@@ -35,10 +35,12 @@ export default async function CrmPage(props: {
     }),
   ]);
 
-  // depende dos ids do quadro, então só pode vir depois da consulta acima
-  const entregas = await getEntregasPorOportunidade(
-    user.companyId, opportunities.map((o) => o.id),
-  );
+  // dependem dos ids do quadro, então só podem vir depois da consulta acima
+  const ids = opportunities.map((o) => o.id);
+  const [entregas, resumos] = await Promise.all([
+    getEntregasPorOportunidade(user.companyId, ids),
+    getResumoPorOportunidade(user.companyId, ids),
+  ]);
 
   const cards: BoardCard[] = opportunities.map((o) => ({
     id: o.id,
@@ -53,6 +55,7 @@ export default async function CrmPage(props: {
     nextActivity: o.activities[0]
       ? { title: o.activities[0].title, dueAt: o.activities[0].dueAt?.toISOString() ?? null }
       : null,
+    resumo: resumos.get(o.id) ?? null,
     entrega: (() => {
       const e = entregas.get(o.id);
       return e ? { ...e, sentAt: e.sentAt.toISOString() } : null;

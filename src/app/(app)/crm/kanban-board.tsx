@@ -31,6 +31,8 @@ export type BoardCard = {
   commercialOwner: { id: string; name: string } | null;
   nextActivity: { title: string; dueAt: string | null } | null;
   entrega: EntregaChipDados | null;
+  /** Orçamento ligado ao cartão e do que ele trata. */
+  resumo: { orcamento: string; assunto: string } | null;
 };
 export type LossReasonOption = { id: string; name: string };
 
@@ -46,11 +48,21 @@ function OpportunityCard({ card, overlay }: { card: BoardCard; overlay?: boolean
   return (
     <div className={`rounded-lg border border-slate-200 bg-white p-3 shadow-sm ${overlay ? 'rotate-2 shadow-lg' : ''}`}>
       <div className="flex items-center justify-between gap-2">
-        <span className="text-[11px] font-semibold text-slate-400">{card.code}</span>
+        {/* O código do orçamento diz mais que o da oportunidade: é por ele
+            que se procura o documento e se fala com o cliente. */}
+        <span className="text-[11px] font-semibold text-slate-400" title={card.code}>
+          {card.resumo?.orcamento ?? card.code}
+        </span>
         <span className={`h-2 w-2 rounded-full ${PRIORITY_DOT[card.priority] ?? PRIORITY_DOT.MEDIA}`} title={`Prioridade ${card.priority.toLowerCase()}`} />
       </div>
-      <Link href={`/crm/${card.id}`} className="mt-1 block text-sm font-medium leading-snug text-slate-900 hover:underline">
-        {card.title}
+      <Link
+        href={`/crm/${card.id}`}
+        title={card.resumo?.assunto || card.title}
+        className="mt-1 line-clamp-2 block text-sm font-medium leading-snug text-slate-900 hover:underline"
+      >
+        {/* Cartão nascido de orçamento tem título genérico ("Orçamento —
+            Cliente"); nesse caso o assunto deduzido informa muito mais. */}
+        {card.resumo?.assunto || card.title}
       </Link>
       <p className="mt-1 truncate text-xs text-slate-500">{card.client.tradeName ?? card.client.legalName}</p>
       <div className="mt-2 flex items-center justify-between text-xs">

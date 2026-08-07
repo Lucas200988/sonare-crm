@@ -3,6 +3,7 @@ import { prisma } from '@/server/db';
 import { auditLog } from '@/server/audit/audit';
 import { sincronizarPropostaComEtapa } from '@/server/services/proposals';
 import { nextCode } from '@/server/services/sequence';
+import { resumirOrcamento } from '@/lib/resumo-orcamento';
 import type { ActivityStatus, ActivityType, Prisma, PriorityLevel } from '@/generated/prisma/client';
 import type { SessionUser } from '@/server/auth/session';
 
@@ -15,6 +16,53 @@ export type BoardFilters = {
   search?: string;
   includeClosed?: boolean;
 };
+
+export type ResumoDoCartao = { orcamento: string; assunto: string };
+
+/**
+ * Do que trata o orçamento de cada oportunidade do quadro.
+ *
+ * O cartão criado a partir de um orçamento nasce com o título "Orçamento —
+ * Nome do Cliente": dois orçamentos do mesmo cliente ficam idênticos e só se
+ * distinguem abrindo um a um. O código e um assunto curto resolvem isso na
+ * frente do cartão, sem pedir digitação a mais de ninguém.
+ */
+export async function getResumoPorOportunidade(
+  companyId: string, opportunityIds: string[],
+): Promise<Map<string, ResumoDoCartao>> {
+  const resultado = new Map<string, ResumoDoCartao>();
+  if (opportunityIds.length === 0) return resultado;
+
+  const orcamentos = await prisma.budget.findMany({
+    where: { companyId, deletedAt: null, opportunityId: { in: opportunityIds } },
+    select: {
+      code: true,
+      opportunityId: true,
+      currentVersion: {
+        select: {
+          serviceType: true,
+          scope: true,
+          items: { select: { description: true }, orderBy: { sortOrder: 'asc' }, take: 1 },
+        },
+      },
+    },
+    // o mais recente por último, para sobrescrever os anteriores no mapa
+    orderBy: { createdAt: 'asc' },
+  });
+
+  for (const b of orcamentos) {
+    if (!b.opportunityId) continue;
+    resultado.set(b.opportunityId, {
+      orcamento: b.code,
+      assunto: resumirOrcamento({
+        serviceType: b.currentVersion?.serviceType,
+        primeiroItem: b.currentVersion?.items[0]?.description,
+        escopo: b.currentVersion?.scope,
+      }),
+    });
+  }
+  return resultado;
+}
 
 export async function getBoard(user: SessionUser, filters: BoardFilters) {
   const where: Prisma.OpportunityWhereInput = {
