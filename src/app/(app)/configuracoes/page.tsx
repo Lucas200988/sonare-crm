@@ -70,7 +70,7 @@ export default async function SettingsPage() {
           <AiSection status={aiStatus} />
         </Card>
         <Card className="p-5">
-          <StagesSection stages={stages.map((s) => ({ id: s.id, name: s.name, kind: s.kind, color: s.color, active: s.active, celebrate: s.celebrate }))} />
+          <StagesSection stages={stages.map((s) => ({ id: s.id, name: s.name, kind: s.kind, color: s.color, active: s.active, celebrate: s.celebrate, createsProject: s.createsProject }))} />
         </Card>
         <div className="space-y-4">
           <Card className="p-5">

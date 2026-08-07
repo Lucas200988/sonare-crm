@@ -80,6 +80,37 @@ export async function addStage(user: SessionUser, input: StageInput) {
 }
 
 /**
+ * Define a etapa que abre o projeto automaticamente.
+ *
+ * Exclusiva pelo mesmo motivo da comemoração: duas etapas criando projeto
+ * geraria dois cartões para o mesmo trabalho.
+ */
+export async function setStageCreatesProject(user: SessionUser, id: string, cria: boolean) {
+  const stage = await prisma.opportunityStage.findFirst({
+    where: { id, companyId: user.companyId },
+    select: { id: true, name: true },
+  });
+  if (!stage) return { error: 'Etapa não encontrada.' };
+
+  await prisma.$transaction([
+    ...(cria
+      ? [prisma.opportunityStage.updateMany({
+          where: { companyId: user.companyId, createsProject: true },
+          data: { createsProject: false },
+        })]
+      : []),
+    prisma.opportunityStage.update({ where: { id }, data: { createsProject: cria } }),
+  ]);
+
+  await auditLog({
+    companyId: user.companyId, userId: user.id,
+    action: 'update', entityType: 'opportunity_stage', entityId: id,
+    after: { etapa: stage.name, criaProjeto: cria },
+  });
+  return { ok: true as const };
+}
+
+/**
  * Define a etapa que dispara a comemoração no quadro.
  *
  * Exclusiva por empresa: a mesma venda passando por duas etapas festivas

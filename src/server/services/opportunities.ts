@@ -4,6 +4,7 @@ import { auditLog } from '@/server/audit/audit';
 import { sincronizarPropostaComEtapa } from '@/server/services/proposals';
 import { nextCode } from '@/server/services/sequence';
 import { resumirOrcamento } from '@/lib/resumo-orcamento';
+import { criarProjetoDaOportunidade } from '@/server/services/projects';
 import type { ActivityStatus, ActivityType, Prisma, PriorityLevel } from '@/generated/prisma/client';
 import type { SessionUser } from '@/server/auth/session';
 
@@ -278,13 +279,28 @@ export async function moveOpportunityStage(
   // O arrasto manual também conta a história: proposta e orçamento acompanham
   await sincronizarPropostaComEtapa(user, opportunityId, targetStage);
 
+  /*
+   * Etapa marcada para abrir projeto: o trabalho começa aqui e o cartão de
+   * execução precisa existir. A falha é registrada e engolida — mover o
+   * cartão não pode quebrar porque a criação do projeto deu errado.
+   */
+  let projetoCriado: { id: string; code: string } | null = null;
+  if (targetStage.createsProject) {
+    try {
+      const r = await criarProjetoDaOportunidade(user, opportunityId);
+      if (r.criado) projetoCriado = { id: r.criado.id, code: r.criado.code };
+    } catch (e) {
+      console.error('[projeto] criação automática falhou:', e instanceof Error ? e.message : e);
+    }
+  }
+
   await auditLog({
     companyId: user.companyId, userId: user.id,
     action: 'stage_change', entityType: 'opportunity', entityId: opportunityId,
     before: { stage: opportunity.stage.name },
     after: { stage: targetStage.name, lossReasonId: options?.lossReasonId },
   });
-  return { opportunity: updated };
+  return { opportunity: updated, projetoCriado };
 }
 
 // ---------- Atividades ----------

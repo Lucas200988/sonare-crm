@@ -43,6 +43,7 @@ export type OpportunityStageMinAggregateOutputType = {
   sortOrder: number | null
   active: boolean | null
   celebrate: boolean | null
+  createsProject: boolean | null
 }
 
 export type OpportunityStageMaxAggregateOutputType = {
@@ -54,6 +55,7 @@ export type OpportunityStageMaxAggregateOutputType = {
   sortOrder: number | null
   active: boolean | null
   celebrate: boolean | null
+  createsProject: boolean | null
 }
 
 export type OpportunityStageCountAggregateOutputType = {
@@ -65,6 +67,7 @@ export type OpportunityStageCountAggregateOutputType = {
   sortOrder: number
   active: number
   celebrate: number
+  createsProject: number
   _all: number
 }
 
@@ -86,6 +89,7 @@ export type OpportunityStageMinAggregateInputType = {
   sortOrder?: true
   active?: true
   celebrate?: true
+  createsProject?: true
 }
 
 export type OpportunityStageMaxAggregateInputType = {
@@ -97,6 +101,7 @@ export type OpportunityStageMaxAggregateInputType = {
   sortOrder?: true
   active?: true
   celebrate?: true
+  createsProject?: true
 }
 
 export type OpportunityStageCountAggregateInputType = {
@@ -108,6 +113,7 @@ export type OpportunityStageCountAggregateInputType = {
   sortOrder?: true
   active?: true
   celebrate?: true
+  createsProject?: true
   _all?: true
 }
 
@@ -206,6 +212,7 @@ export type OpportunityStageGroupByOutputType = {
   sortOrder: number
   active: boolean
   celebrate: boolean
+  createsProject: boolean
   _count: OpportunityStageCountAggregateOutputType | null
   _avg: OpportunityStageAvgAggregateOutputType | null
   _sum: OpportunityStageSumAggregateOutputType | null
@@ -240,6 +247,7 @@ export type OpportunityStageWhereInput = {
   sortOrder?: Prisma.IntFilter<"OpportunityStage"> | number
   active?: Prisma.BoolFilter<"OpportunityStage"> | boolean
   celebrate?: Prisma.BoolFilter<"OpportunityStage"> | boolean
+  createsProject?: Prisma.BoolFilter<"OpportunityStage"> | boolean
   opportunities?: Prisma.OpportunityListRelationFilter
 }
 
@@ -252,6 +260,7 @@ export type OpportunityStageOrderByWithRelationInput = {
   sortOrder?: Prisma.SortOrder
   active?: Prisma.SortOrder
   celebrate?: Prisma.SortOrder
+  createsProject?: Prisma.SortOrder
   opportunities?: Prisma.OpportunityOrderByRelationAggregateInput
 }
 
@@ -268,6 +277,7 @@ export type OpportunityStageWhereUniqueInput = Prisma.AtLeast<{
   sortOrder?: Prisma.IntFilter<"OpportunityStage"> | number
   active?: Prisma.BoolFilter<"OpportunityStage"> | boolean
   celebrate?: Prisma.BoolFilter<"OpportunityStage"> | boolean
+  createsProject?: Prisma.BoolFilter<"OpportunityStage"> | boolean
   opportunities?: Prisma.OpportunityListRelationFilter
 }, "id" | "companyId_name">
 
@@ -280,6 +290,7 @@ export type OpportunityStageOrderByWithAggregationInput = {
   sortOrder?: Prisma.SortOrder
   active?: Prisma.SortOrder
   celebrate?: Prisma.SortOrder
+  createsProject?: Prisma.SortOrder
   _count?: Prisma.OpportunityStageCountOrderByAggregateInput
   _avg?: Prisma.OpportunityStageAvgOrderByAggregateInput
   _max?: Prisma.OpportunityStageMaxOrderByAggregateInput
@@ -299,6 +310,7 @@ export type OpportunityStageScalarWhereWithAggregatesInput = {
   sortOrder?: Prisma.IntWithAggregatesFilter<"OpportunityStage"> | number
   active?: Prisma.BoolWithAggregatesFilter<"OpportunityStage"> | boolean
   celebrate?: Prisma.BoolWithAggregatesFilter<"OpportunityStage"> | boolean
+  createsProject?: Prisma.BoolWithAggregatesFilter<"OpportunityStage"> | boolean
 }
 
 export type OpportunityStageCreateInput = {
@@ -310,6 +322,7 @@ export type OpportunityStageCreateInput = {
   sortOrder?: number
   active?: boolean
   celebrate?: boolean
+  createsProject?: boolean
   opportunities?: Prisma.OpportunityCreateNestedManyWithoutStageInput
 }
 
@@ -322,6 +335,7 @@ export type OpportunityStageUncheckedCreateInput = {
   sortOrder?: number
   active?: boolean
   celebrate?: boolean
+  createsProject?: boolean
   opportunities?: Prisma.OpportunityUncheckedCreateNestedManyWithoutStageInput
 }
 
@@ -334,6 +348,7 @@ export type OpportunityStageUpdateInput = {
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   celebrate?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createsProject?: Prisma.BoolFieldUpdateOperationsInput | boolean
   opportunities?: Prisma.OpportunityUpdateManyWithoutStageNestedInput
 }
 
@@ -346,6 +361,7 @@ export type OpportunityStageUncheckedUpdateInput = {
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   celebrate?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createsProject?: Prisma.BoolFieldUpdateOperationsInput | boolean
   opportunities?: Prisma.OpportunityUncheckedUpdateManyWithoutStageNestedInput
 }
 
@@ -358,6 +374,7 @@ export type OpportunityStageCreateManyInput = {
   sortOrder?: number
   active?: boolean
   celebrate?: boolean
+  createsProject?: boolean
 }
 
 export type OpportunityStageUpdateManyMutationInput = {
@@ -369,6 +386,7 @@ export type OpportunityStageUpdateManyMutationInput = {
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   celebrate?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createsProject?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type OpportunityStageUncheckedUpdateManyInput = {
@@ -380,6 +398,7 @@ export type OpportunityStageUncheckedUpdateManyInput = {
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   celebrate?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createsProject?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type OpportunityStageCompanyIdNameCompoundUniqueInput = {
@@ -396,6 +415,7 @@ export type OpportunityStageCountOrderByAggregateInput = {
   sortOrder?: Prisma.SortOrder
   active?: Prisma.SortOrder
   celebrate?: Prisma.SortOrder
+  createsProject?: Prisma.SortOrder
 }
 
 export type OpportunityStageAvgOrderByAggregateInput = {
@@ -411,6 +431,7 @@ export type OpportunityStageMaxOrderByAggregateInput = {
   sortOrder?: Prisma.SortOrder
   active?: Prisma.SortOrder
   celebrate?: Prisma.SortOrder
+  createsProject?: Prisma.SortOrder
 }
 
 export type OpportunityStageMinOrderByAggregateInput = {
@@ -422,6 +443,7 @@ export type OpportunityStageMinOrderByAggregateInput = {
   sortOrder?: Prisma.SortOrder
   active?: Prisma.SortOrder
   celebrate?: Prisma.SortOrder
+  createsProject?: Prisma.SortOrder
 }
 
 export type OpportunityStageSumOrderByAggregateInput = {
@@ -460,6 +482,7 @@ export type OpportunityStageCreateWithoutOpportunitiesInput = {
   sortOrder?: number
   active?: boolean
   celebrate?: boolean
+  createsProject?: boolean
 }
 
 export type OpportunityStageUncheckedCreateWithoutOpportunitiesInput = {
@@ -471,6 +494,7 @@ export type OpportunityStageUncheckedCreateWithoutOpportunitiesInput = {
   sortOrder?: number
   active?: boolean
   celebrate?: boolean
+  createsProject?: boolean
 }
 
 export type OpportunityStageCreateOrConnectWithoutOpportunitiesInput = {
@@ -498,6 +522,7 @@ export type OpportunityStageUpdateWithoutOpportunitiesInput = {
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   celebrate?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createsProject?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type OpportunityStageUncheckedUpdateWithoutOpportunitiesInput = {
@@ -509,6 +534,7 @@ export type OpportunityStageUncheckedUpdateWithoutOpportunitiesInput = {
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   celebrate?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createsProject?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 
@@ -551,6 +577,7 @@ export type OpportunityStageSelect<ExtArgs extends runtime.Types.Extensions.Inte
   sortOrder?: boolean
   active?: boolean
   celebrate?: boolean
+  createsProject?: boolean
   opportunities?: boolean | Prisma.OpportunityStage$opportunitiesArgs<ExtArgs>
   _count?: boolean | Prisma.OpportunityStageCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["opportunityStage"]>
@@ -564,6 +591,7 @@ export type OpportunityStageSelectCreateManyAndReturn<ExtArgs extends runtime.Ty
   sortOrder?: boolean
   active?: boolean
   celebrate?: boolean
+  createsProject?: boolean
 }, ExtArgs["result"]["opportunityStage"]>
 
 export type OpportunityStageSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -575,6 +603,7 @@ export type OpportunityStageSelectUpdateManyAndReturn<ExtArgs extends runtime.Ty
   sortOrder?: boolean
   active?: boolean
   celebrate?: boolean
+  createsProject?: boolean
 }, ExtArgs["result"]["opportunityStage"]>
 
 export type OpportunityStageSelectScalar = {
@@ -586,9 +615,10 @@ export type OpportunityStageSelectScalar = {
   sortOrder?: boolean
   active?: boolean
   celebrate?: boolean
+  createsProject?: boolean
 }
 
-export type OpportunityStageOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "companyId" | "name" | "kind" | "color" | "sortOrder" | "active" | "celebrate", ExtArgs["result"]["opportunityStage"]>
+export type OpportunityStageOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "companyId" | "name" | "kind" | "color" | "sortOrder" | "active" | "celebrate" | "createsProject", ExtArgs["result"]["opportunityStage"]>
 export type OpportunityStageInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   opportunities?: boolean | Prisma.OpportunityStage$opportunitiesArgs<ExtArgs>
   _count?: boolean | Prisma.OpportunityStageCountOutputTypeDefaultArgs<ExtArgs>
@@ -616,6 +646,11 @@ export type $OpportunityStagePayload<ExtArgs extends runtime.Types.Extensions.In
      * para quadro.
      */
     celebrate: boolean
+    /**
+     * Cria o projeto automaticamente quando o cartão chega aqui. É a etapa
+     * em que o trabalho começa de fato — varia entre empresas.
+     */
+    createsProject: boolean
   }, ExtArgs["result"]["opportunityStage"]>
   composites: {}
 }
@@ -1048,6 +1083,7 @@ export interface OpportunityStageFieldRefs {
   readonly sortOrder: Prisma.FieldRef<"OpportunityStage", 'Int'>
   readonly active: Prisma.FieldRef<"OpportunityStage", 'Boolean'>
   readonly celebrate: Prisma.FieldRef<"OpportunityStage", 'Boolean'>
+  readonly createsProject: Prisma.FieldRef<"OpportunityStage", 'Boolean'>
 }
     
 

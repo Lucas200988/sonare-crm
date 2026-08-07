@@ -83,7 +83,10 @@ export async function moveStageAction(input: {
   targetStageId: string;
   lossReasonId?: string;
   lossNotes?: string;
-}): Promise<ActionState & { needsLossReason?: boolean }> {
+}): Promise<ActionState & {
+  needsLossReason?: boolean;
+  projetoCriado?: { id: string; code: string };
+}> {
   const user = await requirePermission('opportunity:write');
   const result = await opps.moveOpportunityStage(user, input.opportunityId, input.targetStageId, {
     lossReasonId: input.lossReasonId,
@@ -95,7 +98,9 @@ export async function moveStageAction(input: {
   }
   revalidatePath('/crm');
   revalidatePath(`/crm/${input.opportunityId}`);
-  return {};
+  // o projeto novo precisa aparecer no quadro de projetos na mesma hora
+  if (result.projetoCriado) revalidatePath('/projetos');
+  return { projetoCriado: result.projetoCriado ?? undefined };
 }
 
 // ---------- Atividades ----------

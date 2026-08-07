@@ -290,6 +290,108 @@ export async function setProjectValue(user: SessionUser, id: string, valor: stri
 }
 
 /**
+ * Cria o projeto da oportunidade ganha, se ainda não existir.
+ *
+ * Chamado quando o cartão chega na etapa marcada para isso. Devolve o que
+ * aconteceu em vez de erro: a movimentação do cartão não pode falhar porque
+ * a criação do projeto não deu certo — o comercial perderia o gesto e não
+ * saberia por quê.
+ */
+export async function criarProjetoDaOportunidade(user: SessionUser, opportunityId: string) {
+  const oportunidade = await prisma.opportunity.findFirst({
+    where: { id: opportunityId, companyId: user.companyId, deletedAt: null },
+    select: {
+      id: true, title: true, clientId: true, clientUnitId: true,
+      technicalOwnerId: true, commercialOwnerId: true, priority: true,
+      budgets: {
+        where: { deletedAt: null },
+        select: {
+          id: true,
+          currentVersion: { select: { total: true, executionDeadline: true } },
+          contracts: {
+            where: { deletedAt: null },
+            select: { id: true, status: true },
+            orderBy: { createdAt: 'desc' },
+          },
+        },
+        orderBy: { createdAt: 'desc' },
+      },
+    },
+  });
+  if (!oportunidade) return { pulou: 'oportunidade não encontrada' as const };
+
+  const orcamentos = oportunidade.budgets;
+  const contratos = orcamentos.flatMap((b) => b.contracts);
+
+  /*
+   * Já existe projeto para este negócio? Pode ter vindo do contrato, do
+   * orçamento, ou de uma passagem anterior por esta mesma etapa — mover o
+   * cartão para frente e para trás não pode multiplicar projetos.
+   */
+  const jaExiste = await prisma.project.findFirst({
+    where: {
+      companyId: user.companyId,
+      deletedAt: null,
+      OR: [
+        ...(contratos.length ? [{ contractId: { in: contratos.map((c) => c.id) } }] : []),
+        ...(orcamentos.length ? [{ budgetId: { in: orcamentos.map((b) => b.id) } }] : []),
+      ],
+    },
+    select: { id: true, code: true },
+  });
+  if (jaExiste) return { pulou: 'já existe projeto' as const, project: jaExiste };
+
+  // Com contrato assinado, o caminho existente herda valor, prazo e objeto
+  const assinado = contratos.find((c) => ['ASSINADO', 'VIGENTE'].includes(c.status));
+  if (assinado) {
+    const r = await createProjectFromContract(user, assinado.id);
+    if ('error' in r) return { pulou: r.error };
+    return { criado: r.project };
+  }
+
+  // Sem contrato — acontece quando a empresa dispensa instrumento — o
+  // projeto nasce da oportunidade, para o trabalho não ficar sem cartão.
+  const orcamento = orcamentos[0];
+  const project = await prisma.$transaction(async (tx) => {
+    const code = await nextCode(user.companyId, 'PRJ', tx);
+    const count = await tx.project.count({ where: { companyId: user.companyId, deletedAt: null } });
+    return tx.project.create({
+      data: {
+        companyId: user.companyId,
+        code,
+        name: oportunidade.title,
+        clientId: oportunidade.clientId,
+        clientUnitId: oportunidade.clientUnitId,
+        budgetId: orcamento?.id ?? null,
+        contractValue: orcamento?.currentVersion?.total ?? null,
+        technicalLeadId: oportunidade.technicalOwnerId,
+        coordinatorId: oportunidade.commercialOwnerId,
+        priority: oportunidade.priority,
+        boardPosition: count,
+        createdById: user.id,
+        stages: { create: DEFAULT_STAGES.map((name, i) => ({ name, sortOrder: i })) },
+      },
+    });
+  });
+
+  await auditLog({
+    companyId: user.companyId, userId: user.id, action: 'create',
+    entityType: 'project', entityId: project.id,
+    after: { code: project.code, origem: 'oportunidade ganha' },
+  });
+
+  await notificar(user, {
+    paraUserId: oportunidade.technicalOwnerId,
+    kind: 'projeto_criado',
+    titulo: `Novo projeto: ${project.code}`,
+    corpo: `O negócio "${oportunidade.title}" foi fechado e o projeto foi aberto para execução.`,
+    link: `/projetos/${project.id}`,
+  });
+
+  return { criado: project };
+}
+
+/**
  * Decisão sobre a responsabilidade técnica do projeto.
  *
  * Fica no cartão porque quem sabe se o serviço exige ART é quem conduz o

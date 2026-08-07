@@ -7,7 +7,7 @@ import {
   DndContext, DragOverlay, PointerSensor, useDraggable, useDroppable,
   useSensor, useSensors, type DragEndEvent, type DragStartEvent,
 } from '@dnd-kit/core';
-import { CalendarClock, User } from 'lucide-react';
+import { CalendarClock, FolderKanban, User } from 'lucide-react';
 import { moveStageAction } from '@/actions/opportunities';
 import { formatBRL } from '@/lib/money';
 import { formatDateBR } from '@/lib/dates';
@@ -152,6 +152,7 @@ export function KanbanBoard({
   const [ganho, setGanho] = useState<
     { titulo: string; cliente: string; valor: string | null } | null
   >(null);
+  const [projetoNovo, setProjetoNovo] = useState<{ id: string; code: string } | null>(null);
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 6 } }));
 
@@ -212,6 +213,7 @@ export function KanbanBoard({
       // só depois de o servidor confirmar — comemorar um erro seria pior
       const card = cards.find((c) => c.id === opportunityId);
       if (card) comemorarSeGanhou(targetStageId, card);
+      if (result.projetoCriado) setProjetoNovo(result.projetoCriado);
       router.refresh();
     });
   }
@@ -251,6 +253,25 @@ export function KanbanBoard({
             ) : null}
           </div>
         </>
+      ) : null}
+
+      {/* O projeto nasce no fundo; sem este aviso ninguém saberia que ele
+          existe até abrir a aba de projetos. */}
+      {projetoNovo ? (
+        <p className="mb-3 flex flex-wrap items-center gap-2 rounded-lg border border-green-200 bg-green-50 px-3 py-2 text-sm text-green-900">
+          <FolderKanban className="h-4 w-4 shrink-0" aria-hidden />
+          Projeto <strong>{projetoNovo.code}</strong> criado para dar andamento.
+          <Link href={`/projetos/${projetoNovo.id}`} className="font-medium underline">
+            Abrir projeto
+          </Link>
+          <button
+            type="button"
+            onClick={() => setProjetoNovo(null)}
+            className="ml-auto rounded px-2 py-0.5 text-xs text-green-800 hover:bg-green-100"
+          >
+            Dispensar
+          </button>
+        </p>
       ) : null}
 
       {error ? (

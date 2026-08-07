@@ -70,6 +70,18 @@ export async function setStageCelebrateAction(
   return {};
 }
 
+/** Marca a etapa em que o projeto é aberto automaticamente. */
+export async function setStageCreatesProjectAction(
+  id: string, cria: boolean,
+): Promise<ActionState> {
+  const admin = await requirePermission('settings:manage');
+  const result = await catalogs.setStageCreatesProject(admin, id, cria);
+  if (result.error) return { error: result.error };
+  revalidatePath('/configuracoes');
+  revalidatePath('/crm');
+  return {};
+}
+
 export async function toggleStageAction(id: string, active: boolean): Promise<ActionState> {
   const user = await requirePermission('settings:manage');
   const result = await catalogs.updateStage(user, id, { active });

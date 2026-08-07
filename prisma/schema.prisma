@@ -415,6 +415,9 @@ model OpportunityStage {
   /// ser trâmite — mas onde exatamente isso acontece muda de quadro
   /// para quadro.
   celebrate Boolean   @default(false)
+  /// Cria o projeto automaticamente quando o cartão chega aqui. É a etapa
+  /// em que o trabalho começa de fato — varia entre empresas.
+  createsProject Boolean @default(false)
 
   opportunities Opportunity[]
 
