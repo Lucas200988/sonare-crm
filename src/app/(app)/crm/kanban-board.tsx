@@ -12,6 +12,7 @@ import { moveStageAction } from '@/actions/opportunities';
 import { formatBRL } from '@/lib/money';
 import { formatDateBR } from '@/lib/dates';
 import { EntregaChip, type EntregaChipDados } from '@/components/entrega-chip';
+import { Comemoracao } from '@/components/comemoracao';
 
 export type BoardStage = { id: string; name: string; kind: string; color: string | null };
 export type BoardCard = {
@@ -132,6 +133,9 @@ export function KanbanBoard({
   const [optimistic, setOptimistic] = useState<Record<string, string>>({});
   const [lossDialog, setLossDialog] = useState<{ opportunityId: string; targetStageId: string } | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [ganho, setGanho] = useState<
+    { titulo: string; cliente: string; valor: string | null } | null
+  >(null);
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 6 } }));
 
@@ -149,6 +153,22 @@ export function KanbanBoard({
   function onDragStart(event: DragStartEvent) {
     const card = cards.find((c) => c.id === event.active.id);
     setActiveCard(card ?? null);
+  }
+
+  /**
+   * Comemora quando o cartão cai numa etapa de ganho.
+   *
+   * Amarrado ao tipo da etapa, não ao nome: o quadro é configurável, e
+   * "Aprovado" pode virar "Fechado" amanhã sem que ninguém lembre daqui.
+   */
+  function comemorarSeGanhou(targetStageId: string, card: BoardCard) {
+    const etapa = stages.find((s) => s.id === targetStageId);
+    if (etapa?.kind !== 'GANHA') return;
+    setGanho({
+      titulo: card.title,
+      cliente: card.client.tradeName ?? card.client.legalName,
+      valor: card.estimatedValue,
+    });
   }
 
   function applyMove(opportunityId: string, targetStageId: string, lossReasonId?: string, lossNotes?: string) {
@@ -171,6 +191,9 @@ export function KanbanBoard({
         setError(result.error);
         return;
       }
+      // só depois de o servidor confirmar — comemorar um erro seria pior
+      const card = cards.find((c) => c.id === opportunityId);
+      if (card) comemorarSeGanhou(targetStageId, card);
       router.refresh();
     });
   }
@@ -190,6 +213,28 @@ export function KanbanBoard({
 
   return (
     <div>
+      {ganho ? (
+        <>
+          <Comemoracao aoTerminar={() => setGanho(null)} />
+          {/*
+            O aviso é o que sobra para quem desligou animações no sistema —
+            por isso ele é texto de verdade, anunciado por leitor de tela, e
+            não uma legenda do confete.
+          */}
+          <div
+            role="status"
+            className="pointer-events-none fixed left-1/2 top-24 z-[61] -translate-x-1/2 rounded-2xl border border-green-200 bg-white/95 px-6 py-4 text-center shadow-xl"
+          >
+            <p className="text-lg font-bold text-green-700">Negócio ganho! 🎉</p>
+            <p className="mt-0.5 text-sm font-medium text-slate-800">{ganho.titulo}</p>
+            <p className="text-xs text-slate-500">{ganho.cliente}</p>
+            {ganho.valor ? (
+              <p className="mt-1 text-xl font-bold text-slate-900">{formatBRL(ganho.valor)}</p>
+            ) : null}
+          </div>
+        </>
+      ) : null}
+
       {error ? (
         <p role="alert" className="mb-3 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
           {error}
