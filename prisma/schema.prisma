@@ -1019,6 +1019,7 @@ model Project {
   invoices      Invoice[]
   payables      Payable[]
   equipmentMovements EquipmentMovement[]
+  externalApprovals  ExternalApproval[]
 
   @@unique([companyId, code])
   @@index([clientId, status])
@@ -1217,6 +1218,73 @@ enum ArtStatus {
   NAO_INFORMADO
   NECESSARIA
   DISPENSADA
+}
+
+enum ExternalApprovalKind {
+  CONCESSIONARIA
+}
+
+enum ExternalApprovalStatus {
+  EM_ANDAMENTO
+  CONCLUIDO
+  CANCELADO
+}
+
+enum ApprovalStepStatus {
+  PENDENTE
+  AGUARDANDO_CONCESSIONARIA
+  CONCLUIDO
+  DISPENSADO
+}
+
+/// Processo de aprovação em órgão externo aberto para um projeto.
+model ExternalApproval {
+  id        String                 @id @default(uuid(7))
+  companyId String
+  projectId String
+  kind      ExternalApprovalKind   @default(CONCESSIONARIA)
+  /// Nome do órgão — "Energisa", "Corpo de Bombeiros"…
+  orgao     String
+  status    ExternalApprovalStatus @default(EM_ANDAMENTO)
+  notes     String?
+  createdAt DateTime               @default(now())
+  updatedAt DateTime               @updatedAt
+  createdById String?
+  deletedAt DateTime?
+
+  project Project                @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  steps   ExternalApprovalStep[]
+
+  @@index([companyId, status])
+}
+
+/// Um passo do processo, com o protocolo e o prazo que corre por ele.
+model ExternalApprovalStep {
+  id         String             @id @default(uuid(7))
+  approvalId String
+  /// Código do modelo do fluxo (SOLICITAR_ORCAMENTO, PROTOCOLAR_PROJETO…).
+  code       String
+  name       String
+  sortOrder  Int                @default(0)
+  status     ApprovalStepStatus @default(PENDENTE)
+  /// Protocolo devolvido pelo órgão; é dele que o prazo conta.
+  protocol   String?
+  protocolAt DateTime?
+  /// Dias corridos de prazo do órgão. Copiado do modelo na abertura, para
+  /// mudança de regulamento não reescrever processo já em curso.
+  deadlineDays Int?
+  respondedAt DateTime?
+  /// Registro da cobrança formal — muda a sugestão para ouvidoria.
+  chargedAt  DateTime?
+  /// Desfecho do passo de decisão: ACEITO, RECUSADO, COM_EXIGENCIAS…
+  outcome    String?
+  notes      String?
+  createdAt  DateTime           @default(now())
+  updatedAt  DateTime           @updatedAt
+
+  approval ExternalApproval @relation(fields: [approvalId], references: [id], onDelete: Cascade)
+
+  @@index([approvalId, sortOrder])
 }
 
 model TechnicalResponsibility {

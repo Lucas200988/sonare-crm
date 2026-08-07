@@ -93,6 +93,8 @@ export const ModelName = {
   Deliverable: 'Deliverable',
   DeliverableRevision: 'DeliverableRevision',
   TimeEntry: 'TimeEntry',
+  ExternalApproval: 'ExternalApproval',
+  ExternalApprovalStep: 'ExternalApprovalStep',
   TechnicalResponsibility: 'TechnicalResponsibility',
   ClientPendency: 'ClientPendency',
   Attachment: 'Attachment',
@@ -950,6 +952,44 @@ export const TimeEntryScalarFieldEnum = {
 } as const
 
 export type TimeEntryScalarFieldEnum = (typeof TimeEntryScalarFieldEnum)[keyof typeof TimeEntryScalarFieldEnum]
+
+
+export const ExternalApprovalScalarFieldEnum = {
+  id: 'id',
+  companyId: 'companyId',
+  projectId: 'projectId',
+  kind: 'kind',
+  orgao: 'orgao',
+  status: 'status',
+  notes: 'notes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  createdById: 'createdById',
+  deletedAt: 'deletedAt'
+} as const
+
+export type ExternalApprovalScalarFieldEnum = (typeof ExternalApprovalScalarFieldEnum)[keyof typeof ExternalApprovalScalarFieldEnum]
+
+
+export const ExternalApprovalStepScalarFieldEnum = {
+  id: 'id',
+  approvalId: 'approvalId',
+  code: 'code',
+  name: 'name',
+  sortOrder: 'sortOrder',
+  status: 'status',
+  protocol: 'protocol',
+  protocolAt: 'protocolAt',
+  deadlineDays: 'deadlineDays',
+  respondedAt: 'respondedAt',
+  chargedAt: 'chargedAt',
+  outcome: 'outcome',
+  notes: 'notes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ExternalApprovalStepScalarFieldEnum = (typeof ExternalApprovalStepScalarFieldEnum)[keyof typeof ExternalApprovalStepScalarFieldEnum]
 
 
 export const TechnicalResponsibilityScalarFieldEnum = {

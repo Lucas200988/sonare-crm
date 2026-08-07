@@ -15,8 +15,10 @@ import { CommentsSection, AttachmentsSection } from './activity-sections';
 import { TaskBoard } from './task-board';
 import { ProjectFinanceSection } from './finance-section';
 import { ArtPanel } from './art-panel';
+import { ApprovalPanel } from './approval-panel';
 import { getProjectFinance } from '@/server/services/finance';
 import { existeAcessoRestrito } from '@/server/auth/project-scope';
+import { getAprovacao } from '@/server/services/aprovacoes';
 
 export const metadata: Metadata = { title: 'Projeto — SONARE CRM' };
 
@@ -43,7 +45,7 @@ export default async function ProjectDetailPage(props: {
   const veFinanceiro = user.permissions.has('finance:read');
   const podeFinanceiro = user.permissions.has('finance:write');
 
-  const [clientUnits, comments, attachments, timeEntries, financeiro, acessoRestrito] = await Promise.all([
+  const [clientUnits, comments, attachments, timeEntries, financeiro, acessoRestrito, processo] = await Promise.all([
     prisma.clientUnit.findMany({
       where: { clientId: project.clientId, deletedAt: null },
       select: { id: true, name: true },
@@ -54,6 +56,7 @@ export default async function ProjectDetailPage(props: {
     veHoras ? listTimeEntries(user, id) : Promise.resolve([]),
     veFinanceiro ? getProjectFinance(user, id) : Promise.resolve(null),
     existeAcessoRestrito(user.companyId),
+    getAprovacao(user, id),
   ]);
 
   const stageOptions = project.stages.map((s) => ({ id: s.id, name: s.name }));
@@ -130,6 +133,24 @@ export default async function ProjectDetailPage(props: {
                 id: t.id, numero: t.number, docType: t.docType, status: t.status,
                 issuedAt: t.issuedAt ? t.issuedAt.toISOString() : null,
               }))}
+              canWrite={canWrite}
+            />
+            <ApprovalPanel
+              projectId={project.id}
+              processo={processo ? {
+                id: processo.id,
+                orgao: processo.orgao,
+                status: processo.status,
+                steps: processo.steps.map((s) => ({
+                  id: s.id, code: s.code, name: s.name, status: s.status,
+                  protocol: s.protocol,
+                  protocolAt: s.protocolAt ? s.protocolAt.toISOString() : null,
+                  deadlineDays: s.deadlineDays,
+                  respondedAt: s.respondedAt ? s.respondedAt.toISOString() : null,
+                  chargedAt: s.chargedAt ? s.chargedAt.toISOString() : null,
+                  outcome: s.outcome, notes: s.notes,
+                })),
+              } : null}
               canWrite={canWrite}
             />
             <Card className="p-4">

@@ -251,6 +251,32 @@ export const ArtStatus = {
 export type ArtStatus = (typeof ArtStatus)[keyof typeof ArtStatus]
 
 
+export const ExternalApprovalKind = {
+  CONCESSIONARIA: 'CONCESSIONARIA'
+} as const
+
+export type ExternalApprovalKind = (typeof ExternalApprovalKind)[keyof typeof ExternalApprovalKind]
+
+
+export const ExternalApprovalStatus = {
+  EM_ANDAMENTO: 'EM_ANDAMENTO',
+  CONCLUIDO: 'CONCLUIDO',
+  CANCELADO: 'CANCELADO'
+} as const
+
+export type ExternalApprovalStatus = (typeof ExternalApprovalStatus)[keyof typeof ExternalApprovalStatus]
+
+
+export const ApprovalStepStatus = {
+  PENDENTE: 'PENDENTE',
+  AGUARDANDO_CONCESSIONARIA: 'AGUARDANDO_CONCESSIONARIA',
+  CONCLUIDO: 'CONCLUIDO',
+  DISPENSADO: 'DISPENSADO'
+} as const
+
+export type ApprovalStepStatus = (typeof ApprovalStepStatus)[keyof typeof ApprovalStepStatus]
+
+
 export const PendencyStatus = {
   ABERTA: 'ABERTA',
   RECEBIDA: 'RECEBIDA',

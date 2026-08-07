@@ -252,6 +252,16 @@ export type DeliverableRevision = Prisma.DeliverableRevisionModel
  */
 export type TimeEntry = Prisma.TimeEntryModel
 /**
+ * Model ExternalApproval
+ * Processo de aprovação em órgão externo aberto para um projeto.
+ */
+export type ExternalApproval = Prisma.ExternalApprovalModel
+/**
+ * Model ExternalApprovalStep
+ * Um passo do processo, com o protocolo e o prazo que corre por ele.
+ */
+export type ExternalApprovalStep = Prisma.ExternalApprovalStepModel
+/**
  * Model TechnicalResponsibility
  * 
  */

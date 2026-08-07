@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/server/db';
 import { executarRotina } from '@/server/services/followup';
+import { avisarPrazosVencidos } from '@/server/services/aprovacoes';
 
 /**
  * Rotina diária de follow-up, chamada pelo agendador da Vercel.
@@ -37,8 +38,19 @@ export async function GET(request: Request) {
       select: { id: true, name: true, email: true },
       orderBy: { createdAt: 'asc' },
     });
+    /*
+     * Prazo estourado no órgão externo avisa o responsável pelo projeto, não
+     * depende de quem assina os e-mails de proposta — por isso roda antes da
+     * checagem do administrador, que só interessa ao follow-up comercial.
+     */
+    const prazos = await avisarPrazosVencidos(empresa.id);
+
     if (!responsavel) {
-      resultados.push({ empresa: empresa.id, pulou: 'sem administrador ativo' });
+      resultados.push({
+        empresa: empresa.id,
+        pulou: 'sem administrador ativo',
+        prazosAvisados: prazos.avisados,
+      });
       continue;
     }
 
@@ -50,7 +62,7 @@ export async function GET(request: Request) {
       roles: ['ADMIN'],
       permissions: new Set(['proposal:write']),
     });
-    resultados.push({ empresa: empresa.id, ...r });
+    resultados.push({ empresa: empresa.id, ...r, prazosAvisados: prazos.avisados });
   }
 
   return NextResponse.json({ executadoEm: new Date().toISOString(), resultados });

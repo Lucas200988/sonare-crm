@@ -439,6 +439,8 @@ export const ModelName = {
   Deliverable: 'Deliverable',
   DeliverableRevision: 'DeliverableRevision',
   TimeEntry: 'TimeEntry',
+  ExternalApproval: 'ExternalApproval',
+  ExternalApprovalStep: 'ExternalApprovalStep',
   TechnicalResponsibility: 'TechnicalResponsibility',
   ClientPendency: 'ClientPendency',
   Attachment: 'Attachment',
@@ -474,7 +476,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "company" | "user" | "role" | "permission" | "rolePermission" | "userRole" | "userPermission" | "session" | "passwordResetToken" | "auditLog" | "systemSetting" | "documentSequence" | "customField" | "customFieldValue" | "client" | "clientContact" | "clientUnit" | "leadSource" | "opportunityStage" | "opportunity" | "opportunityActivity" | "lossReason" | "serviceCatalog" | "budget" | "budgetVersion" | "budgetItem" | "budgetApproval" | "proposal" | "proposalTemplate" | "contract" | "contractVersion" | "contractAmendment" | "contractSignature" | "contractTemplate" | "project" | "projectStage" | "projectMember" | "task" | "taskChecklistItem" | "deliverable" | "deliverableRevision" | "timeEntry" | "technicalResponsibility" | "clientPendency" | "attachment" | "comment" | "receivable" | "receipt" | "financialRetention" | "invoice" | "invoiceReceivable" | "paymentMethod" | "payable" | "collectionEvent" | "notification" | "importJob" | "importError" | "equipment" | "equipmentMovement" | "bankTransaction" | "followUpEvent" | "emailDelivery"
+    modelProps: "company" | "user" | "role" | "permission" | "rolePermission" | "userRole" | "userPermission" | "session" | "passwordResetToken" | "auditLog" | "systemSetting" | "documentSequence" | "customField" | "customFieldValue" | "client" | "clientContact" | "clientUnit" | "leadSource" | "opportunityStage" | "opportunity" | "opportunityActivity" | "lossReason" | "serviceCatalog" | "budget" | "budgetVersion" | "budgetItem" | "budgetApproval" | "proposal" | "proposalTemplate" | "contract" | "contractVersion" | "contractAmendment" | "contractSignature" | "contractTemplate" | "project" | "projectStage" | "projectMember" | "task" | "taskChecklistItem" | "deliverable" | "deliverableRevision" | "timeEntry" | "externalApproval" | "externalApprovalStep" | "technicalResponsibility" | "clientPendency" | "attachment" | "comment" | "receivable" | "receipt" | "financialRetention" | "invoice" | "invoiceReceivable" | "paymentMethod" | "payable" | "collectionEvent" | "notification" | "importJob" | "importError" | "equipment" | "equipmentMovement" | "bankTransaction" | "followUpEvent" | "emailDelivery"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -3586,6 +3588,154 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    ExternalApproval: {
+      payload: Prisma.$ExternalApprovalPayload<ExtArgs>
+      fields: Prisma.ExternalApprovalFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ExternalApprovalFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ExternalApprovalPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ExternalApprovalFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ExternalApprovalPayload>
+        }
+        findFirst: {
+          args: Prisma.ExternalApprovalFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ExternalApprovalPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ExternalApprovalFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ExternalApprovalPayload>
+        }
+        findMany: {
+          args: Prisma.ExternalApprovalFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ExternalApprovalPayload>[]
+        }
+        create: {
+          args: Prisma.ExternalApprovalCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ExternalApprovalPayload>
+        }
+        createMany: {
+          args: Prisma.ExternalApprovalCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ExternalApprovalCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ExternalApprovalPayload>[]
+        }
+        delete: {
+          args: Prisma.ExternalApprovalDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ExternalApprovalPayload>
+        }
+        update: {
+          args: Prisma.ExternalApprovalUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ExternalApprovalPayload>
+        }
+        deleteMany: {
+          args: Prisma.ExternalApprovalDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ExternalApprovalUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ExternalApprovalUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ExternalApprovalPayload>[]
+        }
+        upsert: {
+          args: Prisma.ExternalApprovalUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ExternalApprovalPayload>
+        }
+        aggregate: {
+          args: Prisma.ExternalApprovalAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateExternalApproval>
+        }
+        groupBy: {
+          args: Prisma.ExternalApprovalGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ExternalApprovalGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ExternalApprovalCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ExternalApprovalCountAggregateOutputType> | number
+        }
+      }
+    }
+    ExternalApprovalStep: {
+      payload: Prisma.$ExternalApprovalStepPayload<ExtArgs>
+      fields: Prisma.ExternalApprovalStepFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ExternalApprovalStepFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ExternalApprovalStepPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ExternalApprovalStepFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ExternalApprovalStepPayload>
+        }
+        findFirst: {
+          args: Prisma.ExternalApprovalStepFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ExternalApprovalStepPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ExternalApprovalStepFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ExternalApprovalStepPayload>
+        }
+        findMany: {
+          args: Prisma.ExternalApprovalStepFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ExternalApprovalStepPayload>[]
+        }
+        create: {
+          args: Prisma.ExternalApprovalStepCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ExternalApprovalStepPayload>
+        }
+        createMany: {
+          args: Prisma.ExternalApprovalStepCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ExternalApprovalStepCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ExternalApprovalStepPayload>[]
+        }
+        delete: {
+          args: Prisma.ExternalApprovalStepDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ExternalApprovalStepPayload>
+        }
+        update: {
+          args: Prisma.ExternalApprovalStepUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ExternalApprovalStepPayload>
+        }
+        deleteMany: {
+          args: Prisma.ExternalApprovalStepDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ExternalApprovalStepUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ExternalApprovalStepUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ExternalApprovalStepPayload>[]
+        }
+        upsert: {
+          args: Prisma.ExternalApprovalStepUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ExternalApprovalStepPayload>
+        }
+        aggregate: {
+          args: Prisma.ExternalApprovalStepAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateExternalApprovalStep>
+        }
+        groupBy: {
+          args: Prisma.ExternalApprovalStepGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ExternalApprovalStepGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ExternalApprovalStepCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ExternalApprovalStepCountAggregateOutputType> | number
+        }
+      }
+    }
     TechnicalResponsibility: {
       payload: Prisma.$TechnicalResponsibilityPayload<ExtArgs>
       fields: Prisma.TechnicalResponsibilityFieldRefs
@@ -5926,6 +6076,44 @@ export const TimeEntryScalarFieldEnum = {
 export type TimeEntryScalarFieldEnum = (typeof TimeEntryScalarFieldEnum)[keyof typeof TimeEntryScalarFieldEnum]
 
 
+export const ExternalApprovalScalarFieldEnum = {
+  id: 'id',
+  companyId: 'companyId',
+  projectId: 'projectId',
+  kind: 'kind',
+  orgao: 'orgao',
+  status: 'status',
+  notes: 'notes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  createdById: 'createdById',
+  deletedAt: 'deletedAt'
+} as const
+
+export type ExternalApprovalScalarFieldEnum = (typeof ExternalApprovalScalarFieldEnum)[keyof typeof ExternalApprovalScalarFieldEnum]
+
+
+export const ExternalApprovalStepScalarFieldEnum = {
+  id: 'id',
+  approvalId: 'approvalId',
+  code: 'code',
+  name: 'name',
+  sortOrder: 'sortOrder',
+  status: 'status',
+  protocol: 'protocol',
+  protocolAt: 'protocolAt',
+  deadlineDays: 'deadlineDays',
+  respondedAt: 'respondedAt',
+  chargedAt: 'chargedAt',
+  outcome: 'outcome',
+  notes: 'notes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ExternalApprovalStepScalarFieldEnum = (typeof ExternalApprovalStepScalarFieldEnum)[keyof typeof ExternalApprovalStepScalarFieldEnum]
+
+
 export const TechnicalResponsibilityScalarFieldEnum = {
   id: 'id',
   companyId: 'companyId',
@@ -6707,6 +6895,48 @@ export type ListEnumRevisionStatusFieldRefInput<$PrismaModel> = FieldRefInputTyp
 
 
 /**
+ * Reference to a field of type 'ExternalApprovalKind'
+ */
+export type EnumExternalApprovalKindFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ExternalApprovalKind'>
+    
+
+
+/**
+ * Reference to a field of type 'ExternalApprovalKind[]'
+ */
+export type ListEnumExternalApprovalKindFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ExternalApprovalKind[]'>
+    
+
+
+/**
+ * Reference to a field of type 'ExternalApprovalStatus'
+ */
+export type EnumExternalApprovalStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ExternalApprovalStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'ExternalApprovalStatus[]'
+ */
+export type ListEnumExternalApprovalStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ExternalApprovalStatus[]'>
+    
+
+
+/**
+ * Reference to a field of type 'ApprovalStepStatus'
+ */
+export type EnumApprovalStepStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ApprovalStepStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'ApprovalStepStatus[]'
+ */
+export type ListEnumApprovalStepStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ApprovalStepStatus[]'>
+    
+
+
+/**
  * Reference to a field of type 'TechRespStatus'
  */
 export type EnumTechRespStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TechRespStatus'>
@@ -7094,6 +7324,8 @@ export type GlobalOmitConfig = {
   deliverable?: Prisma.DeliverableOmit
   deliverableRevision?: Prisma.DeliverableRevisionOmit
   timeEntry?: Prisma.TimeEntryOmit
+  externalApproval?: Prisma.ExternalApprovalOmit
+  externalApprovalStep?: Prisma.ExternalApprovalStepOmit
   technicalResponsibility?: Prisma.TechnicalResponsibilityOmit
   clientPendency?: Prisma.ClientPendencyOmit
   attachment?: Prisma.AttachmentOmit

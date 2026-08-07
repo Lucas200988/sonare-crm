@@ -1,5 +1,6 @@
 import 'server-only';
 import { escopoDeProjetos } from '@/server/auth/project-scope';
+import { getPrazosVencidos } from '@/server/services/aprovacoes';
 import { prisma } from '@/server/db';
 import type { SessionUser } from '@/server/auth/session';
 
@@ -111,6 +112,9 @@ export async function getAlerts(user: SessionUser): Promise<Alerta[]> {
       : 0,
   ]);
 
+  // consulta própria: cruza prazo e protocolo, e não cabe no Promise.all acima
+  const prazosVencidos = pode('project:read') ? await getPrazosVencidos(user) : [];
+
   const alertas: Alerta[] = [];
 
   if (parcelasVencidas > 0) {
@@ -140,6 +144,18 @@ export async function getAlerts(user: SessionUser): Promise<Alerta[]> {
       titulo: `Prazo vencido: ${p.name}`,
       detalhe: `${p.code} passou do prazo contratual`,
       href: `/projetos/${p.id}`,
+    });
+  }
+
+  for (const v of prazosVencidos.slice(0, 5)) {
+    alertas.push({
+      id: `aprovacao-${v.projectId}-${v.passo}`,
+      gravidade: 'alta',
+      titulo: `${v.orgao} atrasada ${v.diasAtraso} dia(s) em ${v.projectCode}`,
+      detalhe: v.acao === 'ouvidoria'
+        ? `"${v.passo}" sem resposta${v.protocolo ? ` (protocolo ${v.protocolo})` : ''} — considere a ouvidoria`
+        : `"${v.passo}" passou do prazo${v.protocolo ? ` (protocolo ${v.protocolo})` : ''} — vale cobrar`,
+      href: `/projetos/${v.projectId}`,
     });
   }
 

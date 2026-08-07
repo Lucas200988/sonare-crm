@@ -445,6 +445,7 @@ export type ProjectWhereInput = {
   invoices?: Prisma.InvoiceListRelationFilter
   payables?: Prisma.PayableListRelationFilter
   equipmentMovements?: Prisma.EquipmentMovementListRelationFilter
+  externalApprovals?: Prisma.ExternalApprovalListRelationFilter
 }
 
 export type ProjectOrderByWithRelationInput = {
@@ -496,6 +497,7 @@ export type ProjectOrderByWithRelationInput = {
   invoices?: Prisma.InvoiceOrderByRelationAggregateInput
   payables?: Prisma.PayableOrderByRelationAggregateInput
   equipmentMovements?: Prisma.EquipmentMovementOrderByRelationAggregateInput
+  externalApprovals?: Prisma.ExternalApprovalOrderByRelationAggregateInput
 }
 
 export type ProjectWhereUniqueInput = Prisma.AtLeast<{
@@ -551,6 +553,7 @@ export type ProjectWhereUniqueInput = Prisma.AtLeast<{
   invoices?: Prisma.InvoiceListRelationFilter
   payables?: Prisma.PayableListRelationFilter
   equipmentMovements?: Prisma.EquipmentMovementListRelationFilter
+  externalApprovals?: Prisma.ExternalApprovalListRelationFilter
 }, "id" | "companyId_code">
 
 export type ProjectOrderByWithAggregationInput = {
@@ -672,6 +675,7 @@ export type ProjectCreateInput = {
   invoices?: Prisma.InvoiceCreateNestedManyWithoutProjectInput
   payables?: Prisma.PayableCreateNestedManyWithoutProjectInput
   equipmentMovements?: Prisma.EquipmentMovementCreateNestedManyWithoutProjectInput
+  externalApprovals?: Prisma.ExternalApprovalCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateInput = {
@@ -717,6 +721,7 @@ export type ProjectUncheckedCreateInput = {
   invoices?: Prisma.InvoiceUncheckedCreateNestedManyWithoutProjectInput
   payables?: Prisma.PayableUncheckedCreateNestedManyWithoutProjectInput
   equipmentMovements?: Prisma.EquipmentMovementUncheckedCreateNestedManyWithoutProjectInput
+  externalApprovals?: Prisma.ExternalApprovalUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUpdateInput = {
@@ -762,6 +767,7 @@ export type ProjectUpdateInput = {
   invoices?: Prisma.InvoiceUpdateManyWithoutProjectNestedInput
   payables?: Prisma.PayableUpdateManyWithoutProjectNestedInput
   equipmentMovements?: Prisma.EquipmentMovementUpdateManyWithoutProjectNestedInput
+  externalApprovals?: Prisma.ExternalApprovalUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateInput = {
@@ -807,6 +813,7 @@ export type ProjectUncheckedUpdateInput = {
   invoices?: Prisma.InvoiceUncheckedUpdateManyWithoutProjectNestedInput
   payables?: Prisma.PayableUncheckedUpdateManyWithoutProjectNestedInput
   equipmentMovements?: Prisma.EquipmentMovementUncheckedUpdateManyWithoutProjectNestedInput
+  externalApprovals?: Prisma.ExternalApprovalUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateManyInput = {
@@ -1383,6 +1390,20 @@ export type ProjectUpdateOneRequiredWithoutTimeEntriesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.ProjectUpdateToOneWithWhereWithoutTimeEntriesInput, Prisma.ProjectUpdateWithoutTimeEntriesInput>, Prisma.ProjectUncheckedUpdateWithoutTimeEntriesInput>
 }
 
+export type ProjectCreateNestedOneWithoutExternalApprovalsInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutExternalApprovalsInput, Prisma.ProjectUncheckedCreateWithoutExternalApprovalsInput>
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutExternalApprovalsInput
+  connect?: Prisma.ProjectWhereUniqueInput
+}
+
+export type ProjectUpdateOneRequiredWithoutExternalApprovalsNestedInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutExternalApprovalsInput, Prisma.ProjectUncheckedCreateWithoutExternalApprovalsInput>
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutExternalApprovalsInput
+  upsert?: Prisma.ProjectUpsertWithoutExternalApprovalsInput
+  connect?: Prisma.ProjectWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ProjectUpdateToOneWithWhereWithoutExternalApprovalsInput, Prisma.ProjectUpdateWithoutExternalApprovalsInput>, Prisma.ProjectUncheckedUpdateWithoutExternalApprovalsInput>
+}
+
 export type ProjectCreateNestedOneWithoutTechnicalResponsibilitiesInput = {
   create?: Prisma.XOR<Prisma.ProjectCreateWithoutTechnicalResponsibilitiesInput, Prisma.ProjectUncheckedCreateWithoutTechnicalResponsibilitiesInput>
   connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutTechnicalResponsibilitiesInput
@@ -1519,6 +1540,7 @@ export type ProjectCreateWithoutTechnicalLeadInput = {
   invoices?: Prisma.InvoiceCreateNestedManyWithoutProjectInput
   payables?: Prisma.PayableCreateNestedManyWithoutProjectInput
   equipmentMovements?: Prisma.EquipmentMovementCreateNestedManyWithoutProjectInput
+  externalApprovals?: Prisma.ExternalApprovalCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutTechnicalLeadInput = {
@@ -1563,6 +1585,7 @@ export type ProjectUncheckedCreateWithoutTechnicalLeadInput = {
   invoices?: Prisma.InvoiceUncheckedCreateNestedManyWithoutProjectInput
   payables?: Prisma.PayableUncheckedCreateNestedManyWithoutProjectInput
   equipmentMovements?: Prisma.EquipmentMovementUncheckedCreateNestedManyWithoutProjectInput
+  externalApprovals?: Prisma.ExternalApprovalUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutTechnicalLeadInput = {
@@ -1617,6 +1640,7 @@ export type ProjectCreateWithoutCoordinatorInput = {
   invoices?: Prisma.InvoiceCreateNestedManyWithoutProjectInput
   payables?: Prisma.PayableCreateNestedManyWithoutProjectInput
   equipmentMovements?: Prisma.EquipmentMovementCreateNestedManyWithoutProjectInput
+  externalApprovals?: Prisma.ExternalApprovalCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutCoordinatorInput = {
@@ -1661,6 +1685,7 @@ export type ProjectUncheckedCreateWithoutCoordinatorInput = {
   invoices?: Prisma.InvoiceUncheckedCreateNestedManyWithoutProjectInput
   payables?: Prisma.PayableUncheckedCreateNestedManyWithoutProjectInput
   equipmentMovements?: Prisma.EquipmentMovementUncheckedCreateNestedManyWithoutProjectInput
+  externalApprovals?: Prisma.ExternalApprovalUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutCoordinatorInput = {
@@ -1784,6 +1809,7 @@ export type ProjectCreateWithoutClientInput = {
   invoices?: Prisma.InvoiceCreateNestedManyWithoutProjectInput
   payables?: Prisma.PayableCreateNestedManyWithoutProjectInput
   equipmentMovements?: Prisma.EquipmentMovementCreateNestedManyWithoutProjectInput
+  externalApprovals?: Prisma.ExternalApprovalCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutClientInput = {
@@ -1828,6 +1854,7 @@ export type ProjectUncheckedCreateWithoutClientInput = {
   invoices?: Prisma.InvoiceUncheckedCreateNestedManyWithoutProjectInput
   payables?: Prisma.PayableUncheckedCreateNestedManyWithoutProjectInput
   equipmentMovements?: Prisma.EquipmentMovementUncheckedCreateNestedManyWithoutProjectInput
+  externalApprovals?: Prisma.ExternalApprovalUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutClientInput = {
@@ -1898,6 +1925,7 @@ export type ProjectCreateWithoutClientUnitInput = {
   invoices?: Prisma.InvoiceCreateNestedManyWithoutProjectInput
   payables?: Prisma.PayableCreateNestedManyWithoutProjectInput
   equipmentMovements?: Prisma.EquipmentMovementCreateNestedManyWithoutProjectInput
+  externalApprovals?: Prisma.ExternalApprovalCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutClientUnitInput = {
@@ -1942,6 +1970,7 @@ export type ProjectUncheckedCreateWithoutClientUnitInput = {
   invoices?: Prisma.InvoiceUncheckedCreateNestedManyWithoutProjectInput
   payables?: Prisma.PayableUncheckedCreateNestedManyWithoutProjectInput
   equipmentMovements?: Prisma.EquipmentMovementUncheckedCreateNestedManyWithoutProjectInput
+  externalApprovals?: Prisma.ExternalApprovalUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutClientUnitInput = {
@@ -2012,6 +2041,7 @@ export type ProjectCreateWithoutBudgetInput = {
   invoices?: Prisma.InvoiceCreateNestedManyWithoutProjectInput
   payables?: Prisma.PayableCreateNestedManyWithoutProjectInput
   equipmentMovements?: Prisma.EquipmentMovementCreateNestedManyWithoutProjectInput
+  externalApprovals?: Prisma.ExternalApprovalCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutBudgetInput = {
@@ -2056,6 +2086,7 @@ export type ProjectUncheckedCreateWithoutBudgetInput = {
   invoices?: Prisma.InvoiceUncheckedCreateNestedManyWithoutProjectInput
   payables?: Prisma.PayableUncheckedCreateNestedManyWithoutProjectInput
   equipmentMovements?: Prisma.EquipmentMovementUncheckedCreateNestedManyWithoutProjectInput
+  externalApprovals?: Prisma.ExternalApprovalUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutBudgetInput = {
@@ -2126,6 +2157,7 @@ export type ProjectCreateWithoutContractInput = {
   invoices?: Prisma.InvoiceCreateNestedManyWithoutProjectInput
   payables?: Prisma.PayableCreateNestedManyWithoutProjectInput
   equipmentMovements?: Prisma.EquipmentMovementCreateNestedManyWithoutProjectInput
+  externalApprovals?: Prisma.ExternalApprovalCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutContractInput = {
@@ -2170,6 +2202,7 @@ export type ProjectUncheckedCreateWithoutContractInput = {
   invoices?: Prisma.InvoiceUncheckedCreateNestedManyWithoutProjectInput
   payables?: Prisma.PayableUncheckedCreateNestedManyWithoutProjectInput
   equipmentMovements?: Prisma.EquipmentMovementUncheckedCreateNestedManyWithoutProjectInput
+  externalApprovals?: Prisma.ExternalApprovalUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutContractInput = {
@@ -2240,6 +2273,7 @@ export type ProjectCreateWithoutStagesInput = {
   invoices?: Prisma.InvoiceCreateNestedManyWithoutProjectInput
   payables?: Prisma.PayableCreateNestedManyWithoutProjectInput
   equipmentMovements?: Prisma.EquipmentMovementCreateNestedManyWithoutProjectInput
+  externalApprovals?: Prisma.ExternalApprovalCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutStagesInput = {
@@ -2284,6 +2318,7 @@ export type ProjectUncheckedCreateWithoutStagesInput = {
   invoices?: Prisma.InvoiceUncheckedCreateNestedManyWithoutProjectInput
   payables?: Prisma.PayableUncheckedCreateNestedManyWithoutProjectInput
   equipmentMovements?: Prisma.EquipmentMovementUncheckedCreateNestedManyWithoutProjectInput
+  externalApprovals?: Prisma.ExternalApprovalUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutStagesInput = {
@@ -2344,6 +2379,7 @@ export type ProjectUpdateWithoutStagesInput = {
   invoices?: Prisma.InvoiceUpdateManyWithoutProjectNestedInput
   payables?: Prisma.PayableUpdateManyWithoutProjectNestedInput
   equipmentMovements?: Prisma.EquipmentMovementUpdateManyWithoutProjectNestedInput
+  externalApprovals?: Prisma.ExternalApprovalUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutStagesInput = {
@@ -2388,6 +2424,7 @@ export type ProjectUncheckedUpdateWithoutStagesInput = {
   invoices?: Prisma.InvoiceUncheckedUpdateManyWithoutProjectNestedInput
   payables?: Prisma.PayableUncheckedUpdateManyWithoutProjectNestedInput
   equipmentMovements?: Prisma.EquipmentMovementUncheckedUpdateManyWithoutProjectNestedInput
+  externalApprovals?: Prisma.ExternalApprovalUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutMembersInput = {
@@ -2432,6 +2469,7 @@ export type ProjectCreateWithoutMembersInput = {
   invoices?: Prisma.InvoiceCreateNestedManyWithoutProjectInput
   payables?: Prisma.PayableCreateNestedManyWithoutProjectInput
   equipmentMovements?: Prisma.EquipmentMovementCreateNestedManyWithoutProjectInput
+  externalApprovals?: Prisma.ExternalApprovalCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutMembersInput = {
@@ -2476,6 +2514,7 @@ export type ProjectUncheckedCreateWithoutMembersInput = {
   invoices?: Prisma.InvoiceUncheckedCreateNestedManyWithoutProjectInput
   payables?: Prisma.PayableUncheckedCreateNestedManyWithoutProjectInput
   equipmentMovements?: Prisma.EquipmentMovementUncheckedCreateNestedManyWithoutProjectInput
+  externalApprovals?: Prisma.ExternalApprovalUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutMembersInput = {
@@ -2536,6 +2575,7 @@ export type ProjectUpdateWithoutMembersInput = {
   invoices?: Prisma.InvoiceUpdateManyWithoutProjectNestedInput
   payables?: Prisma.PayableUpdateManyWithoutProjectNestedInput
   equipmentMovements?: Prisma.EquipmentMovementUpdateManyWithoutProjectNestedInput
+  externalApprovals?: Prisma.ExternalApprovalUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutMembersInput = {
@@ -2580,6 +2620,7 @@ export type ProjectUncheckedUpdateWithoutMembersInput = {
   invoices?: Prisma.InvoiceUncheckedUpdateManyWithoutProjectNestedInput
   payables?: Prisma.PayableUncheckedUpdateManyWithoutProjectNestedInput
   equipmentMovements?: Prisma.EquipmentMovementUncheckedUpdateManyWithoutProjectNestedInput
+  externalApprovals?: Prisma.ExternalApprovalUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutTasksInput = {
@@ -2624,6 +2665,7 @@ export type ProjectCreateWithoutTasksInput = {
   invoices?: Prisma.InvoiceCreateNestedManyWithoutProjectInput
   payables?: Prisma.PayableCreateNestedManyWithoutProjectInput
   equipmentMovements?: Prisma.EquipmentMovementCreateNestedManyWithoutProjectInput
+  externalApprovals?: Prisma.ExternalApprovalCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutTasksInput = {
@@ -2668,6 +2710,7 @@ export type ProjectUncheckedCreateWithoutTasksInput = {
   invoices?: Prisma.InvoiceUncheckedCreateNestedManyWithoutProjectInput
   payables?: Prisma.PayableUncheckedCreateNestedManyWithoutProjectInput
   equipmentMovements?: Prisma.EquipmentMovementUncheckedCreateNestedManyWithoutProjectInput
+  externalApprovals?: Prisma.ExternalApprovalUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutTasksInput = {
@@ -2728,6 +2771,7 @@ export type ProjectUpdateWithoutTasksInput = {
   invoices?: Prisma.InvoiceUpdateManyWithoutProjectNestedInput
   payables?: Prisma.PayableUpdateManyWithoutProjectNestedInput
   equipmentMovements?: Prisma.EquipmentMovementUpdateManyWithoutProjectNestedInput
+  externalApprovals?: Prisma.ExternalApprovalUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutTasksInput = {
@@ -2772,6 +2816,7 @@ export type ProjectUncheckedUpdateWithoutTasksInput = {
   invoices?: Prisma.InvoiceUncheckedUpdateManyWithoutProjectNestedInput
   payables?: Prisma.PayableUncheckedUpdateManyWithoutProjectNestedInput
   equipmentMovements?: Prisma.EquipmentMovementUncheckedUpdateManyWithoutProjectNestedInput
+  externalApprovals?: Prisma.ExternalApprovalUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutDeliverablesInput = {
@@ -2816,6 +2861,7 @@ export type ProjectCreateWithoutDeliverablesInput = {
   invoices?: Prisma.InvoiceCreateNestedManyWithoutProjectInput
   payables?: Prisma.PayableCreateNestedManyWithoutProjectInput
   equipmentMovements?: Prisma.EquipmentMovementCreateNestedManyWithoutProjectInput
+  externalApprovals?: Prisma.ExternalApprovalCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutDeliverablesInput = {
@@ -2860,6 +2906,7 @@ export type ProjectUncheckedCreateWithoutDeliverablesInput = {
   invoices?: Prisma.InvoiceUncheckedCreateNestedManyWithoutProjectInput
   payables?: Prisma.PayableUncheckedCreateNestedManyWithoutProjectInput
   equipmentMovements?: Prisma.EquipmentMovementUncheckedCreateNestedManyWithoutProjectInput
+  externalApprovals?: Prisma.ExternalApprovalUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutDeliverablesInput = {
@@ -2920,6 +2967,7 @@ export type ProjectUpdateWithoutDeliverablesInput = {
   invoices?: Prisma.InvoiceUpdateManyWithoutProjectNestedInput
   payables?: Prisma.PayableUpdateManyWithoutProjectNestedInput
   equipmentMovements?: Prisma.EquipmentMovementUpdateManyWithoutProjectNestedInput
+  externalApprovals?: Prisma.ExternalApprovalUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutDeliverablesInput = {
@@ -2964,6 +3012,7 @@ export type ProjectUncheckedUpdateWithoutDeliverablesInput = {
   invoices?: Prisma.InvoiceUncheckedUpdateManyWithoutProjectNestedInput
   payables?: Prisma.PayableUncheckedUpdateManyWithoutProjectNestedInput
   equipmentMovements?: Prisma.EquipmentMovementUncheckedUpdateManyWithoutProjectNestedInput
+  externalApprovals?: Prisma.ExternalApprovalUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutTimeEntriesInput = {
@@ -3008,6 +3057,7 @@ export type ProjectCreateWithoutTimeEntriesInput = {
   invoices?: Prisma.InvoiceCreateNestedManyWithoutProjectInput
   payables?: Prisma.PayableCreateNestedManyWithoutProjectInput
   equipmentMovements?: Prisma.EquipmentMovementCreateNestedManyWithoutProjectInput
+  externalApprovals?: Prisma.ExternalApprovalCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutTimeEntriesInput = {
@@ -3052,6 +3102,7 @@ export type ProjectUncheckedCreateWithoutTimeEntriesInput = {
   invoices?: Prisma.InvoiceUncheckedCreateNestedManyWithoutProjectInput
   payables?: Prisma.PayableUncheckedCreateNestedManyWithoutProjectInput
   equipmentMovements?: Prisma.EquipmentMovementUncheckedCreateNestedManyWithoutProjectInput
+  externalApprovals?: Prisma.ExternalApprovalUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutTimeEntriesInput = {
@@ -3112,6 +3163,7 @@ export type ProjectUpdateWithoutTimeEntriesInput = {
   invoices?: Prisma.InvoiceUpdateManyWithoutProjectNestedInput
   payables?: Prisma.PayableUpdateManyWithoutProjectNestedInput
   equipmentMovements?: Prisma.EquipmentMovementUpdateManyWithoutProjectNestedInput
+  externalApprovals?: Prisma.ExternalApprovalUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutTimeEntriesInput = {
@@ -3150,6 +3202,203 @@ export type ProjectUncheckedUpdateWithoutTimeEntriesInput = {
   members?: Prisma.ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
   tasks?: Prisma.TaskUncheckedUpdateManyWithoutProjectNestedInput
   deliverables?: Prisma.DeliverableUncheckedUpdateManyWithoutProjectNestedInput
+  technicalResponsibilities?: Prisma.TechnicalResponsibilityUncheckedUpdateManyWithoutProjectNestedInput
+  pendencies?: Prisma.ClientPendencyUncheckedUpdateManyWithoutProjectNestedInput
+  receivables?: Prisma.ReceivableUncheckedUpdateManyWithoutProjectNestedInput
+  invoices?: Prisma.InvoiceUncheckedUpdateManyWithoutProjectNestedInput
+  payables?: Prisma.PayableUncheckedUpdateManyWithoutProjectNestedInput
+  equipmentMovements?: Prisma.EquipmentMovementUncheckedUpdateManyWithoutProjectNestedInput
+  externalApprovals?: Prisma.ExternalApprovalUncheckedUpdateManyWithoutProjectNestedInput
+}
+
+export type ProjectCreateWithoutExternalApprovalsInput = {
+  id?: string
+  companyId: string
+  code: string
+  name: string
+  disciplines?: Prisma.ProjectCreatedisciplinesInput | string[]
+  startDate?: Date | string | null
+  contractualDeadline?: Date | string | null
+  expectedEndDate?: Date | string | null
+  actualEndDate?: Date | string | null
+  contractValue?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  status?: $Enums.ProjectStatus
+  priority?: $Enums.PriorityLevel
+  progressPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  boardPosition?: number
+  archivedAt?: Date | string | null
+  folderPath?: string | null
+  artStatus?: $Enums.ArtStatus
+  artNotes?: string | null
+  risks?: string | null
+  notes?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  createdById?: string | null
+  updatedById?: string | null
+  deletedAt?: Date | string | null
+  client: Prisma.ClientCreateNestedOneWithoutProjectsInput
+  clientUnit?: Prisma.ClientUnitCreateNestedOneWithoutProjectsInput
+  contract?: Prisma.ContractCreateNestedOneWithoutProjectsInput
+  budget?: Prisma.BudgetCreateNestedOneWithoutProjectsInput
+  technicalLead?: Prisma.UserCreateNestedOneWithoutProjectsLedInput
+  coordinator?: Prisma.UserCreateNestedOneWithoutProjectsCoordinatedInput
+  stages?: Prisma.ProjectStageCreateNestedManyWithoutProjectInput
+  members?: Prisma.ProjectMemberCreateNestedManyWithoutProjectInput
+  tasks?: Prisma.TaskCreateNestedManyWithoutProjectInput
+  deliverables?: Prisma.DeliverableCreateNestedManyWithoutProjectInput
+  timeEntries?: Prisma.TimeEntryCreateNestedManyWithoutProjectInput
+  technicalResponsibilities?: Prisma.TechnicalResponsibilityCreateNestedManyWithoutProjectInput
+  pendencies?: Prisma.ClientPendencyCreateNestedManyWithoutProjectInput
+  receivables?: Prisma.ReceivableCreateNestedManyWithoutProjectInput
+  invoices?: Prisma.InvoiceCreateNestedManyWithoutProjectInput
+  payables?: Prisma.PayableCreateNestedManyWithoutProjectInput
+  equipmentMovements?: Prisma.EquipmentMovementCreateNestedManyWithoutProjectInput
+}
+
+export type ProjectUncheckedCreateWithoutExternalApprovalsInput = {
+  id?: string
+  companyId: string
+  code: string
+  name: string
+  clientId: string
+  clientUnitId?: string | null
+  contractId?: string | null
+  budgetId?: string | null
+  technicalLeadId?: string | null
+  coordinatorId?: string | null
+  disciplines?: Prisma.ProjectCreatedisciplinesInput | string[]
+  startDate?: Date | string | null
+  contractualDeadline?: Date | string | null
+  expectedEndDate?: Date | string | null
+  actualEndDate?: Date | string | null
+  contractValue?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  status?: $Enums.ProjectStatus
+  priority?: $Enums.PriorityLevel
+  progressPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  boardPosition?: number
+  archivedAt?: Date | string | null
+  folderPath?: string | null
+  artStatus?: $Enums.ArtStatus
+  artNotes?: string | null
+  risks?: string | null
+  notes?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  createdById?: string | null
+  updatedById?: string | null
+  deletedAt?: Date | string | null
+  stages?: Prisma.ProjectStageUncheckedCreateNestedManyWithoutProjectInput
+  members?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
+  tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutProjectInput
+  deliverables?: Prisma.DeliverableUncheckedCreateNestedManyWithoutProjectInput
+  timeEntries?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutProjectInput
+  technicalResponsibilities?: Prisma.TechnicalResponsibilityUncheckedCreateNestedManyWithoutProjectInput
+  pendencies?: Prisma.ClientPendencyUncheckedCreateNestedManyWithoutProjectInput
+  receivables?: Prisma.ReceivableUncheckedCreateNestedManyWithoutProjectInput
+  invoices?: Prisma.InvoiceUncheckedCreateNestedManyWithoutProjectInput
+  payables?: Prisma.PayableUncheckedCreateNestedManyWithoutProjectInput
+  equipmentMovements?: Prisma.EquipmentMovementUncheckedCreateNestedManyWithoutProjectInput
+}
+
+export type ProjectCreateOrConnectWithoutExternalApprovalsInput = {
+  where: Prisma.ProjectWhereUniqueInput
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutExternalApprovalsInput, Prisma.ProjectUncheckedCreateWithoutExternalApprovalsInput>
+}
+
+export type ProjectUpsertWithoutExternalApprovalsInput = {
+  update: Prisma.XOR<Prisma.ProjectUpdateWithoutExternalApprovalsInput, Prisma.ProjectUncheckedUpdateWithoutExternalApprovalsInput>
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutExternalApprovalsInput, Prisma.ProjectUncheckedCreateWithoutExternalApprovalsInput>
+  where?: Prisma.ProjectWhereInput
+}
+
+export type ProjectUpdateToOneWithWhereWithoutExternalApprovalsInput = {
+  where?: Prisma.ProjectWhereInput
+  data: Prisma.XOR<Prisma.ProjectUpdateWithoutExternalApprovalsInput, Prisma.ProjectUncheckedUpdateWithoutExternalApprovalsInput>
+}
+
+export type ProjectUpdateWithoutExternalApprovalsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  companyId?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  disciplines?: Prisma.ProjectUpdatedisciplinesInput | string[]
+  startDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  contractualDeadline?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  expectedEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  actualEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  contractValue?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+  priority?: Prisma.EnumPriorityLevelFieldUpdateOperationsInput | $Enums.PriorityLevel
+  progressPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  artStatus?: Prisma.EnumArtStatusFieldUpdateOperationsInput | $Enums.ArtStatus
+  artNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  client?: Prisma.ClientUpdateOneRequiredWithoutProjectsNestedInput
+  clientUnit?: Prisma.ClientUnitUpdateOneWithoutProjectsNestedInput
+  contract?: Prisma.ContractUpdateOneWithoutProjectsNestedInput
+  budget?: Prisma.BudgetUpdateOneWithoutProjectsNestedInput
+  technicalLead?: Prisma.UserUpdateOneWithoutProjectsLedNestedInput
+  coordinator?: Prisma.UserUpdateOneWithoutProjectsCoordinatedNestedInput
+  stages?: Prisma.ProjectStageUpdateManyWithoutProjectNestedInput
+  members?: Prisma.ProjectMemberUpdateManyWithoutProjectNestedInput
+  tasks?: Prisma.TaskUpdateManyWithoutProjectNestedInput
+  deliverables?: Prisma.DeliverableUpdateManyWithoutProjectNestedInput
+  timeEntries?: Prisma.TimeEntryUpdateManyWithoutProjectNestedInput
+  technicalResponsibilities?: Prisma.TechnicalResponsibilityUpdateManyWithoutProjectNestedInput
+  pendencies?: Prisma.ClientPendencyUpdateManyWithoutProjectNestedInput
+  receivables?: Prisma.ReceivableUpdateManyWithoutProjectNestedInput
+  invoices?: Prisma.InvoiceUpdateManyWithoutProjectNestedInput
+  payables?: Prisma.PayableUpdateManyWithoutProjectNestedInput
+  equipmentMovements?: Prisma.EquipmentMovementUpdateManyWithoutProjectNestedInput
+}
+
+export type ProjectUncheckedUpdateWithoutExternalApprovalsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  companyId?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  clientUnitId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contractId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  budgetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  technicalLeadId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  coordinatorId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  disciplines?: Prisma.ProjectUpdatedisciplinesInput | string[]
+  startDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  contractualDeadline?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  expectedEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  actualEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  contractValue?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+  priority?: Prisma.EnumPriorityLevelFieldUpdateOperationsInput | $Enums.PriorityLevel
+  progressPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  artStatus?: Prisma.EnumArtStatusFieldUpdateOperationsInput | $Enums.ArtStatus
+  artNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  stages?: Prisma.ProjectStageUncheckedUpdateManyWithoutProjectNestedInput
+  members?: Prisma.ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
+  tasks?: Prisma.TaskUncheckedUpdateManyWithoutProjectNestedInput
+  deliverables?: Prisma.DeliverableUncheckedUpdateManyWithoutProjectNestedInput
+  timeEntries?: Prisma.TimeEntryUncheckedUpdateManyWithoutProjectNestedInput
   technicalResponsibilities?: Prisma.TechnicalResponsibilityUncheckedUpdateManyWithoutProjectNestedInput
   pendencies?: Prisma.ClientPendencyUncheckedUpdateManyWithoutProjectNestedInput
   receivables?: Prisma.ReceivableUncheckedUpdateManyWithoutProjectNestedInput
@@ -3200,6 +3449,7 @@ export type ProjectCreateWithoutTechnicalResponsibilitiesInput = {
   invoices?: Prisma.InvoiceCreateNestedManyWithoutProjectInput
   payables?: Prisma.PayableCreateNestedManyWithoutProjectInput
   equipmentMovements?: Prisma.EquipmentMovementCreateNestedManyWithoutProjectInput
+  externalApprovals?: Prisma.ExternalApprovalCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutTechnicalResponsibilitiesInput = {
@@ -3244,6 +3494,7 @@ export type ProjectUncheckedCreateWithoutTechnicalResponsibilitiesInput = {
   invoices?: Prisma.InvoiceUncheckedCreateNestedManyWithoutProjectInput
   payables?: Prisma.PayableUncheckedCreateNestedManyWithoutProjectInput
   equipmentMovements?: Prisma.EquipmentMovementUncheckedCreateNestedManyWithoutProjectInput
+  externalApprovals?: Prisma.ExternalApprovalUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutTechnicalResponsibilitiesInput = {
@@ -3304,6 +3555,7 @@ export type ProjectUpdateWithoutTechnicalResponsibilitiesInput = {
   invoices?: Prisma.InvoiceUpdateManyWithoutProjectNestedInput
   payables?: Prisma.PayableUpdateManyWithoutProjectNestedInput
   equipmentMovements?: Prisma.EquipmentMovementUpdateManyWithoutProjectNestedInput
+  externalApprovals?: Prisma.ExternalApprovalUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutTechnicalResponsibilitiesInput = {
@@ -3348,6 +3600,7 @@ export type ProjectUncheckedUpdateWithoutTechnicalResponsibilitiesInput = {
   invoices?: Prisma.InvoiceUncheckedUpdateManyWithoutProjectNestedInput
   payables?: Prisma.PayableUncheckedUpdateManyWithoutProjectNestedInput
   equipmentMovements?: Prisma.EquipmentMovementUncheckedUpdateManyWithoutProjectNestedInput
+  externalApprovals?: Prisma.ExternalApprovalUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutPendenciesInput = {
@@ -3392,6 +3645,7 @@ export type ProjectCreateWithoutPendenciesInput = {
   invoices?: Prisma.InvoiceCreateNestedManyWithoutProjectInput
   payables?: Prisma.PayableCreateNestedManyWithoutProjectInput
   equipmentMovements?: Prisma.EquipmentMovementCreateNestedManyWithoutProjectInput
+  externalApprovals?: Prisma.ExternalApprovalCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutPendenciesInput = {
@@ -3436,6 +3690,7 @@ export type ProjectUncheckedCreateWithoutPendenciesInput = {
   invoices?: Prisma.InvoiceUncheckedCreateNestedManyWithoutProjectInput
   payables?: Prisma.PayableUncheckedCreateNestedManyWithoutProjectInput
   equipmentMovements?: Prisma.EquipmentMovementUncheckedCreateNestedManyWithoutProjectInput
+  externalApprovals?: Prisma.ExternalApprovalUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutPendenciesInput = {
@@ -3496,6 +3751,7 @@ export type ProjectUpdateWithoutPendenciesInput = {
   invoices?: Prisma.InvoiceUpdateManyWithoutProjectNestedInput
   payables?: Prisma.PayableUpdateManyWithoutProjectNestedInput
   equipmentMovements?: Prisma.EquipmentMovementUpdateManyWithoutProjectNestedInput
+  externalApprovals?: Prisma.ExternalApprovalUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutPendenciesInput = {
@@ -3540,6 +3796,7 @@ export type ProjectUncheckedUpdateWithoutPendenciesInput = {
   invoices?: Prisma.InvoiceUncheckedUpdateManyWithoutProjectNestedInput
   payables?: Prisma.PayableUncheckedUpdateManyWithoutProjectNestedInput
   equipmentMovements?: Prisma.EquipmentMovementUncheckedUpdateManyWithoutProjectNestedInput
+  externalApprovals?: Prisma.ExternalApprovalUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutReceivablesInput = {
@@ -3584,6 +3841,7 @@ export type ProjectCreateWithoutReceivablesInput = {
   invoices?: Prisma.InvoiceCreateNestedManyWithoutProjectInput
   payables?: Prisma.PayableCreateNestedManyWithoutProjectInput
   equipmentMovements?: Prisma.EquipmentMovementCreateNestedManyWithoutProjectInput
+  externalApprovals?: Prisma.ExternalApprovalCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutReceivablesInput = {
@@ -3628,6 +3886,7 @@ export type ProjectUncheckedCreateWithoutReceivablesInput = {
   invoices?: Prisma.InvoiceUncheckedCreateNestedManyWithoutProjectInput
   payables?: Prisma.PayableUncheckedCreateNestedManyWithoutProjectInput
   equipmentMovements?: Prisma.EquipmentMovementUncheckedCreateNestedManyWithoutProjectInput
+  externalApprovals?: Prisma.ExternalApprovalUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutReceivablesInput = {
@@ -3688,6 +3947,7 @@ export type ProjectUpdateWithoutReceivablesInput = {
   invoices?: Prisma.InvoiceUpdateManyWithoutProjectNestedInput
   payables?: Prisma.PayableUpdateManyWithoutProjectNestedInput
   equipmentMovements?: Prisma.EquipmentMovementUpdateManyWithoutProjectNestedInput
+  externalApprovals?: Prisma.ExternalApprovalUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutReceivablesInput = {
@@ -3732,6 +3992,7 @@ export type ProjectUncheckedUpdateWithoutReceivablesInput = {
   invoices?: Prisma.InvoiceUncheckedUpdateManyWithoutProjectNestedInput
   payables?: Prisma.PayableUncheckedUpdateManyWithoutProjectNestedInput
   equipmentMovements?: Prisma.EquipmentMovementUncheckedUpdateManyWithoutProjectNestedInput
+  externalApprovals?: Prisma.ExternalApprovalUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutInvoicesInput = {
@@ -3776,6 +4037,7 @@ export type ProjectCreateWithoutInvoicesInput = {
   receivables?: Prisma.ReceivableCreateNestedManyWithoutProjectInput
   payables?: Prisma.PayableCreateNestedManyWithoutProjectInput
   equipmentMovements?: Prisma.EquipmentMovementCreateNestedManyWithoutProjectInput
+  externalApprovals?: Prisma.ExternalApprovalCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutInvoicesInput = {
@@ -3820,6 +4082,7 @@ export type ProjectUncheckedCreateWithoutInvoicesInput = {
   receivables?: Prisma.ReceivableUncheckedCreateNestedManyWithoutProjectInput
   payables?: Prisma.PayableUncheckedCreateNestedManyWithoutProjectInput
   equipmentMovements?: Prisma.EquipmentMovementUncheckedCreateNestedManyWithoutProjectInput
+  externalApprovals?: Prisma.ExternalApprovalUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutInvoicesInput = {
@@ -3880,6 +4143,7 @@ export type ProjectUpdateWithoutInvoicesInput = {
   receivables?: Prisma.ReceivableUpdateManyWithoutProjectNestedInput
   payables?: Prisma.PayableUpdateManyWithoutProjectNestedInput
   equipmentMovements?: Prisma.EquipmentMovementUpdateManyWithoutProjectNestedInput
+  externalApprovals?: Prisma.ExternalApprovalUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutInvoicesInput = {
@@ -3924,6 +4188,7 @@ export type ProjectUncheckedUpdateWithoutInvoicesInput = {
   receivables?: Prisma.ReceivableUncheckedUpdateManyWithoutProjectNestedInput
   payables?: Prisma.PayableUncheckedUpdateManyWithoutProjectNestedInput
   equipmentMovements?: Prisma.EquipmentMovementUncheckedUpdateManyWithoutProjectNestedInput
+  externalApprovals?: Prisma.ExternalApprovalUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutPayablesInput = {
@@ -3968,6 +4233,7 @@ export type ProjectCreateWithoutPayablesInput = {
   receivables?: Prisma.ReceivableCreateNestedManyWithoutProjectInput
   invoices?: Prisma.InvoiceCreateNestedManyWithoutProjectInput
   equipmentMovements?: Prisma.EquipmentMovementCreateNestedManyWithoutProjectInput
+  externalApprovals?: Prisma.ExternalApprovalCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutPayablesInput = {
@@ -4012,6 +4278,7 @@ export type ProjectUncheckedCreateWithoutPayablesInput = {
   receivables?: Prisma.ReceivableUncheckedCreateNestedManyWithoutProjectInput
   invoices?: Prisma.InvoiceUncheckedCreateNestedManyWithoutProjectInput
   equipmentMovements?: Prisma.EquipmentMovementUncheckedCreateNestedManyWithoutProjectInput
+  externalApprovals?: Prisma.ExternalApprovalUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutPayablesInput = {
@@ -4072,6 +4339,7 @@ export type ProjectUpdateWithoutPayablesInput = {
   receivables?: Prisma.ReceivableUpdateManyWithoutProjectNestedInput
   invoices?: Prisma.InvoiceUpdateManyWithoutProjectNestedInput
   equipmentMovements?: Prisma.EquipmentMovementUpdateManyWithoutProjectNestedInput
+  externalApprovals?: Prisma.ExternalApprovalUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutPayablesInput = {
@@ -4116,6 +4384,7 @@ export type ProjectUncheckedUpdateWithoutPayablesInput = {
   receivables?: Prisma.ReceivableUncheckedUpdateManyWithoutProjectNestedInput
   invoices?: Prisma.InvoiceUncheckedUpdateManyWithoutProjectNestedInput
   equipmentMovements?: Prisma.EquipmentMovementUncheckedUpdateManyWithoutProjectNestedInput
+  externalApprovals?: Prisma.ExternalApprovalUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutEquipmentMovementsInput = {
@@ -4160,6 +4429,7 @@ export type ProjectCreateWithoutEquipmentMovementsInput = {
   receivables?: Prisma.ReceivableCreateNestedManyWithoutProjectInput
   invoices?: Prisma.InvoiceCreateNestedManyWithoutProjectInput
   payables?: Prisma.PayableCreateNestedManyWithoutProjectInput
+  externalApprovals?: Prisma.ExternalApprovalCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutEquipmentMovementsInput = {
@@ -4204,6 +4474,7 @@ export type ProjectUncheckedCreateWithoutEquipmentMovementsInput = {
   receivables?: Prisma.ReceivableUncheckedCreateNestedManyWithoutProjectInput
   invoices?: Prisma.InvoiceUncheckedCreateNestedManyWithoutProjectInput
   payables?: Prisma.PayableUncheckedCreateNestedManyWithoutProjectInput
+  externalApprovals?: Prisma.ExternalApprovalUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutEquipmentMovementsInput = {
@@ -4264,6 +4535,7 @@ export type ProjectUpdateWithoutEquipmentMovementsInput = {
   receivables?: Prisma.ReceivableUpdateManyWithoutProjectNestedInput
   invoices?: Prisma.InvoiceUpdateManyWithoutProjectNestedInput
   payables?: Prisma.PayableUpdateManyWithoutProjectNestedInput
+  externalApprovals?: Prisma.ExternalApprovalUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutEquipmentMovementsInput = {
@@ -4308,6 +4580,7 @@ export type ProjectUncheckedUpdateWithoutEquipmentMovementsInput = {
   receivables?: Prisma.ReceivableUncheckedUpdateManyWithoutProjectNestedInput
   invoices?: Prisma.InvoiceUncheckedUpdateManyWithoutProjectNestedInput
   payables?: Prisma.PayableUncheckedUpdateManyWithoutProjectNestedInput
+  externalApprovals?: Prisma.ExternalApprovalUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateManyTechnicalLeadInput = {
@@ -4418,6 +4691,7 @@ export type ProjectUpdateWithoutTechnicalLeadInput = {
   invoices?: Prisma.InvoiceUpdateManyWithoutProjectNestedInput
   payables?: Prisma.PayableUpdateManyWithoutProjectNestedInput
   equipmentMovements?: Prisma.EquipmentMovementUpdateManyWithoutProjectNestedInput
+  externalApprovals?: Prisma.ExternalApprovalUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutTechnicalLeadInput = {
@@ -4462,6 +4736,7 @@ export type ProjectUncheckedUpdateWithoutTechnicalLeadInput = {
   invoices?: Prisma.InvoiceUncheckedUpdateManyWithoutProjectNestedInput
   payables?: Prisma.PayableUncheckedUpdateManyWithoutProjectNestedInput
   equipmentMovements?: Prisma.EquipmentMovementUncheckedUpdateManyWithoutProjectNestedInput
+  externalApprovals?: Prisma.ExternalApprovalUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateManyWithoutTechnicalLeadInput = {
@@ -4539,6 +4814,7 @@ export type ProjectUpdateWithoutCoordinatorInput = {
   invoices?: Prisma.InvoiceUpdateManyWithoutProjectNestedInput
   payables?: Prisma.PayableUpdateManyWithoutProjectNestedInput
   equipmentMovements?: Prisma.EquipmentMovementUpdateManyWithoutProjectNestedInput
+  externalApprovals?: Prisma.ExternalApprovalUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutCoordinatorInput = {
@@ -4583,6 +4859,7 @@ export type ProjectUncheckedUpdateWithoutCoordinatorInput = {
   invoices?: Prisma.InvoiceUncheckedUpdateManyWithoutProjectNestedInput
   payables?: Prisma.PayableUncheckedUpdateManyWithoutProjectNestedInput
   equipmentMovements?: Prisma.EquipmentMovementUncheckedUpdateManyWithoutProjectNestedInput
+  externalApprovals?: Prisma.ExternalApprovalUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateManyWithoutCoordinatorInput = {
@@ -4693,6 +4970,7 @@ export type ProjectUpdateWithoutClientInput = {
   invoices?: Prisma.InvoiceUpdateManyWithoutProjectNestedInput
   payables?: Prisma.PayableUpdateManyWithoutProjectNestedInput
   equipmentMovements?: Prisma.EquipmentMovementUpdateManyWithoutProjectNestedInput
+  externalApprovals?: Prisma.ExternalApprovalUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutClientInput = {
@@ -4737,6 +5015,7 @@ export type ProjectUncheckedUpdateWithoutClientInput = {
   invoices?: Prisma.InvoiceUncheckedUpdateManyWithoutProjectNestedInput
   payables?: Prisma.PayableUncheckedUpdateManyWithoutProjectNestedInput
   equipmentMovements?: Prisma.EquipmentMovementUncheckedUpdateManyWithoutProjectNestedInput
+  externalApprovals?: Prisma.ExternalApprovalUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateManyWithoutClientInput = {
@@ -4847,6 +5126,7 @@ export type ProjectUpdateWithoutClientUnitInput = {
   invoices?: Prisma.InvoiceUpdateManyWithoutProjectNestedInput
   payables?: Prisma.PayableUpdateManyWithoutProjectNestedInput
   equipmentMovements?: Prisma.EquipmentMovementUpdateManyWithoutProjectNestedInput
+  externalApprovals?: Prisma.ExternalApprovalUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutClientUnitInput = {
@@ -4891,6 +5171,7 @@ export type ProjectUncheckedUpdateWithoutClientUnitInput = {
   invoices?: Prisma.InvoiceUncheckedUpdateManyWithoutProjectNestedInput
   payables?: Prisma.PayableUncheckedUpdateManyWithoutProjectNestedInput
   equipmentMovements?: Prisma.EquipmentMovementUncheckedUpdateManyWithoutProjectNestedInput
+  externalApprovals?: Prisma.ExternalApprovalUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateManyWithoutClientUnitInput = {
@@ -5001,6 +5282,7 @@ export type ProjectUpdateWithoutBudgetInput = {
   invoices?: Prisma.InvoiceUpdateManyWithoutProjectNestedInput
   payables?: Prisma.PayableUpdateManyWithoutProjectNestedInput
   equipmentMovements?: Prisma.EquipmentMovementUpdateManyWithoutProjectNestedInput
+  externalApprovals?: Prisma.ExternalApprovalUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutBudgetInput = {
@@ -5045,6 +5327,7 @@ export type ProjectUncheckedUpdateWithoutBudgetInput = {
   invoices?: Prisma.InvoiceUncheckedUpdateManyWithoutProjectNestedInput
   payables?: Prisma.PayableUncheckedUpdateManyWithoutProjectNestedInput
   equipmentMovements?: Prisma.EquipmentMovementUncheckedUpdateManyWithoutProjectNestedInput
+  externalApprovals?: Prisma.ExternalApprovalUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateManyWithoutBudgetInput = {
@@ -5155,6 +5438,7 @@ export type ProjectUpdateWithoutContractInput = {
   invoices?: Prisma.InvoiceUpdateManyWithoutProjectNestedInput
   payables?: Prisma.PayableUpdateManyWithoutProjectNestedInput
   equipmentMovements?: Prisma.EquipmentMovementUpdateManyWithoutProjectNestedInput
+  externalApprovals?: Prisma.ExternalApprovalUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutContractInput = {
@@ -5199,6 +5483,7 @@ export type ProjectUncheckedUpdateWithoutContractInput = {
   invoices?: Prisma.InvoiceUncheckedUpdateManyWithoutProjectNestedInput
   payables?: Prisma.PayableUncheckedUpdateManyWithoutProjectNestedInput
   equipmentMovements?: Prisma.EquipmentMovementUncheckedUpdateManyWithoutProjectNestedInput
+  externalApprovals?: Prisma.ExternalApprovalUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateManyWithoutContractInput = {
@@ -5251,6 +5536,7 @@ export type ProjectCountOutputType = {
   invoices: number
   payables: number
   equipmentMovements: number
+  externalApprovals: number
 }
 
 export type ProjectCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -5265,6 +5551,7 @@ export type ProjectCountOutputTypeSelect<ExtArgs extends runtime.Types.Extension
   invoices?: boolean | ProjectCountOutputTypeCountInvoicesArgs
   payables?: boolean | ProjectCountOutputTypeCountPayablesArgs
   equipmentMovements?: boolean | ProjectCountOutputTypeCountEquipmentMovementsArgs
+  externalApprovals?: boolean | ProjectCountOutputTypeCountExternalApprovalsArgs
 }
 
 /**
@@ -5354,6 +5641,13 @@ export type ProjectCountOutputTypeCountEquipmentMovementsArgs<ExtArgs extends ru
   where?: Prisma.EquipmentMovementWhereInput
 }
 
+/**
+ * ProjectCountOutputType without action
+ */
+export type ProjectCountOutputTypeCountExternalApprovalsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ExternalApprovalWhereInput
+}
+
 
 export type ProjectSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -5404,6 +5698,7 @@ export type ProjectSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   invoices?: boolean | Prisma.Project$invoicesArgs<ExtArgs>
   payables?: boolean | Prisma.Project$payablesArgs<ExtArgs>
   equipmentMovements?: boolean | Prisma.Project$equipmentMovementsArgs<ExtArgs>
+  externalApprovals?: boolean | Prisma.Project$externalApprovalsArgs<ExtArgs>
   _count?: boolean | Prisma.ProjectCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["project"]>
 
@@ -5540,6 +5835,7 @@ export type ProjectInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs
   invoices?: boolean | Prisma.Project$invoicesArgs<ExtArgs>
   payables?: boolean | Prisma.Project$payablesArgs<ExtArgs>
   equipmentMovements?: boolean | Prisma.Project$equipmentMovementsArgs<ExtArgs>
+  externalApprovals?: boolean | Prisma.Project$externalApprovalsArgs<ExtArgs>
   _count?: boolean | Prisma.ProjectCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ProjectIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -5579,6 +5875,7 @@ export type $ProjectPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     invoices: Prisma.$InvoicePayload<ExtArgs>[]
     payables: Prisma.$PayablePayload<ExtArgs>[]
     equipmentMovements: Prisma.$EquipmentMovementPayload<ExtArgs>[]
+    externalApprovals: Prisma.$ExternalApprovalPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -6034,6 +6331,7 @@ export interface Prisma__ProjectClient<T, Null = never, ExtArgs extends runtime.
   invoices<T extends Prisma.Project$invoicesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$invoicesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$InvoicePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   payables<T extends Prisma.Project$payablesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$payablesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PayablePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   equipmentMovements<T extends Prisma.Project$equipmentMovementsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$equipmentMovementsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EquipmentMovementPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  externalApprovals<T extends Prisma.Project$externalApprovalsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$externalApprovalsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ExternalApprovalPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -6851,6 +7149,30 @@ export type Project$equipmentMovementsArgs<ExtArgs extends runtime.Types.Extensi
   take?: number
   skip?: number
   distinct?: Prisma.EquipmentMovementScalarFieldEnum | Prisma.EquipmentMovementScalarFieldEnum[]
+}
+
+/**
+ * Project.externalApprovals
+ */
+export type Project$externalApprovalsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ExternalApproval
+   */
+  select?: Prisma.ExternalApprovalSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ExternalApproval
+   */
+  omit?: Prisma.ExternalApprovalOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ExternalApprovalInclude<ExtArgs> | null
+  where?: Prisma.ExternalApprovalWhereInput
+  orderBy?: Prisma.ExternalApprovalOrderByWithRelationInput | Prisma.ExternalApprovalOrderByWithRelationInput[]
+  cursor?: Prisma.ExternalApprovalWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ExternalApprovalScalarFieldEnum | Prisma.ExternalApprovalScalarFieldEnum[]
 }
 
 /**
