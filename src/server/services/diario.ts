@@ -397,6 +397,7 @@ function montarNarrativa(d: {
   entries: Array<{ kind: string; title: string; payload: unknown }>;
   weather: unknown;
   openedAt: Date;
+  fotos?: number;
 }): string {
   const partes: string[] = [];
 
@@ -429,6 +430,10 @@ function montarNarrativa(d: {
     partes.push(`Ocorrência registrada: ${oc.title}.`);
   }
 
+  if (d.fotos && d.fotos > 0) {
+    partes.push(`Foram registradas ${d.fotos} fotografia(s) das atividades desenvolvidas.`);
+  }
+
   const clima = d.weather as { rotulo?: string } | null;
   if (clima?.rotulo) {
     partes.push(`Condições climáticas: ${clima.rotulo.toLowerCase()}.`);
@@ -442,12 +447,17 @@ export async function conferirParaFechar(user: SessionUser, diaryId: string) {
   const diario = await getDiario(user, diaryId);
   if (!diario) return null;
 
+  const [fotos, fotosSemCategoria] = await Promise.all([
+    prisma.sitePhoto.count({ where: { diaryId, deletedAt: null } }),
+    prisma.sitePhoto.count({ where: { diaryId, deletedAt: null, category: null } }),
+  ]);
+
   const resumo: ResumoParaFechar = {
     atividades: diario.entries.filter((e) => e.kind === 'ATIVIDADE').length,
     equipes: diario.workforce.length,
     equipamentos: diario.equipment.length,
-    fotos: 0, // Fase 2
-    fotosSemCategoria: 0,
+    fotos,
+    fotosSemCategoria,
     ocorrenciasSemResponsavel: diario.entries
       .filter((e) => e.kind === 'OCORRENCIA' && !e.responsible).length,
     impedimentosAbertos: diario.entries
@@ -457,7 +467,7 @@ export async function conferirParaFechar(user: SessionUser, diaryId: string) {
   return {
     resumo,
     pendencias: pendenciasDoFechamento(resumo),
-    narrativa: diario.narrative ?? montarNarrativa(diario),
+    narrativa: diario.narrative ?? montarNarrativa({ ...diario, fotos }),
   };
 }
 

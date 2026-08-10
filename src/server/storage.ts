@@ -1,5 +1,5 @@
 import 'server-only';
-import { createHash } from 'node:crypto';
+import { createHash, randomUUID } from 'node:crypto';
 import { mkdir, readFile, writeFile, rm } from 'node:fs/promises';
 import path from 'node:path';
 import { createClient } from '@supabase/supabase-js';
@@ -200,4 +200,88 @@ export async function checkStorageAccess(): Promise<
   } catch (e) {
     return { ok: false, erro: e instanceof Error ? e.message : 'falha desconhecida' };
   }
+}
+
+// ---------- Upload direto (fotos de obra) ----------
+
+/**
+ * URL assinada para o navegador subir o arquivo direto ao bucket.
+ *
+ * Existe por causa do limite de 4,5 MB por requisição nas funções da
+ * Vercel: foto de celular passa disso com folga. O original vai do
+ * aparelho ao storage sem tocar no servidor; depois o servidor baixa,
+ * confere o hash e gera as derivadas.
+ *
+ * No driver local (desenvolvimento) não há URL assinada — o chamador cai
+ * para o envio comum, que localmente não tem limite.
+ */
+export async function createDirectUpload(input: {
+  companyId: string;
+  fileName: string;
+}): Promise<{ url: string; token: string; storageKey: string } | null> {
+  if (!useSupabase()) return null;
+
+  const client = supabaseClient();
+  const bucket = await resolveBucket(client);
+  const key = path.posix.join(
+    input.companyId,
+    String(new Date().getFullYear()),
+    'site_photo',
+    `${randomUUID()}-${input.fileName.replace(/[^\w.\-]+/g, '_')}`,
+  );
+  const { data, error } = await client.storage.from(bucket).createSignedUploadUrl(key);
+  if (error || !data) {
+    throw new Error(`Falha ao preparar o envio: ${error?.message ?? 'sem resposta'}`);
+  }
+  return { url: data.signedUrl, token: data.token, storageKey: key };
+}
+
+/** Lê um objeto do storage pela chave — usado antes de existir Attachment. */
+export async function readByKey(storageKey: string): Promise<Buffer | null> {
+  try {
+    if (useSupabase()) {
+      const client = supabaseClient();
+      const bucket = await resolveBucket(client);
+      const { data, error } = await client.storage.from(bucket).download(storageKey);
+      if (error || !data) return null;
+      return Buffer.from(await data.arrayBuffer());
+    }
+    return await readFile(path.join(baseDir(), storageKey));
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Registra como Attachment um objeto que já está no storage (veio pelo
+ * upload direto). O hash é calculado aqui, do conteúdo baixado — nunca
+ * confiado ao cliente.
+ */
+export async function registerStoredFile(input: {
+  companyId: string;
+  entityType: string;
+  entityId: string;
+  category?: string;
+  fileName: string;
+  mimeType: string;
+  storageKey: string;
+  content: Buffer;
+  createdById?: string;
+}): Promise<SavedFile> {
+  const sha256 = createHash('sha256').update(input.content).digest('hex');
+  const attachment = await prisma.attachment.create({
+    data: {
+      companyId: input.companyId,
+      entityType: input.entityType,
+      entityId: input.entityId,
+      category: input.category,
+      fileName: input.fileName,
+      mimeType: input.mimeType,
+      sizeBytes: input.content.length,
+      sha256,
+      storageKey: input.storageKey,
+      createdById: input.createdById,
+    },
+  });
+  return { attachmentId: attachment.id, storageKey: input.storageKey, sha256, sizeBytes: input.content.length };
 }

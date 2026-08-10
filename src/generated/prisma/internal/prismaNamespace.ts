@@ -433,6 +433,7 @@ export const ModelName = {
   ContractTemplate: 'ContractTemplate',
   Project: 'Project',
   ConstructionDiary: 'ConstructionDiary',
+  SitePhoto: 'SitePhoto',
   DiaryEntry: 'DiaryEntry',
   DiaryWorkforce: 'DiaryWorkforce',
   DiaryEquipment: 'DiaryEquipment',
@@ -480,7 +481,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "company" | "user" | "role" | "permission" | "rolePermission" | "userRole" | "userPermission" | "session" | "passwordResetToken" | "auditLog" | "systemSetting" | "documentSequence" | "customField" | "customFieldValue" | "client" | "clientContact" | "clientUnit" | "leadSource" | "opportunityStage" | "opportunity" | "opportunityActivity" | "lossReason" | "serviceCatalog" | "budget" | "budgetVersion" | "budgetItem" | "budgetApproval" | "proposal" | "proposalTemplate" | "contract" | "contractVersion" | "contractAmendment" | "contractSignature" | "contractTemplate" | "project" | "constructionDiary" | "diaryEntry" | "diaryWorkforce" | "diaryEquipment" | "projectStage" | "projectMember" | "task" | "taskChecklistItem" | "deliverable" | "deliverableRevision" | "timeEntry" | "externalApproval" | "externalApprovalStep" | "technicalResponsibility" | "clientPendency" | "attachment" | "comment" | "receivable" | "receipt" | "financialRetention" | "invoice" | "invoiceReceivable" | "paymentMethod" | "payable" | "collectionEvent" | "notification" | "importJob" | "importError" | "equipment" | "equipmentMovement" | "bankTransaction" | "followUpEvent" | "emailDelivery"
+    modelProps: "company" | "user" | "role" | "permission" | "rolePermission" | "userRole" | "userPermission" | "session" | "passwordResetToken" | "auditLog" | "systemSetting" | "documentSequence" | "customField" | "customFieldValue" | "client" | "clientContact" | "clientUnit" | "leadSource" | "opportunityStage" | "opportunity" | "opportunityActivity" | "lossReason" | "serviceCatalog" | "budget" | "budgetVersion" | "budgetItem" | "budgetApproval" | "proposal" | "proposalTemplate" | "contract" | "contractVersion" | "contractAmendment" | "contractSignature" | "contractTemplate" | "project" | "constructionDiary" | "sitePhoto" | "diaryEntry" | "diaryWorkforce" | "diaryEquipment" | "projectStage" | "projectMember" | "task" | "taskChecklistItem" | "deliverable" | "deliverableRevision" | "timeEntry" | "externalApproval" | "externalApprovalStep" | "technicalResponsibility" | "clientPendency" | "attachment" | "comment" | "receivable" | "receipt" | "financialRetention" | "invoice" | "invoiceReceivable" | "paymentMethod" | "payable" | "collectionEvent" | "notification" | "importJob" | "importError" | "equipment" | "equipmentMovement" | "bankTransaction" | "followUpEvent" | "emailDelivery"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -3145,6 +3146,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.ConstructionDiaryCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.ConstructionDiaryCountAggregateOutputType> | number
+        }
+      }
+    }
+    SitePhoto: {
+      payload: Prisma.$SitePhotoPayload<ExtArgs>
+      fields: Prisma.SitePhotoFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.SitePhotoFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SitePhotoPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.SitePhotoFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SitePhotoPayload>
+        }
+        findFirst: {
+          args: Prisma.SitePhotoFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SitePhotoPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.SitePhotoFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SitePhotoPayload>
+        }
+        findMany: {
+          args: Prisma.SitePhotoFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SitePhotoPayload>[]
+        }
+        create: {
+          args: Prisma.SitePhotoCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SitePhotoPayload>
+        }
+        createMany: {
+          args: Prisma.SitePhotoCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.SitePhotoCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SitePhotoPayload>[]
+        }
+        delete: {
+          args: Prisma.SitePhotoDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SitePhotoPayload>
+        }
+        update: {
+          args: Prisma.SitePhotoUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SitePhotoPayload>
+        }
+        deleteMany: {
+          args: Prisma.SitePhotoDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.SitePhotoUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.SitePhotoUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SitePhotoPayload>[]
+        }
+        upsert: {
+          args: Prisma.SitePhotoUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SitePhotoPayload>
+        }
+        aggregate: {
+          args: Prisma.SitePhotoAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateSitePhoto>
+        }
+        groupBy: {
+          args: Prisma.SitePhotoGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SitePhotoGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.SitePhotoCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SitePhotoCountAggregateOutputType> | number
         }
       }
     }
@@ -6286,6 +6361,42 @@ export const ConstructionDiaryScalarFieldEnum = {
 export type ConstructionDiaryScalarFieldEnum = (typeof ConstructionDiaryScalarFieldEnum)[keyof typeof ConstructionDiaryScalarFieldEnum]
 
 
+export const SitePhotoScalarFieldEnum = {
+  id: 'id',
+  companyId: 'companyId',
+  projectId: 'projectId',
+  diaryId: 'diaryId',
+  seq: 'seq',
+  category: 'category',
+  description: 'description',
+  originalAttachmentId: 'originalAttachmentId',
+  viewAttachmentId: 'viewAttachmentId',
+  thumbAttachmentId: 'thumbAttachmentId',
+  capturedAtDevice: 'capturedAtDevice',
+  receivedAt: 'receivedAt',
+  lat: 'lat',
+  lng: 'lng',
+  accuracy: 'accuracy',
+  captureSource: 'captureSource',
+  originalFilename: 'originalFilename',
+  mimeType: 'mimeType',
+  sizeBytes: 'sizeBytes',
+  width: 'width',
+  height: 'height',
+  sha256: 'sha256',
+  exif: 'exif',
+  deviceInfo: 'deviceInfo',
+  createdById: 'createdById',
+  deletedAt: 'deletedAt',
+  deletedById: 'deletedById',
+  deleteReason: 'deleteReason',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type SitePhotoScalarFieldEnum = (typeof SitePhotoScalarFieldEnum)[keyof typeof SitePhotoScalarFieldEnum]
+
+
 export const DiaryEntryScalarFieldEnum = {
   id: 'id',
   diaryId: 'diaryId',
@@ -7251,6 +7362,20 @@ export type ListEnumDiaryStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$
 
 
 /**
+ * Reference to a field of type 'PhotoSource'
+ */
+export type EnumPhotoSourceFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PhotoSource'>
+    
+
+
+/**
+ * Reference to a field of type 'PhotoSource[]'
+ */
+export type ListEnumPhotoSourceFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PhotoSource[]'>
+    
+
+
+/**
  * Reference to a field of type 'DiaryEntryKind'
  */
 export type EnumDiaryEntryKindFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DiaryEntryKind'>
@@ -7730,6 +7855,7 @@ export type GlobalOmitConfig = {
   contractTemplate?: Prisma.ContractTemplateOmit
   project?: Prisma.ProjectOmit
   constructionDiary?: Prisma.ConstructionDiaryOmit
+  sitePhoto?: Prisma.SitePhotoOmit
   diaryEntry?: Prisma.DiaryEntryOmit
   diaryWorkforce?: Prisma.DiaryWorkforceOmit
   diaryEquipment?: Prisma.DiaryEquipmentOmit

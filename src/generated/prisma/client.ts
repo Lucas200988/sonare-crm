@@ -222,6 +222,15 @@ export type Project = Prisma.ProjectModel
  */
 export type ConstructionDiary = Prisma.ConstructionDiaryModel
 /**
+ * Model SitePhoto
+ * Fotografia de campo — a evidência central do RDO.
+ * 
+ * O arquivo original NUNCA é alterado: dele saem o hash e as versões
+ * derivadas (miniatura e visualização com tarja). Excluir é sempre lógico,
+ * com motivo — evidência não some, sai da frente.
+ */
+export type SitePhoto = Prisma.SitePhotoModel
+/**
  * Model DiaryEntry
  * 
  */

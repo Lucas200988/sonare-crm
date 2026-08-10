@@ -12,6 +12,7 @@ import {
   removerEquipeAction, removerRegistroAction, repetirDiaAnteriorAction,
 } from '@/actions/diario';
 import { inputCls, Field, FormError, SubmitButton } from '@/components/ui';
+import { FotoSection, type FotoDaTela } from './foto-section';
 
 export type DiarioDaTela = {
   id: string;
@@ -37,6 +38,7 @@ export type DiarioDaTela = {
   workforce: Array<{ id: string; role: string; company: string | null; quantity: number }>;
   equipment: Array<{ id: string; name: string; identification: string | null; quantity: number }>;
   sugestoesAtividade: string[];
+  fotos: FotoDaTela[];
   conferencia: { pendencias: string[]; narrativa: string } | null;
 };
 
@@ -129,9 +131,9 @@ export function ObraHome({ projeto, diario, canWrite }: {
 
         <div className="mt-3 grid grid-cols-4 gap-2 text-center">
           <Contador rotulo="Equipe" valor={diario.workforce.reduce((a, w) => a + w.quantity, 0)} />
+          <Contador rotulo="Fotos" valor={diario.fotos.length} />
           <Contador rotulo="Atividades" valor={contagem('ATIVIDADE')} />
           <Contador rotulo="Ocorrências" valor={contagem('OCORRENCIA')} />
-          <Contador rotulo="Impedim." valor={contagem('IMPEDIMENTO')} />
         </div>
       </div>
 
@@ -146,6 +148,12 @@ export function ObraHome({ projeto, diario, canWrite }: {
         <Botoes projeto={projeto} diario={diario} />
       ) : null}
 
+      <FotoSection
+        projetoId={projeto.id}
+        diarioId={diario.id}
+        fotos={diario.fotos}
+        canWrite={canWrite && !fechado}
+      />
       <Registros projeto={projeto} diario={diario} canWrite={canWrite && !fechado} />
       <EquipeSection projeto={projeto} diario={diario} canWrite={canWrite && !fechado} />
       <EquipamentosSection projeto={projeto} diario={diario} canWrite={canWrite && !fechado} />

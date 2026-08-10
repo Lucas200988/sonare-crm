@@ -1107,12 +1107,72 @@ model ConstructionDiary {
 
   project   Project          @relation(fields: [projectId], references: [id], onDelete: Cascade)
   entries   DiaryEntry[]
+  photos    SitePhoto[]
   workforce DiaryWorkforce[]
   equipment DiaryEquipment[]
 
   @@unique([projectId, diaryDate])
   @@unique([companyId, code])
   @@index([companyId, status])
+}
+
+enum PhotoSource {
+  APP_CAMERA
+  GALLERY_IMPORT
+  FILE_UPLOAD
+}
+
+/// Fotografia de campo — a evidência central do RDO.
+///
+/// O arquivo original NUNCA é alterado: dele saem o hash e as versões
+/// derivadas (miniatura e visualização com tarja). Excluir é sempre lógico,
+/// com motivo — evidência não some, sai da frente.
+model SitePhoto {
+  id        String  @id @default(uuid(7))
+  companyId String
+  projectId String
+  diaryId   String
+  /// Sequencial no diário: vira RDO-…-F007.
+  seq       Int
+
+  category    String?
+  description String?
+
+  originalAttachmentId String
+  /// Versão com a tarja de identificação, usada na tela e no PDF.
+  viewAttachmentId     String?
+  thumbAttachmentId    String?
+
+  /// Hora que o aparelho informou ≠ hora que o servidor recebeu. A oficial
+  /// é a do servidor; a do aparelho fica registrada para conferência.
+  capturedAtDevice DateTime?
+  receivedAt       DateTime  @default(now())
+
+  lat      Float?
+  lng      Float?
+  accuracy Float?
+
+  captureSource    PhotoSource @default(APP_CAMERA)
+  originalFilename String
+  mimeType         String
+  sizeBytes        Int
+  width            Int?
+  height           Int?
+  sha256           String
+  exif             Json?
+  deviceInfo       String?
+
+  createdById  String?
+  deletedAt    DateTime?
+  deletedById  String?
+  deleteReason String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  diary ConstructionDiary @relation(fields: [diaryId], references: [id], onDelete: Cascade)
+
+  @@unique([diaryId, seq])
+  @@index([projectId, deletedAt])
 }
 
 model DiaryEntry {

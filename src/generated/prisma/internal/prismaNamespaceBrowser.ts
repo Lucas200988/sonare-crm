@@ -87,6 +87,7 @@ export const ModelName = {
   ContractTemplate: 'ContractTemplate',
   Project: 'Project',
   ConstructionDiary: 'ConstructionDiary',
+  SitePhoto: 'SitePhoto',
   DiaryEntry: 'DiaryEntry',
   DiaryWorkforce: 'DiaryWorkforce',
   DiaryEquipment: 'DiaryEquipment',
@@ -866,6 +867,42 @@ export const ConstructionDiaryScalarFieldEnum = {
 } as const
 
 export type ConstructionDiaryScalarFieldEnum = (typeof ConstructionDiaryScalarFieldEnum)[keyof typeof ConstructionDiaryScalarFieldEnum]
+
+
+export const SitePhotoScalarFieldEnum = {
+  id: 'id',
+  companyId: 'companyId',
+  projectId: 'projectId',
+  diaryId: 'diaryId',
+  seq: 'seq',
+  category: 'category',
+  description: 'description',
+  originalAttachmentId: 'originalAttachmentId',
+  viewAttachmentId: 'viewAttachmentId',
+  thumbAttachmentId: 'thumbAttachmentId',
+  capturedAtDevice: 'capturedAtDevice',
+  receivedAt: 'receivedAt',
+  lat: 'lat',
+  lng: 'lng',
+  accuracy: 'accuracy',
+  captureSource: 'captureSource',
+  originalFilename: 'originalFilename',
+  mimeType: 'mimeType',
+  sizeBytes: 'sizeBytes',
+  width: 'width',
+  height: 'height',
+  sha256: 'sha256',
+  exif: 'exif',
+  deviceInfo: 'deviceInfo',
+  createdById: 'createdById',
+  deletedAt: 'deletedAt',
+  deletedById: 'deletedById',
+  deleteReason: 'deleteReason',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type SitePhotoScalarFieldEnum = (typeof SitePhotoScalarFieldEnum)[keyof typeof SitePhotoScalarFieldEnum]
 
 
 export const DiaryEntryScalarFieldEnum = {

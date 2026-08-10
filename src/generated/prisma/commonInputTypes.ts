@@ -657,6 +657,23 @@ export type EnumDiaryStatusWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedEnumDiaryStatusFilter<$PrismaModel>
 }
 
+export type EnumPhotoSourceFilter<$PrismaModel = never> = {
+  equals?: $Enums.PhotoSource | Prisma.EnumPhotoSourceFieldRefInput<$PrismaModel>
+  in?: $Enums.PhotoSource[] | Prisma.ListEnumPhotoSourceFieldRefInput<$PrismaModel>
+  notIn?: $Enums.PhotoSource[] | Prisma.ListEnumPhotoSourceFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumPhotoSourceFilter<$PrismaModel> | $Enums.PhotoSource
+}
+
+export type EnumPhotoSourceWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.PhotoSource | Prisma.EnumPhotoSourceFieldRefInput<$PrismaModel>
+  in?: $Enums.PhotoSource[] | Prisma.ListEnumPhotoSourceFieldRefInput<$PrismaModel>
+  notIn?: $Enums.PhotoSource[] | Prisma.ListEnumPhotoSourceFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumPhotoSourceWithAggregatesFilter<$PrismaModel> | $Enums.PhotoSource
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumPhotoSourceFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumPhotoSourceFilter<$PrismaModel>
+}
+
 export type EnumDiaryEntryKindFilter<$PrismaModel = never> = {
   equals?: $Enums.DiaryEntryKind | Prisma.EnumDiaryEntryKindFieldRefInput<$PrismaModel>
   in?: $Enums.DiaryEntryKind[] | Prisma.ListEnumDiaryEntryKindFieldRefInput<$PrismaModel>
@@ -1603,6 +1620,23 @@ export type NestedEnumDiaryStatusWithAggregatesFilter<$PrismaModel = never> = {
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumDiaryStatusFilter<$PrismaModel>
   _max?: Prisma.NestedEnumDiaryStatusFilter<$PrismaModel>
+}
+
+export type NestedEnumPhotoSourceFilter<$PrismaModel = never> = {
+  equals?: $Enums.PhotoSource | Prisma.EnumPhotoSourceFieldRefInput<$PrismaModel>
+  in?: $Enums.PhotoSource[] | Prisma.ListEnumPhotoSourceFieldRefInput<$PrismaModel>
+  notIn?: $Enums.PhotoSource[] | Prisma.ListEnumPhotoSourceFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumPhotoSourceFilter<$PrismaModel> | $Enums.PhotoSource
+}
+
+export type NestedEnumPhotoSourceWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.PhotoSource | Prisma.EnumPhotoSourceFieldRefInput<$PrismaModel>
+  in?: $Enums.PhotoSource[] | Prisma.ListEnumPhotoSourceFieldRefInput<$PrismaModel>
+  notIn?: $Enums.PhotoSource[] | Prisma.ListEnumPhotoSourceFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumPhotoSourceWithAggregatesFilter<$PrismaModel> | $Enums.PhotoSource
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumPhotoSourceFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumPhotoSourceFilter<$PrismaModel>
 }
 
 export type NestedEnumDiaryEntryKindFilter<$PrismaModel = never> = {

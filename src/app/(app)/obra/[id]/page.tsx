@@ -6,7 +6,8 @@ import { requirePermissionPage } from '@/server/auth/guards';
 import { prisma } from '@/server/db';
 import { escopoDeProjetos } from '@/server/auth/project-scope';
 import { conferirParaFechar, getDiarioDeHoje } from '@/server/services/diario';
-import { textoDoLocal, type ClasseLocal } from '@/lib/diario-regras';
+import { listarFotos } from '@/server/services/diario-fotos';
+import { codigoFoto, textoDoLocal, type ClasseLocal } from '@/lib/diario-regras';
 import { ObraHome, type DiarioDaTela } from './obra-home';
 
 export const metadata: Metadata = { title: 'Diário de Obras — SONARE CRM' };
@@ -28,6 +29,7 @@ export default async function ObraPage(props: { params: Promise<{ id: string }> 
   if (!projeto) notFound();
 
   const diario = await getDiarioDeHoje(user, id);
+  const fotos = diario ? await listarFotos(user, diario.id) : [];
   const conferencia = diario && diario.status === 'ABERTO'
     ? await conferirParaFechar(user, diario.id)
     : null;
@@ -67,6 +69,17 @@ export default async function ObraPage(props: { params: Promise<{ id: string }> 
       ...diario.project.tasks.map((t) => t.title),
       ...diario.project.stages.map((s) => s.name),
     ].filter((v, i, arr) => arr.indexOf(v) === i).slice(0, 30),
+    fotos: fotos.map((f) => ({
+      id: f.id,
+      seq: f.seq,
+      codigo: codigoFoto(diario.code, f.seq),
+      category: f.category,
+      description: f.description,
+      captureSource: f.captureSource,
+      hora: new Intl.DateTimeFormat('pt-BR', {
+        hour: '2-digit', minute: '2-digit', timeZone: 'America/Cuiaba',
+      }).format(f.receivedAt),
+    })),
     conferencia: conferencia
       ? { pendencias: conferencia.pendencias, narrativa: conferencia.narrativa }
       : null,

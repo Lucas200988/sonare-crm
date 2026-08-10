@@ -208,6 +208,15 @@ export const DiaryEntryKind = {
 export type DiaryEntryKind = (typeof DiaryEntryKind)[keyof typeof DiaryEntryKind]
 
 
+export const PhotoSource = {
+  APP_CAMERA: 'APP_CAMERA',
+  GALLERY_IMPORT: 'GALLERY_IMPORT',
+  FILE_UPLOAD: 'FILE_UPLOAD'
+} as const
+
+export type PhotoSource = (typeof PhotoSource)[keyof typeof PhotoSource]
+
+
 export const StageStatus = {
   PENDENTE: 'PENDENTE',
   EM_ANDAMENTO: 'EM_ANDAMENTO',
