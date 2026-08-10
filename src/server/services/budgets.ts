@@ -177,20 +177,60 @@ export async function changeBudgetClient(
 
   const novo = await prisma.client.findFirst({
     where: { id: clientId, companyId: user.companyId, deletedAt: null },
-    select: { id: true, legalName: true },
+    select: { id: true, legalName: true, tradeName: true },
   });
   if (!novo) return { error: 'Cliente não encontrado.' };
 
-  await prisma.budget.update({
-    where: { id: budgetId },
-    data: {
-      clientId: novo.id,
-      clientUnitId: null,
-      contactId: null,
-      opportunityId: null,
-      updatedById: user.id,
-    },
-  });
+  /*
+   * O cartão do pipeline acompanha o orçamento.
+   *
+   * Antes o vínculo era simplesmente cortado, porque a oportunidade era do
+   * cliente antigo — e o orçamento ficava fora do quadro, com um cartão
+   * órfão sobrando com o nome errado. Quando a oportunidade existe só para
+   * este orçamento, ela muda de cliente junto; quando é compartilhada com
+   * outros orçamentos, aí sim o vínculo é cortado.
+   */
+  const oportunidade = budget.opportunityId
+    ? await prisma.opportunity.findFirst({
+        where: { id: budget.opportunityId, companyId: user.companyId, deletedAt: null },
+        select: {
+          id: true, title: true,
+          _count: { select: { budgets: { where: { deletedAt: null } } } },
+        },
+      })
+    : null;
+
+  const cartaoSoDesteOrcamento = oportunidade !== null && oportunidade._count.budgets <= 1;
+  const nomeNovo = novo.tradeName ?? novo.legalName;
+
+  await prisma.$transaction([
+    prisma.budget.update({
+      where: { id: budgetId },
+      data: {
+        clientId: novo.id,
+        clientUnitId: null,
+        contactId: null,
+        // o cartão só é solto quando não pode acompanhar
+        ...(cartaoSoDesteOrcamento ? {} : { opportunityId: null }),
+        updatedById: user.id,
+      },
+    }),
+    ...(cartaoSoDesteOrcamento
+      ? [prisma.opportunity.update({
+          where: { id: oportunidade.id },
+          data: {
+            clientId: novo.id,
+            clientUnitId: null,
+            primaryContactId: null,
+            // título automático segue o cliente; título escrito à mão fica
+            ...(oportunidade.title.startsWith('Orçamento — ')
+              ? { title: `Orçamento — ${nomeNovo}` }
+              : {}),
+            updatedById: user.id,
+          },
+        })]
+      : []),
+  ]);
 
   await auditLog({
     companyId: user.companyId, userId: user.id, action: 'update',
