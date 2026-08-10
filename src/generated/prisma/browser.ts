@@ -193,6 +193,26 @@ export type ContractTemplate = Prisma.ContractTemplateModel
  */
 export type Project = Prisma.ProjectModel
 /**
+ * Model ConstructionDiary
+ * Um dia de obra. Um por projeto por dia — o dia é o do fuso da obra.
+ */
+export type ConstructionDiary = Prisma.ConstructionDiaryModel
+/**
+ * Model DiaryEntry
+ * 
+ */
+export type DiaryEntry = Prisma.DiaryEntryModel
+/**
+ * Model DiaryWorkforce
+ * Equipe presente, por função — o controle nominal é opcional e vem depois.
+ */
+export type DiaryWorkforce = Prisma.DiaryWorkforceModel
+/**
+ * Model DiaryEquipment
+ * 
+ */
+export type DiaryEquipment = Prisma.DiaryEquipmentModel
+/**
  * Model ProjectStage
  * 
  */

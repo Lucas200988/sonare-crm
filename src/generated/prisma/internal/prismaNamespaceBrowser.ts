@@ -86,6 +86,10 @@ export const ModelName = {
   ContractSignature: 'ContractSignature',
   ContractTemplate: 'ContractTemplate',
   Project: 'Project',
+  ConstructionDiary: 'ConstructionDiary',
+  DiaryEntry: 'DiaryEntry',
+  DiaryWorkforce: 'DiaryWorkforce',
+  DiaryEquipment: 'DiaryEquipment',
   ProjectStage: 'ProjectStage',
   ProjectMember: 'ProjectMember',
   Task: 'Task',
@@ -814,6 +818,11 @@ export const ProjectScalarFieldEnum = {
   boardPosition: 'boardPosition',
   archivedAt: 'archivedAt',
   folderPath: 'folderPath',
+  diaryEnabled: 'diaryEnabled',
+  siteAddress: 'siteAddress',
+  siteLat: 'siteLat',
+  siteLng: 'siteLng',
+  siteRadiusM: 'siteRadiusM',
   artStatus: 'artStatus',
   artNotes: 'artNotes',
   risks: 'risks',
@@ -826,6 +835,84 @@ export const ProjectScalarFieldEnum = {
 } as const
 
 export type ProjectScalarFieldEnum = (typeof ProjectScalarFieldEnum)[keyof typeof ProjectScalarFieldEnum]
+
+
+export const ConstructionDiaryScalarFieldEnum = {
+  id: 'id',
+  companyId: 'companyId',
+  projectId: 'projectId',
+  number: 'number',
+  code: 'code',
+  diaryDate: 'diaryDate',
+  status: 'status',
+  openedAt: 'openedAt',
+  openedById: 'openedById',
+  closedAt: 'closedAt',
+  closedById: 'closedById',
+  openLat: 'openLat',
+  openLng: 'openLng',
+  openAccuracy: 'openAccuracy',
+  geofence: 'geofence',
+  geofenceDistM: 'geofenceDistM',
+  weather: 'weather',
+  weatherBlocked: 'weatherBlocked',
+  weatherNotes: 'weatherNotes',
+  narrative: 'narrative',
+  notes: 'notes',
+  ignoredWarnings: 'ignoredWarnings',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt'
+} as const
+
+export type ConstructionDiaryScalarFieldEnum = (typeof ConstructionDiaryScalarFieldEnum)[keyof typeof ConstructionDiaryScalarFieldEnum]
+
+
+export const DiaryEntryScalarFieldEnum = {
+  id: 'id',
+  diaryId: 'diaryId',
+  kind: 'kind',
+  title: 'title',
+  description: 'description',
+  happenedAt: 'happenedAt',
+  payload: 'payload',
+  status: 'status',
+  responsible: 'responsible',
+  createdById: 'createdById',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt'
+} as const
+
+export type DiaryEntryScalarFieldEnum = (typeof DiaryEntryScalarFieldEnum)[keyof typeof DiaryEntryScalarFieldEnum]
+
+
+export const DiaryWorkforceScalarFieldEnum = {
+  id: 'id',
+  diaryId: 'diaryId',
+  role: 'role',
+  company: 'company',
+  quantity: 'quantity',
+  startTime: 'startTime',
+  endTime: 'endTime',
+  notes: 'notes'
+} as const
+
+export type DiaryWorkforceScalarFieldEnum = (typeof DiaryWorkforceScalarFieldEnum)[keyof typeof DiaryWorkforceScalarFieldEnum]
+
+
+export const DiaryEquipmentScalarFieldEnum = {
+  id: 'id',
+  diaryId: 'diaryId',
+  name: 'name',
+  identification: 'identification',
+  quantity: 'quantity',
+  hours: 'hours',
+  company: 'company',
+  notes: 'notes'
+} as const
+
+export type DiaryEquipmentScalarFieldEnum = (typeof DiaryEquipmentScalarFieldEnum)[keyof typeof DiaryEquipmentScalarFieldEnum]
 
 
 export const ProjectStageScalarFieldEnum = {

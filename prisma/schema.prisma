@@ -991,6 +991,16 @@ model Project {
   archivedAt          DateTime?
   /// Pasta de rede com os documentos do projeto (ex.: Z:\SONARE\Projetos\...)
   folderPath          String?
+  /// O projeto é uma obra com diário (RDO)? Nem todo projeto exige — laudo
+  /// e consultoria não têm canteiro. A marcação é o que faz o projeto
+  /// aparecer no módulo de Obras e cobrar diário nos dias úteis.
+  diaryEnabled        Boolean   @default(false)
+  /// Geofence da obra: centro e raio para classificar os registros de campo.
+  /// Nunca bloqueia — só rastreia (o GPS erra e o estacionamento fica fora).
+  siteAddress         String?
+  siteLat             Float?
+  siteLng             Float?
+  siteRadiusM         Int?
   /// O projeto exige ART/RRT? O número fica no módulo de ART; aqui mora só a
   /// decisão, que é do gestor. "Não informado" é estado de alerta: projeto
   /// entregue sem ART e sem alguém ter dito que não precisava é risco.
@@ -1023,9 +1033,141 @@ model Project {
   payables      Payable[]
   equipmentMovements EquipmentMovement[]
   externalApprovals  ExternalApproval[]
+  diaries            ConstructionDiary[]
 
   @@unique([companyId, code])
   @@index([clientId, status])
+}
+
+// ============================================================
+// DIÁRIO DE OBRAS (RDO)
+// ============================================================
+
+enum DiaryStatus {
+  ABERTO
+  FINALIZADO
+  APROVADO
+}
+
+/// Tipos de registro do dia. O específico de cada tipo vai em `payload`:
+/// os campos comuns (título, descrição, horário, responsável) cobrem 90%
+/// dos casos, e oito tabelas quase iguais custariam mais que informam.
+enum DiaryEntryKind {
+  ATIVIDADE
+  OCORRENCIA
+  IMPEDIMENTO
+  ORIENTACAO
+  VISITANTE
+  MATERIAL
+  OBSERVACAO
+}
+
+/// Um dia de obra. Um por projeto por dia — o dia é o do fuso da obra.
+model ConstructionDiary {
+  id          String      @id @default(uuid(7))
+  companyId   String
+  projectId   String
+  /// Sequencial dentro do projeto (1, 2, 3…).
+  number      Int
+  /// RDO-2026-004-001 — ano, projeto, sequencial.
+  code        String
+  /// Dia de trabalho (YYYY-MM-DD no fuso da obra), gravado como texto para
+  /// não sofrer deslocamento de fuso na ida e volta do banco.
+  diaryDate   String
+  status      DiaryStatus @default(ABERTO)
+
+  openedAt     DateTime  @default(now())
+  openedById   String?
+  closedAt     DateTime?
+  closedById   String?
+
+  /// Localização do aparelho na abertura, quando autorizada.
+  openLat      Float?
+  openLng      Float?
+  openAccuracy Float?
+  /// DENTRO | PROXIMO | FORA | INDISPONIVEL — comparação com a geofence.
+  geofence     String?
+  geofenceDistM Int?
+
+  /// Clima consultado na abertura: { fonte, consultadoEm, rotulo, tempC, … }.
+  weather      Json?
+  /// Clima impediu serviços? Preenchido à mão quando sim.
+  weatherBlocked Boolean @default(false)
+  weatherNotes String?
+
+  /// Narrativa do dia, gerada dos registros e revisável antes do fechamento.
+  narrative    String?
+  notes        String?
+  /// Pendências apontadas no fechamento que o usuário decidiu ignorar.
+  ignoredWarnings Json?
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  project   Project          @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  entries   DiaryEntry[]
+  workforce DiaryWorkforce[]
+  equipment DiaryEquipment[]
+
+  @@unique([projectId, diaryDate])
+  @@unique([companyId, code])
+  @@index([companyId, status])
+}
+
+model DiaryEntry {
+  id          String         @id @default(uuid(7))
+  diaryId     String
+  kind        DiaryEntryKind
+  title       String
+  description String?
+  /// Quando aconteceu (informado ou o momento do registro).
+  happenedAt  DateTime       @default(now())
+  /// Campos específicos do tipo: quantidade/unidade da atividade, gravidade
+  /// da ocorrência, responsável pelo impedimento…
+  payload     Json?
+  /// ABERTA | RESOLVIDA — só para ocorrência e impedimento.
+  status      String?
+  responsible String?
+  createdById String?
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  deletedAt   DateTime?
+
+  diary ConstructionDiary @relation(fields: [diaryId], references: [id], onDelete: Cascade)
+
+  @@index([diaryId, kind])
+}
+
+/// Equipe presente, por função — o controle nominal é opcional e vem depois.
+model DiaryWorkforce {
+  id        String  @id @default(uuid(7))
+  diaryId   String
+  role      String
+  company   String?
+  quantity  Int     @default(1)
+  startTime String?
+  endTime   String?
+  notes     String?
+
+  diary ConstructionDiary @relation(fields: [diaryId], references: [id], onDelete: Cascade)
+
+  @@index([diaryId])
+}
+
+model DiaryEquipment {
+  id             String   @id @default(uuid(7))
+  diaryId        String
+  name           String
+  identification String?
+  quantity       Int      @default(1)
+  hours          Decimal? @db.Decimal(9, 4)
+  company        String?
+  notes          String?
+
+  diary ConstructionDiary @relation(fields: [diaryId], references: [id], onDelete: Cascade)
+
+  @@index([diaryId])
 }
 
 enum StageStatus {

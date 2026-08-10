@@ -586,6 +586,17 @@ export type EnumProjectStatusFilter<$PrismaModel = never> = {
   not?: Prisma.NestedEnumProjectStatusFilter<$PrismaModel> | $Enums.ProjectStatus
 }
 
+export type FloatNullableFilter<$PrismaModel = never> = {
+  equals?: number | Prisma.FloatFieldRefInput<$PrismaModel> | null
+  in?: number[] | Prisma.ListFloatFieldRefInput<$PrismaModel> | null
+  notIn?: number[] | Prisma.ListFloatFieldRefInput<$PrismaModel> | null
+  lt?: number | Prisma.FloatFieldRefInput<$PrismaModel>
+  lte?: number | Prisma.FloatFieldRefInput<$PrismaModel>
+  gt?: number | Prisma.FloatFieldRefInput<$PrismaModel>
+  gte?: number | Prisma.FloatFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedFloatNullableFilter<$PrismaModel> | number | null
+}
+
 export type EnumArtStatusFilter<$PrismaModel = never> = {
   equals?: $Enums.ArtStatus | Prisma.EnumArtStatusFieldRefInput<$PrismaModel>
   in?: $Enums.ArtStatus[] | Prisma.ListEnumArtStatusFieldRefInput<$PrismaModel>
@@ -603,6 +614,22 @@ export type EnumProjectStatusWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedEnumProjectStatusFilter<$PrismaModel>
 }
 
+export type FloatNullableWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: number | Prisma.FloatFieldRefInput<$PrismaModel> | null
+  in?: number[] | Prisma.ListFloatFieldRefInput<$PrismaModel> | null
+  notIn?: number[] | Prisma.ListFloatFieldRefInput<$PrismaModel> | null
+  lt?: number | Prisma.FloatFieldRefInput<$PrismaModel>
+  lte?: number | Prisma.FloatFieldRefInput<$PrismaModel>
+  gt?: number | Prisma.FloatFieldRefInput<$PrismaModel>
+  gte?: number | Prisma.FloatFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedFloatNullableWithAggregatesFilter<$PrismaModel> | number | null
+  _count?: Prisma.NestedIntNullableFilter<$PrismaModel>
+  _avg?: Prisma.NestedFloatNullableFilter<$PrismaModel>
+  _sum?: Prisma.NestedFloatNullableFilter<$PrismaModel>
+  _min?: Prisma.NestedFloatNullableFilter<$PrismaModel>
+  _max?: Prisma.NestedFloatNullableFilter<$PrismaModel>
+}
+
 export type EnumArtStatusWithAggregatesFilter<$PrismaModel = never> = {
   equals?: $Enums.ArtStatus | Prisma.EnumArtStatusFieldRefInput<$PrismaModel>
   in?: $Enums.ArtStatus[] | Prisma.ListEnumArtStatusFieldRefInput<$PrismaModel>
@@ -611,6 +638,40 @@ export type EnumArtStatusWithAggregatesFilter<$PrismaModel = never> = {
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumArtStatusFilter<$PrismaModel>
   _max?: Prisma.NestedEnumArtStatusFilter<$PrismaModel>
+}
+
+export type EnumDiaryStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.DiaryStatus | Prisma.EnumDiaryStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.DiaryStatus[] | Prisma.ListEnumDiaryStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.DiaryStatus[] | Prisma.ListEnumDiaryStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumDiaryStatusFilter<$PrismaModel> | $Enums.DiaryStatus
+}
+
+export type EnumDiaryStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.DiaryStatus | Prisma.EnumDiaryStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.DiaryStatus[] | Prisma.ListEnumDiaryStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.DiaryStatus[] | Prisma.ListEnumDiaryStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumDiaryStatusWithAggregatesFilter<$PrismaModel> | $Enums.DiaryStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumDiaryStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumDiaryStatusFilter<$PrismaModel>
+}
+
+export type EnumDiaryEntryKindFilter<$PrismaModel = never> = {
+  equals?: $Enums.DiaryEntryKind | Prisma.EnumDiaryEntryKindFieldRefInput<$PrismaModel>
+  in?: $Enums.DiaryEntryKind[] | Prisma.ListEnumDiaryEntryKindFieldRefInput<$PrismaModel>
+  notIn?: $Enums.DiaryEntryKind[] | Prisma.ListEnumDiaryEntryKindFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumDiaryEntryKindFilter<$PrismaModel> | $Enums.DiaryEntryKind
+}
+
+export type EnumDiaryEntryKindWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.DiaryEntryKind | Prisma.EnumDiaryEntryKindFieldRefInput<$PrismaModel>
+  in?: $Enums.DiaryEntryKind[] | Prisma.ListEnumDiaryEntryKindFieldRefInput<$PrismaModel>
+  notIn?: $Enums.DiaryEntryKind[] | Prisma.ListEnumDiaryEntryKindFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumDiaryEntryKindWithAggregatesFilter<$PrismaModel> | $Enums.DiaryEntryKind
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumDiaryEntryKindFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumDiaryEntryKindFilter<$PrismaModel>
 }
 
 export type EnumStageStatusFilter<$PrismaModel = never> = {
@@ -1501,6 +1562,22 @@ export type NestedEnumProjectStatusWithAggregatesFilter<$PrismaModel = never> = 
   _max?: Prisma.NestedEnumProjectStatusFilter<$PrismaModel>
 }
 
+export type NestedFloatNullableWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: number | Prisma.FloatFieldRefInput<$PrismaModel> | null
+  in?: number[] | Prisma.ListFloatFieldRefInput<$PrismaModel> | null
+  notIn?: number[] | Prisma.ListFloatFieldRefInput<$PrismaModel> | null
+  lt?: number | Prisma.FloatFieldRefInput<$PrismaModel>
+  lte?: number | Prisma.FloatFieldRefInput<$PrismaModel>
+  gt?: number | Prisma.FloatFieldRefInput<$PrismaModel>
+  gte?: number | Prisma.FloatFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedFloatNullableWithAggregatesFilter<$PrismaModel> | number | null
+  _count?: Prisma.NestedIntNullableFilter<$PrismaModel>
+  _avg?: Prisma.NestedFloatNullableFilter<$PrismaModel>
+  _sum?: Prisma.NestedFloatNullableFilter<$PrismaModel>
+  _min?: Prisma.NestedFloatNullableFilter<$PrismaModel>
+  _max?: Prisma.NestedFloatNullableFilter<$PrismaModel>
+}
+
 export type NestedEnumArtStatusWithAggregatesFilter<$PrismaModel = never> = {
   equals?: $Enums.ArtStatus | Prisma.EnumArtStatusFieldRefInput<$PrismaModel>
   in?: $Enums.ArtStatus[] | Prisma.ListEnumArtStatusFieldRefInput<$PrismaModel>
@@ -1509,6 +1586,40 @@ export type NestedEnumArtStatusWithAggregatesFilter<$PrismaModel = never> = {
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumArtStatusFilter<$PrismaModel>
   _max?: Prisma.NestedEnumArtStatusFilter<$PrismaModel>
+}
+
+export type NestedEnumDiaryStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.DiaryStatus | Prisma.EnumDiaryStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.DiaryStatus[] | Prisma.ListEnumDiaryStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.DiaryStatus[] | Prisma.ListEnumDiaryStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumDiaryStatusFilter<$PrismaModel> | $Enums.DiaryStatus
+}
+
+export type NestedEnumDiaryStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.DiaryStatus | Prisma.EnumDiaryStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.DiaryStatus[] | Prisma.ListEnumDiaryStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.DiaryStatus[] | Prisma.ListEnumDiaryStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumDiaryStatusWithAggregatesFilter<$PrismaModel> | $Enums.DiaryStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumDiaryStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumDiaryStatusFilter<$PrismaModel>
+}
+
+export type NestedEnumDiaryEntryKindFilter<$PrismaModel = never> = {
+  equals?: $Enums.DiaryEntryKind | Prisma.EnumDiaryEntryKindFieldRefInput<$PrismaModel>
+  in?: $Enums.DiaryEntryKind[] | Prisma.ListEnumDiaryEntryKindFieldRefInput<$PrismaModel>
+  notIn?: $Enums.DiaryEntryKind[] | Prisma.ListEnumDiaryEntryKindFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumDiaryEntryKindFilter<$PrismaModel> | $Enums.DiaryEntryKind
+}
+
+export type NestedEnumDiaryEntryKindWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.DiaryEntryKind | Prisma.EnumDiaryEntryKindFieldRefInput<$PrismaModel>
+  in?: $Enums.DiaryEntryKind[] | Prisma.ListEnumDiaryEntryKindFieldRefInput<$PrismaModel>
+  notIn?: $Enums.DiaryEntryKind[] | Prisma.ListEnumDiaryEntryKindFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumDiaryEntryKindWithAggregatesFilter<$PrismaModel> | $Enums.DiaryEntryKind
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumDiaryEntryKindFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumDiaryEntryKindFilter<$PrismaModel>
 }
 
 export type NestedEnumStageStatusFilter<$PrismaModel = never> = {

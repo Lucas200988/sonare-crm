@@ -186,6 +186,28 @@ export const ProjectStatus = {
 export type ProjectStatus = (typeof ProjectStatus)[keyof typeof ProjectStatus]
 
 
+export const DiaryStatus = {
+  ABERTO: 'ABERTO',
+  FINALIZADO: 'FINALIZADO',
+  APROVADO: 'APROVADO'
+} as const
+
+export type DiaryStatus = (typeof DiaryStatus)[keyof typeof DiaryStatus]
+
+
+export const DiaryEntryKind = {
+  ATIVIDADE: 'ATIVIDADE',
+  OCORRENCIA: 'OCORRENCIA',
+  IMPEDIMENTO: 'IMPEDIMENTO',
+  ORIENTACAO: 'ORIENTACAO',
+  VISITANTE: 'VISITANTE',
+  MATERIAL: 'MATERIAL',
+  OBSERVACAO: 'OBSERVACAO'
+} as const
+
+export type DiaryEntryKind = (typeof DiaryEntryKind)[keyof typeof DiaryEntryKind]
+
+
 export const StageStatus = {
   PENDENTE: 'PENDENTE',
   EM_ANDAMENTO: 'EM_ANDAMENTO',

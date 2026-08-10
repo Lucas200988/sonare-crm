@@ -20,6 +20,7 @@ export const NAV_ITEMS: NavItem[] = [
   { label: 'Contratos', href: '/contratos', icon: 'FileSignature', permission: 'contract:read' },
   { label: 'Projetos', href: '/projetos', icon: 'FolderKanban', permission: 'project:read' },
   { label: 'ART / RRT', href: '/art', icon: 'Stamp', permission: 'project:read', child: true },
+  { label: 'Obras (RDO)', href: '/obra', icon: 'HardHat', permission: 'diary:read' },
   { label: 'Equipamentos', href: '/equipamentos', icon: 'Wrench', permission: 'equipment:read' },
   { label: 'Financeiro', href: '/financeiro', icon: 'Wallet', permission: 'finance:read' },
   { label: 'A receber', href: '/financeiro/receber', icon: 'ArrowDownCircle', permission: 'finance:read', child: true },

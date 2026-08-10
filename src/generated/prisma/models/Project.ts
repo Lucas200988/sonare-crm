@@ -30,12 +30,18 @@ export type ProjectAvgAggregateOutputType = {
   contractValue: runtime.Decimal | null
   progressPercent: runtime.Decimal | null
   boardPosition: number | null
+  siteLat: number | null
+  siteLng: number | null
+  siteRadiusM: number | null
 }
 
 export type ProjectSumAggregateOutputType = {
   contractValue: runtime.Decimal | null
   progressPercent: runtime.Decimal | null
   boardPosition: number | null
+  siteLat: number | null
+  siteLng: number | null
+  siteRadiusM: number | null
 }
 
 export type ProjectMinAggregateOutputType = {
@@ -60,6 +66,11 @@ export type ProjectMinAggregateOutputType = {
   boardPosition: number | null
   archivedAt: Date | null
   folderPath: string | null
+  diaryEnabled: boolean | null
+  siteAddress: string | null
+  siteLat: number | null
+  siteLng: number | null
+  siteRadiusM: number | null
   artStatus: $Enums.ArtStatus | null
   artNotes: string | null
   risks: string | null
@@ -93,6 +104,11 @@ export type ProjectMaxAggregateOutputType = {
   boardPosition: number | null
   archivedAt: Date | null
   folderPath: string | null
+  diaryEnabled: boolean | null
+  siteAddress: string | null
+  siteLat: number | null
+  siteLng: number | null
+  siteRadiusM: number | null
   artStatus: $Enums.ArtStatus | null
   artNotes: string | null
   risks: string | null
@@ -127,6 +143,11 @@ export type ProjectCountAggregateOutputType = {
   boardPosition: number
   archivedAt: number
   folderPath: number
+  diaryEnabled: number
+  siteAddress: number
+  siteLat: number
+  siteLng: number
+  siteRadiusM: number
   artStatus: number
   artNotes: number
   risks: number
@@ -144,12 +165,18 @@ export type ProjectAvgAggregateInputType = {
   contractValue?: true
   progressPercent?: true
   boardPosition?: true
+  siteLat?: true
+  siteLng?: true
+  siteRadiusM?: true
 }
 
 export type ProjectSumAggregateInputType = {
   contractValue?: true
   progressPercent?: true
   boardPosition?: true
+  siteLat?: true
+  siteLng?: true
+  siteRadiusM?: true
 }
 
 export type ProjectMinAggregateInputType = {
@@ -174,6 +201,11 @@ export type ProjectMinAggregateInputType = {
   boardPosition?: true
   archivedAt?: true
   folderPath?: true
+  diaryEnabled?: true
+  siteAddress?: true
+  siteLat?: true
+  siteLng?: true
+  siteRadiusM?: true
   artStatus?: true
   artNotes?: true
   risks?: true
@@ -207,6 +239,11 @@ export type ProjectMaxAggregateInputType = {
   boardPosition?: true
   archivedAt?: true
   folderPath?: true
+  diaryEnabled?: true
+  siteAddress?: true
+  siteLat?: true
+  siteLng?: true
+  siteRadiusM?: true
   artStatus?: true
   artNotes?: true
   risks?: true
@@ -241,6 +278,11 @@ export type ProjectCountAggregateInputType = {
   boardPosition?: true
   archivedAt?: true
   folderPath?: true
+  diaryEnabled?: true
+  siteAddress?: true
+  siteLat?: true
+  siteLng?: true
+  siteRadiusM?: true
   artStatus?: true
   artNotes?: true
   risks?: true
@@ -362,6 +404,11 @@ export type ProjectGroupByOutputType = {
   boardPosition: number
   archivedAt: Date | null
   folderPath: string | null
+  diaryEnabled: boolean
+  siteAddress: string | null
+  siteLat: number | null
+  siteLng: number | null
+  siteRadiusM: number | null
   artStatus: $Enums.ArtStatus
   artNotes: string | null
   risks: string | null
@@ -419,6 +466,11 @@ export type ProjectWhereInput = {
   boardPosition?: Prisma.IntFilter<"Project"> | number
   archivedAt?: Prisma.DateTimeNullableFilter<"Project"> | Date | string | null
   folderPath?: Prisma.StringNullableFilter<"Project"> | string | null
+  diaryEnabled?: Prisma.BoolFilter<"Project"> | boolean
+  siteAddress?: Prisma.StringNullableFilter<"Project"> | string | null
+  siteLat?: Prisma.FloatNullableFilter<"Project"> | number | null
+  siteLng?: Prisma.FloatNullableFilter<"Project"> | number | null
+  siteRadiusM?: Prisma.IntNullableFilter<"Project"> | number | null
   artStatus?: Prisma.EnumArtStatusFilter<"Project"> | $Enums.ArtStatus
   artNotes?: Prisma.StringNullableFilter<"Project"> | string | null
   risks?: Prisma.StringNullableFilter<"Project"> | string | null
@@ -446,6 +498,7 @@ export type ProjectWhereInput = {
   payables?: Prisma.PayableListRelationFilter
   equipmentMovements?: Prisma.EquipmentMovementListRelationFilter
   externalApprovals?: Prisma.ExternalApprovalListRelationFilter
+  diaries?: Prisma.ConstructionDiaryListRelationFilter
 }
 
 export type ProjectOrderByWithRelationInput = {
@@ -471,6 +524,11 @@ export type ProjectOrderByWithRelationInput = {
   boardPosition?: Prisma.SortOrder
   archivedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   folderPath?: Prisma.SortOrderInput | Prisma.SortOrder
+  diaryEnabled?: Prisma.SortOrder
+  siteAddress?: Prisma.SortOrderInput | Prisma.SortOrder
+  siteLat?: Prisma.SortOrderInput | Prisma.SortOrder
+  siteLng?: Prisma.SortOrderInput | Prisma.SortOrder
+  siteRadiusM?: Prisma.SortOrderInput | Prisma.SortOrder
   artStatus?: Prisma.SortOrder
   artNotes?: Prisma.SortOrderInput | Prisma.SortOrder
   risks?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -498,6 +556,7 @@ export type ProjectOrderByWithRelationInput = {
   payables?: Prisma.PayableOrderByRelationAggregateInput
   equipmentMovements?: Prisma.EquipmentMovementOrderByRelationAggregateInput
   externalApprovals?: Prisma.ExternalApprovalOrderByRelationAggregateInput
+  diaries?: Prisma.ConstructionDiaryOrderByRelationAggregateInput
 }
 
 export type ProjectWhereUniqueInput = Prisma.AtLeast<{
@@ -527,6 +586,11 @@ export type ProjectWhereUniqueInput = Prisma.AtLeast<{
   boardPosition?: Prisma.IntFilter<"Project"> | number
   archivedAt?: Prisma.DateTimeNullableFilter<"Project"> | Date | string | null
   folderPath?: Prisma.StringNullableFilter<"Project"> | string | null
+  diaryEnabled?: Prisma.BoolFilter<"Project"> | boolean
+  siteAddress?: Prisma.StringNullableFilter<"Project"> | string | null
+  siteLat?: Prisma.FloatNullableFilter<"Project"> | number | null
+  siteLng?: Prisma.FloatNullableFilter<"Project"> | number | null
+  siteRadiusM?: Prisma.IntNullableFilter<"Project"> | number | null
   artStatus?: Prisma.EnumArtStatusFilter<"Project"> | $Enums.ArtStatus
   artNotes?: Prisma.StringNullableFilter<"Project"> | string | null
   risks?: Prisma.StringNullableFilter<"Project"> | string | null
@@ -554,6 +618,7 @@ export type ProjectWhereUniqueInput = Prisma.AtLeast<{
   payables?: Prisma.PayableListRelationFilter
   equipmentMovements?: Prisma.EquipmentMovementListRelationFilter
   externalApprovals?: Prisma.ExternalApprovalListRelationFilter
+  diaries?: Prisma.ConstructionDiaryListRelationFilter
 }, "id" | "companyId_code">
 
 export type ProjectOrderByWithAggregationInput = {
@@ -579,6 +644,11 @@ export type ProjectOrderByWithAggregationInput = {
   boardPosition?: Prisma.SortOrder
   archivedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   folderPath?: Prisma.SortOrderInput | Prisma.SortOrder
+  diaryEnabled?: Prisma.SortOrder
+  siteAddress?: Prisma.SortOrderInput | Prisma.SortOrder
+  siteLat?: Prisma.SortOrderInput | Prisma.SortOrder
+  siteLng?: Prisma.SortOrderInput | Prisma.SortOrder
+  siteRadiusM?: Prisma.SortOrderInput | Prisma.SortOrder
   artStatus?: Prisma.SortOrder
   artNotes?: Prisma.SortOrderInput | Prisma.SortOrder
   risks?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -621,6 +691,11 @@ export type ProjectScalarWhereWithAggregatesInput = {
   boardPosition?: Prisma.IntWithAggregatesFilter<"Project"> | number
   archivedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Project"> | Date | string | null
   folderPath?: Prisma.StringNullableWithAggregatesFilter<"Project"> | string | null
+  diaryEnabled?: Prisma.BoolWithAggregatesFilter<"Project"> | boolean
+  siteAddress?: Prisma.StringNullableWithAggregatesFilter<"Project"> | string | null
+  siteLat?: Prisma.FloatNullableWithAggregatesFilter<"Project"> | number | null
+  siteLng?: Prisma.FloatNullableWithAggregatesFilter<"Project"> | number | null
+  siteRadiusM?: Prisma.IntNullableWithAggregatesFilter<"Project"> | number | null
   artStatus?: Prisma.EnumArtStatusWithAggregatesFilter<"Project"> | $Enums.ArtStatus
   artNotes?: Prisma.StringNullableWithAggregatesFilter<"Project"> | string | null
   risks?: Prisma.StringNullableWithAggregatesFilter<"Project"> | string | null
@@ -649,6 +724,11 @@ export type ProjectCreateInput = {
   boardPosition?: number
   archivedAt?: Date | string | null
   folderPath?: string | null
+  diaryEnabled?: boolean
+  siteAddress?: string | null
+  siteLat?: number | null
+  siteLng?: number | null
+  siteRadiusM?: number | null
   artStatus?: $Enums.ArtStatus
   artNotes?: string | null
   risks?: string | null
@@ -676,6 +756,7 @@ export type ProjectCreateInput = {
   payables?: Prisma.PayableCreateNestedManyWithoutProjectInput
   equipmentMovements?: Prisma.EquipmentMovementCreateNestedManyWithoutProjectInput
   externalApprovals?: Prisma.ExternalApprovalCreateNestedManyWithoutProjectInput
+  diaries?: Prisma.ConstructionDiaryCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateInput = {
@@ -701,6 +782,11 @@ export type ProjectUncheckedCreateInput = {
   boardPosition?: number
   archivedAt?: Date | string | null
   folderPath?: string | null
+  diaryEnabled?: boolean
+  siteAddress?: string | null
+  siteLat?: number | null
+  siteLng?: number | null
+  siteRadiusM?: number | null
   artStatus?: $Enums.ArtStatus
   artNotes?: string | null
   risks?: string | null
@@ -722,6 +808,7 @@ export type ProjectUncheckedCreateInput = {
   payables?: Prisma.PayableUncheckedCreateNestedManyWithoutProjectInput
   equipmentMovements?: Prisma.EquipmentMovementUncheckedCreateNestedManyWithoutProjectInput
   externalApprovals?: Prisma.ExternalApprovalUncheckedCreateNestedManyWithoutProjectInput
+  diaries?: Prisma.ConstructionDiaryUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUpdateInput = {
@@ -741,6 +828,11 @@ export type ProjectUpdateInput = {
   boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
   archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  diaryEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  siteAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  siteLat?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteLng?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteRadiusM?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   artStatus?: Prisma.EnumArtStatusFieldUpdateOperationsInput | $Enums.ArtStatus
   artNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -768,6 +860,7 @@ export type ProjectUpdateInput = {
   payables?: Prisma.PayableUpdateManyWithoutProjectNestedInput
   equipmentMovements?: Prisma.EquipmentMovementUpdateManyWithoutProjectNestedInput
   externalApprovals?: Prisma.ExternalApprovalUpdateManyWithoutProjectNestedInput
+  diaries?: Prisma.ConstructionDiaryUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateInput = {
@@ -793,6 +886,11 @@ export type ProjectUncheckedUpdateInput = {
   boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
   archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  diaryEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  siteAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  siteLat?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteLng?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteRadiusM?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   artStatus?: Prisma.EnumArtStatusFieldUpdateOperationsInput | $Enums.ArtStatus
   artNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -814,6 +912,7 @@ export type ProjectUncheckedUpdateInput = {
   payables?: Prisma.PayableUncheckedUpdateManyWithoutProjectNestedInput
   equipmentMovements?: Prisma.EquipmentMovementUncheckedUpdateManyWithoutProjectNestedInput
   externalApprovals?: Prisma.ExternalApprovalUncheckedUpdateManyWithoutProjectNestedInput
+  diaries?: Prisma.ConstructionDiaryUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateManyInput = {
@@ -839,6 +938,11 @@ export type ProjectCreateManyInput = {
   boardPosition?: number
   archivedAt?: Date | string | null
   folderPath?: string | null
+  diaryEnabled?: boolean
+  siteAddress?: string | null
+  siteLat?: number | null
+  siteLng?: number | null
+  siteRadiusM?: number | null
   artStatus?: $Enums.ArtStatus
   artNotes?: string | null
   risks?: string | null
@@ -867,6 +971,11 @@ export type ProjectUpdateManyMutationInput = {
   boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
   archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  diaryEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  siteAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  siteLat?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteLng?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteRadiusM?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   artStatus?: Prisma.EnumArtStatusFieldUpdateOperationsInput | $Enums.ArtStatus
   artNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -901,6 +1010,11 @@ export type ProjectUncheckedUpdateManyInput = {
   boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
   archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  diaryEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  siteAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  siteLat?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteLng?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteRadiusM?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   artStatus?: Prisma.EnumArtStatusFieldUpdateOperationsInput | $Enums.ArtStatus
   artNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -950,6 +1064,11 @@ export type ProjectCountOrderByAggregateInput = {
   boardPosition?: Prisma.SortOrder
   archivedAt?: Prisma.SortOrder
   folderPath?: Prisma.SortOrder
+  diaryEnabled?: Prisma.SortOrder
+  siteAddress?: Prisma.SortOrder
+  siteLat?: Prisma.SortOrder
+  siteLng?: Prisma.SortOrder
+  siteRadiusM?: Prisma.SortOrder
   artStatus?: Prisma.SortOrder
   artNotes?: Prisma.SortOrder
   risks?: Prisma.SortOrder
@@ -965,6 +1084,9 @@ export type ProjectAvgOrderByAggregateInput = {
   contractValue?: Prisma.SortOrder
   progressPercent?: Prisma.SortOrder
   boardPosition?: Prisma.SortOrder
+  siteLat?: Prisma.SortOrder
+  siteLng?: Prisma.SortOrder
+  siteRadiusM?: Prisma.SortOrder
 }
 
 export type ProjectMaxOrderByAggregateInput = {
@@ -989,6 +1111,11 @@ export type ProjectMaxOrderByAggregateInput = {
   boardPosition?: Prisma.SortOrder
   archivedAt?: Prisma.SortOrder
   folderPath?: Prisma.SortOrder
+  diaryEnabled?: Prisma.SortOrder
+  siteAddress?: Prisma.SortOrder
+  siteLat?: Prisma.SortOrder
+  siteLng?: Prisma.SortOrder
+  siteRadiusM?: Prisma.SortOrder
   artStatus?: Prisma.SortOrder
   artNotes?: Prisma.SortOrder
   risks?: Prisma.SortOrder
@@ -1022,6 +1149,11 @@ export type ProjectMinOrderByAggregateInput = {
   boardPosition?: Prisma.SortOrder
   archivedAt?: Prisma.SortOrder
   folderPath?: Prisma.SortOrder
+  diaryEnabled?: Prisma.SortOrder
+  siteAddress?: Prisma.SortOrder
+  siteLat?: Prisma.SortOrder
+  siteLng?: Prisma.SortOrder
+  siteRadiusM?: Prisma.SortOrder
   artStatus?: Prisma.SortOrder
   artNotes?: Prisma.SortOrder
   risks?: Prisma.SortOrder
@@ -1037,6 +1169,9 @@ export type ProjectSumOrderByAggregateInput = {
   contractValue?: Prisma.SortOrder
   progressPercent?: Prisma.SortOrder
   boardPosition?: Prisma.SortOrder
+  siteLat?: Prisma.SortOrder
+  siteLng?: Prisma.SortOrder
+  siteRadiusM?: Prisma.SortOrder
 }
 
 export type ProjectScalarRelationFilter = {
@@ -1314,8 +1449,30 @@ export type EnumProjectStatusFieldUpdateOperationsInput = {
   set?: $Enums.ProjectStatus
 }
 
+export type NullableFloatFieldUpdateOperationsInput = {
+  set?: number | null
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
+}
+
 export type EnumArtStatusFieldUpdateOperationsInput = {
   set?: $Enums.ArtStatus
+}
+
+export type ProjectCreateNestedOneWithoutDiariesInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutDiariesInput, Prisma.ProjectUncheckedCreateWithoutDiariesInput>
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutDiariesInput
+  connect?: Prisma.ProjectWhereUniqueInput
+}
+
+export type ProjectUpdateOneRequiredWithoutDiariesNestedInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutDiariesInput, Prisma.ProjectUncheckedCreateWithoutDiariesInput>
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutDiariesInput
+  upsert?: Prisma.ProjectUpsertWithoutDiariesInput
+  connect?: Prisma.ProjectWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ProjectUpdateToOneWithWhereWithoutDiariesInput, Prisma.ProjectUpdateWithoutDiariesInput>, Prisma.ProjectUncheckedUpdateWithoutDiariesInput>
 }
 
 export type ProjectCreateNestedOneWithoutStagesInput = {
@@ -1515,6 +1672,11 @@ export type ProjectCreateWithoutTechnicalLeadInput = {
   boardPosition?: number
   archivedAt?: Date | string | null
   folderPath?: string | null
+  diaryEnabled?: boolean
+  siteAddress?: string | null
+  siteLat?: number | null
+  siteLng?: number | null
+  siteRadiusM?: number | null
   artStatus?: $Enums.ArtStatus
   artNotes?: string | null
   risks?: string | null
@@ -1541,6 +1703,7 @@ export type ProjectCreateWithoutTechnicalLeadInput = {
   payables?: Prisma.PayableCreateNestedManyWithoutProjectInput
   equipmentMovements?: Prisma.EquipmentMovementCreateNestedManyWithoutProjectInput
   externalApprovals?: Prisma.ExternalApprovalCreateNestedManyWithoutProjectInput
+  diaries?: Prisma.ConstructionDiaryCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutTechnicalLeadInput = {
@@ -1565,6 +1728,11 @@ export type ProjectUncheckedCreateWithoutTechnicalLeadInput = {
   boardPosition?: number
   archivedAt?: Date | string | null
   folderPath?: string | null
+  diaryEnabled?: boolean
+  siteAddress?: string | null
+  siteLat?: number | null
+  siteLng?: number | null
+  siteRadiusM?: number | null
   artStatus?: $Enums.ArtStatus
   artNotes?: string | null
   risks?: string | null
@@ -1586,6 +1754,7 @@ export type ProjectUncheckedCreateWithoutTechnicalLeadInput = {
   payables?: Prisma.PayableUncheckedCreateNestedManyWithoutProjectInput
   equipmentMovements?: Prisma.EquipmentMovementUncheckedCreateNestedManyWithoutProjectInput
   externalApprovals?: Prisma.ExternalApprovalUncheckedCreateNestedManyWithoutProjectInput
+  diaries?: Prisma.ConstructionDiaryUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutTechnicalLeadInput = {
@@ -1615,6 +1784,11 @@ export type ProjectCreateWithoutCoordinatorInput = {
   boardPosition?: number
   archivedAt?: Date | string | null
   folderPath?: string | null
+  diaryEnabled?: boolean
+  siteAddress?: string | null
+  siteLat?: number | null
+  siteLng?: number | null
+  siteRadiusM?: number | null
   artStatus?: $Enums.ArtStatus
   artNotes?: string | null
   risks?: string | null
@@ -1641,6 +1815,7 @@ export type ProjectCreateWithoutCoordinatorInput = {
   payables?: Prisma.PayableCreateNestedManyWithoutProjectInput
   equipmentMovements?: Prisma.EquipmentMovementCreateNestedManyWithoutProjectInput
   externalApprovals?: Prisma.ExternalApprovalCreateNestedManyWithoutProjectInput
+  diaries?: Prisma.ConstructionDiaryCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutCoordinatorInput = {
@@ -1665,6 +1840,11 @@ export type ProjectUncheckedCreateWithoutCoordinatorInput = {
   boardPosition?: number
   archivedAt?: Date | string | null
   folderPath?: string | null
+  diaryEnabled?: boolean
+  siteAddress?: string | null
+  siteLat?: number | null
+  siteLng?: number | null
+  siteRadiusM?: number | null
   artStatus?: $Enums.ArtStatus
   artNotes?: string | null
   risks?: string | null
@@ -1686,6 +1866,7 @@ export type ProjectUncheckedCreateWithoutCoordinatorInput = {
   payables?: Prisma.PayableUncheckedCreateNestedManyWithoutProjectInput
   equipmentMovements?: Prisma.EquipmentMovementUncheckedCreateNestedManyWithoutProjectInput
   externalApprovals?: Prisma.ExternalApprovalUncheckedCreateNestedManyWithoutProjectInput
+  diaries?: Prisma.ConstructionDiaryUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutCoordinatorInput = {
@@ -1740,6 +1921,11 @@ export type ProjectScalarWhereInput = {
   boardPosition?: Prisma.IntFilter<"Project"> | number
   archivedAt?: Prisma.DateTimeNullableFilter<"Project"> | Date | string | null
   folderPath?: Prisma.StringNullableFilter<"Project"> | string | null
+  diaryEnabled?: Prisma.BoolFilter<"Project"> | boolean
+  siteAddress?: Prisma.StringNullableFilter<"Project"> | string | null
+  siteLat?: Prisma.FloatNullableFilter<"Project"> | number | null
+  siteLng?: Prisma.FloatNullableFilter<"Project"> | number | null
+  siteRadiusM?: Prisma.IntNullableFilter<"Project"> | number | null
   artStatus?: Prisma.EnumArtStatusFilter<"Project"> | $Enums.ArtStatus
   artNotes?: Prisma.StringNullableFilter<"Project"> | string | null
   risks?: Prisma.StringNullableFilter<"Project"> | string | null
@@ -1784,6 +1970,11 @@ export type ProjectCreateWithoutClientInput = {
   boardPosition?: number
   archivedAt?: Date | string | null
   folderPath?: string | null
+  diaryEnabled?: boolean
+  siteAddress?: string | null
+  siteLat?: number | null
+  siteLng?: number | null
+  siteRadiusM?: number | null
   artStatus?: $Enums.ArtStatus
   artNotes?: string | null
   risks?: string | null
@@ -1810,6 +2001,7 @@ export type ProjectCreateWithoutClientInput = {
   payables?: Prisma.PayableCreateNestedManyWithoutProjectInput
   equipmentMovements?: Prisma.EquipmentMovementCreateNestedManyWithoutProjectInput
   externalApprovals?: Prisma.ExternalApprovalCreateNestedManyWithoutProjectInput
+  diaries?: Prisma.ConstructionDiaryCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutClientInput = {
@@ -1834,6 +2026,11 @@ export type ProjectUncheckedCreateWithoutClientInput = {
   boardPosition?: number
   archivedAt?: Date | string | null
   folderPath?: string | null
+  diaryEnabled?: boolean
+  siteAddress?: string | null
+  siteLat?: number | null
+  siteLng?: number | null
+  siteRadiusM?: number | null
   artStatus?: $Enums.ArtStatus
   artNotes?: string | null
   risks?: string | null
@@ -1855,6 +2052,7 @@ export type ProjectUncheckedCreateWithoutClientInput = {
   payables?: Prisma.PayableUncheckedCreateNestedManyWithoutProjectInput
   equipmentMovements?: Prisma.EquipmentMovementUncheckedCreateNestedManyWithoutProjectInput
   externalApprovals?: Prisma.ExternalApprovalUncheckedCreateNestedManyWithoutProjectInput
+  diaries?: Prisma.ConstructionDiaryUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutClientInput = {
@@ -1900,6 +2098,11 @@ export type ProjectCreateWithoutClientUnitInput = {
   boardPosition?: number
   archivedAt?: Date | string | null
   folderPath?: string | null
+  diaryEnabled?: boolean
+  siteAddress?: string | null
+  siteLat?: number | null
+  siteLng?: number | null
+  siteRadiusM?: number | null
   artStatus?: $Enums.ArtStatus
   artNotes?: string | null
   risks?: string | null
@@ -1926,6 +2129,7 @@ export type ProjectCreateWithoutClientUnitInput = {
   payables?: Prisma.PayableCreateNestedManyWithoutProjectInput
   equipmentMovements?: Prisma.EquipmentMovementCreateNestedManyWithoutProjectInput
   externalApprovals?: Prisma.ExternalApprovalCreateNestedManyWithoutProjectInput
+  diaries?: Prisma.ConstructionDiaryCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutClientUnitInput = {
@@ -1950,6 +2154,11 @@ export type ProjectUncheckedCreateWithoutClientUnitInput = {
   boardPosition?: number
   archivedAt?: Date | string | null
   folderPath?: string | null
+  diaryEnabled?: boolean
+  siteAddress?: string | null
+  siteLat?: number | null
+  siteLng?: number | null
+  siteRadiusM?: number | null
   artStatus?: $Enums.ArtStatus
   artNotes?: string | null
   risks?: string | null
@@ -1971,6 +2180,7 @@ export type ProjectUncheckedCreateWithoutClientUnitInput = {
   payables?: Prisma.PayableUncheckedCreateNestedManyWithoutProjectInput
   equipmentMovements?: Prisma.EquipmentMovementUncheckedCreateNestedManyWithoutProjectInput
   externalApprovals?: Prisma.ExternalApprovalUncheckedCreateNestedManyWithoutProjectInput
+  diaries?: Prisma.ConstructionDiaryUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutClientUnitInput = {
@@ -2016,6 +2226,11 @@ export type ProjectCreateWithoutBudgetInput = {
   boardPosition?: number
   archivedAt?: Date | string | null
   folderPath?: string | null
+  diaryEnabled?: boolean
+  siteAddress?: string | null
+  siteLat?: number | null
+  siteLng?: number | null
+  siteRadiusM?: number | null
   artStatus?: $Enums.ArtStatus
   artNotes?: string | null
   risks?: string | null
@@ -2042,6 +2257,7 @@ export type ProjectCreateWithoutBudgetInput = {
   payables?: Prisma.PayableCreateNestedManyWithoutProjectInput
   equipmentMovements?: Prisma.EquipmentMovementCreateNestedManyWithoutProjectInput
   externalApprovals?: Prisma.ExternalApprovalCreateNestedManyWithoutProjectInput
+  diaries?: Prisma.ConstructionDiaryCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutBudgetInput = {
@@ -2066,6 +2282,11 @@ export type ProjectUncheckedCreateWithoutBudgetInput = {
   boardPosition?: number
   archivedAt?: Date | string | null
   folderPath?: string | null
+  diaryEnabled?: boolean
+  siteAddress?: string | null
+  siteLat?: number | null
+  siteLng?: number | null
+  siteRadiusM?: number | null
   artStatus?: $Enums.ArtStatus
   artNotes?: string | null
   risks?: string | null
@@ -2087,6 +2308,7 @@ export type ProjectUncheckedCreateWithoutBudgetInput = {
   payables?: Prisma.PayableUncheckedCreateNestedManyWithoutProjectInput
   equipmentMovements?: Prisma.EquipmentMovementUncheckedCreateNestedManyWithoutProjectInput
   externalApprovals?: Prisma.ExternalApprovalUncheckedCreateNestedManyWithoutProjectInput
+  diaries?: Prisma.ConstructionDiaryUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutBudgetInput = {
@@ -2132,6 +2354,11 @@ export type ProjectCreateWithoutContractInput = {
   boardPosition?: number
   archivedAt?: Date | string | null
   folderPath?: string | null
+  diaryEnabled?: boolean
+  siteAddress?: string | null
+  siteLat?: number | null
+  siteLng?: number | null
+  siteRadiusM?: number | null
   artStatus?: $Enums.ArtStatus
   artNotes?: string | null
   risks?: string | null
@@ -2158,6 +2385,7 @@ export type ProjectCreateWithoutContractInput = {
   payables?: Prisma.PayableCreateNestedManyWithoutProjectInput
   equipmentMovements?: Prisma.EquipmentMovementCreateNestedManyWithoutProjectInput
   externalApprovals?: Prisma.ExternalApprovalCreateNestedManyWithoutProjectInput
+  diaries?: Prisma.ConstructionDiaryCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutContractInput = {
@@ -2182,6 +2410,11 @@ export type ProjectUncheckedCreateWithoutContractInput = {
   boardPosition?: number
   archivedAt?: Date | string | null
   folderPath?: string | null
+  diaryEnabled?: boolean
+  siteAddress?: string | null
+  siteLat?: number | null
+  siteLng?: number | null
+  siteRadiusM?: number | null
   artStatus?: $Enums.ArtStatus
   artNotes?: string | null
   risks?: string | null
@@ -2203,6 +2436,7 @@ export type ProjectUncheckedCreateWithoutContractInput = {
   payables?: Prisma.PayableUncheckedCreateNestedManyWithoutProjectInput
   equipmentMovements?: Prisma.EquipmentMovementUncheckedCreateNestedManyWithoutProjectInput
   externalApprovals?: Prisma.ExternalApprovalUncheckedCreateNestedManyWithoutProjectInput
+  diaries?: Prisma.ConstructionDiaryUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutContractInput = {
@@ -2231,6 +2465,226 @@ export type ProjectUpdateManyWithWhereWithoutContractInput = {
   data: Prisma.XOR<Prisma.ProjectUpdateManyMutationInput, Prisma.ProjectUncheckedUpdateManyWithoutContractInput>
 }
 
+export type ProjectCreateWithoutDiariesInput = {
+  id?: string
+  companyId: string
+  code: string
+  name: string
+  disciplines?: Prisma.ProjectCreatedisciplinesInput | string[]
+  startDate?: Date | string | null
+  contractualDeadline?: Date | string | null
+  expectedEndDate?: Date | string | null
+  actualEndDate?: Date | string | null
+  contractValue?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  status?: $Enums.ProjectStatus
+  priority?: $Enums.PriorityLevel
+  progressPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  boardPosition?: number
+  archivedAt?: Date | string | null
+  folderPath?: string | null
+  diaryEnabled?: boolean
+  siteAddress?: string | null
+  siteLat?: number | null
+  siteLng?: number | null
+  siteRadiusM?: number | null
+  artStatus?: $Enums.ArtStatus
+  artNotes?: string | null
+  risks?: string | null
+  notes?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  createdById?: string | null
+  updatedById?: string | null
+  deletedAt?: Date | string | null
+  client: Prisma.ClientCreateNestedOneWithoutProjectsInput
+  clientUnit?: Prisma.ClientUnitCreateNestedOneWithoutProjectsInput
+  contract?: Prisma.ContractCreateNestedOneWithoutProjectsInput
+  budget?: Prisma.BudgetCreateNestedOneWithoutProjectsInput
+  technicalLead?: Prisma.UserCreateNestedOneWithoutProjectsLedInput
+  coordinator?: Prisma.UserCreateNestedOneWithoutProjectsCoordinatedInput
+  stages?: Prisma.ProjectStageCreateNestedManyWithoutProjectInput
+  members?: Prisma.ProjectMemberCreateNestedManyWithoutProjectInput
+  tasks?: Prisma.TaskCreateNestedManyWithoutProjectInput
+  deliverables?: Prisma.DeliverableCreateNestedManyWithoutProjectInput
+  timeEntries?: Prisma.TimeEntryCreateNestedManyWithoutProjectInput
+  technicalResponsibilities?: Prisma.TechnicalResponsibilityCreateNestedManyWithoutProjectInput
+  pendencies?: Prisma.ClientPendencyCreateNestedManyWithoutProjectInput
+  receivables?: Prisma.ReceivableCreateNestedManyWithoutProjectInput
+  invoices?: Prisma.InvoiceCreateNestedManyWithoutProjectInput
+  payables?: Prisma.PayableCreateNestedManyWithoutProjectInput
+  equipmentMovements?: Prisma.EquipmentMovementCreateNestedManyWithoutProjectInput
+  externalApprovals?: Prisma.ExternalApprovalCreateNestedManyWithoutProjectInput
+}
+
+export type ProjectUncheckedCreateWithoutDiariesInput = {
+  id?: string
+  companyId: string
+  code: string
+  name: string
+  clientId: string
+  clientUnitId?: string | null
+  contractId?: string | null
+  budgetId?: string | null
+  technicalLeadId?: string | null
+  coordinatorId?: string | null
+  disciplines?: Prisma.ProjectCreatedisciplinesInput | string[]
+  startDate?: Date | string | null
+  contractualDeadline?: Date | string | null
+  expectedEndDate?: Date | string | null
+  actualEndDate?: Date | string | null
+  contractValue?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  status?: $Enums.ProjectStatus
+  priority?: $Enums.PriorityLevel
+  progressPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  boardPosition?: number
+  archivedAt?: Date | string | null
+  folderPath?: string | null
+  diaryEnabled?: boolean
+  siteAddress?: string | null
+  siteLat?: number | null
+  siteLng?: number | null
+  siteRadiusM?: number | null
+  artStatus?: $Enums.ArtStatus
+  artNotes?: string | null
+  risks?: string | null
+  notes?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  createdById?: string | null
+  updatedById?: string | null
+  deletedAt?: Date | string | null
+  stages?: Prisma.ProjectStageUncheckedCreateNestedManyWithoutProjectInput
+  members?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
+  tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutProjectInput
+  deliverables?: Prisma.DeliverableUncheckedCreateNestedManyWithoutProjectInput
+  timeEntries?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutProjectInput
+  technicalResponsibilities?: Prisma.TechnicalResponsibilityUncheckedCreateNestedManyWithoutProjectInput
+  pendencies?: Prisma.ClientPendencyUncheckedCreateNestedManyWithoutProjectInput
+  receivables?: Prisma.ReceivableUncheckedCreateNestedManyWithoutProjectInput
+  invoices?: Prisma.InvoiceUncheckedCreateNestedManyWithoutProjectInput
+  payables?: Prisma.PayableUncheckedCreateNestedManyWithoutProjectInput
+  equipmentMovements?: Prisma.EquipmentMovementUncheckedCreateNestedManyWithoutProjectInput
+  externalApprovals?: Prisma.ExternalApprovalUncheckedCreateNestedManyWithoutProjectInput
+}
+
+export type ProjectCreateOrConnectWithoutDiariesInput = {
+  where: Prisma.ProjectWhereUniqueInput
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutDiariesInput, Prisma.ProjectUncheckedCreateWithoutDiariesInput>
+}
+
+export type ProjectUpsertWithoutDiariesInput = {
+  update: Prisma.XOR<Prisma.ProjectUpdateWithoutDiariesInput, Prisma.ProjectUncheckedUpdateWithoutDiariesInput>
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutDiariesInput, Prisma.ProjectUncheckedCreateWithoutDiariesInput>
+  where?: Prisma.ProjectWhereInput
+}
+
+export type ProjectUpdateToOneWithWhereWithoutDiariesInput = {
+  where?: Prisma.ProjectWhereInput
+  data: Prisma.XOR<Prisma.ProjectUpdateWithoutDiariesInput, Prisma.ProjectUncheckedUpdateWithoutDiariesInput>
+}
+
+export type ProjectUpdateWithoutDiariesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  companyId?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  disciplines?: Prisma.ProjectUpdatedisciplinesInput | string[]
+  startDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  contractualDeadline?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  expectedEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  actualEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  contractValue?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+  priority?: Prisma.EnumPriorityLevelFieldUpdateOperationsInput | $Enums.PriorityLevel
+  progressPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  diaryEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  siteAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  siteLat?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteLng?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteRadiusM?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  artStatus?: Prisma.EnumArtStatusFieldUpdateOperationsInput | $Enums.ArtStatus
+  artNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  client?: Prisma.ClientUpdateOneRequiredWithoutProjectsNestedInput
+  clientUnit?: Prisma.ClientUnitUpdateOneWithoutProjectsNestedInput
+  contract?: Prisma.ContractUpdateOneWithoutProjectsNestedInput
+  budget?: Prisma.BudgetUpdateOneWithoutProjectsNestedInput
+  technicalLead?: Prisma.UserUpdateOneWithoutProjectsLedNestedInput
+  coordinator?: Prisma.UserUpdateOneWithoutProjectsCoordinatedNestedInput
+  stages?: Prisma.ProjectStageUpdateManyWithoutProjectNestedInput
+  members?: Prisma.ProjectMemberUpdateManyWithoutProjectNestedInput
+  tasks?: Prisma.TaskUpdateManyWithoutProjectNestedInput
+  deliverables?: Prisma.DeliverableUpdateManyWithoutProjectNestedInput
+  timeEntries?: Prisma.TimeEntryUpdateManyWithoutProjectNestedInput
+  technicalResponsibilities?: Prisma.TechnicalResponsibilityUpdateManyWithoutProjectNestedInput
+  pendencies?: Prisma.ClientPendencyUpdateManyWithoutProjectNestedInput
+  receivables?: Prisma.ReceivableUpdateManyWithoutProjectNestedInput
+  invoices?: Prisma.InvoiceUpdateManyWithoutProjectNestedInput
+  payables?: Prisma.PayableUpdateManyWithoutProjectNestedInput
+  equipmentMovements?: Prisma.EquipmentMovementUpdateManyWithoutProjectNestedInput
+  externalApprovals?: Prisma.ExternalApprovalUpdateManyWithoutProjectNestedInput
+}
+
+export type ProjectUncheckedUpdateWithoutDiariesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  companyId?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  clientUnitId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contractId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  budgetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  technicalLeadId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  coordinatorId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  disciplines?: Prisma.ProjectUpdatedisciplinesInput | string[]
+  startDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  contractualDeadline?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  expectedEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  actualEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  contractValue?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+  priority?: Prisma.EnumPriorityLevelFieldUpdateOperationsInput | $Enums.PriorityLevel
+  progressPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  diaryEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  siteAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  siteLat?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteLng?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteRadiusM?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  artStatus?: Prisma.EnumArtStatusFieldUpdateOperationsInput | $Enums.ArtStatus
+  artNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  stages?: Prisma.ProjectStageUncheckedUpdateManyWithoutProjectNestedInput
+  members?: Prisma.ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
+  tasks?: Prisma.TaskUncheckedUpdateManyWithoutProjectNestedInput
+  deliverables?: Prisma.DeliverableUncheckedUpdateManyWithoutProjectNestedInput
+  timeEntries?: Prisma.TimeEntryUncheckedUpdateManyWithoutProjectNestedInput
+  technicalResponsibilities?: Prisma.TechnicalResponsibilityUncheckedUpdateManyWithoutProjectNestedInput
+  pendencies?: Prisma.ClientPendencyUncheckedUpdateManyWithoutProjectNestedInput
+  receivables?: Prisma.ReceivableUncheckedUpdateManyWithoutProjectNestedInput
+  invoices?: Prisma.InvoiceUncheckedUpdateManyWithoutProjectNestedInput
+  payables?: Prisma.PayableUncheckedUpdateManyWithoutProjectNestedInput
+  equipmentMovements?: Prisma.EquipmentMovementUncheckedUpdateManyWithoutProjectNestedInput
+  externalApprovals?: Prisma.ExternalApprovalUncheckedUpdateManyWithoutProjectNestedInput
+}
+
 export type ProjectCreateWithoutStagesInput = {
   id?: string
   companyId: string
@@ -2248,6 +2702,11 @@ export type ProjectCreateWithoutStagesInput = {
   boardPosition?: number
   archivedAt?: Date | string | null
   folderPath?: string | null
+  diaryEnabled?: boolean
+  siteAddress?: string | null
+  siteLat?: number | null
+  siteLng?: number | null
+  siteRadiusM?: number | null
   artStatus?: $Enums.ArtStatus
   artNotes?: string | null
   risks?: string | null
@@ -2274,6 +2733,7 @@ export type ProjectCreateWithoutStagesInput = {
   payables?: Prisma.PayableCreateNestedManyWithoutProjectInput
   equipmentMovements?: Prisma.EquipmentMovementCreateNestedManyWithoutProjectInput
   externalApprovals?: Prisma.ExternalApprovalCreateNestedManyWithoutProjectInput
+  diaries?: Prisma.ConstructionDiaryCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutStagesInput = {
@@ -2299,6 +2759,11 @@ export type ProjectUncheckedCreateWithoutStagesInput = {
   boardPosition?: number
   archivedAt?: Date | string | null
   folderPath?: string | null
+  diaryEnabled?: boolean
+  siteAddress?: string | null
+  siteLat?: number | null
+  siteLng?: number | null
+  siteRadiusM?: number | null
   artStatus?: $Enums.ArtStatus
   artNotes?: string | null
   risks?: string | null
@@ -2319,6 +2784,7 @@ export type ProjectUncheckedCreateWithoutStagesInput = {
   payables?: Prisma.PayableUncheckedCreateNestedManyWithoutProjectInput
   equipmentMovements?: Prisma.EquipmentMovementUncheckedCreateNestedManyWithoutProjectInput
   externalApprovals?: Prisma.ExternalApprovalUncheckedCreateNestedManyWithoutProjectInput
+  diaries?: Prisma.ConstructionDiaryUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutStagesInput = {
@@ -2354,6 +2820,11 @@ export type ProjectUpdateWithoutStagesInput = {
   boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
   archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  diaryEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  siteAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  siteLat?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteLng?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteRadiusM?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   artStatus?: Prisma.EnumArtStatusFieldUpdateOperationsInput | $Enums.ArtStatus
   artNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2380,6 +2851,7 @@ export type ProjectUpdateWithoutStagesInput = {
   payables?: Prisma.PayableUpdateManyWithoutProjectNestedInput
   equipmentMovements?: Prisma.EquipmentMovementUpdateManyWithoutProjectNestedInput
   externalApprovals?: Prisma.ExternalApprovalUpdateManyWithoutProjectNestedInput
+  diaries?: Prisma.ConstructionDiaryUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutStagesInput = {
@@ -2405,6 +2877,11 @@ export type ProjectUncheckedUpdateWithoutStagesInput = {
   boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
   archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  diaryEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  siteAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  siteLat?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteLng?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteRadiusM?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   artStatus?: Prisma.EnumArtStatusFieldUpdateOperationsInput | $Enums.ArtStatus
   artNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2425,6 +2902,7 @@ export type ProjectUncheckedUpdateWithoutStagesInput = {
   payables?: Prisma.PayableUncheckedUpdateManyWithoutProjectNestedInput
   equipmentMovements?: Prisma.EquipmentMovementUncheckedUpdateManyWithoutProjectNestedInput
   externalApprovals?: Prisma.ExternalApprovalUncheckedUpdateManyWithoutProjectNestedInput
+  diaries?: Prisma.ConstructionDiaryUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutMembersInput = {
@@ -2444,6 +2922,11 @@ export type ProjectCreateWithoutMembersInput = {
   boardPosition?: number
   archivedAt?: Date | string | null
   folderPath?: string | null
+  diaryEnabled?: boolean
+  siteAddress?: string | null
+  siteLat?: number | null
+  siteLng?: number | null
+  siteRadiusM?: number | null
   artStatus?: $Enums.ArtStatus
   artNotes?: string | null
   risks?: string | null
@@ -2470,6 +2953,7 @@ export type ProjectCreateWithoutMembersInput = {
   payables?: Prisma.PayableCreateNestedManyWithoutProjectInput
   equipmentMovements?: Prisma.EquipmentMovementCreateNestedManyWithoutProjectInput
   externalApprovals?: Prisma.ExternalApprovalCreateNestedManyWithoutProjectInput
+  diaries?: Prisma.ConstructionDiaryCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutMembersInput = {
@@ -2495,6 +2979,11 @@ export type ProjectUncheckedCreateWithoutMembersInput = {
   boardPosition?: number
   archivedAt?: Date | string | null
   folderPath?: string | null
+  diaryEnabled?: boolean
+  siteAddress?: string | null
+  siteLat?: number | null
+  siteLng?: number | null
+  siteRadiusM?: number | null
   artStatus?: $Enums.ArtStatus
   artNotes?: string | null
   risks?: string | null
@@ -2515,6 +3004,7 @@ export type ProjectUncheckedCreateWithoutMembersInput = {
   payables?: Prisma.PayableUncheckedCreateNestedManyWithoutProjectInput
   equipmentMovements?: Prisma.EquipmentMovementUncheckedCreateNestedManyWithoutProjectInput
   externalApprovals?: Prisma.ExternalApprovalUncheckedCreateNestedManyWithoutProjectInput
+  diaries?: Prisma.ConstructionDiaryUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutMembersInput = {
@@ -2550,6 +3040,11 @@ export type ProjectUpdateWithoutMembersInput = {
   boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
   archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  diaryEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  siteAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  siteLat?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteLng?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteRadiusM?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   artStatus?: Prisma.EnumArtStatusFieldUpdateOperationsInput | $Enums.ArtStatus
   artNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2576,6 +3071,7 @@ export type ProjectUpdateWithoutMembersInput = {
   payables?: Prisma.PayableUpdateManyWithoutProjectNestedInput
   equipmentMovements?: Prisma.EquipmentMovementUpdateManyWithoutProjectNestedInput
   externalApprovals?: Prisma.ExternalApprovalUpdateManyWithoutProjectNestedInput
+  diaries?: Prisma.ConstructionDiaryUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutMembersInput = {
@@ -2601,6 +3097,11 @@ export type ProjectUncheckedUpdateWithoutMembersInput = {
   boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
   archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  diaryEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  siteAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  siteLat?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteLng?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteRadiusM?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   artStatus?: Prisma.EnumArtStatusFieldUpdateOperationsInput | $Enums.ArtStatus
   artNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2621,6 +3122,7 @@ export type ProjectUncheckedUpdateWithoutMembersInput = {
   payables?: Prisma.PayableUncheckedUpdateManyWithoutProjectNestedInput
   equipmentMovements?: Prisma.EquipmentMovementUncheckedUpdateManyWithoutProjectNestedInput
   externalApprovals?: Prisma.ExternalApprovalUncheckedUpdateManyWithoutProjectNestedInput
+  diaries?: Prisma.ConstructionDiaryUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutTasksInput = {
@@ -2640,6 +3142,11 @@ export type ProjectCreateWithoutTasksInput = {
   boardPosition?: number
   archivedAt?: Date | string | null
   folderPath?: string | null
+  diaryEnabled?: boolean
+  siteAddress?: string | null
+  siteLat?: number | null
+  siteLng?: number | null
+  siteRadiusM?: number | null
   artStatus?: $Enums.ArtStatus
   artNotes?: string | null
   risks?: string | null
@@ -2666,6 +3173,7 @@ export type ProjectCreateWithoutTasksInput = {
   payables?: Prisma.PayableCreateNestedManyWithoutProjectInput
   equipmentMovements?: Prisma.EquipmentMovementCreateNestedManyWithoutProjectInput
   externalApprovals?: Prisma.ExternalApprovalCreateNestedManyWithoutProjectInput
+  diaries?: Prisma.ConstructionDiaryCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutTasksInput = {
@@ -2691,6 +3199,11 @@ export type ProjectUncheckedCreateWithoutTasksInput = {
   boardPosition?: number
   archivedAt?: Date | string | null
   folderPath?: string | null
+  diaryEnabled?: boolean
+  siteAddress?: string | null
+  siteLat?: number | null
+  siteLng?: number | null
+  siteRadiusM?: number | null
   artStatus?: $Enums.ArtStatus
   artNotes?: string | null
   risks?: string | null
@@ -2711,6 +3224,7 @@ export type ProjectUncheckedCreateWithoutTasksInput = {
   payables?: Prisma.PayableUncheckedCreateNestedManyWithoutProjectInput
   equipmentMovements?: Prisma.EquipmentMovementUncheckedCreateNestedManyWithoutProjectInput
   externalApprovals?: Prisma.ExternalApprovalUncheckedCreateNestedManyWithoutProjectInput
+  diaries?: Prisma.ConstructionDiaryUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutTasksInput = {
@@ -2746,6 +3260,11 @@ export type ProjectUpdateWithoutTasksInput = {
   boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
   archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  diaryEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  siteAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  siteLat?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteLng?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteRadiusM?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   artStatus?: Prisma.EnumArtStatusFieldUpdateOperationsInput | $Enums.ArtStatus
   artNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2772,6 +3291,7 @@ export type ProjectUpdateWithoutTasksInput = {
   payables?: Prisma.PayableUpdateManyWithoutProjectNestedInput
   equipmentMovements?: Prisma.EquipmentMovementUpdateManyWithoutProjectNestedInput
   externalApprovals?: Prisma.ExternalApprovalUpdateManyWithoutProjectNestedInput
+  diaries?: Prisma.ConstructionDiaryUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutTasksInput = {
@@ -2797,6 +3317,11 @@ export type ProjectUncheckedUpdateWithoutTasksInput = {
   boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
   archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  diaryEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  siteAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  siteLat?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteLng?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteRadiusM?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   artStatus?: Prisma.EnumArtStatusFieldUpdateOperationsInput | $Enums.ArtStatus
   artNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2817,6 +3342,7 @@ export type ProjectUncheckedUpdateWithoutTasksInput = {
   payables?: Prisma.PayableUncheckedUpdateManyWithoutProjectNestedInput
   equipmentMovements?: Prisma.EquipmentMovementUncheckedUpdateManyWithoutProjectNestedInput
   externalApprovals?: Prisma.ExternalApprovalUncheckedUpdateManyWithoutProjectNestedInput
+  diaries?: Prisma.ConstructionDiaryUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutDeliverablesInput = {
@@ -2836,6 +3362,11 @@ export type ProjectCreateWithoutDeliverablesInput = {
   boardPosition?: number
   archivedAt?: Date | string | null
   folderPath?: string | null
+  diaryEnabled?: boolean
+  siteAddress?: string | null
+  siteLat?: number | null
+  siteLng?: number | null
+  siteRadiusM?: number | null
   artStatus?: $Enums.ArtStatus
   artNotes?: string | null
   risks?: string | null
@@ -2862,6 +3393,7 @@ export type ProjectCreateWithoutDeliverablesInput = {
   payables?: Prisma.PayableCreateNestedManyWithoutProjectInput
   equipmentMovements?: Prisma.EquipmentMovementCreateNestedManyWithoutProjectInput
   externalApprovals?: Prisma.ExternalApprovalCreateNestedManyWithoutProjectInput
+  diaries?: Prisma.ConstructionDiaryCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutDeliverablesInput = {
@@ -2887,6 +3419,11 @@ export type ProjectUncheckedCreateWithoutDeliverablesInput = {
   boardPosition?: number
   archivedAt?: Date | string | null
   folderPath?: string | null
+  diaryEnabled?: boolean
+  siteAddress?: string | null
+  siteLat?: number | null
+  siteLng?: number | null
+  siteRadiusM?: number | null
   artStatus?: $Enums.ArtStatus
   artNotes?: string | null
   risks?: string | null
@@ -2907,6 +3444,7 @@ export type ProjectUncheckedCreateWithoutDeliverablesInput = {
   payables?: Prisma.PayableUncheckedCreateNestedManyWithoutProjectInput
   equipmentMovements?: Prisma.EquipmentMovementUncheckedCreateNestedManyWithoutProjectInput
   externalApprovals?: Prisma.ExternalApprovalUncheckedCreateNestedManyWithoutProjectInput
+  diaries?: Prisma.ConstructionDiaryUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutDeliverablesInput = {
@@ -2942,6 +3480,11 @@ export type ProjectUpdateWithoutDeliverablesInput = {
   boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
   archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  diaryEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  siteAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  siteLat?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteLng?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteRadiusM?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   artStatus?: Prisma.EnumArtStatusFieldUpdateOperationsInput | $Enums.ArtStatus
   artNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2968,6 +3511,7 @@ export type ProjectUpdateWithoutDeliverablesInput = {
   payables?: Prisma.PayableUpdateManyWithoutProjectNestedInput
   equipmentMovements?: Prisma.EquipmentMovementUpdateManyWithoutProjectNestedInput
   externalApprovals?: Prisma.ExternalApprovalUpdateManyWithoutProjectNestedInput
+  diaries?: Prisma.ConstructionDiaryUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutDeliverablesInput = {
@@ -2993,6 +3537,11 @@ export type ProjectUncheckedUpdateWithoutDeliverablesInput = {
   boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
   archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  diaryEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  siteAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  siteLat?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteLng?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteRadiusM?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   artStatus?: Prisma.EnumArtStatusFieldUpdateOperationsInput | $Enums.ArtStatus
   artNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3013,6 +3562,7 @@ export type ProjectUncheckedUpdateWithoutDeliverablesInput = {
   payables?: Prisma.PayableUncheckedUpdateManyWithoutProjectNestedInput
   equipmentMovements?: Prisma.EquipmentMovementUncheckedUpdateManyWithoutProjectNestedInput
   externalApprovals?: Prisma.ExternalApprovalUncheckedUpdateManyWithoutProjectNestedInput
+  diaries?: Prisma.ConstructionDiaryUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutTimeEntriesInput = {
@@ -3032,6 +3582,11 @@ export type ProjectCreateWithoutTimeEntriesInput = {
   boardPosition?: number
   archivedAt?: Date | string | null
   folderPath?: string | null
+  diaryEnabled?: boolean
+  siteAddress?: string | null
+  siteLat?: number | null
+  siteLng?: number | null
+  siteRadiusM?: number | null
   artStatus?: $Enums.ArtStatus
   artNotes?: string | null
   risks?: string | null
@@ -3058,6 +3613,7 @@ export type ProjectCreateWithoutTimeEntriesInput = {
   payables?: Prisma.PayableCreateNestedManyWithoutProjectInput
   equipmentMovements?: Prisma.EquipmentMovementCreateNestedManyWithoutProjectInput
   externalApprovals?: Prisma.ExternalApprovalCreateNestedManyWithoutProjectInput
+  diaries?: Prisma.ConstructionDiaryCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutTimeEntriesInput = {
@@ -3083,6 +3639,11 @@ export type ProjectUncheckedCreateWithoutTimeEntriesInput = {
   boardPosition?: number
   archivedAt?: Date | string | null
   folderPath?: string | null
+  diaryEnabled?: boolean
+  siteAddress?: string | null
+  siteLat?: number | null
+  siteLng?: number | null
+  siteRadiusM?: number | null
   artStatus?: $Enums.ArtStatus
   artNotes?: string | null
   risks?: string | null
@@ -3103,6 +3664,7 @@ export type ProjectUncheckedCreateWithoutTimeEntriesInput = {
   payables?: Prisma.PayableUncheckedCreateNestedManyWithoutProjectInput
   equipmentMovements?: Prisma.EquipmentMovementUncheckedCreateNestedManyWithoutProjectInput
   externalApprovals?: Prisma.ExternalApprovalUncheckedCreateNestedManyWithoutProjectInput
+  diaries?: Prisma.ConstructionDiaryUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutTimeEntriesInput = {
@@ -3138,6 +3700,11 @@ export type ProjectUpdateWithoutTimeEntriesInput = {
   boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
   archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  diaryEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  siteAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  siteLat?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteLng?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteRadiusM?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   artStatus?: Prisma.EnumArtStatusFieldUpdateOperationsInput | $Enums.ArtStatus
   artNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3164,6 +3731,7 @@ export type ProjectUpdateWithoutTimeEntriesInput = {
   payables?: Prisma.PayableUpdateManyWithoutProjectNestedInput
   equipmentMovements?: Prisma.EquipmentMovementUpdateManyWithoutProjectNestedInput
   externalApprovals?: Prisma.ExternalApprovalUpdateManyWithoutProjectNestedInput
+  diaries?: Prisma.ConstructionDiaryUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutTimeEntriesInput = {
@@ -3189,6 +3757,11 @@ export type ProjectUncheckedUpdateWithoutTimeEntriesInput = {
   boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
   archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  diaryEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  siteAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  siteLat?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteLng?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteRadiusM?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   artStatus?: Prisma.EnumArtStatusFieldUpdateOperationsInput | $Enums.ArtStatus
   artNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3209,6 +3782,7 @@ export type ProjectUncheckedUpdateWithoutTimeEntriesInput = {
   payables?: Prisma.PayableUncheckedUpdateManyWithoutProjectNestedInput
   equipmentMovements?: Prisma.EquipmentMovementUncheckedUpdateManyWithoutProjectNestedInput
   externalApprovals?: Prisma.ExternalApprovalUncheckedUpdateManyWithoutProjectNestedInput
+  diaries?: Prisma.ConstructionDiaryUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutExternalApprovalsInput = {
@@ -3228,6 +3802,11 @@ export type ProjectCreateWithoutExternalApprovalsInput = {
   boardPosition?: number
   archivedAt?: Date | string | null
   folderPath?: string | null
+  diaryEnabled?: boolean
+  siteAddress?: string | null
+  siteLat?: number | null
+  siteLng?: number | null
+  siteRadiusM?: number | null
   artStatus?: $Enums.ArtStatus
   artNotes?: string | null
   risks?: string | null
@@ -3254,6 +3833,7 @@ export type ProjectCreateWithoutExternalApprovalsInput = {
   invoices?: Prisma.InvoiceCreateNestedManyWithoutProjectInput
   payables?: Prisma.PayableCreateNestedManyWithoutProjectInput
   equipmentMovements?: Prisma.EquipmentMovementCreateNestedManyWithoutProjectInput
+  diaries?: Prisma.ConstructionDiaryCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutExternalApprovalsInput = {
@@ -3279,6 +3859,11 @@ export type ProjectUncheckedCreateWithoutExternalApprovalsInput = {
   boardPosition?: number
   archivedAt?: Date | string | null
   folderPath?: string | null
+  diaryEnabled?: boolean
+  siteAddress?: string | null
+  siteLat?: number | null
+  siteLng?: number | null
+  siteRadiusM?: number | null
   artStatus?: $Enums.ArtStatus
   artNotes?: string | null
   risks?: string | null
@@ -3299,6 +3884,7 @@ export type ProjectUncheckedCreateWithoutExternalApprovalsInput = {
   invoices?: Prisma.InvoiceUncheckedCreateNestedManyWithoutProjectInput
   payables?: Prisma.PayableUncheckedCreateNestedManyWithoutProjectInput
   equipmentMovements?: Prisma.EquipmentMovementUncheckedCreateNestedManyWithoutProjectInput
+  diaries?: Prisma.ConstructionDiaryUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutExternalApprovalsInput = {
@@ -3334,6 +3920,11 @@ export type ProjectUpdateWithoutExternalApprovalsInput = {
   boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
   archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  diaryEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  siteAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  siteLat?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteLng?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteRadiusM?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   artStatus?: Prisma.EnumArtStatusFieldUpdateOperationsInput | $Enums.ArtStatus
   artNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3360,6 +3951,7 @@ export type ProjectUpdateWithoutExternalApprovalsInput = {
   invoices?: Prisma.InvoiceUpdateManyWithoutProjectNestedInput
   payables?: Prisma.PayableUpdateManyWithoutProjectNestedInput
   equipmentMovements?: Prisma.EquipmentMovementUpdateManyWithoutProjectNestedInput
+  diaries?: Prisma.ConstructionDiaryUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutExternalApprovalsInput = {
@@ -3385,6 +3977,11 @@ export type ProjectUncheckedUpdateWithoutExternalApprovalsInput = {
   boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
   archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  diaryEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  siteAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  siteLat?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteLng?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteRadiusM?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   artStatus?: Prisma.EnumArtStatusFieldUpdateOperationsInput | $Enums.ArtStatus
   artNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3405,6 +4002,7 @@ export type ProjectUncheckedUpdateWithoutExternalApprovalsInput = {
   invoices?: Prisma.InvoiceUncheckedUpdateManyWithoutProjectNestedInput
   payables?: Prisma.PayableUncheckedUpdateManyWithoutProjectNestedInput
   equipmentMovements?: Prisma.EquipmentMovementUncheckedUpdateManyWithoutProjectNestedInput
+  diaries?: Prisma.ConstructionDiaryUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutTechnicalResponsibilitiesInput = {
@@ -3424,6 +4022,11 @@ export type ProjectCreateWithoutTechnicalResponsibilitiesInput = {
   boardPosition?: number
   archivedAt?: Date | string | null
   folderPath?: string | null
+  diaryEnabled?: boolean
+  siteAddress?: string | null
+  siteLat?: number | null
+  siteLng?: number | null
+  siteRadiusM?: number | null
   artStatus?: $Enums.ArtStatus
   artNotes?: string | null
   risks?: string | null
@@ -3450,6 +4053,7 @@ export type ProjectCreateWithoutTechnicalResponsibilitiesInput = {
   payables?: Prisma.PayableCreateNestedManyWithoutProjectInput
   equipmentMovements?: Prisma.EquipmentMovementCreateNestedManyWithoutProjectInput
   externalApprovals?: Prisma.ExternalApprovalCreateNestedManyWithoutProjectInput
+  diaries?: Prisma.ConstructionDiaryCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutTechnicalResponsibilitiesInput = {
@@ -3475,6 +4079,11 @@ export type ProjectUncheckedCreateWithoutTechnicalResponsibilitiesInput = {
   boardPosition?: number
   archivedAt?: Date | string | null
   folderPath?: string | null
+  diaryEnabled?: boolean
+  siteAddress?: string | null
+  siteLat?: number | null
+  siteLng?: number | null
+  siteRadiusM?: number | null
   artStatus?: $Enums.ArtStatus
   artNotes?: string | null
   risks?: string | null
@@ -3495,6 +4104,7 @@ export type ProjectUncheckedCreateWithoutTechnicalResponsibilitiesInput = {
   payables?: Prisma.PayableUncheckedCreateNestedManyWithoutProjectInput
   equipmentMovements?: Prisma.EquipmentMovementUncheckedCreateNestedManyWithoutProjectInput
   externalApprovals?: Prisma.ExternalApprovalUncheckedCreateNestedManyWithoutProjectInput
+  diaries?: Prisma.ConstructionDiaryUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutTechnicalResponsibilitiesInput = {
@@ -3530,6 +4140,11 @@ export type ProjectUpdateWithoutTechnicalResponsibilitiesInput = {
   boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
   archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  diaryEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  siteAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  siteLat?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteLng?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteRadiusM?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   artStatus?: Prisma.EnumArtStatusFieldUpdateOperationsInput | $Enums.ArtStatus
   artNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3556,6 +4171,7 @@ export type ProjectUpdateWithoutTechnicalResponsibilitiesInput = {
   payables?: Prisma.PayableUpdateManyWithoutProjectNestedInput
   equipmentMovements?: Prisma.EquipmentMovementUpdateManyWithoutProjectNestedInput
   externalApprovals?: Prisma.ExternalApprovalUpdateManyWithoutProjectNestedInput
+  diaries?: Prisma.ConstructionDiaryUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutTechnicalResponsibilitiesInput = {
@@ -3581,6 +4197,11 @@ export type ProjectUncheckedUpdateWithoutTechnicalResponsibilitiesInput = {
   boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
   archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  diaryEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  siteAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  siteLat?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteLng?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteRadiusM?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   artStatus?: Prisma.EnumArtStatusFieldUpdateOperationsInput | $Enums.ArtStatus
   artNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3601,6 +4222,7 @@ export type ProjectUncheckedUpdateWithoutTechnicalResponsibilitiesInput = {
   payables?: Prisma.PayableUncheckedUpdateManyWithoutProjectNestedInput
   equipmentMovements?: Prisma.EquipmentMovementUncheckedUpdateManyWithoutProjectNestedInput
   externalApprovals?: Prisma.ExternalApprovalUncheckedUpdateManyWithoutProjectNestedInput
+  diaries?: Prisma.ConstructionDiaryUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutPendenciesInput = {
@@ -3620,6 +4242,11 @@ export type ProjectCreateWithoutPendenciesInput = {
   boardPosition?: number
   archivedAt?: Date | string | null
   folderPath?: string | null
+  diaryEnabled?: boolean
+  siteAddress?: string | null
+  siteLat?: number | null
+  siteLng?: number | null
+  siteRadiusM?: number | null
   artStatus?: $Enums.ArtStatus
   artNotes?: string | null
   risks?: string | null
@@ -3646,6 +4273,7 @@ export type ProjectCreateWithoutPendenciesInput = {
   payables?: Prisma.PayableCreateNestedManyWithoutProjectInput
   equipmentMovements?: Prisma.EquipmentMovementCreateNestedManyWithoutProjectInput
   externalApprovals?: Prisma.ExternalApprovalCreateNestedManyWithoutProjectInput
+  diaries?: Prisma.ConstructionDiaryCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutPendenciesInput = {
@@ -3671,6 +4299,11 @@ export type ProjectUncheckedCreateWithoutPendenciesInput = {
   boardPosition?: number
   archivedAt?: Date | string | null
   folderPath?: string | null
+  diaryEnabled?: boolean
+  siteAddress?: string | null
+  siteLat?: number | null
+  siteLng?: number | null
+  siteRadiusM?: number | null
   artStatus?: $Enums.ArtStatus
   artNotes?: string | null
   risks?: string | null
@@ -3691,6 +4324,7 @@ export type ProjectUncheckedCreateWithoutPendenciesInput = {
   payables?: Prisma.PayableUncheckedCreateNestedManyWithoutProjectInput
   equipmentMovements?: Prisma.EquipmentMovementUncheckedCreateNestedManyWithoutProjectInput
   externalApprovals?: Prisma.ExternalApprovalUncheckedCreateNestedManyWithoutProjectInput
+  diaries?: Prisma.ConstructionDiaryUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutPendenciesInput = {
@@ -3726,6 +4360,11 @@ export type ProjectUpdateWithoutPendenciesInput = {
   boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
   archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  diaryEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  siteAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  siteLat?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteLng?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteRadiusM?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   artStatus?: Prisma.EnumArtStatusFieldUpdateOperationsInput | $Enums.ArtStatus
   artNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3752,6 +4391,7 @@ export type ProjectUpdateWithoutPendenciesInput = {
   payables?: Prisma.PayableUpdateManyWithoutProjectNestedInput
   equipmentMovements?: Prisma.EquipmentMovementUpdateManyWithoutProjectNestedInput
   externalApprovals?: Prisma.ExternalApprovalUpdateManyWithoutProjectNestedInput
+  diaries?: Prisma.ConstructionDiaryUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutPendenciesInput = {
@@ -3777,6 +4417,11 @@ export type ProjectUncheckedUpdateWithoutPendenciesInput = {
   boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
   archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  diaryEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  siteAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  siteLat?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteLng?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteRadiusM?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   artStatus?: Prisma.EnumArtStatusFieldUpdateOperationsInput | $Enums.ArtStatus
   artNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3797,6 +4442,7 @@ export type ProjectUncheckedUpdateWithoutPendenciesInput = {
   payables?: Prisma.PayableUncheckedUpdateManyWithoutProjectNestedInput
   equipmentMovements?: Prisma.EquipmentMovementUncheckedUpdateManyWithoutProjectNestedInput
   externalApprovals?: Prisma.ExternalApprovalUncheckedUpdateManyWithoutProjectNestedInput
+  diaries?: Prisma.ConstructionDiaryUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutReceivablesInput = {
@@ -3816,6 +4462,11 @@ export type ProjectCreateWithoutReceivablesInput = {
   boardPosition?: number
   archivedAt?: Date | string | null
   folderPath?: string | null
+  diaryEnabled?: boolean
+  siteAddress?: string | null
+  siteLat?: number | null
+  siteLng?: number | null
+  siteRadiusM?: number | null
   artStatus?: $Enums.ArtStatus
   artNotes?: string | null
   risks?: string | null
@@ -3842,6 +4493,7 @@ export type ProjectCreateWithoutReceivablesInput = {
   payables?: Prisma.PayableCreateNestedManyWithoutProjectInput
   equipmentMovements?: Prisma.EquipmentMovementCreateNestedManyWithoutProjectInput
   externalApprovals?: Prisma.ExternalApprovalCreateNestedManyWithoutProjectInput
+  diaries?: Prisma.ConstructionDiaryCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutReceivablesInput = {
@@ -3867,6 +4519,11 @@ export type ProjectUncheckedCreateWithoutReceivablesInput = {
   boardPosition?: number
   archivedAt?: Date | string | null
   folderPath?: string | null
+  diaryEnabled?: boolean
+  siteAddress?: string | null
+  siteLat?: number | null
+  siteLng?: number | null
+  siteRadiusM?: number | null
   artStatus?: $Enums.ArtStatus
   artNotes?: string | null
   risks?: string | null
@@ -3887,6 +4544,7 @@ export type ProjectUncheckedCreateWithoutReceivablesInput = {
   payables?: Prisma.PayableUncheckedCreateNestedManyWithoutProjectInput
   equipmentMovements?: Prisma.EquipmentMovementUncheckedCreateNestedManyWithoutProjectInput
   externalApprovals?: Prisma.ExternalApprovalUncheckedCreateNestedManyWithoutProjectInput
+  diaries?: Prisma.ConstructionDiaryUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutReceivablesInput = {
@@ -3922,6 +4580,11 @@ export type ProjectUpdateWithoutReceivablesInput = {
   boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
   archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  diaryEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  siteAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  siteLat?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteLng?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteRadiusM?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   artStatus?: Prisma.EnumArtStatusFieldUpdateOperationsInput | $Enums.ArtStatus
   artNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3948,6 +4611,7 @@ export type ProjectUpdateWithoutReceivablesInput = {
   payables?: Prisma.PayableUpdateManyWithoutProjectNestedInput
   equipmentMovements?: Prisma.EquipmentMovementUpdateManyWithoutProjectNestedInput
   externalApprovals?: Prisma.ExternalApprovalUpdateManyWithoutProjectNestedInput
+  diaries?: Prisma.ConstructionDiaryUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutReceivablesInput = {
@@ -3973,6 +4637,11 @@ export type ProjectUncheckedUpdateWithoutReceivablesInput = {
   boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
   archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  diaryEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  siteAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  siteLat?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteLng?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteRadiusM?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   artStatus?: Prisma.EnumArtStatusFieldUpdateOperationsInput | $Enums.ArtStatus
   artNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3993,6 +4662,7 @@ export type ProjectUncheckedUpdateWithoutReceivablesInput = {
   payables?: Prisma.PayableUncheckedUpdateManyWithoutProjectNestedInput
   equipmentMovements?: Prisma.EquipmentMovementUncheckedUpdateManyWithoutProjectNestedInput
   externalApprovals?: Prisma.ExternalApprovalUncheckedUpdateManyWithoutProjectNestedInput
+  diaries?: Prisma.ConstructionDiaryUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutInvoicesInput = {
@@ -4012,6 +4682,11 @@ export type ProjectCreateWithoutInvoicesInput = {
   boardPosition?: number
   archivedAt?: Date | string | null
   folderPath?: string | null
+  diaryEnabled?: boolean
+  siteAddress?: string | null
+  siteLat?: number | null
+  siteLng?: number | null
+  siteRadiusM?: number | null
   artStatus?: $Enums.ArtStatus
   artNotes?: string | null
   risks?: string | null
@@ -4038,6 +4713,7 @@ export type ProjectCreateWithoutInvoicesInput = {
   payables?: Prisma.PayableCreateNestedManyWithoutProjectInput
   equipmentMovements?: Prisma.EquipmentMovementCreateNestedManyWithoutProjectInput
   externalApprovals?: Prisma.ExternalApprovalCreateNestedManyWithoutProjectInput
+  diaries?: Prisma.ConstructionDiaryCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutInvoicesInput = {
@@ -4063,6 +4739,11 @@ export type ProjectUncheckedCreateWithoutInvoicesInput = {
   boardPosition?: number
   archivedAt?: Date | string | null
   folderPath?: string | null
+  diaryEnabled?: boolean
+  siteAddress?: string | null
+  siteLat?: number | null
+  siteLng?: number | null
+  siteRadiusM?: number | null
   artStatus?: $Enums.ArtStatus
   artNotes?: string | null
   risks?: string | null
@@ -4083,6 +4764,7 @@ export type ProjectUncheckedCreateWithoutInvoicesInput = {
   payables?: Prisma.PayableUncheckedCreateNestedManyWithoutProjectInput
   equipmentMovements?: Prisma.EquipmentMovementUncheckedCreateNestedManyWithoutProjectInput
   externalApprovals?: Prisma.ExternalApprovalUncheckedCreateNestedManyWithoutProjectInput
+  diaries?: Prisma.ConstructionDiaryUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutInvoicesInput = {
@@ -4118,6 +4800,11 @@ export type ProjectUpdateWithoutInvoicesInput = {
   boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
   archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  diaryEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  siteAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  siteLat?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteLng?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteRadiusM?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   artStatus?: Prisma.EnumArtStatusFieldUpdateOperationsInput | $Enums.ArtStatus
   artNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4144,6 +4831,7 @@ export type ProjectUpdateWithoutInvoicesInput = {
   payables?: Prisma.PayableUpdateManyWithoutProjectNestedInput
   equipmentMovements?: Prisma.EquipmentMovementUpdateManyWithoutProjectNestedInput
   externalApprovals?: Prisma.ExternalApprovalUpdateManyWithoutProjectNestedInput
+  diaries?: Prisma.ConstructionDiaryUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutInvoicesInput = {
@@ -4169,6 +4857,11 @@ export type ProjectUncheckedUpdateWithoutInvoicesInput = {
   boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
   archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  diaryEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  siteAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  siteLat?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteLng?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteRadiusM?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   artStatus?: Prisma.EnumArtStatusFieldUpdateOperationsInput | $Enums.ArtStatus
   artNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4189,6 +4882,7 @@ export type ProjectUncheckedUpdateWithoutInvoicesInput = {
   payables?: Prisma.PayableUncheckedUpdateManyWithoutProjectNestedInput
   equipmentMovements?: Prisma.EquipmentMovementUncheckedUpdateManyWithoutProjectNestedInput
   externalApprovals?: Prisma.ExternalApprovalUncheckedUpdateManyWithoutProjectNestedInput
+  diaries?: Prisma.ConstructionDiaryUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutPayablesInput = {
@@ -4208,6 +4902,11 @@ export type ProjectCreateWithoutPayablesInput = {
   boardPosition?: number
   archivedAt?: Date | string | null
   folderPath?: string | null
+  diaryEnabled?: boolean
+  siteAddress?: string | null
+  siteLat?: number | null
+  siteLng?: number | null
+  siteRadiusM?: number | null
   artStatus?: $Enums.ArtStatus
   artNotes?: string | null
   risks?: string | null
@@ -4234,6 +4933,7 @@ export type ProjectCreateWithoutPayablesInput = {
   invoices?: Prisma.InvoiceCreateNestedManyWithoutProjectInput
   equipmentMovements?: Prisma.EquipmentMovementCreateNestedManyWithoutProjectInput
   externalApprovals?: Prisma.ExternalApprovalCreateNestedManyWithoutProjectInput
+  diaries?: Prisma.ConstructionDiaryCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutPayablesInput = {
@@ -4259,6 +4959,11 @@ export type ProjectUncheckedCreateWithoutPayablesInput = {
   boardPosition?: number
   archivedAt?: Date | string | null
   folderPath?: string | null
+  diaryEnabled?: boolean
+  siteAddress?: string | null
+  siteLat?: number | null
+  siteLng?: number | null
+  siteRadiusM?: number | null
   artStatus?: $Enums.ArtStatus
   artNotes?: string | null
   risks?: string | null
@@ -4279,6 +4984,7 @@ export type ProjectUncheckedCreateWithoutPayablesInput = {
   invoices?: Prisma.InvoiceUncheckedCreateNestedManyWithoutProjectInput
   equipmentMovements?: Prisma.EquipmentMovementUncheckedCreateNestedManyWithoutProjectInput
   externalApprovals?: Prisma.ExternalApprovalUncheckedCreateNestedManyWithoutProjectInput
+  diaries?: Prisma.ConstructionDiaryUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutPayablesInput = {
@@ -4314,6 +5020,11 @@ export type ProjectUpdateWithoutPayablesInput = {
   boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
   archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  diaryEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  siteAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  siteLat?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteLng?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteRadiusM?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   artStatus?: Prisma.EnumArtStatusFieldUpdateOperationsInput | $Enums.ArtStatus
   artNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4340,6 +5051,7 @@ export type ProjectUpdateWithoutPayablesInput = {
   invoices?: Prisma.InvoiceUpdateManyWithoutProjectNestedInput
   equipmentMovements?: Prisma.EquipmentMovementUpdateManyWithoutProjectNestedInput
   externalApprovals?: Prisma.ExternalApprovalUpdateManyWithoutProjectNestedInput
+  diaries?: Prisma.ConstructionDiaryUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutPayablesInput = {
@@ -4365,6 +5077,11 @@ export type ProjectUncheckedUpdateWithoutPayablesInput = {
   boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
   archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  diaryEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  siteAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  siteLat?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteLng?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteRadiusM?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   artStatus?: Prisma.EnumArtStatusFieldUpdateOperationsInput | $Enums.ArtStatus
   artNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4385,6 +5102,7 @@ export type ProjectUncheckedUpdateWithoutPayablesInput = {
   invoices?: Prisma.InvoiceUncheckedUpdateManyWithoutProjectNestedInput
   equipmentMovements?: Prisma.EquipmentMovementUncheckedUpdateManyWithoutProjectNestedInput
   externalApprovals?: Prisma.ExternalApprovalUncheckedUpdateManyWithoutProjectNestedInput
+  diaries?: Prisma.ConstructionDiaryUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutEquipmentMovementsInput = {
@@ -4404,6 +5122,11 @@ export type ProjectCreateWithoutEquipmentMovementsInput = {
   boardPosition?: number
   archivedAt?: Date | string | null
   folderPath?: string | null
+  diaryEnabled?: boolean
+  siteAddress?: string | null
+  siteLat?: number | null
+  siteLng?: number | null
+  siteRadiusM?: number | null
   artStatus?: $Enums.ArtStatus
   artNotes?: string | null
   risks?: string | null
@@ -4430,6 +5153,7 @@ export type ProjectCreateWithoutEquipmentMovementsInput = {
   invoices?: Prisma.InvoiceCreateNestedManyWithoutProjectInput
   payables?: Prisma.PayableCreateNestedManyWithoutProjectInput
   externalApprovals?: Prisma.ExternalApprovalCreateNestedManyWithoutProjectInput
+  diaries?: Prisma.ConstructionDiaryCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutEquipmentMovementsInput = {
@@ -4455,6 +5179,11 @@ export type ProjectUncheckedCreateWithoutEquipmentMovementsInput = {
   boardPosition?: number
   archivedAt?: Date | string | null
   folderPath?: string | null
+  diaryEnabled?: boolean
+  siteAddress?: string | null
+  siteLat?: number | null
+  siteLng?: number | null
+  siteRadiusM?: number | null
   artStatus?: $Enums.ArtStatus
   artNotes?: string | null
   risks?: string | null
@@ -4475,6 +5204,7 @@ export type ProjectUncheckedCreateWithoutEquipmentMovementsInput = {
   invoices?: Prisma.InvoiceUncheckedCreateNestedManyWithoutProjectInput
   payables?: Prisma.PayableUncheckedCreateNestedManyWithoutProjectInput
   externalApprovals?: Prisma.ExternalApprovalUncheckedCreateNestedManyWithoutProjectInput
+  diaries?: Prisma.ConstructionDiaryUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutEquipmentMovementsInput = {
@@ -4510,6 +5240,11 @@ export type ProjectUpdateWithoutEquipmentMovementsInput = {
   boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
   archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  diaryEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  siteAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  siteLat?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteLng?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteRadiusM?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   artStatus?: Prisma.EnumArtStatusFieldUpdateOperationsInput | $Enums.ArtStatus
   artNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4536,6 +5271,7 @@ export type ProjectUpdateWithoutEquipmentMovementsInput = {
   invoices?: Prisma.InvoiceUpdateManyWithoutProjectNestedInput
   payables?: Prisma.PayableUpdateManyWithoutProjectNestedInput
   externalApprovals?: Prisma.ExternalApprovalUpdateManyWithoutProjectNestedInput
+  diaries?: Prisma.ConstructionDiaryUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutEquipmentMovementsInput = {
@@ -4561,6 +5297,11 @@ export type ProjectUncheckedUpdateWithoutEquipmentMovementsInput = {
   boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
   archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  diaryEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  siteAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  siteLat?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteLng?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteRadiusM?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   artStatus?: Prisma.EnumArtStatusFieldUpdateOperationsInput | $Enums.ArtStatus
   artNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4581,6 +5322,7 @@ export type ProjectUncheckedUpdateWithoutEquipmentMovementsInput = {
   invoices?: Prisma.InvoiceUncheckedUpdateManyWithoutProjectNestedInput
   payables?: Prisma.PayableUncheckedUpdateManyWithoutProjectNestedInput
   externalApprovals?: Prisma.ExternalApprovalUncheckedUpdateManyWithoutProjectNestedInput
+  diaries?: Prisma.ConstructionDiaryUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateManyTechnicalLeadInput = {
@@ -4605,6 +5347,11 @@ export type ProjectCreateManyTechnicalLeadInput = {
   boardPosition?: number
   archivedAt?: Date | string | null
   folderPath?: string | null
+  diaryEnabled?: boolean
+  siteAddress?: string | null
+  siteLat?: number | null
+  siteLng?: number | null
+  siteRadiusM?: number | null
   artStatus?: $Enums.ArtStatus
   artNotes?: string | null
   risks?: string | null
@@ -4638,6 +5385,11 @@ export type ProjectCreateManyCoordinatorInput = {
   boardPosition?: number
   archivedAt?: Date | string | null
   folderPath?: string | null
+  diaryEnabled?: boolean
+  siteAddress?: string | null
+  siteLat?: number | null
+  siteLng?: number | null
+  siteRadiusM?: number | null
   artStatus?: $Enums.ArtStatus
   artNotes?: string | null
   risks?: string | null
@@ -4666,6 +5418,11 @@ export type ProjectUpdateWithoutTechnicalLeadInput = {
   boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
   archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  diaryEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  siteAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  siteLat?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteLng?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteRadiusM?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   artStatus?: Prisma.EnumArtStatusFieldUpdateOperationsInput | $Enums.ArtStatus
   artNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4692,6 +5449,7 @@ export type ProjectUpdateWithoutTechnicalLeadInput = {
   payables?: Prisma.PayableUpdateManyWithoutProjectNestedInput
   equipmentMovements?: Prisma.EquipmentMovementUpdateManyWithoutProjectNestedInput
   externalApprovals?: Prisma.ExternalApprovalUpdateManyWithoutProjectNestedInput
+  diaries?: Prisma.ConstructionDiaryUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutTechnicalLeadInput = {
@@ -4716,6 +5474,11 @@ export type ProjectUncheckedUpdateWithoutTechnicalLeadInput = {
   boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
   archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  diaryEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  siteAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  siteLat?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteLng?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteRadiusM?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   artStatus?: Prisma.EnumArtStatusFieldUpdateOperationsInput | $Enums.ArtStatus
   artNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4737,6 +5500,7 @@ export type ProjectUncheckedUpdateWithoutTechnicalLeadInput = {
   payables?: Prisma.PayableUncheckedUpdateManyWithoutProjectNestedInput
   equipmentMovements?: Prisma.EquipmentMovementUncheckedUpdateManyWithoutProjectNestedInput
   externalApprovals?: Prisma.ExternalApprovalUncheckedUpdateManyWithoutProjectNestedInput
+  diaries?: Prisma.ConstructionDiaryUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateManyWithoutTechnicalLeadInput = {
@@ -4761,6 +5525,11 @@ export type ProjectUncheckedUpdateManyWithoutTechnicalLeadInput = {
   boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
   archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  diaryEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  siteAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  siteLat?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteLng?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteRadiusM?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   artStatus?: Prisma.EnumArtStatusFieldUpdateOperationsInput | $Enums.ArtStatus
   artNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4789,6 +5558,11 @@ export type ProjectUpdateWithoutCoordinatorInput = {
   boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
   archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  diaryEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  siteAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  siteLat?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteLng?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteRadiusM?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   artStatus?: Prisma.EnumArtStatusFieldUpdateOperationsInput | $Enums.ArtStatus
   artNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4815,6 +5589,7 @@ export type ProjectUpdateWithoutCoordinatorInput = {
   payables?: Prisma.PayableUpdateManyWithoutProjectNestedInput
   equipmentMovements?: Prisma.EquipmentMovementUpdateManyWithoutProjectNestedInput
   externalApprovals?: Prisma.ExternalApprovalUpdateManyWithoutProjectNestedInput
+  diaries?: Prisma.ConstructionDiaryUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutCoordinatorInput = {
@@ -4839,6 +5614,11 @@ export type ProjectUncheckedUpdateWithoutCoordinatorInput = {
   boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
   archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  diaryEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  siteAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  siteLat?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteLng?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteRadiusM?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   artStatus?: Prisma.EnumArtStatusFieldUpdateOperationsInput | $Enums.ArtStatus
   artNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4860,6 +5640,7 @@ export type ProjectUncheckedUpdateWithoutCoordinatorInput = {
   payables?: Prisma.PayableUncheckedUpdateManyWithoutProjectNestedInput
   equipmentMovements?: Prisma.EquipmentMovementUncheckedUpdateManyWithoutProjectNestedInput
   externalApprovals?: Prisma.ExternalApprovalUncheckedUpdateManyWithoutProjectNestedInput
+  diaries?: Prisma.ConstructionDiaryUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateManyWithoutCoordinatorInput = {
@@ -4884,6 +5665,11 @@ export type ProjectUncheckedUpdateManyWithoutCoordinatorInput = {
   boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
   archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  diaryEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  siteAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  siteLat?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteLng?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteRadiusM?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   artStatus?: Prisma.EnumArtStatusFieldUpdateOperationsInput | $Enums.ArtStatus
   artNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4917,6 +5703,11 @@ export type ProjectCreateManyClientInput = {
   boardPosition?: number
   archivedAt?: Date | string | null
   folderPath?: string | null
+  diaryEnabled?: boolean
+  siteAddress?: string | null
+  siteLat?: number | null
+  siteLng?: number | null
+  siteRadiusM?: number | null
   artStatus?: $Enums.ArtStatus
   artNotes?: string | null
   risks?: string | null
@@ -4945,6 +5736,11 @@ export type ProjectUpdateWithoutClientInput = {
   boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
   archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  diaryEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  siteAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  siteLat?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteLng?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteRadiusM?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   artStatus?: Prisma.EnumArtStatusFieldUpdateOperationsInput | $Enums.ArtStatus
   artNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4971,6 +5767,7 @@ export type ProjectUpdateWithoutClientInput = {
   payables?: Prisma.PayableUpdateManyWithoutProjectNestedInput
   equipmentMovements?: Prisma.EquipmentMovementUpdateManyWithoutProjectNestedInput
   externalApprovals?: Prisma.ExternalApprovalUpdateManyWithoutProjectNestedInput
+  diaries?: Prisma.ConstructionDiaryUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutClientInput = {
@@ -4995,6 +5792,11 @@ export type ProjectUncheckedUpdateWithoutClientInput = {
   boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
   archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  diaryEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  siteAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  siteLat?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteLng?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteRadiusM?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   artStatus?: Prisma.EnumArtStatusFieldUpdateOperationsInput | $Enums.ArtStatus
   artNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5016,6 +5818,7 @@ export type ProjectUncheckedUpdateWithoutClientInput = {
   payables?: Prisma.PayableUncheckedUpdateManyWithoutProjectNestedInput
   equipmentMovements?: Prisma.EquipmentMovementUncheckedUpdateManyWithoutProjectNestedInput
   externalApprovals?: Prisma.ExternalApprovalUncheckedUpdateManyWithoutProjectNestedInput
+  diaries?: Prisma.ConstructionDiaryUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateManyWithoutClientInput = {
@@ -5040,6 +5843,11 @@ export type ProjectUncheckedUpdateManyWithoutClientInput = {
   boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
   archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  diaryEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  siteAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  siteLat?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteLng?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteRadiusM?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   artStatus?: Prisma.EnumArtStatusFieldUpdateOperationsInput | $Enums.ArtStatus
   artNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5073,6 +5881,11 @@ export type ProjectCreateManyClientUnitInput = {
   boardPosition?: number
   archivedAt?: Date | string | null
   folderPath?: string | null
+  diaryEnabled?: boolean
+  siteAddress?: string | null
+  siteLat?: number | null
+  siteLng?: number | null
+  siteRadiusM?: number | null
   artStatus?: $Enums.ArtStatus
   artNotes?: string | null
   risks?: string | null
@@ -5101,6 +5914,11 @@ export type ProjectUpdateWithoutClientUnitInput = {
   boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
   archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  diaryEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  siteAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  siteLat?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteLng?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteRadiusM?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   artStatus?: Prisma.EnumArtStatusFieldUpdateOperationsInput | $Enums.ArtStatus
   artNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5127,6 +5945,7 @@ export type ProjectUpdateWithoutClientUnitInput = {
   payables?: Prisma.PayableUpdateManyWithoutProjectNestedInput
   equipmentMovements?: Prisma.EquipmentMovementUpdateManyWithoutProjectNestedInput
   externalApprovals?: Prisma.ExternalApprovalUpdateManyWithoutProjectNestedInput
+  diaries?: Prisma.ConstructionDiaryUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutClientUnitInput = {
@@ -5151,6 +5970,11 @@ export type ProjectUncheckedUpdateWithoutClientUnitInput = {
   boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
   archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  diaryEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  siteAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  siteLat?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteLng?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteRadiusM?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   artStatus?: Prisma.EnumArtStatusFieldUpdateOperationsInput | $Enums.ArtStatus
   artNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5172,6 +5996,7 @@ export type ProjectUncheckedUpdateWithoutClientUnitInput = {
   payables?: Prisma.PayableUncheckedUpdateManyWithoutProjectNestedInput
   equipmentMovements?: Prisma.EquipmentMovementUncheckedUpdateManyWithoutProjectNestedInput
   externalApprovals?: Prisma.ExternalApprovalUncheckedUpdateManyWithoutProjectNestedInput
+  diaries?: Prisma.ConstructionDiaryUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateManyWithoutClientUnitInput = {
@@ -5196,6 +6021,11 @@ export type ProjectUncheckedUpdateManyWithoutClientUnitInput = {
   boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
   archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  diaryEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  siteAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  siteLat?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteLng?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteRadiusM?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   artStatus?: Prisma.EnumArtStatusFieldUpdateOperationsInput | $Enums.ArtStatus
   artNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5229,6 +6059,11 @@ export type ProjectCreateManyBudgetInput = {
   boardPosition?: number
   archivedAt?: Date | string | null
   folderPath?: string | null
+  diaryEnabled?: boolean
+  siteAddress?: string | null
+  siteLat?: number | null
+  siteLng?: number | null
+  siteRadiusM?: number | null
   artStatus?: $Enums.ArtStatus
   artNotes?: string | null
   risks?: string | null
@@ -5257,6 +6092,11 @@ export type ProjectUpdateWithoutBudgetInput = {
   boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
   archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  diaryEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  siteAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  siteLat?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteLng?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteRadiusM?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   artStatus?: Prisma.EnumArtStatusFieldUpdateOperationsInput | $Enums.ArtStatus
   artNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5283,6 +6123,7 @@ export type ProjectUpdateWithoutBudgetInput = {
   payables?: Prisma.PayableUpdateManyWithoutProjectNestedInput
   equipmentMovements?: Prisma.EquipmentMovementUpdateManyWithoutProjectNestedInput
   externalApprovals?: Prisma.ExternalApprovalUpdateManyWithoutProjectNestedInput
+  diaries?: Prisma.ConstructionDiaryUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutBudgetInput = {
@@ -5307,6 +6148,11 @@ export type ProjectUncheckedUpdateWithoutBudgetInput = {
   boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
   archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  diaryEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  siteAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  siteLat?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteLng?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteRadiusM?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   artStatus?: Prisma.EnumArtStatusFieldUpdateOperationsInput | $Enums.ArtStatus
   artNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5328,6 +6174,7 @@ export type ProjectUncheckedUpdateWithoutBudgetInput = {
   payables?: Prisma.PayableUncheckedUpdateManyWithoutProjectNestedInput
   equipmentMovements?: Prisma.EquipmentMovementUncheckedUpdateManyWithoutProjectNestedInput
   externalApprovals?: Prisma.ExternalApprovalUncheckedUpdateManyWithoutProjectNestedInput
+  diaries?: Prisma.ConstructionDiaryUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateManyWithoutBudgetInput = {
@@ -5352,6 +6199,11 @@ export type ProjectUncheckedUpdateManyWithoutBudgetInput = {
   boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
   archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  diaryEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  siteAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  siteLat?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteLng?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteRadiusM?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   artStatus?: Prisma.EnumArtStatusFieldUpdateOperationsInput | $Enums.ArtStatus
   artNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5385,6 +6237,11 @@ export type ProjectCreateManyContractInput = {
   boardPosition?: number
   archivedAt?: Date | string | null
   folderPath?: string | null
+  diaryEnabled?: boolean
+  siteAddress?: string | null
+  siteLat?: number | null
+  siteLng?: number | null
+  siteRadiusM?: number | null
   artStatus?: $Enums.ArtStatus
   artNotes?: string | null
   risks?: string | null
@@ -5413,6 +6270,11 @@ export type ProjectUpdateWithoutContractInput = {
   boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
   archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  diaryEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  siteAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  siteLat?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteLng?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteRadiusM?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   artStatus?: Prisma.EnumArtStatusFieldUpdateOperationsInput | $Enums.ArtStatus
   artNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5439,6 +6301,7 @@ export type ProjectUpdateWithoutContractInput = {
   payables?: Prisma.PayableUpdateManyWithoutProjectNestedInput
   equipmentMovements?: Prisma.EquipmentMovementUpdateManyWithoutProjectNestedInput
   externalApprovals?: Prisma.ExternalApprovalUpdateManyWithoutProjectNestedInput
+  diaries?: Prisma.ConstructionDiaryUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutContractInput = {
@@ -5463,6 +6326,11 @@ export type ProjectUncheckedUpdateWithoutContractInput = {
   boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
   archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  diaryEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  siteAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  siteLat?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteLng?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteRadiusM?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   artStatus?: Prisma.EnumArtStatusFieldUpdateOperationsInput | $Enums.ArtStatus
   artNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5484,6 +6352,7 @@ export type ProjectUncheckedUpdateWithoutContractInput = {
   payables?: Prisma.PayableUncheckedUpdateManyWithoutProjectNestedInput
   equipmentMovements?: Prisma.EquipmentMovementUncheckedUpdateManyWithoutProjectNestedInput
   externalApprovals?: Prisma.ExternalApprovalUncheckedUpdateManyWithoutProjectNestedInput
+  diaries?: Prisma.ConstructionDiaryUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateManyWithoutContractInput = {
@@ -5508,6 +6377,11 @@ export type ProjectUncheckedUpdateManyWithoutContractInput = {
   boardPosition?: Prisma.IntFieldUpdateOperationsInput | number
   archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   folderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  diaryEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  siteAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  siteLat?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteLng?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  siteRadiusM?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   artStatus?: Prisma.EnumArtStatusFieldUpdateOperationsInput | $Enums.ArtStatus
   artNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   risks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5537,6 +6411,7 @@ export type ProjectCountOutputType = {
   payables: number
   equipmentMovements: number
   externalApprovals: number
+  diaries: number
 }
 
 export type ProjectCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -5552,6 +6427,7 @@ export type ProjectCountOutputTypeSelect<ExtArgs extends runtime.Types.Extension
   payables?: boolean | ProjectCountOutputTypeCountPayablesArgs
   equipmentMovements?: boolean | ProjectCountOutputTypeCountEquipmentMovementsArgs
   externalApprovals?: boolean | ProjectCountOutputTypeCountExternalApprovalsArgs
+  diaries?: boolean | ProjectCountOutputTypeCountDiariesArgs
 }
 
 /**
@@ -5648,6 +6524,13 @@ export type ProjectCountOutputTypeCountExternalApprovalsArgs<ExtArgs extends run
   where?: Prisma.ExternalApprovalWhereInput
 }
 
+/**
+ * ProjectCountOutputType without action
+ */
+export type ProjectCountOutputTypeCountDiariesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ConstructionDiaryWhereInput
+}
+
 
 export type ProjectSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -5672,6 +6555,11 @@ export type ProjectSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   boardPosition?: boolean
   archivedAt?: boolean
   folderPath?: boolean
+  diaryEnabled?: boolean
+  siteAddress?: boolean
+  siteLat?: boolean
+  siteLng?: boolean
+  siteRadiusM?: boolean
   artStatus?: boolean
   artNotes?: boolean
   risks?: boolean
@@ -5699,6 +6587,7 @@ export type ProjectSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   payables?: boolean | Prisma.Project$payablesArgs<ExtArgs>
   equipmentMovements?: boolean | Prisma.Project$equipmentMovementsArgs<ExtArgs>
   externalApprovals?: boolean | Prisma.Project$externalApprovalsArgs<ExtArgs>
+  diaries?: boolean | Prisma.Project$diariesArgs<ExtArgs>
   _count?: boolean | Prisma.ProjectCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["project"]>
 
@@ -5725,6 +6614,11 @@ export type ProjectSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   boardPosition?: boolean
   archivedAt?: boolean
   folderPath?: boolean
+  diaryEnabled?: boolean
+  siteAddress?: boolean
+  siteLat?: boolean
+  siteLng?: boolean
+  siteRadiusM?: boolean
   artStatus?: boolean
   artNotes?: boolean
   risks?: boolean
@@ -5765,6 +6659,11 @@ export type ProjectSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   boardPosition?: boolean
   archivedAt?: boolean
   folderPath?: boolean
+  diaryEnabled?: boolean
+  siteAddress?: boolean
+  siteLat?: boolean
+  siteLng?: boolean
+  siteRadiusM?: boolean
   artStatus?: boolean
   artNotes?: boolean
   risks?: boolean
@@ -5805,6 +6704,11 @@ export type ProjectSelectScalar = {
   boardPosition?: boolean
   archivedAt?: boolean
   folderPath?: boolean
+  diaryEnabled?: boolean
+  siteAddress?: boolean
+  siteLat?: boolean
+  siteLng?: boolean
+  siteRadiusM?: boolean
   artStatus?: boolean
   artNotes?: boolean
   risks?: boolean
@@ -5816,7 +6720,7 @@ export type ProjectSelectScalar = {
   deletedAt?: boolean
 }
 
-export type ProjectOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "companyId" | "code" | "name" | "clientId" | "clientUnitId" | "contractId" | "budgetId" | "technicalLeadId" | "coordinatorId" | "disciplines" | "startDate" | "contractualDeadline" | "expectedEndDate" | "actualEndDate" | "contractValue" | "status" | "priority" | "progressPercent" | "boardPosition" | "archivedAt" | "folderPath" | "artStatus" | "artNotes" | "risks" | "notes" | "createdAt" | "updatedAt" | "createdById" | "updatedById" | "deletedAt", ExtArgs["result"]["project"]>
+export type ProjectOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "companyId" | "code" | "name" | "clientId" | "clientUnitId" | "contractId" | "budgetId" | "technicalLeadId" | "coordinatorId" | "disciplines" | "startDate" | "contractualDeadline" | "expectedEndDate" | "actualEndDate" | "contractValue" | "status" | "priority" | "progressPercent" | "boardPosition" | "archivedAt" | "folderPath" | "diaryEnabled" | "siteAddress" | "siteLat" | "siteLng" | "siteRadiusM" | "artStatus" | "artNotes" | "risks" | "notes" | "createdAt" | "updatedAt" | "createdById" | "updatedById" | "deletedAt", ExtArgs["result"]["project"]>
 export type ProjectInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   client?: boolean | Prisma.ClientDefaultArgs<ExtArgs>
   clientUnit?: boolean | Prisma.Project$clientUnitArgs<ExtArgs>
@@ -5836,6 +6740,7 @@ export type ProjectInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs
   payables?: boolean | Prisma.Project$payablesArgs<ExtArgs>
   equipmentMovements?: boolean | Prisma.Project$equipmentMovementsArgs<ExtArgs>
   externalApprovals?: boolean | Prisma.Project$externalApprovalsArgs<ExtArgs>
+  diaries?: boolean | Prisma.Project$diariesArgs<ExtArgs>
   _count?: boolean | Prisma.ProjectCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ProjectIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -5876,6 +6781,7 @@ export type $ProjectPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     payables: Prisma.$PayablePayload<ExtArgs>[]
     equipmentMovements: Prisma.$EquipmentMovementPayload<ExtArgs>[]
     externalApprovals: Prisma.$ExternalApprovalPayload<ExtArgs>[]
+    diaries: Prisma.$ConstructionDiaryPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -5903,6 +6809,20 @@ export type $ProjectPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
      * Pasta de rede com os documentos do projeto (ex.: Z:\SONARE\Projetos\...)
      */
     folderPath: string | null
+    /**
+     * O projeto é uma obra com diário (RDO)? Nem todo projeto exige — laudo
+     * e consultoria não têm canteiro. A marcação é o que faz o projeto
+     * aparecer no módulo de Obras e cobrar diário nos dias úteis.
+     */
+    diaryEnabled: boolean
+    /**
+     * Geofence da obra: centro e raio para classificar os registros de campo.
+     * Nunca bloqueia — só rastreia (o GPS erra e o estacionamento fica fora).
+     */
+    siteAddress: string | null
+    siteLat: number | null
+    siteLng: number | null
+    siteRadiusM: number | null
     /**
      * O projeto exige ART/RRT? O número fica no módulo de ART; aqui mora só a
      * decisão, que é do gestor. "Não informado" é estado de alerta: projeto
@@ -6332,6 +7252,7 @@ export interface Prisma__ProjectClient<T, Null = never, ExtArgs extends runtime.
   payables<T extends Prisma.Project$payablesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$payablesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PayablePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   equipmentMovements<T extends Prisma.Project$equipmentMovementsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$equipmentMovementsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EquipmentMovementPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   externalApprovals<T extends Prisma.Project$externalApprovalsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$externalApprovalsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ExternalApprovalPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  diaries<T extends Prisma.Project$diariesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$diariesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ConstructionDiaryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -6383,6 +7304,11 @@ export interface ProjectFieldRefs {
   readonly boardPosition: Prisma.FieldRef<"Project", 'Int'>
   readonly archivedAt: Prisma.FieldRef<"Project", 'DateTime'>
   readonly folderPath: Prisma.FieldRef<"Project", 'String'>
+  readonly diaryEnabled: Prisma.FieldRef<"Project", 'Boolean'>
+  readonly siteAddress: Prisma.FieldRef<"Project", 'String'>
+  readonly siteLat: Prisma.FieldRef<"Project", 'Float'>
+  readonly siteLng: Prisma.FieldRef<"Project", 'Float'>
+  readonly siteRadiusM: Prisma.FieldRef<"Project", 'Int'>
   readonly artStatus: Prisma.FieldRef<"Project", 'ArtStatus'>
   readonly artNotes: Prisma.FieldRef<"Project", 'String'>
   readonly risks: Prisma.FieldRef<"Project", 'String'>
@@ -7173,6 +8099,30 @@ export type Project$externalApprovalsArgs<ExtArgs extends runtime.Types.Extensio
   take?: number
   skip?: number
   distinct?: Prisma.ExternalApprovalScalarFieldEnum | Prisma.ExternalApprovalScalarFieldEnum[]
+}
+
+/**
+ * Project.diaries
+ */
+export type Project$diariesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ConstructionDiary
+   */
+  select?: Prisma.ConstructionDiarySelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ConstructionDiary
+   */
+  omit?: Prisma.ConstructionDiaryOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ConstructionDiaryInclude<ExtArgs> | null
+  where?: Prisma.ConstructionDiaryWhereInput
+  orderBy?: Prisma.ConstructionDiaryOrderByWithRelationInput | Prisma.ConstructionDiaryOrderByWithRelationInput[]
+  cursor?: Prisma.ConstructionDiaryWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ConstructionDiaryScalarFieldEnum | Prisma.ConstructionDiaryScalarFieldEnum[]
 }
 
 /**

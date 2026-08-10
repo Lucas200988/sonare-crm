@@ -16,6 +16,7 @@ import { TaskBoard } from './task-board';
 import { ProjectFinanceSection } from './finance-section';
 import { ArtPanel } from './art-panel';
 import { ApprovalPanel } from './approval-panel';
+import { ObraPanel } from './obra-panel';
 import { getProjectFinance } from '@/server/services/finance';
 import { existeAcessoRestrito } from '@/server/auth/project-scope';
 import { getAprovacao } from '@/server/services/aprovacoes';
@@ -133,6 +134,17 @@ export default async function ProjectDetailPage(props: {
                 id: t.id, numero: t.number, docType: t.docType, status: t.status,
                 issuedAt: t.issuedAt ? t.issuedAt.toISOString() : null,
               }))}
+              canWrite={canWrite}
+            />
+            <ObraPanel
+              projectId={project.id}
+              config={{
+                enabled: project.diaryEnabled,
+                siteAddress: project.siteAddress,
+                siteLat: project.siteLat,
+                siteLng: project.siteLng,
+                siteRadiusM: project.siteRadiusM,
+              }}
               canWrite={canWrite}
             />
             <ApprovalPanel

@@ -43,6 +43,11 @@ export const PERMISSIONS = {
   'timeentry:approve': 'Aprovar apontamentos',
   'techresp:write': 'Gerenciar ART/RRT',
 
+  // Diário de obras (RDO)
+  'diary:read': 'Consultar diários de obra',
+  'diary:write': 'Preencher e finalizar diários de obra',
+  'diary:approve': 'Aprovar diários de obra',
+
   // Equipamentos
   'equipment:read': 'Consultar equipamentos',
   'equipment:write': 'Cadastrar equipamentos e registrar saídas e devoluções',
@@ -84,6 +89,7 @@ export const ROLE_DEFAULTS: Record<string, { name: string; permissions: Permissi
       'client:read',
       'contract:read',
       'project:read', 'project:write',
+      'diary:read', 'diary:write',
       'task:read', 'task:write',
       'deliverable:write',
       'timeentry:write',
@@ -111,6 +117,7 @@ export const ROLE_DEFAULTS: Record<string, { name: string; permissions: Permissi
       'client:read', 'opportunity:read', 'budget:read', 'budget:approve',
       'proposal:read', 'contract:read', 'contract:write', 'contract:sign',
       'project:read', 'project:read_all', 'task:read', 'timeentry:approve',
+      'diary:read', 'diary:approve',
       'equipment:read',
       'finance:read', 'invoice:read',
       'report:read', 'dashboard:read', 'audit:read',
