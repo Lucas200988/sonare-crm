@@ -7,9 +7,24 @@ import * as diario from '@/server/services/diario';
 
 export type ActionState = { error?: string; info?: string };
 
+/**
+ * Número opcional vindo de formulário.
+ *
+ * Campo vazio chega como string vazia, não como null — e coordenada
+ * digitada à brasileira vem com vírgula ("-15,5989").
+ */
 const numeroOuNulo = z.preprocess(
-  (v) => (typeof v === 'string' && v.trim() !== '' ? Number(v) : v == null ? null : v),
-  z.number().finite().nullable(),
+  (v) => {
+    if (v == null) return null;
+    if (typeof v === 'string') {
+      const t = v.trim();
+      if (t === '') return null;
+      const n = Number(t.replace(',', '.'));
+      return Number.isFinite(n) ? n : t; // deixa o schema apontar o inválido
+    }
+    return v;
+  },
+  z.number({ message: 'Informe um número válido (ex.: -15.5989).' }).finite().nullable(),
 );
 
 const aberturaSchema = z.object({
