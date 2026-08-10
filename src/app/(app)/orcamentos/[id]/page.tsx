@@ -126,7 +126,8 @@ export default async function BudgetDetailPage(props: { params: Promise<{ id: st
             {nomeCliente}
             {podeTrocarCliente ? (
               <ChangeClientButton
-                budgetId={budget.id} clientId={budget.clientId} clients={clientes}
+                budgetId={budget.id}
+                clientId={budget.clientId} clients={clientes}
               />
             ) : null}
           </span>
@@ -143,6 +144,7 @@ export default async function BudgetDetailPage(props: { params: Promise<{ id: st
         <Card className="p-5 lg:col-span-3">
           <BudgetEditor
             budgetId={budget.id}
+            clientId={budget.clientId}
             editable={editable}
             initialFields={initialFields}
             initialItems={initialItems}

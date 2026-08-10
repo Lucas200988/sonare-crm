@@ -178,6 +178,40 @@ export async function saveContactAction(
   return {};
 }
 
+/**
+ * Cadastro rápido de solicitante, de dentro do orçamento.
+ *
+ * O solicitante costuma aparecer na hora de emitir a proposta — sair para o
+ * cadastro do cliente e voltar faria perder o que estava sendo digitado.
+ * Só o essencial: nome, cargo e e-mail; o resto se completa depois.
+ */
+export async function quickCreateContactAction(
+  clientId: string, input: { name: string; position?: string; email?: string },
+): Promise<{ error: string } | { contact: { id: string; name: string; position: string | null } }> {
+  const user = await requirePermission('budget:write');
+  const nome = input.name.trim();
+  if (nome.length < 2) return { error: 'Informe o nome do solicitante.' };
+
+  const result = await clients.upsertContact(user, clientId, {
+    name: nome,
+    position: input.position?.trim() || null,
+    email: input.email?.trim() || null,
+  });
+  if ('error' in result && result.error) return { error: result.error };
+  if (!('contact' in result) || !result.contact) {
+    return { error: 'Não foi possível cadastrar o solicitante.' };
+  }
+
+  revalidatePath(`/clientes/${clientId}`);
+  return {
+    contact: {
+      id: result.contact.id,
+      name: result.contact.name,
+      position: result.contact.position,
+    },
+  };
+}
+
 export async function deleteContactAction(clientId: string, contactId: string): Promise<ActionState> {
   const user = await requirePermission('client:write');
   const result = await clients.deleteContact(user, contactId);

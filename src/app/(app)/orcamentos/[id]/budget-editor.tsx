@@ -4,6 +4,7 @@ import { useMemo, useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { AlertTriangle, Plus, Save, Trash2 } from 'lucide-react';
 import { saveVersionAction } from '@/actions/budgets';
+import { quickCreateContactAction } from '@/actions/clients';
 import { computeBudgetTotals } from '@/lib/budget-calc';
 import { formatBRL } from '@/lib/money';
 import { parseDecimalBR, formatDecimalBR } from '@/lib/parse';
@@ -94,10 +95,11 @@ const EMPTY_ITEM: EditorItem = {
 };
 
 export function BudgetEditor({
-  budgetId, editable, initialFields, initialItems, services, aiEnabled, clienteNome, scopeTemplates,
+  budgetId, clientId, editable, initialFields, initialItems, services, aiEnabled, clienteNome, scopeTemplates,
   priceSuggestions = [], companyDefaults, contatos,
 }: {
   budgetId: string;
+  clientId: string;
   editable: boolean;
   initialFields: EditorFields;
   initialItems: EditorItem[];
@@ -474,26 +476,15 @@ export function BudgetEditor({
         <Field
           label="Solicitante (A/C)"
           htmlFor="f-solicitante"
-          hint={
-            contatos.length === 0
-              ? 'Nenhum contato cadastrado neste cliente — cadastre na ficha do cliente.'
-              : 'Sai na proposta como responsável pelo contato.'
-          }
+          hint="Sai na proposta como responsável pelo contato."
         >
-          <select
-            id="f-solicitante"
-            value={fields.contactId ?? ''}
-            onChange={(e) => setFields((f) => ({ ...f, contactId: e.target.value || null }))}
-            disabled={!editable || contatos.length === 0}
-            className={inputCls}
-          >
-            <option value="">Não informado</option>
-            {contatos.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.position ? `${c.name} — ${c.position}` : c.name}
-              </option>
-            ))}
-          </select>
+          <SolicitanteSelect
+            clientId={clientId}
+            contatos={contatos}
+            value={fields.contactId}
+            disabled={!editable}
+            onChange={(id) => setFields((f) => ({ ...f, contactId: id }))}
+          />
         </Field>
         <Field label="Validade (dd/mm/aaaa)" htmlFor="f-validade">
           <input id="f-validade" value={fields.validUntil} onChange={set('validUntil')} disabled={!editable} placeholder="dd/mm/aaaa" className={inputCls} />
@@ -648,5 +639,119 @@ function OverridableCompanyText({
       )}
       <p className="mt-1 text-[11px] text-slate-500">{hint}</p>
     </Field>
+  );
+}
+
+/**
+ * Escolha do solicitante, com cadastro rápido embutido.
+ *
+ * O solicitante costuma aparecer na hora de montar a proposta — "manda aos
+ * cuidados do fulano". Mandar a pessoa para a ficha do cliente e voltar
+ * significaria perder o que estava sendo digitado no orçamento.
+ */
+function SolicitanteSelect({
+  clientId, contatos, value, disabled, onChange,
+}: {
+  clientId: string;
+  contatos: Array<{ id: string; name: string; position: string | null }>;
+  value: string | null;
+  disabled: boolean;
+  onChange: (contactId: string | null) => void;
+}) {
+  const router = useRouter();
+  /*
+   * Contatos criados aqui aparecem na hora, antes de o servidor devolver a
+   * lista nova. Derivar em vez de copiar o prop evita a lista congelar
+   * quando o cliente do orçamento muda.
+   */
+  const [novos, setNovos] = useState<typeof contatos>([]);
+  const lista = [...contatos, ...novos.filter((n) => !contatos.some((c) => c.id === n.id))];
+  const [criando, setCriando] = useState(false);
+  const [pending, startTransition] = useTransition();
+  const [erro, setErro] = useState<string | null>(null);
+  const [nome, setNome] = useState('');
+  const [cargo, setCargo] = useState('');
+  const [email, setEmail] = useState('');
+
+  function salvar() {
+    startTransition(async () => {
+      setErro(null);
+      const r = await quickCreateContactAction(clientId, { name: nome, position: cargo, email });
+      if ('error' in r) { setErro(r.error); return; }
+      setNovos((prev) => [...prev, r.contact]);
+      onChange(r.contact.id);
+      setCriando(false);
+      setNome(''); setCargo(''); setEmail('');
+      router.refresh();
+    });
+  }
+
+  if (criando) {
+    return (
+      <div className="space-y-1.5 rounded-lg border border-slate-300 bg-slate-50 p-2">
+        <input
+          value={nome} onChange={(e) => setNome(e.target.value)} autoFocus
+          placeholder="Nome do solicitante" aria-label="Nome do solicitante" className={inputCls}
+        />
+        <div className="grid grid-cols-2 gap-1.5">
+          <input
+            value={cargo} onChange={(e) => setCargo(e.target.value)}
+            placeholder="Cargo (opcional)" aria-label="Cargo" className={inputCls}
+          />
+          <input
+            value={email} onChange={(e) => setEmail(e.target.value)} type="email"
+            placeholder="E-mail (opcional)" aria-label="E-mail" className={inputCls}
+          />
+        </div>
+        {erro ? <p className="text-[11px] text-red-600">{erro}</p> : null}
+        <div className="flex gap-1.5">
+          <button
+            type="button" onClick={salvar} disabled={pending || nome.trim().length < 2}
+            className="rounded-lg bg-brand px-3 py-1.5 text-xs font-semibold text-white hover:bg-brand-dark disabled:opacity-50"
+          >
+            {pending ? 'Salvando…' : 'Adicionar'}
+          </button>
+          <button
+            type="button" onClick={() => { setCriando(false); setErro(null); }}
+            className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs text-slate-600 hover:bg-slate-50"
+          >
+            Cancelar
+          </button>
+        </div>
+        <p className="text-[11px] text-slate-500">
+          O contato entra na ficha do cliente e fica disponível nos próximos orçamentos.
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex gap-1.5">
+      <select
+        id="f-solicitante"
+        value={value ?? ''}
+        onChange={(e) => onChange(e.target.value || null)}
+        disabled={disabled}
+        className={inputCls}
+      >
+        <option value="">Não informado</option>
+        {lista.map((c) => (
+          <option key={c.id} value={c.id}>
+            {c.position ? `${c.name} — ${c.position}` : c.name}
+          </option>
+        ))}
+      </select>
+      {!disabled ? (
+        <button
+          type="button"
+          onClick={() => setCriando(true)}
+          title="Adicionar solicitante"
+          aria-label="Adicionar solicitante"
+          className="shrink-0 rounded-lg border border-slate-300 px-2.5 text-slate-600 hover:border-brand hover:text-brand"
+        >
+          <Plus className="h-4 w-4" aria-hidden />
+        </button>
+      ) : null}
+    </div>
   );
 }
