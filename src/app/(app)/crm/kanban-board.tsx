@@ -13,6 +13,7 @@ import { formatBRL } from '@/lib/money';
 import { formatDateBR } from '@/lib/dates';
 import { EntregaChip, type EntregaChipDados } from '@/components/entrega-chip';
 import { Comemoracao } from '@/components/comemoracao';
+import { FollowUpManualButton } from './followup-manual';
 
 export type BoardStage = {
   id: string; name: string; kind: string; color: string | null;
@@ -44,16 +45,26 @@ const PRIORITY_DOT: Record<string, string> = {
 };
 
 
-function OpportunityCard({ card, overlay }: { card: BoardCard; overlay?: boolean }) {
+function OpportunityCard({ card, overlay, canFollowUp }: {
+  card: BoardCard; overlay?: boolean; canFollowUp?: boolean;
+}) {
   return (
-    <div className={`rounded-lg border border-slate-200 bg-white p-3 shadow-sm ${overlay ? 'rotate-2 shadow-lg' : ''}`}>
+    <div className={`relative rounded-lg border border-slate-200 bg-white p-3 shadow-sm ${overlay ? 'rotate-2 shadow-lg' : ''}`}>
       <div className="flex items-center justify-between gap-2">
         {/* O código do orçamento diz mais que o da oportunidade: é por ele
             que se procura o documento e se fala com o cliente. */}
         <span className="text-[11px] font-semibold text-slate-400" title={card.code}>
           {card.resumo?.orcamento ?? card.code}
         </span>
-        <span className={`h-2 w-2 rounded-full ${PRIORITY_DOT[card.priority] ?? PRIORITY_DOT.MEDIA}`} title={`Prioridade ${card.priority.toLowerCase()}`} />
+        <span className="flex items-center gap-1">
+          {canFollowUp && !overlay ? (
+            <FollowUpManualButton
+              opportunityId={card.id}
+              cliente={card.client.tradeName ?? card.client.legalName}
+            />
+          ) : null}
+          <span className={`h-2 w-2 rounded-full ${PRIORITY_DOT[card.priority] ?? PRIORITY_DOT.MEDIA}`} title={`Prioridade ${card.priority.toLowerCase()}`} />
+        </span>
       </div>
       <Link
         href={`/crm/${card.id}`}
@@ -92,7 +103,9 @@ function OpportunityCard({ card, overlay }: { card: BoardCard; overlay?: boolean
   );
 }
 
-function DraggableCard({ card, disabled }: { card: BoardCard; disabled: boolean }) {
+function DraggableCard({ card, disabled, canFollowUp }: {
+  card: BoardCard; disabled: boolean; canFollowUp: boolean;
+}) {
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
     id: card.id,
     disabled,
@@ -104,7 +117,7 @@ function DraggableCard({ card, disabled }: { card: BoardCard; disabled: boolean 
       {...listeners}
       className={`${isDragging ? 'opacity-30' : ''} ${disabled ? '' : 'cursor-grab active:cursor-grabbing'}`}
     >
-      <OpportunityCard card={card} />
+      <OpportunityCard card={card} canFollowUp={canFollowUp} />
     </div>
   );
 }
@@ -136,12 +149,13 @@ function StageColumn({ stage, cards, children }: { stage: BoardStage; cards: Boa
 }
 
 export function KanbanBoard({
-  stages, cards, lossReasons, canWrite,
+  stages, cards, lossReasons, canWrite, canFollowUp,
 }: {
   stages: BoardStage[];
   cards: BoardCard[];
   lossReasons: LossReasonOption[];
   canWrite: boolean;
+  canFollowUp: boolean;
 }) {
   const router = useRouter();
   const [, startTransition] = useTransition();
@@ -286,7 +300,7 @@ export function KanbanBoard({
             return (
               <StageColumn key={stage.id} stage={stage} cards={stageCards}>
                 {stageCards.map((card) => (
-                  <DraggableCard key={card.id} card={card} disabled={!canWrite} />
+                  <DraggableCard key={card.id} card={card} disabled={!canWrite} canFollowUp={canFollowUp} />
                 ))}
               </StageColumn>
             );

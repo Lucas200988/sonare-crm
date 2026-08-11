@@ -10,7 +10,7 @@ import { linkWhatsApp } from '@/server/email-proposta';
 import { formatBRL } from '@/lib/money';
 import { formatDateBR } from '@/lib/dates';
 import {
-  avaliarProposta, emHorarioComercial, CONFIG_PADRAO,
+  avaliarProposta, diasUteisEntre, emHorarioComercial, CONFIG_PADRAO,
   type ConfigFollowUp, type TipoToque,
 } from '@/lib/followup-regras';
 import type { SessionUser } from '@/server/auth/session';
@@ -210,6 +210,106 @@ export async function getFila(user: SessionUser, agora = new Date()): Promise<It
   }
 
   return fila.sort((a, b) => b.diasDesde - a.diasDesde);
+}
+
+/**
+ * Prepara um follow-up disparado à mão, a partir do cartão do pipeline.
+ *
+ * O manual existe justamente para furar as regras da rotina — o comercial
+ * sentiu que é hora de cobrar, e o sistema não deve discutir. O que ele
+ * faz é AVISAR: se já houve contato recente com o cliente, isso aparece no
+ * diálogo antes do envio, e a decisão fica com quem está enviando.
+ */
+export async function prepararFollowUpManual(user: SessionUser, opportunityId: string) {
+  const proposta = await prisma.proposal.findFirst({
+    where: {
+      companyId: user.companyId,
+      deletedAt: null,
+      sentAt: { not: null },
+      budgetVersion: {
+        budget: { opportunityId, companyId: user.companyId, deletedAt: null },
+      },
+    },
+    orderBy: { sentAt: 'desc' },
+    include: {
+      followUps: { orderBy: { createdAt: 'desc' }, take: 1 },
+      budgetVersion: {
+        select: {
+          validUntil: true,
+          total: true,
+          budget: {
+            select: {
+              clientId: true,
+              client: {
+                select: {
+                  legalName: true, tradeName: true, email: true,
+                  phone: true, whatsapp: true,
+                },
+              },
+              contact: { select: { name: true, email: true } },
+            },
+          },
+        },
+      },
+    },
+  });
+  if (!proposta || !proposta.sentAt) {
+    return { error: 'Este negócio ainda não tem proposta enviada — não há o que cobrar.' };
+  }
+
+  const bv = proposta.budgetVersion;
+  const cliente = bv.budget.client;
+  const agora = new Date();
+
+  // o tipo certo pelo estado da proposta, só para o texto sair adequado
+  const validadeVencida = bv.validUntil !== null && bv.validUntil < agora;
+  const tipo: TipoToque = validadeVencida
+    ? 'EXPIRADA'
+    : proposta.status === 'VISUALIZADA'
+      ? 'VISUALIZADA_SEM_DECISAO'
+      : 'SEM_RETORNO';
+
+  const codigo = codigoProposta(proposta.code, proposta.revision);
+  const contato = bv.budget.contact?.name ?? null;
+  const validade = bv.validUntil ? formatDateBR(bv.validUntil) : null;
+  const dias = diasUteisEntre(proposta.sentAt, agora);
+  const { assunto, corpo } = mensagemPara(tipo, { codigo, contato, validade, dias });
+
+  // contatos com este cliente nos últimos 7 dias — aviso, não trava
+  const seteDiasAtras = new Date(agora);
+  seteDiasAtras.setDate(seteDiasAtras.getDate() - 7);
+  const contatosRecentes = await prisma.followUpEvent.count({
+    where: {
+      companyId: user.companyId,
+      createdAt: { gte: seteDiasAtras },
+      channel: { not: 'INTERNO' },
+      proposal: {
+        budgetVersion: { budget: { clientId: bv.budget.clientId } },
+      },
+    },
+  });
+
+  return {
+    ok: true as const,
+    proposalId: proposta.id,
+    tipo,
+    codigo,
+    cliente: cliente.tradeName ?? cliente.legalName,
+    para: bv.budget.contact?.email ?? cliente.email,
+    contato,
+    valor: formatBRL(bv.total.toString()),
+    assunto,
+    corpo,
+    contatosRecentes,
+    ultimoToqueEm: proposta.followUps[0]?.createdAt.toISOString() ?? null,
+    urlWhatsApp: cliente.whatsapp || cliente.phone
+      ? linkWhatsApp(
+          (cliente.whatsapp || cliente.phone)!,
+          `${contato ? `Olá, ${contato}!` : 'Olá!'} Sobre a proposta ${codigo} que enviamos, `
+          + 'conseguiu avaliar? Qualquer dúvida estou à disposição.',
+        )
+      : null,
+  };
 }
 
 /** Registra o toque — o que impede repetir e alimenta o histórico. */

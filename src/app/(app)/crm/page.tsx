@@ -96,6 +96,7 @@ export default async function CrmPage(props: {
         cards={cards}
         lossReasons={lossReasons}
         canWrite={canWrite}
+        canFollowUp={user.permissions.has('proposal:write')}
       />
     </div>
   );

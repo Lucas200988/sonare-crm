@@ -31,6 +31,18 @@ export async function saveFollowUpConfigAction(
   return { info: 'Configuração salva.' };
 }
 
+/**
+ * Monta o follow-up manual de um cartão do pipeline.
+ *
+ * Não envia nada: devolve destinatário, assunto e corpo prontos para o
+ * diálogo, junto com o aviso de contato recente. O envio passa pelo mesmo
+ * sendFollowUpAction da fila.
+ */
+export async function prepararFollowUpManualAction(opportunityId: string) {
+  const user = await requirePermission('proposal:write');
+  return followup.prepararFollowUpManual(user, opportunityId);
+}
+
 export async function sendFollowUpAction(
   _prev: ActionState, formData: FormData,
 ): Promise<ActionState> {
