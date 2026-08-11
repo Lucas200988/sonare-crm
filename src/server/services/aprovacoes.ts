@@ -71,10 +71,76 @@ export async function getAprovacao(user: SessionUser, projectId: string) {
   if (!project) return null;
 
   return prisma.externalApproval.findFirst({
-    where: { projectId, deletedAt: null },
+    // cancelado sai do cartão — fica só na auditoria; o botão de abrir volta
+    where: { projectId, deletedAt: null, status: { in: ['EM_ANDAMENTO', 'CONCLUIDO'] } },
     include: { steps: { orderBy: { sortOrder: 'asc' } } },
     orderBy: { createdAt: 'desc' },
   });
+}
+
+/**
+ * Desfaz o processo de aprovação.
+ *
+ * Dois casos, de propósito: aberto por engano (nenhum passo mexido) some
+ * de vez — clique errado não vira histórico. Com protocolo ou passo
+ * registrado já é fato acontecido: aí exige motivo e vira CANCELADO, que
+ * sai do cartão mas permanece na auditoria.
+ */
+export async function cancelarAprovacao(
+  user: SessionUser, approvalId: string, motivo: string | null,
+) {
+  const processo = await prisma.externalApproval.findFirst({
+    where: {
+      id: approvalId,
+      companyId: user.companyId,
+      deletedAt: null,
+      status: 'EM_ANDAMENTO',
+      project: { companyId: user.companyId, deletedAt: null, ...escopoDeProjetos(user) },
+    },
+    include: {
+      steps: { select: { status: true, protocol: true } },
+      project: { select: { code: true } },
+    },
+  });
+  if (!processo) return { error: 'Processo não encontrado ou já encerrado.' };
+
+  const temProgresso = processo.steps.some(
+    (s) => s.protocol !== null || s.status !== 'PENDENTE',
+  );
+
+  if (!temProgresso) {
+    await prisma.externalApproval.update({
+      where: { id: approvalId },
+      data: { deletedAt: new Date() },
+    });
+    await auditLog({
+      companyId: user.companyId, userId: user.id, action: 'delete',
+      entityType: 'external_approval', entityId: approvalId,
+      before: { projeto: processo.project.code, orgao: processo.orgao, motivo: 'aberto por engano' },
+    });
+    return { ok: true as const, removido: true };
+  }
+
+  if (!motivo?.trim()) {
+    return {
+      error: 'Este processo já tem protocolo ou passo registrado. Informe o motivo do cancelamento.',
+    };
+  }
+
+  await prisma.externalApproval.update({
+    where: { id: approvalId },
+    data: {
+      status: 'CANCELADO',
+      notes: motivo.trim(),
+    },
+  });
+  await auditLog({
+    companyId: user.companyId, userId: user.id, action: 'update',
+    entityType: 'external_approval', entityId: approvalId,
+    before: { projeto: processo.project.code, situacao: 'em andamento' },
+    after: { situacao: 'cancelado', motivo: motivo.trim() },
+  });
+  return { ok: true as const, removido: false };
 }
 
 /** Carrega o passo garantindo que ele pertence a um projeto visível. */

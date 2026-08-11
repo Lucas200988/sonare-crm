@@ -3,10 +3,10 @@
 import { useActionState, useEffect, useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import {
-  AlertTriangle, Check, CircleDot, Clock, FileText, Megaphone, Plug, Siren,
+  AlertTriangle, Check, CircleDot, Clock, FileText, Megaphone, Plug, Siren, Trash2,
 } from 'lucide-react';
 import {
-  abrirAprovacaoAction, concluirPassoAction,
+  abrirAprovacaoAction, cancelarAprovacaoAction, concluirPassoAction,
   registrarCobrancaAction, registrarProtocoloAction,
 } from '@/actions/aprovacoes';
 import { inputCls, Field, FormError, SubmitButton } from '@/components/ui';
@@ -87,6 +87,9 @@ export function ApprovalPanel({
             Concluído
           </span>
         ) : null}
+        {canWrite && processo.status === 'EM_ANDAMENTO' ? (
+          <RemoverProcesso processo={processo} projectId={projectId} />
+        ) : null}
       </div>
 
       <ol className="space-y-2">
@@ -101,6 +104,85 @@ export function ApprovalPanel({
           />
         ))}
       </ol>
+    </div>
+  );
+}
+
+/**
+ * Saída para o clique errado.
+ *
+ * Processo virgem some sem cerimônia — bastou confirmar. Se algum passo já
+ * tem protocolo ou registro, aquilo aconteceu de verdade: o cancelamento
+ * pede um motivo e o processo vai para a auditoria em vez de sumir.
+ */
+function RemoverProcesso({ processo, projectId }: {
+  processo: ProcessoAprovacao; projectId: string;
+}) {
+  const router = useRouter();
+  const [aberto, setAberto] = useState(false);
+  const [motivo, setMotivo] = useState('');
+  const [erro, setErro] = useState<string | null>(null);
+  const [pending, startTransition] = useTransition();
+
+  const temProgresso = processo.steps.some(
+    (p) => p.protocol !== null || p.status !== 'PENDENTE',
+  );
+
+  function remover() {
+    startTransition(async () => {
+      setErro(null);
+      const r = await cancelarAprovacaoAction(
+        processo.id, projectId, temProgresso ? motivo : null,
+      );
+      if (r.error) { setErro(r.error); return; }
+      setAberto(false);
+      router.refresh();
+    });
+  }
+
+  return (
+    <div className="ml-auto">
+      {!aberto ? (
+        <button
+          type="button"
+          onClick={() => setAberto(true)}
+          title="Remover processo"
+          aria-label="Remover processo de aprovação"
+          className="rounded p-1 text-slate-300 hover:bg-slate-100 hover:text-red-600"
+        >
+          <Trash2 className="h-3.5 w-3.5" aria-hidden />
+        </button>
+      ) : (
+        <div className="flex flex-wrap items-center justify-end gap-2">
+          {temProgresso ? (
+            <input
+              value={motivo}
+              onChange={(e) => setMotivo(e.target.value)}
+              placeholder="Motivo do cancelamento"
+              aria-label="Motivo do cancelamento"
+              className={`${inputCls} w-56 py-1 text-xs`}
+            />
+          ) : (
+            <span className="text-[11px] text-slate-500">Aberto por engano?</span>
+          )}
+          <button
+            type="button"
+            disabled={pending || (temProgresso && !motivo.trim())}
+            onClick={remover}
+            className="rounded-lg border border-red-300 bg-white px-2.5 py-1 text-[11px] font-medium text-red-700 hover:bg-red-50 disabled:opacity-50"
+          >
+            {pending ? 'Removendo…' : temProgresso ? 'Cancelar processo' : 'Remover'}
+          </button>
+          <button
+            type="button"
+            onClick={() => { setAberto(false); setErro(null); }}
+            className="rounded-lg border border-slate-300 px-2.5 py-1 text-[11px] text-slate-600 hover:bg-slate-50"
+          >
+            Manter
+          </button>
+          {erro ? <span className="w-full text-right text-[11px] text-red-700">{erro}</span> : null}
+        </div>
+      )}
     </div>
   );
 }

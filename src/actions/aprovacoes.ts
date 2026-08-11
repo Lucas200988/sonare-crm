@@ -30,6 +30,21 @@ export async function abrirAprovacaoAction(
   return { info: 'Processo aberto. Comece pela solicitação do orçamento de conexão.' };
 }
 
+export async function cancelarAprovacaoAction(
+  approvalId: string, projectId: string, motivo: string | null,
+): Promise<ActionState> {
+  const user = await requirePermission('project:write');
+  const result = await aprovacoes.cancelarAprovacao(user, approvalId, motivo);
+  if ('error' in result) return { error: result.error };
+
+  revalidatePath(`/projetos/${projectId}`);
+  return {
+    info: result.removido
+      ? 'Processo removido. O cartão voltou ao estado anterior.'
+      : 'Processo cancelado. Ele fica registrado na auditoria.',
+  };
+}
+
 const protocoloSchema = z.object({
   protocolo: z.string().trim().min(1, 'Informe o número do protocolo.'),
   notes: z.string().trim().max(500).optional(),
