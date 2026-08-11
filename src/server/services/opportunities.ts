@@ -20,6 +20,9 @@ export type BoardFilters = {
 
 export type ResumoDoCartao = { orcamento: string; assunto: string };
 
+/** Cartão ganho/perdido fica este tanto de dias no quadro após o fechamento. */
+export const DIAS_NO_QUADRO_APOS_FECHAR = 30;
+
 /**
  * Do que trata o orçamento de cada oportunidade do quadro.
  *
@@ -79,6 +82,14 @@ export async function getBoard(user: SessionUser, filters: BoardFilters) {
       { code: { contains: filters.search, mode: 'insensitive' } },
       { client: { legalName: { contains: filters.search, mode: 'insensitive' } } },
     ];
+  }
+
+  // Ganho/perdido fica 30 dias à vista e depois sai do quadro. A busca por
+  // texto ignora o corte de propósito — "cadê aquele cartão" tem que achar.
+  // Em AND para não disputar com o OR da busca.
+  if (!filters.search) {
+    const corte = new Date(Date.now() - DIAS_NO_QUADRO_APOS_FECHAR * 24 * 60 * 60 * 1000);
+    where.AND = [{ OR: [{ closedAt: null }, { closedAt: { gte: corte } }] }];
   }
 
   const [stages, opportunities] = await Promise.all([

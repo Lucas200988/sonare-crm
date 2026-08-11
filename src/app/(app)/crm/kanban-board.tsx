@@ -138,6 +138,11 @@ function StageColumn({ stage, cards, children }: { stage: BoardStage; cards: Boa
       <p className="px-3 pb-2 text-[11px] text-slate-500">
         {total > 0 ? formatBRL(total) : ' '}
       </p>
+      {stage.kind !== 'ABERTA' ? (
+        <p className="px-3 pb-2 text-[10px] text-slate-400">
+          Últimos 30 dias — os anteriores saem do quadro, mas a busca encontra.
+        </p>
+      ) : null}
       <div
         ref={setNodeRef}
         className={`flex min-h-24 flex-1 flex-col gap-2 overflow-y-auto p-2 pt-0 transition ${isOver ? 'rounded-b-xl bg-amber-100/60' : ''}`}
