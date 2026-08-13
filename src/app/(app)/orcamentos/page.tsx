@@ -44,7 +44,7 @@ export default async function BudgetsPage(props: {
         <form method="get" className="flex flex-wrap gap-3">
           <input
             type="search" name="q" defaultValue={sp.q ?? ''}
-            placeholder="Código, cliente ou oportunidade…"
+            placeholder="Código, proposta, cliente ou oportunidade…"
             className={`${inputCls} max-w-xs`}
           />
           <select name="status" defaultValue={sp.status ?? 'TODOS'} className={`${inputCls} max-w-56`} aria-label="Status">

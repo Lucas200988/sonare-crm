@@ -97,6 +97,9 @@ function mensagemPara(
 export type ItemFila = {
   proposalId: string;
   codigo: string;
+  /** Para abrir o orçamento a partir da fila — proposta e orçamento têm numerações diferentes. */
+  budgetId: string;
+  orcamento: string;
   tipo: TipoToque;
   rotulo: string;
   diasDesde: number;
@@ -133,6 +136,8 @@ export async function getFila(user: SessionUser, agora = new Date()): Promise<It
           total: true,
           budget: {
             select: {
+              id: true,
+              code: true,
               clientId: true,
               client: { select: { legalName: true, tradeName: true, email: true, phone: true, whatsapp: true } },
               contact: { select: { name: true, email: true } },
@@ -188,6 +193,8 @@ export async function getFila(user: SessionUser, agora = new Date()): Promise<It
     fila.push({
       proposalId: p.id,
       codigo,
+      budgetId: bv.budget.id,
+      orcamento: bv.budget.code,
       tipo: decisao.tipo,
       rotulo: ROTULO_TOQUE[decisao.tipo],
       diasDesde: decisao.diasDesde,

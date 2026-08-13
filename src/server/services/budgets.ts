@@ -60,6 +60,9 @@ export async function listBudgets(user: SessionUser, filter: BudgetListFilter) {
       { code: { contains: filter.search, mode: 'insensitive' } },
       { client: { legalName: { contains: filter.search, mode: 'insensitive' } } },
       { opportunity: { title: { contains: filter.search, mode: 'insensitive' } } },
+      // a proposta tem numeração própria (PROP-AAAA-NNN ≠ ORC-AAAA-NNN);
+      // quem só tem o número da proposta em mãos precisa achar por aqui
+      { versions: { some: { proposals: { some: { code: { contains: filter.search, mode: 'insensitive' } } } } } },
     ];
   }
 
