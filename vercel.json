@@ -5,5 +5,19 @@
       "path": "/api/cron/followup",
       "schedule": "0 12 * * *"
     }
+  ],
+  "redirects": [
+    {
+      "source": "/:path(.*)",
+      "has": [{ "type": "host", "value": "sonare.com.br" }],
+      "destination": "https://www.sonareengenharia.com.br/",
+      "permanent": false
+    },
+    {
+      "source": "/:path(.*)",
+      "has": [{ "type": "host", "value": "www.sonare.com.br" }],
+      "destination": "https://www.sonareengenharia.com.br/",
+      "permanent": false
+    }
   ]
 }
