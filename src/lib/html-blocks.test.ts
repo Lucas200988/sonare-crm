@@ -80,4 +80,28 @@ describe('conversões de texto e HTML', () => {
   it('escapa caracteres perigosos ao converter texto', () => {
     expect(textToHtml('a < b & c')).toBe('<p>a &lt; b &amp; c</p>');
   });
+
+  it('converte "**" da IA em negrito de verdade', () => {
+    expect(textToHtml('**Entregáveis**\n- Laudo **assinado**'))
+      .toBe('<p><strong>Entregáveis</strong></p><ul><li>Laudo <strong>assinado</strong></li></ul>');
+  });
+
+  it('asterisco desacompanhado fica literal', () => {
+    expect(textToHtml('2 ** 3 = 8')).toBe('<p>2 ** 3 = 8</p>');
+    expect(textToHtml('nota*')).toBe('<p>nota*</p>');
+  });
+
+  it('negrito escapa junto com o resto', () => {
+    expect(textToHtml('**a < b**')).toBe('<p><strong>a &lt; b</strong></p>');
+  });
+
+  it('negrito sobrevive à ida e volta', () => {
+    const html = '<p>Prazo de <strong>15 dias</strong></p>';
+    expect(htmlToText(html)).toBe('Prazo de **15 dias**');
+    expect(textToHtml(htmlToText(html))).toBe(html);
+  });
+
+  it('strong vazio não vira asteriscos soltos', () => {
+    expect(htmlToText('<p>a<strong></strong>b</p>')).toBe('ab');
+  });
 });

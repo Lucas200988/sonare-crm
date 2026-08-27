@@ -32,7 +32,7 @@ export function textToHtml(text: string): string {
 
   const fecharLista = () => {
     if (lista.length > 0) {
-      partes.push(`<ul>${lista.map((l) => `<li>${escapeHtml(l)}</li>`).join('')}</ul>`);
+      partes.push(`<ul>${lista.map((l) => `<li>${inline(l)}</li>`).join('')}</ul>`);
       lista = [];
     }
   };
@@ -44,10 +44,22 @@ export function textToHtml(text: string): string {
       continue;
     }
     fecharLista();
-    if (t) partes.push(`<p>${escapeHtml(t)}</p>`);
+    if (t) partes.push(`<p>${inline(t)}</p>`);
   }
   fecharLista();
   return partes.join('') || '<p></p>';
+}
+
+/**
+ * Marcações dentro da linha: "**texto**" vira negrito de verdade.
+ *
+ * A IA (e o montador de escopo) escrevem em markdown; o editor guarda HTML.
+ * Sem esta ponte, os asteriscos aparecem literais e alguém apaga um a um.
+ * Um "**" desacompanhado fica como está — melhor um asterisco visível que
+ * negrito engolindo o resto do parágrafo.
+ */
+function inline(s: string): string {
+  return escapeHtml(s).replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
 }
 
 function escapeHtml(s: string): string {
@@ -57,6 +69,9 @@ function escapeHtml(s: string): string {
 /** HTML → texto puro legível (usado na revisão por IA e em buscas). */
 export function htmlToText(html: string): string {
   return html
+    // negrito sobrevive como "**": o textToHtml refaz a marcação na volta
+    .replace(/<(strong|b)\b[^>]*>\s*<\/\1>/gi, '')
+    .replace(/<(strong|b)\b[^>]*>([\s\S]*?)<\/\1>/gi, '**$2**')
     .replace(/<li[^>]*>/gi, '\n- ')
     .replace(/<\/(p|h[1-6]|div)>/gi, '\n')
     .replace(/<br\s*\/?>/gi, '\n')
