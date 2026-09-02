@@ -433,6 +433,8 @@ export const ModelName = {
   ContractTemplate: 'ContractTemplate',
   Project: 'Project',
   ConstructionDiary: 'ConstructionDiary',
+  DiarySignature: 'DiarySignature',
+  DiaryFile: 'DiaryFile',
   SitePhoto: 'SitePhoto',
   DiaryEntry: 'DiaryEntry',
   DiaryWorkforce: 'DiaryWorkforce',
@@ -481,7 +483,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "company" | "user" | "role" | "permission" | "rolePermission" | "userRole" | "userPermission" | "session" | "passwordResetToken" | "auditLog" | "systemSetting" | "documentSequence" | "customField" | "customFieldValue" | "client" | "clientContact" | "clientUnit" | "leadSource" | "opportunityStage" | "opportunity" | "opportunityActivity" | "lossReason" | "serviceCatalog" | "budget" | "budgetVersion" | "budgetItem" | "budgetApproval" | "proposal" | "proposalTemplate" | "contract" | "contractVersion" | "contractAmendment" | "contractSignature" | "contractTemplate" | "project" | "constructionDiary" | "sitePhoto" | "diaryEntry" | "diaryWorkforce" | "diaryEquipment" | "projectStage" | "projectMember" | "task" | "taskChecklistItem" | "deliverable" | "deliverableRevision" | "timeEntry" | "externalApproval" | "externalApprovalStep" | "technicalResponsibility" | "clientPendency" | "attachment" | "comment" | "receivable" | "receipt" | "financialRetention" | "invoice" | "invoiceReceivable" | "paymentMethod" | "payable" | "collectionEvent" | "notification" | "importJob" | "importError" | "equipment" | "equipmentMovement" | "bankTransaction" | "followUpEvent" | "emailDelivery"
+    modelProps: "company" | "user" | "role" | "permission" | "rolePermission" | "userRole" | "userPermission" | "session" | "passwordResetToken" | "auditLog" | "systemSetting" | "documentSequence" | "customField" | "customFieldValue" | "client" | "clientContact" | "clientUnit" | "leadSource" | "opportunityStage" | "opportunity" | "opportunityActivity" | "lossReason" | "serviceCatalog" | "budget" | "budgetVersion" | "budgetItem" | "budgetApproval" | "proposal" | "proposalTemplate" | "contract" | "contractVersion" | "contractAmendment" | "contractSignature" | "contractTemplate" | "project" | "constructionDiary" | "diarySignature" | "diaryFile" | "sitePhoto" | "diaryEntry" | "diaryWorkforce" | "diaryEquipment" | "projectStage" | "projectMember" | "task" | "taskChecklistItem" | "deliverable" | "deliverableRevision" | "timeEntry" | "externalApproval" | "externalApprovalStep" | "technicalResponsibility" | "clientPendency" | "attachment" | "comment" | "receivable" | "receipt" | "financialRetention" | "invoice" | "invoiceReceivable" | "paymentMethod" | "payable" | "collectionEvent" | "notification" | "importJob" | "importError" | "equipment" | "equipmentMovement" | "bankTransaction" | "followUpEvent" | "emailDelivery"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -3146,6 +3148,154 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.ConstructionDiaryCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.ConstructionDiaryCountAggregateOutputType> | number
+        }
+      }
+    }
+    DiarySignature: {
+      payload: Prisma.$DiarySignaturePayload<ExtArgs>
+      fields: Prisma.DiarySignatureFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.DiarySignatureFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DiarySignaturePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.DiarySignatureFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DiarySignaturePayload>
+        }
+        findFirst: {
+          args: Prisma.DiarySignatureFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DiarySignaturePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.DiarySignatureFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DiarySignaturePayload>
+        }
+        findMany: {
+          args: Prisma.DiarySignatureFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DiarySignaturePayload>[]
+        }
+        create: {
+          args: Prisma.DiarySignatureCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DiarySignaturePayload>
+        }
+        createMany: {
+          args: Prisma.DiarySignatureCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.DiarySignatureCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DiarySignaturePayload>[]
+        }
+        delete: {
+          args: Prisma.DiarySignatureDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DiarySignaturePayload>
+        }
+        update: {
+          args: Prisma.DiarySignatureUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DiarySignaturePayload>
+        }
+        deleteMany: {
+          args: Prisma.DiarySignatureDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.DiarySignatureUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.DiarySignatureUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DiarySignaturePayload>[]
+        }
+        upsert: {
+          args: Prisma.DiarySignatureUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DiarySignaturePayload>
+        }
+        aggregate: {
+          args: Prisma.DiarySignatureAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateDiarySignature>
+        }
+        groupBy: {
+          args: Prisma.DiarySignatureGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.DiarySignatureGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.DiarySignatureCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.DiarySignatureCountAggregateOutputType> | number
+        }
+      }
+    }
+    DiaryFile: {
+      payload: Prisma.$DiaryFilePayload<ExtArgs>
+      fields: Prisma.DiaryFileFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.DiaryFileFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DiaryFilePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.DiaryFileFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DiaryFilePayload>
+        }
+        findFirst: {
+          args: Prisma.DiaryFileFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DiaryFilePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.DiaryFileFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DiaryFilePayload>
+        }
+        findMany: {
+          args: Prisma.DiaryFileFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DiaryFilePayload>[]
+        }
+        create: {
+          args: Prisma.DiaryFileCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DiaryFilePayload>
+        }
+        createMany: {
+          args: Prisma.DiaryFileCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.DiaryFileCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DiaryFilePayload>[]
+        }
+        delete: {
+          args: Prisma.DiaryFileDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DiaryFilePayload>
+        }
+        update: {
+          args: Prisma.DiaryFileUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DiaryFilePayload>
+        }
+        deleteMany: {
+          args: Prisma.DiaryFileDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.DiaryFileUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.DiaryFileUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DiaryFilePayload>[]
+        }
+        upsert: {
+          args: Prisma.DiaryFileUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DiaryFilePayload>
+        }
+        aggregate: {
+          args: Prisma.DiaryFileAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateDiaryFile>
+        }
+        groupBy: {
+          args: Prisma.DiaryFileGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.DiaryFileGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.DiaryFileCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.DiaryFileCountAggregateOutputType> | number
         }
       }
     }
@@ -6353,12 +6503,51 @@ export const ConstructionDiaryScalarFieldEnum = {
   narrative: 'narrative',
   notes: 'notes',
   ignoredWarnings: 'ignoredWarnings',
+  verificationCode: 'verificationCode',
+  documentHash: 'documentHash',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   deletedAt: 'deletedAt'
 } as const
 
 export type ConstructionDiaryScalarFieldEnum = (typeof ConstructionDiaryScalarFieldEnum)[keyof typeof ConstructionDiaryScalarFieldEnum]
+
+
+export const DiarySignatureScalarFieldEnum = {
+  id: 'id',
+  diaryId: 'diaryId',
+  role: 'role',
+  name: 'name',
+  registration: 'registration',
+  signedById: 'signedById',
+  signedAt: 'signedAt'
+} as const
+
+export type DiarySignatureScalarFieldEnum = (typeof DiarySignatureScalarFieldEnum)[keyof typeof DiarySignatureScalarFieldEnum]
+
+
+export const DiaryFileScalarFieldEnum = {
+  id: 'id',
+  companyId: 'companyId',
+  projectId: 'projectId',
+  diaryId: 'diaryId',
+  kind: 'kind',
+  seq: 'seq',
+  description: 'description',
+  attachmentId: 'attachmentId',
+  originalFilename: 'originalFilename',
+  mimeType: 'mimeType',
+  sizeBytes: 'sizeBytes',
+  sha256: 'sha256',
+  createdById: 'createdById',
+  deletedAt: 'deletedAt',
+  deletedById: 'deletedById',
+  deleteReason: 'deleteReason',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type DiaryFileScalarFieldEnum = (typeof DiaryFileScalarFieldEnum)[keyof typeof DiaryFileScalarFieldEnum]
 
 
 export const SitePhotoScalarFieldEnum = {
@@ -6420,6 +6609,7 @@ export const DiaryWorkforceScalarFieldEnum = {
   id: 'id',
   diaryId: 'diaryId',
   role: 'role',
+  kind: 'kind',
   company: 'company',
   quantity: 'quantity',
   startTime: 'startTime',
@@ -7855,6 +8045,8 @@ export type GlobalOmitConfig = {
   contractTemplate?: Prisma.ContractTemplateOmit
   project?: Prisma.ProjectOmit
   constructionDiary?: Prisma.ConstructionDiaryOmit
+  diarySignature?: Prisma.DiarySignatureOmit
+  diaryFile?: Prisma.DiaryFileOmit
   sitePhoto?: Prisma.SitePhotoOmit
   diaryEntry?: Prisma.DiaryEntryOmit
   diaryWorkforce?: Prisma.DiaryWorkforceOmit

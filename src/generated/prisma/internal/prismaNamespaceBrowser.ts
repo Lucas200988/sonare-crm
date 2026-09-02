@@ -87,6 +87,8 @@ export const ModelName = {
   ContractTemplate: 'ContractTemplate',
   Project: 'Project',
   ConstructionDiary: 'ConstructionDiary',
+  DiarySignature: 'DiarySignature',
+  DiaryFile: 'DiaryFile',
   SitePhoto: 'SitePhoto',
   DiaryEntry: 'DiaryEntry',
   DiaryWorkforce: 'DiaryWorkforce',
@@ -861,12 +863,51 @@ export const ConstructionDiaryScalarFieldEnum = {
   narrative: 'narrative',
   notes: 'notes',
   ignoredWarnings: 'ignoredWarnings',
+  verificationCode: 'verificationCode',
+  documentHash: 'documentHash',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   deletedAt: 'deletedAt'
 } as const
 
 export type ConstructionDiaryScalarFieldEnum = (typeof ConstructionDiaryScalarFieldEnum)[keyof typeof ConstructionDiaryScalarFieldEnum]
+
+
+export const DiarySignatureScalarFieldEnum = {
+  id: 'id',
+  diaryId: 'diaryId',
+  role: 'role',
+  name: 'name',
+  registration: 'registration',
+  signedById: 'signedById',
+  signedAt: 'signedAt'
+} as const
+
+export type DiarySignatureScalarFieldEnum = (typeof DiarySignatureScalarFieldEnum)[keyof typeof DiarySignatureScalarFieldEnum]
+
+
+export const DiaryFileScalarFieldEnum = {
+  id: 'id',
+  companyId: 'companyId',
+  projectId: 'projectId',
+  diaryId: 'diaryId',
+  kind: 'kind',
+  seq: 'seq',
+  description: 'description',
+  attachmentId: 'attachmentId',
+  originalFilename: 'originalFilename',
+  mimeType: 'mimeType',
+  sizeBytes: 'sizeBytes',
+  sha256: 'sha256',
+  createdById: 'createdById',
+  deletedAt: 'deletedAt',
+  deletedById: 'deletedById',
+  deleteReason: 'deleteReason',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type DiaryFileScalarFieldEnum = (typeof DiaryFileScalarFieldEnum)[keyof typeof DiaryFileScalarFieldEnum]
 
 
 export const SitePhotoScalarFieldEnum = {
@@ -928,6 +969,7 @@ export const DiaryWorkforceScalarFieldEnum = {
   id: 'id',
   diaryId: 'diaryId',
   role: 'role',
+  kind: 'kind',
   company: 'company',
   quantity: 'quantity',
   startTime: 'startTime',

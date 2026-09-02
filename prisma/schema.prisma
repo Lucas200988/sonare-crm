@@ -1101,19 +1101,77 @@ model ConstructionDiary {
   /// Pendências apontadas no fechamento que o usuário decidiu ignorar.
   ignoredWarnings Json?
 
+  /// Código público de conferência do RDO emitido (como o da proposta).
+  verificationCode String?  @unique
+  /// SHA-256 do PDF emitido no fechamento — congela o documento assinado.
+  documentHash     String?
+
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
 
-  project   Project          @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  entries   DiaryEntry[]
-  photos    SitePhoto[]
-  workforce DiaryWorkforce[]
-  equipment DiaryEquipment[]
+  project    Project          @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  entries    DiaryEntry[]
+  photos     SitePhoto[]
+  workforce  DiaryWorkforce[]
+  equipment  DiaryEquipment[]
+  signatures DiarySignature[]
+  files      DiaryFile[]
 
   @@unique([projectId, diaryDate])
   @@unique([companyId, code])
   @@index([companyId, status])
+}
+
+/// Assinatura eletrônica do RDO, um papel por linha.
+///
+/// Os três papéis clássicos do documento: gerência de engenharia, engenheiro
+/// residente e fiscalização. Quem assina é usuário do sistema — a fiscalização
+/// externa entra com o papel Campo (RDO), vendo só as obras dela.
+model DiarySignature {
+  id           String   @id @default(uuid(7))
+  diaryId      String
+  /// GERENCIA | RESIDENTE | FISCALIZACAO
+  role         String
+  name         String
+  registration String?
+  signedById   String?
+  signedAt     DateTime @default(now())
+
+  diary ConstructionDiary @relation(fields: [diaryId], references: [id], onDelete: Cascade)
+
+  @@unique([diaryId, role])
+}
+
+/// Vídeo ou anexo do dia — mesma disciplina das fotos: original intocado,
+/// exclusão sempre lógica e com motivo.
+model DiaryFile {
+  id           String  @id @default(uuid(7))
+  companyId    String
+  projectId    String
+  diaryId      String
+  /// VIDEO | ANEXO
+  kind         String
+  /// Sequencial no diário, por tipo.
+  seq          Int
+  description  String?
+  attachmentId String
+
+  originalFilename String
+  mimeType         String
+  sizeBytes        Int
+  sha256           String?
+
+  createdById  String?
+  deletedAt    DateTime?
+  deletedById  String?
+  deleteReason String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  diary ConstructionDiary @relation(fields: [diaryId], references: [id], onDelete: Cascade)
+
+  @@index([diaryId, kind])
 }
 
 enum PhotoSource {
@@ -1204,6 +1262,8 @@ model DiaryWorkforce {
   id        String  @id @default(uuid(7))
   diaryId   String
   role      String
+  /// PROPRIA | TERCEIRO — alimenta os totais do relatório.
+  kind      String  @default("PROPRIA")
   company   String?
   quantity  Int     @default(1)
   startTime String?

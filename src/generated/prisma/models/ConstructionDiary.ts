@@ -63,6 +63,8 @@ export type ConstructionDiaryMinAggregateOutputType = {
   weatherNotes: string | null
   narrative: string | null
   notes: string | null
+  verificationCode: string | null
+  documentHash: string | null
   createdAt: Date | null
   updatedAt: Date | null
   deletedAt: Date | null
@@ -89,6 +91,8 @@ export type ConstructionDiaryMaxAggregateOutputType = {
   weatherNotes: string | null
   narrative: string | null
   notes: string | null
+  verificationCode: string | null
+  documentHash: string | null
   createdAt: Date | null
   updatedAt: Date | null
   deletedAt: Date | null
@@ -117,6 +121,8 @@ export type ConstructionDiaryCountAggregateOutputType = {
   narrative: number
   notes: number
   ignoredWarnings: number
+  verificationCode: number
+  documentHash: number
   createdAt: number
   updatedAt: number
   deletedAt: number
@@ -161,6 +167,8 @@ export type ConstructionDiaryMinAggregateInputType = {
   weatherNotes?: true
   narrative?: true
   notes?: true
+  verificationCode?: true
+  documentHash?: true
   createdAt?: true
   updatedAt?: true
   deletedAt?: true
@@ -187,6 +195,8 @@ export type ConstructionDiaryMaxAggregateInputType = {
   weatherNotes?: true
   narrative?: true
   notes?: true
+  verificationCode?: true
+  documentHash?: true
   createdAt?: true
   updatedAt?: true
   deletedAt?: true
@@ -215,6 +225,8 @@ export type ConstructionDiaryCountAggregateInputType = {
   narrative?: true
   notes?: true
   ignoredWarnings?: true
+  verificationCode?: true
+  documentHash?: true
   createdAt?: true
   updatedAt?: true
   deletedAt?: true
@@ -330,6 +342,8 @@ export type ConstructionDiaryGroupByOutputType = {
   narrative: string | null
   notes: string | null
   ignoredWarnings: runtime.JsonValue | null
+  verificationCode: string | null
+  documentHash: string | null
   createdAt: Date
   updatedAt: Date
   deletedAt: Date | null
@@ -381,6 +395,8 @@ export type ConstructionDiaryWhereInput = {
   narrative?: Prisma.StringNullableFilter<"ConstructionDiary"> | string | null
   notes?: Prisma.StringNullableFilter<"ConstructionDiary"> | string | null
   ignoredWarnings?: Prisma.JsonNullableFilter<"ConstructionDiary">
+  verificationCode?: Prisma.StringNullableFilter<"ConstructionDiary"> | string | null
+  documentHash?: Prisma.StringNullableFilter<"ConstructionDiary"> | string | null
   createdAt?: Prisma.DateTimeFilter<"ConstructionDiary"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"ConstructionDiary"> | Date | string
   deletedAt?: Prisma.DateTimeNullableFilter<"ConstructionDiary"> | Date | string | null
@@ -389,6 +405,8 @@ export type ConstructionDiaryWhereInput = {
   photos?: Prisma.SitePhotoListRelationFilter
   workforce?: Prisma.DiaryWorkforceListRelationFilter
   equipment?: Prisma.DiaryEquipmentListRelationFilter
+  signatures?: Prisma.DiarySignatureListRelationFilter
+  files?: Prisma.DiaryFileListRelationFilter
 }
 
 export type ConstructionDiaryOrderByWithRelationInput = {
@@ -414,6 +432,8 @@ export type ConstructionDiaryOrderByWithRelationInput = {
   narrative?: Prisma.SortOrderInput | Prisma.SortOrder
   notes?: Prisma.SortOrderInput | Prisma.SortOrder
   ignoredWarnings?: Prisma.SortOrderInput | Prisma.SortOrder
+  verificationCode?: Prisma.SortOrderInput | Prisma.SortOrder
+  documentHash?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -422,10 +442,13 @@ export type ConstructionDiaryOrderByWithRelationInput = {
   photos?: Prisma.SitePhotoOrderByRelationAggregateInput
   workforce?: Prisma.DiaryWorkforceOrderByRelationAggregateInput
   equipment?: Prisma.DiaryEquipmentOrderByRelationAggregateInput
+  signatures?: Prisma.DiarySignatureOrderByRelationAggregateInput
+  files?: Prisma.DiaryFileOrderByRelationAggregateInput
 }
 
 export type ConstructionDiaryWhereUniqueInput = Prisma.AtLeast<{
   id?: string
+  verificationCode?: string
   projectId_diaryDate?: Prisma.ConstructionDiaryProjectIdDiaryDateCompoundUniqueInput
   companyId_code?: Prisma.ConstructionDiaryCompanyIdCodeCompoundUniqueInput
   AND?: Prisma.ConstructionDiaryWhereInput | Prisma.ConstructionDiaryWhereInput[]
@@ -452,6 +475,7 @@ export type ConstructionDiaryWhereUniqueInput = Prisma.AtLeast<{
   narrative?: Prisma.StringNullableFilter<"ConstructionDiary"> | string | null
   notes?: Prisma.StringNullableFilter<"ConstructionDiary"> | string | null
   ignoredWarnings?: Prisma.JsonNullableFilter<"ConstructionDiary">
+  documentHash?: Prisma.StringNullableFilter<"ConstructionDiary"> | string | null
   createdAt?: Prisma.DateTimeFilter<"ConstructionDiary"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"ConstructionDiary"> | Date | string
   deletedAt?: Prisma.DateTimeNullableFilter<"ConstructionDiary"> | Date | string | null
@@ -460,7 +484,9 @@ export type ConstructionDiaryWhereUniqueInput = Prisma.AtLeast<{
   photos?: Prisma.SitePhotoListRelationFilter
   workforce?: Prisma.DiaryWorkforceListRelationFilter
   equipment?: Prisma.DiaryEquipmentListRelationFilter
-}, "id" | "projectId_diaryDate" | "companyId_code">
+  signatures?: Prisma.DiarySignatureListRelationFilter
+  files?: Prisma.DiaryFileListRelationFilter
+}, "id" | "verificationCode" | "projectId_diaryDate" | "companyId_code">
 
 export type ConstructionDiaryOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -485,6 +511,8 @@ export type ConstructionDiaryOrderByWithAggregationInput = {
   narrative?: Prisma.SortOrderInput | Prisma.SortOrder
   notes?: Prisma.SortOrderInput | Prisma.SortOrder
   ignoredWarnings?: Prisma.SortOrderInput | Prisma.SortOrder
+  verificationCode?: Prisma.SortOrderInput | Prisma.SortOrder
+  documentHash?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -521,6 +549,8 @@ export type ConstructionDiaryScalarWhereWithAggregatesInput = {
   narrative?: Prisma.StringNullableWithAggregatesFilter<"ConstructionDiary"> | string | null
   notes?: Prisma.StringNullableWithAggregatesFilter<"ConstructionDiary"> | string | null
   ignoredWarnings?: Prisma.JsonNullableWithAggregatesFilter<"ConstructionDiary">
+  verificationCode?: Prisma.StringNullableWithAggregatesFilter<"ConstructionDiary"> | string | null
+  documentHash?: Prisma.StringNullableWithAggregatesFilter<"ConstructionDiary"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"ConstructionDiary"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"ConstructionDiary"> | Date | string
   deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"ConstructionDiary"> | Date | string | null
@@ -548,6 +578,8 @@ export type ConstructionDiaryCreateInput = {
   narrative?: string | null
   notes?: string | null
   ignoredWarnings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  verificationCode?: string | null
+  documentHash?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -556,6 +588,8 @@ export type ConstructionDiaryCreateInput = {
   photos?: Prisma.SitePhotoCreateNestedManyWithoutDiaryInput
   workforce?: Prisma.DiaryWorkforceCreateNestedManyWithoutDiaryInput
   equipment?: Prisma.DiaryEquipmentCreateNestedManyWithoutDiaryInput
+  signatures?: Prisma.DiarySignatureCreateNestedManyWithoutDiaryInput
+  files?: Prisma.DiaryFileCreateNestedManyWithoutDiaryInput
 }
 
 export type ConstructionDiaryUncheckedCreateInput = {
@@ -581,6 +615,8 @@ export type ConstructionDiaryUncheckedCreateInput = {
   narrative?: string | null
   notes?: string | null
   ignoredWarnings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  verificationCode?: string | null
+  documentHash?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -588,6 +624,8 @@ export type ConstructionDiaryUncheckedCreateInput = {
   photos?: Prisma.SitePhotoUncheckedCreateNestedManyWithoutDiaryInput
   workforce?: Prisma.DiaryWorkforceUncheckedCreateNestedManyWithoutDiaryInput
   equipment?: Prisma.DiaryEquipmentUncheckedCreateNestedManyWithoutDiaryInput
+  signatures?: Prisma.DiarySignatureUncheckedCreateNestedManyWithoutDiaryInput
+  files?: Prisma.DiaryFileUncheckedCreateNestedManyWithoutDiaryInput
 }
 
 export type ConstructionDiaryUpdateInput = {
@@ -612,6 +650,8 @@ export type ConstructionDiaryUpdateInput = {
   narrative?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ignoredWarnings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  verificationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  documentHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -620,6 +660,8 @@ export type ConstructionDiaryUpdateInput = {
   photos?: Prisma.SitePhotoUpdateManyWithoutDiaryNestedInput
   workforce?: Prisma.DiaryWorkforceUpdateManyWithoutDiaryNestedInput
   equipment?: Prisma.DiaryEquipmentUpdateManyWithoutDiaryNestedInput
+  signatures?: Prisma.DiarySignatureUpdateManyWithoutDiaryNestedInput
+  files?: Prisma.DiaryFileUpdateManyWithoutDiaryNestedInput
 }
 
 export type ConstructionDiaryUncheckedUpdateInput = {
@@ -645,6 +687,8 @@ export type ConstructionDiaryUncheckedUpdateInput = {
   narrative?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ignoredWarnings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  verificationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  documentHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -652,6 +696,8 @@ export type ConstructionDiaryUncheckedUpdateInput = {
   photos?: Prisma.SitePhotoUncheckedUpdateManyWithoutDiaryNestedInput
   workforce?: Prisma.DiaryWorkforceUncheckedUpdateManyWithoutDiaryNestedInput
   equipment?: Prisma.DiaryEquipmentUncheckedUpdateManyWithoutDiaryNestedInput
+  signatures?: Prisma.DiarySignatureUncheckedUpdateManyWithoutDiaryNestedInput
+  files?: Prisma.DiaryFileUncheckedUpdateManyWithoutDiaryNestedInput
 }
 
 export type ConstructionDiaryCreateManyInput = {
@@ -677,6 +723,8 @@ export type ConstructionDiaryCreateManyInput = {
   narrative?: string | null
   notes?: string | null
   ignoredWarnings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  verificationCode?: string | null
+  documentHash?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -704,6 +752,8 @@ export type ConstructionDiaryUpdateManyMutationInput = {
   narrative?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ignoredWarnings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  verificationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  documentHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -732,6 +782,8 @@ export type ConstructionDiaryUncheckedUpdateManyInput = {
   narrative?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ignoredWarnings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  verificationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  documentHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -780,6 +832,8 @@ export type ConstructionDiaryCountOrderByAggregateInput = {
   narrative?: Prisma.SortOrder
   notes?: Prisma.SortOrder
   ignoredWarnings?: Prisma.SortOrder
+  verificationCode?: Prisma.SortOrder
+  documentHash?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
@@ -814,6 +868,8 @@ export type ConstructionDiaryMaxOrderByAggregateInput = {
   weatherNotes?: Prisma.SortOrder
   narrative?: Prisma.SortOrder
   notes?: Prisma.SortOrder
+  verificationCode?: Prisma.SortOrder
+  documentHash?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
@@ -840,6 +896,8 @@ export type ConstructionDiaryMinOrderByAggregateInput = {
   weatherNotes?: Prisma.SortOrder
   narrative?: Prisma.SortOrder
   notes?: Prisma.SortOrder
+  verificationCode?: Prisma.SortOrder
+  documentHash?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
@@ -902,6 +960,34 @@ export type ConstructionDiaryUncheckedUpdateManyWithoutProjectNestedInput = {
 
 export type EnumDiaryStatusFieldUpdateOperationsInput = {
   set?: $Enums.DiaryStatus
+}
+
+export type ConstructionDiaryCreateNestedOneWithoutSignaturesInput = {
+  create?: Prisma.XOR<Prisma.ConstructionDiaryCreateWithoutSignaturesInput, Prisma.ConstructionDiaryUncheckedCreateWithoutSignaturesInput>
+  connectOrCreate?: Prisma.ConstructionDiaryCreateOrConnectWithoutSignaturesInput
+  connect?: Prisma.ConstructionDiaryWhereUniqueInput
+}
+
+export type ConstructionDiaryUpdateOneRequiredWithoutSignaturesNestedInput = {
+  create?: Prisma.XOR<Prisma.ConstructionDiaryCreateWithoutSignaturesInput, Prisma.ConstructionDiaryUncheckedCreateWithoutSignaturesInput>
+  connectOrCreate?: Prisma.ConstructionDiaryCreateOrConnectWithoutSignaturesInput
+  upsert?: Prisma.ConstructionDiaryUpsertWithoutSignaturesInput
+  connect?: Prisma.ConstructionDiaryWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ConstructionDiaryUpdateToOneWithWhereWithoutSignaturesInput, Prisma.ConstructionDiaryUpdateWithoutSignaturesInput>, Prisma.ConstructionDiaryUncheckedUpdateWithoutSignaturesInput>
+}
+
+export type ConstructionDiaryCreateNestedOneWithoutFilesInput = {
+  create?: Prisma.XOR<Prisma.ConstructionDiaryCreateWithoutFilesInput, Prisma.ConstructionDiaryUncheckedCreateWithoutFilesInput>
+  connectOrCreate?: Prisma.ConstructionDiaryCreateOrConnectWithoutFilesInput
+  connect?: Prisma.ConstructionDiaryWhereUniqueInput
+}
+
+export type ConstructionDiaryUpdateOneRequiredWithoutFilesNestedInput = {
+  create?: Prisma.XOR<Prisma.ConstructionDiaryCreateWithoutFilesInput, Prisma.ConstructionDiaryUncheckedCreateWithoutFilesInput>
+  connectOrCreate?: Prisma.ConstructionDiaryCreateOrConnectWithoutFilesInput
+  upsert?: Prisma.ConstructionDiaryUpsertWithoutFilesInput
+  connect?: Prisma.ConstructionDiaryWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ConstructionDiaryUpdateToOneWithWhereWithoutFilesInput, Prisma.ConstructionDiaryUpdateWithoutFilesInput>, Prisma.ConstructionDiaryUncheckedUpdateWithoutFilesInput>
 }
 
 export type ConstructionDiaryCreateNestedOneWithoutPhotosInput = {
@@ -982,6 +1068,8 @@ export type ConstructionDiaryCreateWithoutProjectInput = {
   narrative?: string | null
   notes?: string | null
   ignoredWarnings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  verificationCode?: string | null
+  documentHash?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -989,6 +1077,8 @@ export type ConstructionDiaryCreateWithoutProjectInput = {
   photos?: Prisma.SitePhotoCreateNestedManyWithoutDiaryInput
   workforce?: Prisma.DiaryWorkforceCreateNestedManyWithoutDiaryInput
   equipment?: Prisma.DiaryEquipmentCreateNestedManyWithoutDiaryInput
+  signatures?: Prisma.DiarySignatureCreateNestedManyWithoutDiaryInput
+  files?: Prisma.DiaryFileCreateNestedManyWithoutDiaryInput
 }
 
 export type ConstructionDiaryUncheckedCreateWithoutProjectInput = {
@@ -1013,6 +1103,8 @@ export type ConstructionDiaryUncheckedCreateWithoutProjectInput = {
   narrative?: string | null
   notes?: string | null
   ignoredWarnings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  verificationCode?: string | null
+  documentHash?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -1020,6 +1112,8 @@ export type ConstructionDiaryUncheckedCreateWithoutProjectInput = {
   photos?: Prisma.SitePhotoUncheckedCreateNestedManyWithoutDiaryInput
   workforce?: Prisma.DiaryWorkforceUncheckedCreateNestedManyWithoutDiaryInput
   equipment?: Prisma.DiaryEquipmentUncheckedCreateNestedManyWithoutDiaryInput
+  signatures?: Prisma.DiarySignatureUncheckedCreateNestedManyWithoutDiaryInput
+  files?: Prisma.DiaryFileUncheckedCreateNestedManyWithoutDiaryInput
 }
 
 export type ConstructionDiaryCreateOrConnectWithoutProjectInput = {
@@ -1074,9 +1168,323 @@ export type ConstructionDiaryScalarWhereInput = {
   narrative?: Prisma.StringNullableFilter<"ConstructionDiary"> | string | null
   notes?: Prisma.StringNullableFilter<"ConstructionDiary"> | string | null
   ignoredWarnings?: Prisma.JsonNullableFilter<"ConstructionDiary">
+  verificationCode?: Prisma.StringNullableFilter<"ConstructionDiary"> | string | null
+  documentHash?: Prisma.StringNullableFilter<"ConstructionDiary"> | string | null
   createdAt?: Prisma.DateTimeFilter<"ConstructionDiary"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"ConstructionDiary"> | Date | string
   deletedAt?: Prisma.DateTimeNullableFilter<"ConstructionDiary"> | Date | string | null
+}
+
+export type ConstructionDiaryCreateWithoutSignaturesInput = {
+  id?: string
+  companyId: string
+  number: number
+  code: string
+  diaryDate: string
+  status?: $Enums.DiaryStatus
+  openedAt?: Date | string
+  openedById?: string | null
+  closedAt?: Date | string | null
+  closedById?: string | null
+  openLat?: number | null
+  openLng?: number | null
+  openAccuracy?: number | null
+  geofence?: string | null
+  geofenceDistM?: number | null
+  weather?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  weatherBlocked?: boolean
+  weatherNotes?: string | null
+  narrative?: string | null
+  notes?: string | null
+  ignoredWarnings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  verificationCode?: string | null
+  documentHash?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  project: Prisma.ProjectCreateNestedOneWithoutDiariesInput
+  entries?: Prisma.DiaryEntryCreateNestedManyWithoutDiaryInput
+  photos?: Prisma.SitePhotoCreateNestedManyWithoutDiaryInput
+  workforce?: Prisma.DiaryWorkforceCreateNestedManyWithoutDiaryInput
+  equipment?: Prisma.DiaryEquipmentCreateNestedManyWithoutDiaryInput
+  files?: Prisma.DiaryFileCreateNestedManyWithoutDiaryInput
+}
+
+export type ConstructionDiaryUncheckedCreateWithoutSignaturesInput = {
+  id?: string
+  companyId: string
+  projectId: string
+  number: number
+  code: string
+  diaryDate: string
+  status?: $Enums.DiaryStatus
+  openedAt?: Date | string
+  openedById?: string | null
+  closedAt?: Date | string | null
+  closedById?: string | null
+  openLat?: number | null
+  openLng?: number | null
+  openAccuracy?: number | null
+  geofence?: string | null
+  geofenceDistM?: number | null
+  weather?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  weatherBlocked?: boolean
+  weatherNotes?: string | null
+  narrative?: string | null
+  notes?: string | null
+  ignoredWarnings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  verificationCode?: string | null
+  documentHash?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  entries?: Prisma.DiaryEntryUncheckedCreateNestedManyWithoutDiaryInput
+  photos?: Prisma.SitePhotoUncheckedCreateNestedManyWithoutDiaryInput
+  workforce?: Prisma.DiaryWorkforceUncheckedCreateNestedManyWithoutDiaryInput
+  equipment?: Prisma.DiaryEquipmentUncheckedCreateNestedManyWithoutDiaryInput
+  files?: Prisma.DiaryFileUncheckedCreateNestedManyWithoutDiaryInput
+}
+
+export type ConstructionDiaryCreateOrConnectWithoutSignaturesInput = {
+  where: Prisma.ConstructionDiaryWhereUniqueInput
+  create: Prisma.XOR<Prisma.ConstructionDiaryCreateWithoutSignaturesInput, Prisma.ConstructionDiaryUncheckedCreateWithoutSignaturesInput>
+}
+
+export type ConstructionDiaryUpsertWithoutSignaturesInput = {
+  update: Prisma.XOR<Prisma.ConstructionDiaryUpdateWithoutSignaturesInput, Prisma.ConstructionDiaryUncheckedUpdateWithoutSignaturesInput>
+  create: Prisma.XOR<Prisma.ConstructionDiaryCreateWithoutSignaturesInput, Prisma.ConstructionDiaryUncheckedCreateWithoutSignaturesInput>
+  where?: Prisma.ConstructionDiaryWhereInput
+}
+
+export type ConstructionDiaryUpdateToOneWithWhereWithoutSignaturesInput = {
+  where?: Prisma.ConstructionDiaryWhereInput
+  data: Prisma.XOR<Prisma.ConstructionDiaryUpdateWithoutSignaturesInput, Prisma.ConstructionDiaryUncheckedUpdateWithoutSignaturesInput>
+}
+
+export type ConstructionDiaryUpdateWithoutSignaturesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  companyId?: Prisma.StringFieldUpdateOperationsInput | string
+  number?: Prisma.IntFieldUpdateOperationsInput | number
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  diaryDate?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumDiaryStatusFieldUpdateOperationsInput | $Enums.DiaryStatus
+  openedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  openedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  openLat?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  openLng?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  openAccuracy?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  geofence?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  geofenceDistM?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  weather?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  weatherBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  weatherNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  narrative?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ignoredWarnings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  verificationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  documentHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  project?: Prisma.ProjectUpdateOneRequiredWithoutDiariesNestedInput
+  entries?: Prisma.DiaryEntryUpdateManyWithoutDiaryNestedInput
+  photos?: Prisma.SitePhotoUpdateManyWithoutDiaryNestedInput
+  workforce?: Prisma.DiaryWorkforceUpdateManyWithoutDiaryNestedInput
+  equipment?: Prisma.DiaryEquipmentUpdateManyWithoutDiaryNestedInput
+  files?: Prisma.DiaryFileUpdateManyWithoutDiaryNestedInput
+}
+
+export type ConstructionDiaryUncheckedUpdateWithoutSignaturesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  companyId?: Prisma.StringFieldUpdateOperationsInput | string
+  projectId?: Prisma.StringFieldUpdateOperationsInput | string
+  number?: Prisma.IntFieldUpdateOperationsInput | number
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  diaryDate?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumDiaryStatusFieldUpdateOperationsInput | $Enums.DiaryStatus
+  openedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  openedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  openLat?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  openLng?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  openAccuracy?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  geofence?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  geofenceDistM?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  weather?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  weatherBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  weatherNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  narrative?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ignoredWarnings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  verificationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  documentHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  entries?: Prisma.DiaryEntryUncheckedUpdateManyWithoutDiaryNestedInput
+  photos?: Prisma.SitePhotoUncheckedUpdateManyWithoutDiaryNestedInput
+  workforce?: Prisma.DiaryWorkforceUncheckedUpdateManyWithoutDiaryNestedInput
+  equipment?: Prisma.DiaryEquipmentUncheckedUpdateManyWithoutDiaryNestedInput
+  files?: Prisma.DiaryFileUncheckedUpdateManyWithoutDiaryNestedInput
+}
+
+export type ConstructionDiaryCreateWithoutFilesInput = {
+  id?: string
+  companyId: string
+  number: number
+  code: string
+  diaryDate: string
+  status?: $Enums.DiaryStatus
+  openedAt?: Date | string
+  openedById?: string | null
+  closedAt?: Date | string | null
+  closedById?: string | null
+  openLat?: number | null
+  openLng?: number | null
+  openAccuracy?: number | null
+  geofence?: string | null
+  geofenceDistM?: number | null
+  weather?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  weatherBlocked?: boolean
+  weatherNotes?: string | null
+  narrative?: string | null
+  notes?: string | null
+  ignoredWarnings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  verificationCode?: string | null
+  documentHash?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  project: Prisma.ProjectCreateNestedOneWithoutDiariesInput
+  entries?: Prisma.DiaryEntryCreateNestedManyWithoutDiaryInput
+  photos?: Prisma.SitePhotoCreateNestedManyWithoutDiaryInput
+  workforce?: Prisma.DiaryWorkforceCreateNestedManyWithoutDiaryInput
+  equipment?: Prisma.DiaryEquipmentCreateNestedManyWithoutDiaryInput
+  signatures?: Prisma.DiarySignatureCreateNestedManyWithoutDiaryInput
+}
+
+export type ConstructionDiaryUncheckedCreateWithoutFilesInput = {
+  id?: string
+  companyId: string
+  projectId: string
+  number: number
+  code: string
+  diaryDate: string
+  status?: $Enums.DiaryStatus
+  openedAt?: Date | string
+  openedById?: string | null
+  closedAt?: Date | string | null
+  closedById?: string | null
+  openLat?: number | null
+  openLng?: number | null
+  openAccuracy?: number | null
+  geofence?: string | null
+  geofenceDistM?: number | null
+  weather?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  weatherBlocked?: boolean
+  weatherNotes?: string | null
+  narrative?: string | null
+  notes?: string | null
+  ignoredWarnings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  verificationCode?: string | null
+  documentHash?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  entries?: Prisma.DiaryEntryUncheckedCreateNestedManyWithoutDiaryInput
+  photos?: Prisma.SitePhotoUncheckedCreateNestedManyWithoutDiaryInput
+  workforce?: Prisma.DiaryWorkforceUncheckedCreateNestedManyWithoutDiaryInput
+  equipment?: Prisma.DiaryEquipmentUncheckedCreateNestedManyWithoutDiaryInput
+  signatures?: Prisma.DiarySignatureUncheckedCreateNestedManyWithoutDiaryInput
+}
+
+export type ConstructionDiaryCreateOrConnectWithoutFilesInput = {
+  where: Prisma.ConstructionDiaryWhereUniqueInput
+  create: Prisma.XOR<Prisma.ConstructionDiaryCreateWithoutFilesInput, Prisma.ConstructionDiaryUncheckedCreateWithoutFilesInput>
+}
+
+export type ConstructionDiaryUpsertWithoutFilesInput = {
+  update: Prisma.XOR<Prisma.ConstructionDiaryUpdateWithoutFilesInput, Prisma.ConstructionDiaryUncheckedUpdateWithoutFilesInput>
+  create: Prisma.XOR<Prisma.ConstructionDiaryCreateWithoutFilesInput, Prisma.ConstructionDiaryUncheckedCreateWithoutFilesInput>
+  where?: Prisma.ConstructionDiaryWhereInput
+}
+
+export type ConstructionDiaryUpdateToOneWithWhereWithoutFilesInput = {
+  where?: Prisma.ConstructionDiaryWhereInput
+  data: Prisma.XOR<Prisma.ConstructionDiaryUpdateWithoutFilesInput, Prisma.ConstructionDiaryUncheckedUpdateWithoutFilesInput>
+}
+
+export type ConstructionDiaryUpdateWithoutFilesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  companyId?: Prisma.StringFieldUpdateOperationsInput | string
+  number?: Prisma.IntFieldUpdateOperationsInput | number
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  diaryDate?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumDiaryStatusFieldUpdateOperationsInput | $Enums.DiaryStatus
+  openedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  openedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  openLat?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  openLng?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  openAccuracy?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  geofence?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  geofenceDistM?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  weather?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  weatherBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  weatherNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  narrative?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ignoredWarnings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  verificationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  documentHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  project?: Prisma.ProjectUpdateOneRequiredWithoutDiariesNestedInput
+  entries?: Prisma.DiaryEntryUpdateManyWithoutDiaryNestedInput
+  photos?: Prisma.SitePhotoUpdateManyWithoutDiaryNestedInput
+  workforce?: Prisma.DiaryWorkforceUpdateManyWithoutDiaryNestedInput
+  equipment?: Prisma.DiaryEquipmentUpdateManyWithoutDiaryNestedInput
+  signatures?: Prisma.DiarySignatureUpdateManyWithoutDiaryNestedInput
+}
+
+export type ConstructionDiaryUncheckedUpdateWithoutFilesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  companyId?: Prisma.StringFieldUpdateOperationsInput | string
+  projectId?: Prisma.StringFieldUpdateOperationsInput | string
+  number?: Prisma.IntFieldUpdateOperationsInput | number
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  diaryDate?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumDiaryStatusFieldUpdateOperationsInput | $Enums.DiaryStatus
+  openedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  openedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  openLat?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  openLng?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  openAccuracy?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  geofence?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  geofenceDistM?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  weather?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  weatherBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  weatherNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  narrative?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ignoredWarnings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  verificationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  documentHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  entries?: Prisma.DiaryEntryUncheckedUpdateManyWithoutDiaryNestedInput
+  photos?: Prisma.SitePhotoUncheckedUpdateManyWithoutDiaryNestedInput
+  workforce?: Prisma.DiaryWorkforceUncheckedUpdateManyWithoutDiaryNestedInput
+  equipment?: Prisma.DiaryEquipmentUncheckedUpdateManyWithoutDiaryNestedInput
+  signatures?: Prisma.DiarySignatureUncheckedUpdateManyWithoutDiaryNestedInput
 }
 
 export type ConstructionDiaryCreateWithoutPhotosInput = {
@@ -1101,6 +1509,8 @@ export type ConstructionDiaryCreateWithoutPhotosInput = {
   narrative?: string | null
   notes?: string | null
   ignoredWarnings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  verificationCode?: string | null
+  documentHash?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -1108,6 +1518,8 @@ export type ConstructionDiaryCreateWithoutPhotosInput = {
   entries?: Prisma.DiaryEntryCreateNestedManyWithoutDiaryInput
   workforce?: Prisma.DiaryWorkforceCreateNestedManyWithoutDiaryInput
   equipment?: Prisma.DiaryEquipmentCreateNestedManyWithoutDiaryInput
+  signatures?: Prisma.DiarySignatureCreateNestedManyWithoutDiaryInput
+  files?: Prisma.DiaryFileCreateNestedManyWithoutDiaryInput
 }
 
 export type ConstructionDiaryUncheckedCreateWithoutPhotosInput = {
@@ -1133,12 +1545,16 @@ export type ConstructionDiaryUncheckedCreateWithoutPhotosInput = {
   narrative?: string | null
   notes?: string | null
   ignoredWarnings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  verificationCode?: string | null
+  documentHash?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   entries?: Prisma.DiaryEntryUncheckedCreateNestedManyWithoutDiaryInput
   workforce?: Prisma.DiaryWorkforceUncheckedCreateNestedManyWithoutDiaryInput
   equipment?: Prisma.DiaryEquipmentUncheckedCreateNestedManyWithoutDiaryInput
+  signatures?: Prisma.DiarySignatureUncheckedCreateNestedManyWithoutDiaryInput
+  files?: Prisma.DiaryFileUncheckedCreateNestedManyWithoutDiaryInput
 }
 
 export type ConstructionDiaryCreateOrConnectWithoutPhotosInput = {
@@ -1179,6 +1595,8 @@ export type ConstructionDiaryUpdateWithoutPhotosInput = {
   narrative?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ignoredWarnings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  verificationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  documentHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1186,6 +1604,8 @@ export type ConstructionDiaryUpdateWithoutPhotosInput = {
   entries?: Prisma.DiaryEntryUpdateManyWithoutDiaryNestedInput
   workforce?: Prisma.DiaryWorkforceUpdateManyWithoutDiaryNestedInput
   equipment?: Prisma.DiaryEquipmentUpdateManyWithoutDiaryNestedInput
+  signatures?: Prisma.DiarySignatureUpdateManyWithoutDiaryNestedInput
+  files?: Prisma.DiaryFileUpdateManyWithoutDiaryNestedInput
 }
 
 export type ConstructionDiaryUncheckedUpdateWithoutPhotosInput = {
@@ -1211,12 +1631,16 @@ export type ConstructionDiaryUncheckedUpdateWithoutPhotosInput = {
   narrative?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ignoredWarnings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  verificationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  documentHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   entries?: Prisma.DiaryEntryUncheckedUpdateManyWithoutDiaryNestedInput
   workforce?: Prisma.DiaryWorkforceUncheckedUpdateManyWithoutDiaryNestedInput
   equipment?: Prisma.DiaryEquipmentUncheckedUpdateManyWithoutDiaryNestedInput
+  signatures?: Prisma.DiarySignatureUncheckedUpdateManyWithoutDiaryNestedInput
+  files?: Prisma.DiaryFileUncheckedUpdateManyWithoutDiaryNestedInput
 }
 
 export type ConstructionDiaryCreateWithoutEntriesInput = {
@@ -1241,6 +1665,8 @@ export type ConstructionDiaryCreateWithoutEntriesInput = {
   narrative?: string | null
   notes?: string | null
   ignoredWarnings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  verificationCode?: string | null
+  documentHash?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -1248,6 +1674,8 @@ export type ConstructionDiaryCreateWithoutEntriesInput = {
   photos?: Prisma.SitePhotoCreateNestedManyWithoutDiaryInput
   workforce?: Prisma.DiaryWorkforceCreateNestedManyWithoutDiaryInput
   equipment?: Prisma.DiaryEquipmentCreateNestedManyWithoutDiaryInput
+  signatures?: Prisma.DiarySignatureCreateNestedManyWithoutDiaryInput
+  files?: Prisma.DiaryFileCreateNestedManyWithoutDiaryInput
 }
 
 export type ConstructionDiaryUncheckedCreateWithoutEntriesInput = {
@@ -1273,12 +1701,16 @@ export type ConstructionDiaryUncheckedCreateWithoutEntriesInput = {
   narrative?: string | null
   notes?: string | null
   ignoredWarnings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  verificationCode?: string | null
+  documentHash?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   photos?: Prisma.SitePhotoUncheckedCreateNestedManyWithoutDiaryInput
   workforce?: Prisma.DiaryWorkforceUncheckedCreateNestedManyWithoutDiaryInput
   equipment?: Prisma.DiaryEquipmentUncheckedCreateNestedManyWithoutDiaryInput
+  signatures?: Prisma.DiarySignatureUncheckedCreateNestedManyWithoutDiaryInput
+  files?: Prisma.DiaryFileUncheckedCreateNestedManyWithoutDiaryInput
 }
 
 export type ConstructionDiaryCreateOrConnectWithoutEntriesInput = {
@@ -1319,6 +1751,8 @@ export type ConstructionDiaryUpdateWithoutEntriesInput = {
   narrative?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ignoredWarnings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  verificationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  documentHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1326,6 +1760,8 @@ export type ConstructionDiaryUpdateWithoutEntriesInput = {
   photos?: Prisma.SitePhotoUpdateManyWithoutDiaryNestedInput
   workforce?: Prisma.DiaryWorkforceUpdateManyWithoutDiaryNestedInput
   equipment?: Prisma.DiaryEquipmentUpdateManyWithoutDiaryNestedInput
+  signatures?: Prisma.DiarySignatureUpdateManyWithoutDiaryNestedInput
+  files?: Prisma.DiaryFileUpdateManyWithoutDiaryNestedInput
 }
 
 export type ConstructionDiaryUncheckedUpdateWithoutEntriesInput = {
@@ -1351,12 +1787,16 @@ export type ConstructionDiaryUncheckedUpdateWithoutEntriesInput = {
   narrative?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ignoredWarnings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  verificationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  documentHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   photos?: Prisma.SitePhotoUncheckedUpdateManyWithoutDiaryNestedInput
   workforce?: Prisma.DiaryWorkforceUncheckedUpdateManyWithoutDiaryNestedInput
   equipment?: Prisma.DiaryEquipmentUncheckedUpdateManyWithoutDiaryNestedInput
+  signatures?: Prisma.DiarySignatureUncheckedUpdateManyWithoutDiaryNestedInput
+  files?: Prisma.DiaryFileUncheckedUpdateManyWithoutDiaryNestedInput
 }
 
 export type ConstructionDiaryCreateWithoutWorkforceInput = {
@@ -1381,6 +1821,8 @@ export type ConstructionDiaryCreateWithoutWorkforceInput = {
   narrative?: string | null
   notes?: string | null
   ignoredWarnings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  verificationCode?: string | null
+  documentHash?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -1388,6 +1830,8 @@ export type ConstructionDiaryCreateWithoutWorkforceInput = {
   entries?: Prisma.DiaryEntryCreateNestedManyWithoutDiaryInput
   photos?: Prisma.SitePhotoCreateNestedManyWithoutDiaryInput
   equipment?: Prisma.DiaryEquipmentCreateNestedManyWithoutDiaryInput
+  signatures?: Prisma.DiarySignatureCreateNestedManyWithoutDiaryInput
+  files?: Prisma.DiaryFileCreateNestedManyWithoutDiaryInput
 }
 
 export type ConstructionDiaryUncheckedCreateWithoutWorkforceInput = {
@@ -1413,12 +1857,16 @@ export type ConstructionDiaryUncheckedCreateWithoutWorkforceInput = {
   narrative?: string | null
   notes?: string | null
   ignoredWarnings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  verificationCode?: string | null
+  documentHash?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   entries?: Prisma.DiaryEntryUncheckedCreateNestedManyWithoutDiaryInput
   photos?: Prisma.SitePhotoUncheckedCreateNestedManyWithoutDiaryInput
   equipment?: Prisma.DiaryEquipmentUncheckedCreateNestedManyWithoutDiaryInput
+  signatures?: Prisma.DiarySignatureUncheckedCreateNestedManyWithoutDiaryInput
+  files?: Prisma.DiaryFileUncheckedCreateNestedManyWithoutDiaryInput
 }
 
 export type ConstructionDiaryCreateOrConnectWithoutWorkforceInput = {
@@ -1459,6 +1907,8 @@ export type ConstructionDiaryUpdateWithoutWorkforceInput = {
   narrative?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ignoredWarnings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  verificationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  documentHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1466,6 +1916,8 @@ export type ConstructionDiaryUpdateWithoutWorkforceInput = {
   entries?: Prisma.DiaryEntryUpdateManyWithoutDiaryNestedInput
   photos?: Prisma.SitePhotoUpdateManyWithoutDiaryNestedInput
   equipment?: Prisma.DiaryEquipmentUpdateManyWithoutDiaryNestedInput
+  signatures?: Prisma.DiarySignatureUpdateManyWithoutDiaryNestedInput
+  files?: Prisma.DiaryFileUpdateManyWithoutDiaryNestedInput
 }
 
 export type ConstructionDiaryUncheckedUpdateWithoutWorkforceInput = {
@@ -1491,12 +1943,16 @@ export type ConstructionDiaryUncheckedUpdateWithoutWorkforceInput = {
   narrative?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ignoredWarnings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  verificationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  documentHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   entries?: Prisma.DiaryEntryUncheckedUpdateManyWithoutDiaryNestedInput
   photos?: Prisma.SitePhotoUncheckedUpdateManyWithoutDiaryNestedInput
   equipment?: Prisma.DiaryEquipmentUncheckedUpdateManyWithoutDiaryNestedInput
+  signatures?: Prisma.DiarySignatureUncheckedUpdateManyWithoutDiaryNestedInput
+  files?: Prisma.DiaryFileUncheckedUpdateManyWithoutDiaryNestedInput
 }
 
 export type ConstructionDiaryCreateWithoutEquipmentInput = {
@@ -1521,6 +1977,8 @@ export type ConstructionDiaryCreateWithoutEquipmentInput = {
   narrative?: string | null
   notes?: string | null
   ignoredWarnings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  verificationCode?: string | null
+  documentHash?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -1528,6 +1986,8 @@ export type ConstructionDiaryCreateWithoutEquipmentInput = {
   entries?: Prisma.DiaryEntryCreateNestedManyWithoutDiaryInput
   photos?: Prisma.SitePhotoCreateNestedManyWithoutDiaryInput
   workforce?: Prisma.DiaryWorkforceCreateNestedManyWithoutDiaryInput
+  signatures?: Prisma.DiarySignatureCreateNestedManyWithoutDiaryInput
+  files?: Prisma.DiaryFileCreateNestedManyWithoutDiaryInput
 }
 
 export type ConstructionDiaryUncheckedCreateWithoutEquipmentInput = {
@@ -1553,12 +2013,16 @@ export type ConstructionDiaryUncheckedCreateWithoutEquipmentInput = {
   narrative?: string | null
   notes?: string | null
   ignoredWarnings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  verificationCode?: string | null
+  documentHash?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   entries?: Prisma.DiaryEntryUncheckedCreateNestedManyWithoutDiaryInput
   photos?: Prisma.SitePhotoUncheckedCreateNestedManyWithoutDiaryInput
   workforce?: Prisma.DiaryWorkforceUncheckedCreateNestedManyWithoutDiaryInput
+  signatures?: Prisma.DiarySignatureUncheckedCreateNestedManyWithoutDiaryInput
+  files?: Prisma.DiaryFileUncheckedCreateNestedManyWithoutDiaryInput
 }
 
 export type ConstructionDiaryCreateOrConnectWithoutEquipmentInput = {
@@ -1599,6 +2063,8 @@ export type ConstructionDiaryUpdateWithoutEquipmentInput = {
   narrative?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ignoredWarnings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  verificationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  documentHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1606,6 +2072,8 @@ export type ConstructionDiaryUpdateWithoutEquipmentInput = {
   entries?: Prisma.DiaryEntryUpdateManyWithoutDiaryNestedInput
   photos?: Prisma.SitePhotoUpdateManyWithoutDiaryNestedInput
   workforce?: Prisma.DiaryWorkforceUpdateManyWithoutDiaryNestedInput
+  signatures?: Prisma.DiarySignatureUpdateManyWithoutDiaryNestedInput
+  files?: Prisma.DiaryFileUpdateManyWithoutDiaryNestedInput
 }
 
 export type ConstructionDiaryUncheckedUpdateWithoutEquipmentInput = {
@@ -1631,12 +2099,16 @@ export type ConstructionDiaryUncheckedUpdateWithoutEquipmentInput = {
   narrative?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ignoredWarnings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  verificationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  documentHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   entries?: Prisma.DiaryEntryUncheckedUpdateManyWithoutDiaryNestedInput
   photos?: Prisma.SitePhotoUncheckedUpdateManyWithoutDiaryNestedInput
   workforce?: Prisma.DiaryWorkforceUncheckedUpdateManyWithoutDiaryNestedInput
+  signatures?: Prisma.DiarySignatureUncheckedUpdateManyWithoutDiaryNestedInput
+  files?: Prisma.DiaryFileUncheckedUpdateManyWithoutDiaryNestedInput
 }
 
 export type ConstructionDiaryCreateManyProjectInput = {
@@ -1661,6 +2133,8 @@ export type ConstructionDiaryCreateManyProjectInput = {
   narrative?: string | null
   notes?: string | null
   ignoredWarnings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  verificationCode?: string | null
+  documentHash?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -1688,6 +2162,8 @@ export type ConstructionDiaryUpdateWithoutProjectInput = {
   narrative?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ignoredWarnings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  verificationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  documentHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1695,6 +2171,8 @@ export type ConstructionDiaryUpdateWithoutProjectInput = {
   photos?: Prisma.SitePhotoUpdateManyWithoutDiaryNestedInput
   workforce?: Prisma.DiaryWorkforceUpdateManyWithoutDiaryNestedInput
   equipment?: Prisma.DiaryEquipmentUpdateManyWithoutDiaryNestedInput
+  signatures?: Prisma.DiarySignatureUpdateManyWithoutDiaryNestedInput
+  files?: Prisma.DiaryFileUpdateManyWithoutDiaryNestedInput
 }
 
 export type ConstructionDiaryUncheckedUpdateWithoutProjectInput = {
@@ -1719,6 +2197,8 @@ export type ConstructionDiaryUncheckedUpdateWithoutProjectInput = {
   narrative?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ignoredWarnings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  verificationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  documentHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1726,6 +2206,8 @@ export type ConstructionDiaryUncheckedUpdateWithoutProjectInput = {
   photos?: Prisma.SitePhotoUncheckedUpdateManyWithoutDiaryNestedInput
   workforce?: Prisma.DiaryWorkforceUncheckedUpdateManyWithoutDiaryNestedInput
   equipment?: Prisma.DiaryEquipmentUncheckedUpdateManyWithoutDiaryNestedInput
+  signatures?: Prisma.DiarySignatureUncheckedUpdateManyWithoutDiaryNestedInput
+  files?: Prisma.DiaryFileUncheckedUpdateManyWithoutDiaryNestedInput
 }
 
 export type ConstructionDiaryUncheckedUpdateManyWithoutProjectInput = {
@@ -1750,6 +2232,8 @@ export type ConstructionDiaryUncheckedUpdateManyWithoutProjectInput = {
   narrative?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ignoredWarnings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  verificationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  documentHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1765,6 +2249,8 @@ export type ConstructionDiaryCountOutputType = {
   photos: number
   workforce: number
   equipment: number
+  signatures: number
+  files: number
 }
 
 export type ConstructionDiaryCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1772,6 +2258,8 @@ export type ConstructionDiaryCountOutputTypeSelect<ExtArgs extends runtime.Types
   photos?: boolean | ConstructionDiaryCountOutputTypeCountPhotosArgs
   workforce?: boolean | ConstructionDiaryCountOutputTypeCountWorkforceArgs
   equipment?: boolean | ConstructionDiaryCountOutputTypeCountEquipmentArgs
+  signatures?: boolean | ConstructionDiaryCountOutputTypeCountSignaturesArgs
+  files?: boolean | ConstructionDiaryCountOutputTypeCountFilesArgs
 }
 
 /**
@@ -1812,6 +2300,20 @@ export type ConstructionDiaryCountOutputTypeCountEquipmentArgs<ExtArgs extends r
   where?: Prisma.DiaryEquipmentWhereInput
 }
 
+/**
+ * ConstructionDiaryCountOutputType without action
+ */
+export type ConstructionDiaryCountOutputTypeCountSignaturesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.DiarySignatureWhereInput
+}
+
+/**
+ * ConstructionDiaryCountOutputType without action
+ */
+export type ConstructionDiaryCountOutputTypeCountFilesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.DiaryFileWhereInput
+}
+
 
 export type ConstructionDiarySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1836,6 +2338,8 @@ export type ConstructionDiarySelect<ExtArgs extends runtime.Types.Extensions.Int
   narrative?: boolean
   notes?: boolean
   ignoredWarnings?: boolean
+  verificationCode?: boolean
+  documentHash?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   deletedAt?: boolean
@@ -1844,6 +2348,8 @@ export type ConstructionDiarySelect<ExtArgs extends runtime.Types.Extensions.Int
   photos?: boolean | Prisma.ConstructionDiary$photosArgs<ExtArgs>
   workforce?: boolean | Prisma.ConstructionDiary$workforceArgs<ExtArgs>
   equipment?: boolean | Prisma.ConstructionDiary$equipmentArgs<ExtArgs>
+  signatures?: boolean | Prisma.ConstructionDiary$signaturesArgs<ExtArgs>
+  files?: boolean | Prisma.ConstructionDiary$filesArgs<ExtArgs>
   _count?: boolean | Prisma.ConstructionDiaryCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["constructionDiary"]>
 
@@ -1870,6 +2376,8 @@ export type ConstructionDiarySelectCreateManyAndReturn<ExtArgs extends runtime.T
   narrative?: boolean
   notes?: boolean
   ignoredWarnings?: boolean
+  verificationCode?: boolean
+  documentHash?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   deletedAt?: boolean
@@ -1899,6 +2407,8 @@ export type ConstructionDiarySelectUpdateManyAndReturn<ExtArgs extends runtime.T
   narrative?: boolean
   notes?: boolean
   ignoredWarnings?: boolean
+  verificationCode?: boolean
+  documentHash?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   deletedAt?: boolean
@@ -1928,18 +2438,22 @@ export type ConstructionDiarySelectScalar = {
   narrative?: boolean
   notes?: boolean
   ignoredWarnings?: boolean
+  verificationCode?: boolean
+  documentHash?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   deletedAt?: boolean
 }
 
-export type ConstructionDiaryOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "companyId" | "projectId" | "number" | "code" | "diaryDate" | "status" | "openedAt" | "openedById" | "closedAt" | "closedById" | "openLat" | "openLng" | "openAccuracy" | "geofence" | "geofenceDistM" | "weather" | "weatherBlocked" | "weatherNotes" | "narrative" | "notes" | "ignoredWarnings" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["constructionDiary"]>
+export type ConstructionDiaryOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "companyId" | "projectId" | "number" | "code" | "diaryDate" | "status" | "openedAt" | "openedById" | "closedAt" | "closedById" | "openLat" | "openLng" | "openAccuracy" | "geofence" | "geofenceDistM" | "weather" | "weatherBlocked" | "weatherNotes" | "narrative" | "notes" | "ignoredWarnings" | "verificationCode" | "documentHash" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["constructionDiary"]>
 export type ConstructionDiaryInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
   entries?: boolean | Prisma.ConstructionDiary$entriesArgs<ExtArgs>
   photos?: boolean | Prisma.ConstructionDiary$photosArgs<ExtArgs>
   workforce?: boolean | Prisma.ConstructionDiary$workforceArgs<ExtArgs>
   equipment?: boolean | Prisma.ConstructionDiary$equipmentArgs<ExtArgs>
+  signatures?: boolean | Prisma.ConstructionDiary$signaturesArgs<ExtArgs>
+  files?: boolean | Prisma.ConstructionDiary$filesArgs<ExtArgs>
   _count?: boolean | Prisma.ConstructionDiaryCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ConstructionDiaryIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1957,6 +2471,8 @@ export type $ConstructionDiaryPayload<ExtArgs extends runtime.Types.Extensions.I
     photos: Prisma.$SitePhotoPayload<ExtArgs>[]
     workforce: Prisma.$DiaryWorkforcePayload<ExtArgs>[]
     equipment: Prisma.$DiaryEquipmentPayload<ExtArgs>[]
+    signatures: Prisma.$DiarySignaturePayload<ExtArgs>[]
+    files: Prisma.$DiaryFilePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -2009,6 +2525,14 @@ export type $ConstructionDiaryPayload<ExtArgs extends runtime.Types.Extensions.I
      * Pendências apontadas no fechamento que o usuário decidiu ignorar.
      */
     ignoredWarnings: runtime.JsonValue | null
+    /**
+     * Código público de conferência do RDO emitido (como o da proposta).
+     */
+    verificationCode: string | null
+    /**
+     * SHA-256 do PDF emitido no fechamento — congela o documento assinado.
+     */
+    documentHash: string | null
     createdAt: Date
     updatedAt: Date
     deletedAt: Date | null
@@ -2411,6 +2935,8 @@ export interface Prisma__ConstructionDiaryClient<T, Null = never, ExtArgs extend
   photos<T extends Prisma.ConstructionDiary$photosArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ConstructionDiary$photosArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SitePhotoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   workforce<T extends Prisma.ConstructionDiary$workforceArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ConstructionDiary$workforceArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DiaryWorkforcePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   equipment<T extends Prisma.ConstructionDiary$equipmentArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ConstructionDiary$equipmentArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DiaryEquipmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  signatures<T extends Prisma.ConstructionDiary$signaturesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ConstructionDiary$signaturesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DiarySignaturePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  files<T extends Prisma.ConstructionDiary$filesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ConstructionDiary$filesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DiaryFilePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2462,6 +2988,8 @@ export interface ConstructionDiaryFieldRefs {
   readonly narrative: Prisma.FieldRef<"ConstructionDiary", 'String'>
   readonly notes: Prisma.FieldRef<"ConstructionDiary", 'String'>
   readonly ignoredWarnings: Prisma.FieldRef<"ConstructionDiary", 'Json'>
+  readonly verificationCode: Prisma.FieldRef<"ConstructionDiary", 'String'>
+  readonly documentHash: Prisma.FieldRef<"ConstructionDiary", 'String'>
   readonly createdAt: Prisma.FieldRef<"ConstructionDiary", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"ConstructionDiary", 'DateTime'>
   readonly deletedAt: Prisma.FieldRef<"ConstructionDiary", 'DateTime'>
@@ -2959,6 +3487,54 @@ export type ConstructionDiary$equipmentArgs<ExtArgs extends runtime.Types.Extens
   take?: number
   skip?: number
   distinct?: Prisma.DiaryEquipmentScalarFieldEnum | Prisma.DiaryEquipmentScalarFieldEnum[]
+}
+
+/**
+ * ConstructionDiary.signatures
+ */
+export type ConstructionDiary$signaturesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the DiarySignature
+   */
+  select?: Prisma.DiarySignatureSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the DiarySignature
+   */
+  omit?: Prisma.DiarySignatureOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.DiarySignatureInclude<ExtArgs> | null
+  where?: Prisma.DiarySignatureWhereInput
+  orderBy?: Prisma.DiarySignatureOrderByWithRelationInput | Prisma.DiarySignatureOrderByWithRelationInput[]
+  cursor?: Prisma.DiarySignatureWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.DiarySignatureScalarFieldEnum | Prisma.DiarySignatureScalarFieldEnum[]
+}
+
+/**
+ * ConstructionDiary.files
+ */
+export type ConstructionDiary$filesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the DiaryFile
+   */
+  select?: Prisma.DiaryFileSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the DiaryFile
+   */
+  omit?: Prisma.DiaryFileOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.DiaryFileInclude<ExtArgs> | null
+  where?: Prisma.DiaryFileWhereInput
+  orderBy?: Prisma.DiaryFileOrderByWithRelationInput | Prisma.DiaryFileOrderByWithRelationInput[]
+  cursor?: Prisma.DiaryFileWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.DiaryFileScalarFieldEnum | Prisma.DiaryFileScalarFieldEnum[]
 }
 
 /**

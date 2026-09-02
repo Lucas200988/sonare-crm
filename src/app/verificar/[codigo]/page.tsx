@@ -35,11 +35,23 @@ export default async function VerifyPage(props: { params: Promise<{ codigo: stri
     },
   }).catch(() => null);
 
+  // o mesmo balcão confere propostas e RDOs — o código diz qual é
+  const rdo = proposal ? null : await prisma.constructionDiary.findUnique({
+    where: { verificationCode: code },
+    select: {
+      code: true, number: true, diaryDate: true, status: true,
+      documentHash: true, deletedAt: true,
+      project: { select: { name: true } },
+      signatures: { select: { role: true, name: true, registration: true, signedAt: true }, orderBy: { signedAt: 'asc' } },
+    },
+  }).catch(() => null);
+
   const company = await prisma.company.findFirst({
     select: { legalName: true, cnpj: true, crea: true },
   }).catch(() => null);
 
   const valid = proposal && !proposal.deletedAt;
+  const rdoValido = rdo && !rdo.deletedAt;
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-slate-100 px-4 py-10">
@@ -82,6 +94,42 @@ export default async function VerifyPage(props: { params: Promise<{ codigo: stri
                 <Row label="Código de conferência" value={code} mono />
                 {proposal.documentHash ? (
                   <Row label="Hash SHA-256 (início)" value={formatHashForDisplay(proposal.documentHash)} mono />
+                ) : null}
+              </dl>
+
+              <p className="mt-5 rounded-lg bg-slate-50 px-3 py-2 text-xs text-slate-500">
+                Assinatura eletrônica nos termos do art. 10, §2º, da MP 2.200-2/2001. Para confirmar que o
+                arquivo em seu poder não foi alterado, compare o hash SHA-256 dele com o exibido acima.
+              </p>
+            </>
+          ) : rdoValido ? (
+            <>
+              <div className="flex items-center gap-2 text-green-700">
+                <ShieldCheck className="h-6 w-6" aria-hidden />
+                <h1 className="text-lg font-bold">Documento autêntico</h1>
+              </div>
+              <p className="mt-1 text-sm text-slate-600">
+                Relatório Diário de Obra emitido por {company?.legalName ?? 'SONARE Engenharia'}.
+              </p>
+
+              <dl className="mt-5 space-y-3 border-t border-slate-100 pt-5 text-sm">
+                <Row label="Documento" value={`RDO nº ${rdo.number} — ${formatDateBR(new Date(`${rdo.diaryDate}T12:00:00Z`))}`} />
+                <Row label="Referência" value={rdo.code} mono />
+                <Row label="Obra" value={rdo.project.name} />
+                <Row
+                  label="Situação"
+                  value={rdo.status === 'APROVADO' ? 'Aprovado pela fiscalização' : 'Finalizado, em assinatura'}
+                />
+                {rdo.signatures.map((a) => (
+                  <Row
+                    key={a.role}
+                    label={a.role === 'FISCALIZACAO' ? 'Fiscalização' : a.role === 'GERENCIA' ? 'Gerência de Engenharia' : 'Engenheiro(a) Residente'}
+                    value={`${[a.name, a.registration].filter(Boolean).join(' · ')} — ${formatDateTimeBR(a.signedAt)}`}
+                  />
+                ))}
+                <Row label="Código de conferência" value={code} mono />
+                {rdo.documentHash ? (
+                  <Row label="Hash SHA-256 (início)" value={formatHashForDisplay(rdo.documentHash)} mono />
                 ) : null}
               </dl>
 

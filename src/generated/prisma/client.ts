@@ -222,6 +222,21 @@ export type Project = Prisma.ProjectModel
  */
 export type ConstructionDiary = Prisma.ConstructionDiaryModel
 /**
+ * Model DiarySignature
+ * Assinatura eletrônica do RDO, um papel por linha.
+ * 
+ * Os três papéis clássicos do documento: gerência de engenharia, engenheiro
+ * residente e fiscalização. Quem assina é usuário do sistema — a fiscalização
+ * externa entra com o papel Campo (RDO), vendo só as obras dela.
+ */
+export type DiarySignature = Prisma.DiarySignatureModel
+/**
+ * Model DiaryFile
+ * Vídeo ou anexo do dia — mesma disciplina das fotos: original intocado,
+ * exclusão sempre lógica e com motivo.
+ */
+export type DiaryFile = Prisma.DiaryFileModel
+/**
  * Model SitePhoto
  * Fotografia de campo — a evidência central do RDO.
  * 

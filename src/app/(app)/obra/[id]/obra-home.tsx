@@ -1,6 +1,7 @@
 'use client';
 
 import { useActionState, useState, useTransition } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
   AlertTriangle, Ban, CheckSquare, CloudSun, Copy, Eye, FileText,
@@ -143,9 +144,23 @@ export function ObraHome({ projeto, diario, canWrite }: {
           {diario.narrativa ? (
             <p className="mt-2 whitespace-pre-wrap text-sm text-green-900/90">{diario.narrativa}</p>
           ) : null}
+          <Link
+            href={`/obra/${projeto.id}/rdo/${diario.id}`}
+            className="mt-3 inline-flex items-center gap-1.5 rounded-lg bg-green-700 px-3 py-1.5 text-xs font-semibold text-white hover:bg-green-800"
+          >
+            Ver relatório (RDO) e assinaturas
+          </Link>
         </div>
       ) : canWrite ? (
-        <Botoes projeto={projeto} diario={diario} />
+        <>
+          <Botoes projeto={projeto} diario={diario} />
+          <Link
+            href={`/obra/${projeto.id}/rdo/${diario.id}`}
+            className="block text-center text-xs font-medium text-slate-500 underline hover:text-brand"
+          >
+            Ver como fica o relatório (RDO nº de hoje)
+          </Link>
+        </>
       ) : null}
 
       <FotoSection

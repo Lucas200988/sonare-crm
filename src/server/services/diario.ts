@@ -1,6 +1,7 @@
 import 'server-only';
 import { prisma } from '@/server/db';
 import { auditLog } from '@/server/audit/audit';
+import { generateVerificationCode } from '@/server/signature';
 import { escopoDeProjetos } from '@/server/auth/project-scope';
 import {
   classificarLocal, codigoDiario, diaDaObra, pendenciasDoFechamento,
@@ -478,6 +479,9 @@ export async function finalizarDiario(
   const r = await diarioEditavel(user, diaryId);
   if ('error' in r) return { error: r.error };
 
+  const atual = await prisma.constructionDiary.findUnique({
+    where: { id: diaryId }, select: { verificationCode: true },
+  });
   await prisma.constructionDiary.update({
     where: { id: diaryId },
     data: {
@@ -485,6 +489,8 @@ export async function finalizarDiario(
       closedAt: new Date(),
       closedById: user.id,
       narrative: input.narrativa?.trim() || null,
+      // o código público nasce no fechamento — reabrir e fechar de novo não o troca
+      verificationCode: atual?.verificationCode ?? generateVerificationCode(),
       ignoredWarnings: input.avisosIgnorados?.length
         ? (input.avisosIgnorados as Prisma.InputJsonValue)
         : undefined,

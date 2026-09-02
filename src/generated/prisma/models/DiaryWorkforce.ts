@@ -38,6 +38,7 @@ export type DiaryWorkforceMinAggregateOutputType = {
   id: string | null
   diaryId: string | null
   role: string | null
+  kind: string | null
   company: string | null
   quantity: number | null
   startTime: string | null
@@ -49,6 +50,7 @@ export type DiaryWorkforceMaxAggregateOutputType = {
   id: string | null
   diaryId: string | null
   role: string | null
+  kind: string | null
   company: string | null
   quantity: number | null
   startTime: string | null
@@ -60,6 +62,7 @@ export type DiaryWorkforceCountAggregateOutputType = {
   id: number
   diaryId: number
   role: number
+  kind: number
   company: number
   quantity: number
   startTime: number
@@ -81,6 +84,7 @@ export type DiaryWorkforceMinAggregateInputType = {
   id?: true
   diaryId?: true
   role?: true
+  kind?: true
   company?: true
   quantity?: true
   startTime?: true
@@ -92,6 +96,7 @@ export type DiaryWorkforceMaxAggregateInputType = {
   id?: true
   diaryId?: true
   role?: true
+  kind?: true
   company?: true
   quantity?: true
   startTime?: true
@@ -103,6 +108,7 @@ export type DiaryWorkforceCountAggregateInputType = {
   id?: true
   diaryId?: true
   role?: true
+  kind?: true
   company?: true
   quantity?: true
   startTime?: true
@@ -201,6 +207,7 @@ export type DiaryWorkforceGroupByOutputType = {
   id: string
   diaryId: string
   role: string
+  kind: string
   company: string | null
   quantity: number
   startTime: string | null
@@ -235,6 +242,7 @@ export type DiaryWorkforceWhereInput = {
   id?: Prisma.StringFilter<"DiaryWorkforce"> | string
   diaryId?: Prisma.StringFilter<"DiaryWorkforce"> | string
   role?: Prisma.StringFilter<"DiaryWorkforce"> | string
+  kind?: Prisma.StringFilter<"DiaryWorkforce"> | string
   company?: Prisma.StringNullableFilter<"DiaryWorkforce"> | string | null
   quantity?: Prisma.IntFilter<"DiaryWorkforce"> | number
   startTime?: Prisma.StringNullableFilter<"DiaryWorkforce"> | string | null
@@ -247,6 +255,7 @@ export type DiaryWorkforceOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   diaryId?: Prisma.SortOrder
   role?: Prisma.SortOrder
+  kind?: Prisma.SortOrder
   company?: Prisma.SortOrderInput | Prisma.SortOrder
   quantity?: Prisma.SortOrder
   startTime?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -262,6 +271,7 @@ export type DiaryWorkforceWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.DiaryWorkforceWhereInput | Prisma.DiaryWorkforceWhereInput[]
   diaryId?: Prisma.StringFilter<"DiaryWorkforce"> | string
   role?: Prisma.StringFilter<"DiaryWorkforce"> | string
+  kind?: Prisma.StringFilter<"DiaryWorkforce"> | string
   company?: Prisma.StringNullableFilter<"DiaryWorkforce"> | string | null
   quantity?: Prisma.IntFilter<"DiaryWorkforce"> | number
   startTime?: Prisma.StringNullableFilter<"DiaryWorkforce"> | string | null
@@ -274,6 +284,7 @@ export type DiaryWorkforceOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   diaryId?: Prisma.SortOrder
   role?: Prisma.SortOrder
+  kind?: Prisma.SortOrder
   company?: Prisma.SortOrderInput | Prisma.SortOrder
   quantity?: Prisma.SortOrder
   startTime?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -293,6 +304,7 @@ export type DiaryWorkforceScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<"DiaryWorkforce"> | string
   diaryId?: Prisma.StringWithAggregatesFilter<"DiaryWorkforce"> | string
   role?: Prisma.StringWithAggregatesFilter<"DiaryWorkforce"> | string
+  kind?: Prisma.StringWithAggregatesFilter<"DiaryWorkforce"> | string
   company?: Prisma.StringNullableWithAggregatesFilter<"DiaryWorkforce"> | string | null
   quantity?: Prisma.IntWithAggregatesFilter<"DiaryWorkforce"> | number
   startTime?: Prisma.StringNullableWithAggregatesFilter<"DiaryWorkforce"> | string | null
@@ -303,6 +315,7 @@ export type DiaryWorkforceScalarWhereWithAggregatesInput = {
 export type DiaryWorkforceCreateInput = {
   id?: string
   role: string
+  kind?: string
   company?: string | null
   quantity?: number
   startTime?: string | null
@@ -315,6 +328,7 @@ export type DiaryWorkforceUncheckedCreateInput = {
   id?: string
   diaryId: string
   role: string
+  kind?: string
   company?: string | null
   quantity?: number
   startTime?: string | null
@@ -325,6 +339,7 @@ export type DiaryWorkforceUncheckedCreateInput = {
 export type DiaryWorkforceUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.StringFieldUpdateOperationsInput | string
+  kind?: Prisma.StringFieldUpdateOperationsInput | string
   company?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   startTime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -337,6 +352,7 @@ export type DiaryWorkforceUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   diaryId?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.StringFieldUpdateOperationsInput | string
+  kind?: Prisma.StringFieldUpdateOperationsInput | string
   company?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   startTime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -348,6 +364,7 @@ export type DiaryWorkforceCreateManyInput = {
   id?: string
   diaryId: string
   role: string
+  kind?: string
   company?: string | null
   quantity?: number
   startTime?: string | null
@@ -358,6 +375,7 @@ export type DiaryWorkforceCreateManyInput = {
 export type DiaryWorkforceUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.StringFieldUpdateOperationsInput | string
+  kind?: Prisma.StringFieldUpdateOperationsInput | string
   company?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   startTime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -369,6 +387,7 @@ export type DiaryWorkforceUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   diaryId?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.StringFieldUpdateOperationsInput | string
+  kind?: Prisma.StringFieldUpdateOperationsInput | string
   company?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   startTime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -390,6 +409,7 @@ export type DiaryWorkforceCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   diaryId?: Prisma.SortOrder
   role?: Prisma.SortOrder
+  kind?: Prisma.SortOrder
   company?: Prisma.SortOrder
   quantity?: Prisma.SortOrder
   startTime?: Prisma.SortOrder
@@ -405,6 +425,7 @@ export type DiaryWorkforceMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   diaryId?: Prisma.SortOrder
   role?: Prisma.SortOrder
+  kind?: Prisma.SortOrder
   company?: Prisma.SortOrder
   quantity?: Prisma.SortOrder
   startTime?: Prisma.SortOrder
@@ -416,6 +437,7 @@ export type DiaryWorkforceMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   diaryId?: Prisma.SortOrder
   role?: Prisma.SortOrder
+  kind?: Prisma.SortOrder
   company?: Prisma.SortOrder
   quantity?: Prisma.SortOrder
   startTime?: Prisma.SortOrder
@@ -472,6 +494,7 @@ export type DiaryWorkforceUncheckedUpdateManyWithoutDiaryNestedInput = {
 export type DiaryWorkforceCreateWithoutDiaryInput = {
   id?: string
   role: string
+  kind?: string
   company?: string | null
   quantity?: number
   startTime?: string | null
@@ -482,6 +505,7 @@ export type DiaryWorkforceCreateWithoutDiaryInput = {
 export type DiaryWorkforceUncheckedCreateWithoutDiaryInput = {
   id?: string
   role: string
+  kind?: string
   company?: string | null
   quantity?: number
   startTime?: string | null
@@ -522,6 +546,7 @@ export type DiaryWorkforceScalarWhereInput = {
   id?: Prisma.StringFilter<"DiaryWorkforce"> | string
   diaryId?: Prisma.StringFilter<"DiaryWorkforce"> | string
   role?: Prisma.StringFilter<"DiaryWorkforce"> | string
+  kind?: Prisma.StringFilter<"DiaryWorkforce"> | string
   company?: Prisma.StringNullableFilter<"DiaryWorkforce"> | string | null
   quantity?: Prisma.IntFilter<"DiaryWorkforce"> | number
   startTime?: Prisma.StringNullableFilter<"DiaryWorkforce"> | string | null
@@ -532,6 +557,7 @@ export type DiaryWorkforceScalarWhereInput = {
 export type DiaryWorkforceCreateManyDiaryInput = {
   id?: string
   role: string
+  kind?: string
   company?: string | null
   quantity?: number
   startTime?: string | null
@@ -542,6 +568,7 @@ export type DiaryWorkforceCreateManyDiaryInput = {
 export type DiaryWorkforceUpdateWithoutDiaryInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.StringFieldUpdateOperationsInput | string
+  kind?: Prisma.StringFieldUpdateOperationsInput | string
   company?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   startTime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -552,6 +579,7 @@ export type DiaryWorkforceUpdateWithoutDiaryInput = {
 export type DiaryWorkforceUncheckedUpdateWithoutDiaryInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.StringFieldUpdateOperationsInput | string
+  kind?: Prisma.StringFieldUpdateOperationsInput | string
   company?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   startTime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -562,6 +590,7 @@ export type DiaryWorkforceUncheckedUpdateWithoutDiaryInput = {
 export type DiaryWorkforceUncheckedUpdateManyWithoutDiaryInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.StringFieldUpdateOperationsInput | string
+  kind?: Prisma.StringFieldUpdateOperationsInput | string
   company?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   startTime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -575,6 +604,7 @@ export type DiaryWorkforceSelect<ExtArgs extends runtime.Types.Extensions.Intern
   id?: boolean
   diaryId?: boolean
   role?: boolean
+  kind?: boolean
   company?: boolean
   quantity?: boolean
   startTime?: boolean
@@ -587,6 +617,7 @@ export type DiaryWorkforceSelectCreateManyAndReturn<ExtArgs extends runtime.Type
   id?: boolean
   diaryId?: boolean
   role?: boolean
+  kind?: boolean
   company?: boolean
   quantity?: boolean
   startTime?: boolean
@@ -599,6 +630,7 @@ export type DiaryWorkforceSelectUpdateManyAndReturn<ExtArgs extends runtime.Type
   id?: boolean
   diaryId?: boolean
   role?: boolean
+  kind?: boolean
   company?: boolean
   quantity?: boolean
   startTime?: boolean
@@ -611,6 +643,7 @@ export type DiaryWorkforceSelectScalar = {
   id?: boolean
   diaryId?: boolean
   role?: boolean
+  kind?: boolean
   company?: boolean
   quantity?: boolean
   startTime?: boolean
@@ -618,7 +651,7 @@ export type DiaryWorkforceSelectScalar = {
   notes?: boolean
 }
 
-export type DiaryWorkforceOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "diaryId" | "role" | "company" | "quantity" | "startTime" | "endTime" | "notes", ExtArgs["result"]["diaryWorkforce"]>
+export type DiaryWorkforceOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "diaryId" | "role" | "kind" | "company" | "quantity" | "startTime" | "endTime" | "notes", ExtArgs["result"]["diaryWorkforce"]>
 export type DiaryWorkforceInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   diary?: boolean | Prisma.ConstructionDiaryDefaultArgs<ExtArgs>
 }
@@ -638,6 +671,10 @@ export type $DiaryWorkforcePayload<ExtArgs extends runtime.Types.Extensions.Inte
     id: string
     diaryId: string
     role: string
+    /**
+     * PROPRIA | TERCEIRO — alimenta os totais do relatório.
+     */
+    kind: string
     company: string | null
     quantity: number
     startTime: string | null
@@ -1070,6 +1107,7 @@ export interface DiaryWorkforceFieldRefs {
   readonly id: Prisma.FieldRef<"DiaryWorkforce", 'String'>
   readonly diaryId: Prisma.FieldRef<"DiaryWorkforce", 'String'>
   readonly role: Prisma.FieldRef<"DiaryWorkforce", 'String'>
+  readonly kind: Prisma.FieldRef<"DiaryWorkforce", 'String'>
   readonly company: Prisma.FieldRef<"DiaryWorkforce", 'String'>
   readonly quantity: Prisma.FieldRef<"DiaryWorkforce", 'Int'>
   readonly startTime: Prisma.FieldRef<"DiaryWorkforce", 'String'>
