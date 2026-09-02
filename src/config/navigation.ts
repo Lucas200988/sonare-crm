@@ -11,6 +11,29 @@ export type NavItem = {
   child?: boolean;
 };
 
+/**
+ * Permissões que caracterizam trabalho de escritório — quem tem qualquer uma
+ * delas usa o dashboard como página inicial. Quem não tem nenhuma (equipe de
+ * campo com acesso só ao RDO, por exemplo) começa no primeiro módulo que pode
+ * ver, e o dashboard não expõe indicadores da operação a quem não é de dentro.
+ */
+const PERMISSOES_DE_ESCRITORIO = [
+  'client:read', 'opportunity:read', 'budget:read', 'contract:read',
+  'project:read', 'equipment:read', 'finance:read', 'invoice:read',
+  'report:read', 'user:manage', 'settings:manage',
+] as const;
+
+export function temVisaoDeEscritorio(permissions: ReadonlySet<string>): boolean {
+  return PERMISSOES_DE_ESCRITORIO.some((p) => permissions.has(p));
+}
+
+/** Onde cada pessoa começa: dashboard para o escritório, o próprio módulo para o resto. */
+export function paginaInicial(permissions: ReadonlySet<string>): string {
+  if (temVisaoDeEscritorio(permissions)) return '/dashboard';
+  const item = NAV_ITEMS.find((i) => !i.comingSoon && i.permission && permissions.has(i.permission));
+  return item?.href ?? '/dashboard';
+}
+
 export const NAV_ITEMS: NavItem[] = [
   { label: 'Dashboard', href: '/dashboard', icon: 'LayoutDashboard', permission: null },
   { label: 'Clientes', href: '/clientes', icon: 'Users', permission: 'client:read' },

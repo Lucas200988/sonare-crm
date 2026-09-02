@@ -3,7 +3,9 @@ import Link from 'next/link';
 import {
   BellRing, Calculator, Send, FolderKanban, SearchCheck, HandCoins, type LucideIcon,
 } from 'lucide-react';
+import { redirect } from 'next/navigation';
 import { requireAuth } from '@/server/auth/guards';
+import { paginaInicial, temVisaoDeEscritorio } from '@/config/navigation';
 import { prisma } from '@/server/db';
 import { getAlerts } from '@/server/services/alerts';
 import { getUnreadNotifications } from '@/server/services/notify';
@@ -79,6 +81,14 @@ async function loadIndicators(companyId: string) {
 
 export default async function DashboardPage() {
   const user = await requireAuth();
+
+  // Equipe de campo (só RDO, por exemplo) não opera por aqui: vai direto ao
+  // módulo dela, e os indicadores da empresa não vazam para quem não é de dentro.
+  if (!temVisaoDeEscritorio(user.permissions)) {
+    const inicio = paginaInicial(user.permissions);
+    if (inicio !== '/dashboard') redirect(inicio);
+  }
+
   const [data, alertas, avisos] = await Promise.all([
     loadIndicators(user.companyId),
     getAlerts(user).catch(() => []),
@@ -128,7 +138,7 @@ export default async function DashboardPage() {
         </section>
       ) : null}
 
-      {!data.ok ? (
+      {!temVisaoDeEscritorio(user.permissions) ? null : !data.ok ? (
         <div className="mt-8 rounded-xl border border-amber-300 bg-amber-50 p-6 text-sm text-amber-900">
           <p className="font-semibold">Banco de dados indisponível</p>
           <p className="mt-1">Verifique a conexão configurada no arquivo <code className="rounded bg-amber-100 px-1">.env</code>.</p>
