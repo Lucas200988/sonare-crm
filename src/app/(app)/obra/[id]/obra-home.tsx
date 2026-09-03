@@ -92,6 +92,12 @@ export function ObraHome({ projeto, diario, canWrite }: {
         ) : (
           <p className="mt-6 text-sm text-slate-500">Nenhum diário aberto hoje.</p>
         )}
+        <Link
+          href={`/obra/${projeto.id}/relatorios`}
+          className="mt-4 block text-center text-[11px] font-medium text-slate-500 underline hover:text-brand"
+        >
+          Painel da obra e relatórios anteriores
+        </Link>
       </div>
     );
   }
@@ -138,6 +144,13 @@ export function ObraHome({ projeto, diario, canWrite }: {
           <Contador rotulo="Atividades" valor={contagem('ATIVIDADE')} />
           <Contador rotulo="Ocorrências" valor={contagem('OCORRENCIA')} />
         </div>
+
+        <Link
+          href={`/obra/${projeto.id}/relatorios`}
+          className="mt-2 block text-center text-[11px] font-medium text-slate-500 underline hover:text-brand"
+        >
+          Painel da obra e relatórios anteriores
+        </Link>
       </div>
 
       {fechado ? (

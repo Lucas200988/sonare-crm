@@ -104,10 +104,10 @@ function Secao({ titulo, children }: { titulo: string; children: React.ReactNode
   );
 }
 
-export function RdoPdf({ data }: { data: RdoPdfData }) {
+/** Uma página (um dia) — compartilhada entre o PDF avulso e o do período. */
+export function RdoPagina({ data }: { data: RdoPdfData }) {
   const d = data;
   return (
-    <Document title={`${d.codigo} — RDO nº ${d.numero}`} author="SONARE CRM">
       <Page size="A4" style={s.page}>
         <Text style={[s.chipStatus, ...(d.status === 'Aprovado' ? [s.chipAprovado] : [])]}>
           {d.status}
@@ -358,6 +358,22 @@ export function RdoPdf({ data }: { data: RdoPdfData }) {
           <Text render={({ pageNumber, totalPages }) => `${d.codigo}  ·  ${pageNumber} / ${totalPages}`} />
         </View>
       </Page>
+  );
+}
+
+export function RdoPdf({ data }: { data: RdoPdfData }) {
+  return (
+    <Document title={`${data.codigo} — RDO nº ${data.numero}`} author="SONARE CRM">
+      <RdoPagina data={data} />
+    </Document>
+  );
+}
+
+/** Todos os RDOs de um período num único arquivo — o pacote da medição. */
+export function RdoLotePdf({ dados, titulo }: { dados: RdoPdfData[]; titulo: string }) {
+  return (
+    <Document title={titulo} author="SONARE CRM">
+      {dados.map((d) => <RdoPagina key={d.codigo} data={d} />)}
     </Document>
   );
 }

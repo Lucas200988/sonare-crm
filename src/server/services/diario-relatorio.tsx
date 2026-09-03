@@ -8,7 +8,7 @@ import { auditLog } from '@/server/audit/audit';
 import { escopoDeProjetos } from '@/server/auth/project-scope';
 import { generateVerificationCode, verificationUrl, formatHashForDisplay } from '@/server/signature';
 import { readAttachment, saveFile } from '@/server/storage';
-import { RdoPdf, type RdoPdfData } from '@/server/pdf/rdo-pdf';
+import { RdoLotePdf, RdoPdf, type RdoPdfData } from '@/server/pdf/rdo-pdf';
 import { formatDateBR, formatDateTimeBR } from '@/lib/dates';
 import {
   PAPEIS_RDO, dataCalendario, diaDaSemana, ehPapelRdo, percentualDaAtividade,
@@ -214,7 +214,9 @@ export async function legendarFoto(
 
 // ---------- PDF ----------
 
-async function montarDadosPdf(user: SessionUser, diaryId: string): Promise<RdoPdfData | null> {
+async function montarDadosPdf(
+  user: SessionUser, diaryId: string, limiteFotos = 40,
+): Promise<RdoPdfData | null> {
   const rel = await getRelatorio(user, diaryId);
   if (!rel) return null;
   const { diario } = rel;
@@ -225,7 +227,7 @@ async function montarDadosPdf(user: SessionUser, diaryId: string): Promise<RdoPd
 
   // fotos: a versão com tarja, limitada para o PDF não estourar memória
   const fotos: RdoPdfData['fotos'] = [];
-  for (const f of diario.photos.slice(0, 40)) {
+  for (const f of diario.photos.slice(0, limiteFotos)) {
     const attId = f.viewAttachmentId ?? f.originalAttachmentId;
     const arq = await readAttachment(user.companyId, attId);
     if (!arq) continue;
@@ -423,3 +425,155 @@ export async function gerarPdfDoRdo(user: SessionUser, diaryId: string) {
 }
 
 export type PapelAssinatura = PapelRdo;
+
+// ---------- Painel e lista de relatórios ----------
+
+/** Obra visível pelo recorte do usuário (sem exigir diário aberto). */
+async function obraDoUsuario(user: SessionUser, projectId: string) {
+  return prisma.project.findFirst({
+    where: {
+      id: projectId, companyId: user.companyId, deletedAt: null, diaryEnabled: true,
+      ...escopoDeProjetos(user),
+    },
+    select: {
+      id: true, code: true, name: true, siteAddress: true, status: true,
+      startDate: true, expectedEndDate: true,
+      technicalLead: { select: { name: true } },
+      contract: { select: { code: true } },
+      client: { select: { legalName: true, tradeName: true } },
+    },
+  });
+}
+
+/**
+ * O painel da obra: contadores, últimos relatórios, últimas fotos e a barra
+ * de prazo — a visão de escritório do que o campo produziu.
+ */
+export async function painelDaObra(user: SessionUser, projectId: string) {
+  const projeto = await obraDoUsuario(user, projectId);
+  if (!projeto) return null;
+
+  const [relatorios, entradas, fotos, arquivos, ultimasFotos, ultimosRelatorios] = await Promise.all([
+    prisma.constructionDiary.count({ where: { projectId, deletedAt: null } }),
+    prisma.diaryEntry.groupBy({
+      by: ['kind'],
+      where: { deletedAt: null, diary: { projectId, deletedAt: null } },
+      _count: { _all: true },
+    }),
+    prisma.sitePhoto.count({ where: { projectId, deletedAt: null } }),
+    prisma.diaryFile.groupBy({
+      by: ['kind'],
+      where: { projectId, deletedAt: null },
+      _count: { _all: true },
+    }),
+    prisma.sitePhoto.findMany({
+      where: { projectId, deletedAt: null },
+      orderBy: { receivedAt: 'desc' },
+      take: 8,
+      select: { id: true, description: true, category: true },
+    }),
+    prisma.constructionDiary.findMany({
+      where: { projectId, deletedAt: null },
+      orderBy: { diaryDate: 'desc' },
+      take: 7,
+      select: {
+        id: true, number: true, diaryDate: true, status: true,
+        _count: { select: { photos: { where: { deletedAt: null } } } },
+      },
+    }),
+  ]);
+
+  const porKind = (lista: Array<{ kind: string; _count: { _all: number } }>, kinds: string[]) =>
+    lista.filter((x) => kinds.includes(x.kind)).reduce((a, x) => a + x._count._all, 0);
+
+  return {
+    projeto,
+    prazos: prazosDaObra(
+      dataCalendario(projeto.startDate),
+      dataCalendario(projeto.expectedEndDate),
+      new Date().toISOString().slice(0, 10),
+    ),
+    contadores: {
+      relatorios,
+      atividades: porKind(entradas, ['ATIVIDADE']),
+      ocorrencias: porKind(entradas, ['OCORRENCIA', 'IMPEDIMENTO']),
+      comentarios: porKind(entradas, ['OBSERVACAO', 'ORIENTACAO', 'VISITANTE', 'MATERIAL']),
+      fotos,
+      videos: porKind(arquivos, ['VIDEO']),
+      anexos: porKind(arquivos, ['ANEXO']),
+    },
+    ultimasFotos,
+    ultimosRelatorios,
+  };
+}
+
+export type FiltroRelatorios = { de?: string | null; ate?: string | null };
+
+/** Todos os relatórios da obra, filtráveis por período. */
+export async function listarRelatorios(
+  user: SessionUser, projectId: string, filtro: FiltroRelatorios = {},
+) {
+  const projeto = await obraDoUsuario(user, projectId);
+  if (!projeto) return null;
+
+  const diaryDate: { gte?: string; lte?: string } = {};
+  if (filtro.de) diaryDate.gte = filtro.de;
+  if (filtro.ate) diaryDate.lte = filtro.ate;
+
+  const itens = await prisma.constructionDiary.findMany({
+    where: {
+      projectId, deletedAt: null,
+      ...(diaryDate.gte || diaryDate.lte ? { diaryDate } : {}),
+    },
+    orderBy: { diaryDate: 'desc' },
+    select: {
+      id: true, number: true, code: true, diaryDate: true, status: true,
+      geofence: true,
+      signatures: { select: { role: true } },
+      _count: {
+        select: {
+          photos: { where: { deletedAt: null } },
+          files: { where: { deletedAt: null } },
+          entries: { where: { deletedAt: null } },
+        },
+      },
+    },
+  });
+  return { projeto, itens };
+}
+
+/**
+ * PDF único com todos os RDOs do período — o pacote que acompanha a medição.
+ *
+ * Fotos limitadas por diário no lote, para o arquivo (e a memória do
+ * servidor) não explodirem num mês inteiro de obra.
+ */
+export async function gerarPdfDoPeriodo(
+  user: SessionUser, projectId: string, de: string, ate: string,
+) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(de) || !/^\d{4}-\d{2}-\d{2}$/.test(ate) || ate < de) {
+    return { error: 'Período inválido.' };
+  }
+  const listagem = await listarRelatorios(user, projectId, { de, ate });
+  if (!listagem) return { error: 'Obra não encontrada.' };
+  const ordenados = [...listagem.itens].reverse(); // do mais antigo ao mais novo
+  if (ordenados.length === 0) return { error: 'Nenhum relatório no período.' };
+  if (ordenados.length > 31) return { error: 'Período longo demais — limite de 31 relatórios por arquivo.' };
+
+  const dados: RdoPdfData[] = [];
+  for (const item of ordenados) {
+    const d = await montarDadosPdf(user, item.id, 15);
+    if (d) dados.push(d);
+  }
+  if (dados.length === 0) return { error: 'Nenhum relatório no período.' };
+
+  const [anoDe, mesDe, diaDe] = de.split('-');
+  const [anoAte, mesAte, diaAte] = ate.split('-');
+  const titulo = `RDOs ${listagem.projeto.code} — ${diaDe}/${mesDe}/${anoDe} a ${diaAte}/${mesAte}/${anoAte}`;
+  const content = Buffer.from(await renderToBuffer(<RdoLotePdf dados={dados} titulo={titulo} />));
+  return {
+    content,
+    fileName: `${titulo.replace(/\//g, '-')}.pdf`,
+    quantidade: dados.length,
+  };
+}
