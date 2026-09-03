@@ -14,6 +14,7 @@ import {
 } from '@/actions/diario';
 import { inputCls, Field, FormError, SubmitButton } from '@/components/ui';
 import { FotoSection, type FotoDaTela } from './foto-section';
+import { ArquivoSection, type ArquivoDaTela } from './arquivo-section';
 
 export type DiarioDaTela = {
   id: string;
@@ -36,10 +37,11 @@ export type DiarioDaTela = {
     happenedAt: string;
     payload: Record<string, string> | null;
   }>;
-  workforce: Array<{ id: string; role: string; company: string | null; quantity: number }>;
+  workforce: Array<{ id: string; role: string; kind: string; company: string | null; quantity: number }>;
   equipment: Array<{ id: string; name: string; identification: string | null; quantity: number }>;
   sugestoesAtividade: string[];
   fotos: FotoDaTela[];
+  arquivos: ArquivoDaTela[];
   conferencia: { pendencias: string[]; narrativa: string } | null;
 };
 
@@ -167,6 +169,12 @@ export function ObraHome({ projeto, diario, canWrite }: {
         projetoId={projeto.id}
         diarioId={diario.id}
         fotos={diario.fotos}
+        canWrite={canWrite && !fechado}
+      />
+      <ArquivoSection
+        projetoId={projeto.id}
+        diarioId={diario.id}
+        arquivos={diario.arquivos}
         canWrite={canWrite && !fechado}
       />
       <Registros projeto={projeto} diario={diario} canWrite={canWrite && !fechado} />
@@ -340,12 +348,18 @@ function FormRegistro({ tipo, projeto, diario, onFechar }: {
       </Field>
 
       {tipo === 'ATIVIDADE' ? (
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-3 gap-2">
           <Field label="Quantidade" htmlFor="r-qtd">
             <input id="r-qtd" name="quantidade" inputMode="decimal" placeholder="40" className={inputCls} />
           </Field>
           <Field label="Unidade" htmlFor="r-un">
-            <input id="r-un" name="unidade" placeholder="m, un, %…" className={inputCls} />
+            <input id="r-un" name="unidade" placeholder="m, un…" className={inputCls} />
+          </Field>
+          <Field label="% concluído" htmlFor="r-pct">
+            <input
+              id="r-pct" name="percentual" type="number" min={0} max={100} step={5}
+              inputMode="numeric" placeholder="60" className={inputCls}
+            />
           </Field>
         </div>
       ) : null}
@@ -406,7 +420,8 @@ function Registros({ projeto, diario, canWrite }: {
             e.payload?.quantidade
               ? `${e.payload.quantidade}${e.payload.unidade ? ` ${e.payload.unidade}` : ''}`
               : null,
-            e.payload?.gravidade ? `gravidade ${e.payload.gravidade.toLowerCase()}` : null,
+            e.payload?.percentual != null ? `${e.payload.percentual}% concluído` : null,
+            e.payload?.gravidade ? `gravidade ${String(e.payload.gravidade).toLowerCase()}` : null,
             e.responsible ? `resp.: ${e.responsible}` : null,
           ].filter(Boolean).join(' · ');
           return (
@@ -514,9 +529,17 @@ function EquipeSection({ projeto, diario, canWrite }: {
               <input id="w-qtd" name="quantity" type="number" min={1} defaultValue={1} required className={inputCls} />
             </Field>
           </div>
-          <Field label="Empresa (opcional)" htmlFor="w-emp">
-            <input id="w-emp" name="company" className={inputCls} />
-          </Field>
+          <div className="grid grid-cols-2 gap-2">
+            <Field label="Origem" htmlFor="w-kind">
+              <select id="w-kind" name="kind" defaultValue="PROPRIA" className={inputCls}>
+                <option value="PROPRIA">Mão de obra própria</option>
+                <option value="TERCEIRO">Terceiros</option>
+              </select>
+            </Field>
+            <Field label="Empresa (opcional)" htmlFor="w-emp">
+              <input id="w-emp" name="company" className={inputCls} />
+            </Field>
+          </div>
           <FormError message={state.error} />
           <SubmitButton pending={pending}>Adicionar</SubmitButton>
         </form>
@@ -529,7 +552,11 @@ function EquipeSection({ projeto, diario, canWrite }: {
           {diario.workforce.map((w) => (
             <li key={w.id} className="flex items-center justify-between py-1.5 text-sm">
               <span className="text-slate-800">
-                {w.role}{w.company ? <span className="text-xs text-slate-400"> · {w.company}</span> : null}
+                {w.role}
+                {w.kind === 'TERCEIRO' ? (
+                  <span className="ml-1.5 rounded bg-slate-100 px-1 py-0.5 text-[10px] font-medium text-slate-500">terceiros</span>
+                ) : null}
+                {w.company ? <span className="text-xs text-slate-400"> · {w.company}</span> : null}
               </span>
               <span className="flex items-center gap-2">
                 <span className="font-semibold text-slate-900">{w.quantity}</span>

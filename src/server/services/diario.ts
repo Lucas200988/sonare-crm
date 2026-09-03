@@ -5,7 +5,7 @@ import { generateVerificationCode } from '@/server/signature';
 import { escopoDeProjetos } from '@/server/auth/project-scope';
 import {
   classificarLocal, codigoDiario, diaDaObra, pendenciasDoFechamento,
-  rotuloDoClima, type ResumoParaFechar,
+  praticavelPeloCodigo, rotuloDoClima, type ResumoParaFechar,
 } from '@/lib/diario-regras';
 import type { DiaryEntryKind, Prisma } from '@/generated/prisma/client';
 import type { SessionUser } from '@/server/auth/session';
@@ -74,12 +74,30 @@ async function consultarClima(lat: number, lng: number) {
   try {
     const url = 'https://api.open-meteo.com/v1/forecast'
       + `?latitude=${lat}&longitude=${lng}`
-      + '&current=temperature_2m,relative_humidity_2m,precipitation,weather_code,wind_speed_10m';
+      + '&current=temperature_2m,relative_humidity_2m,precipitation,weather_code,wind_speed_10m'
+      // previsão horária do dia, para o quadro manhã/tarde/noite do RDO
+      + '&hourly=temperature_2m,precipitation,weather_code&forecast_days=1'
+      + '&timezone=America%2FCuiaba';
     const res = await fetch(url, { signal: AbortSignal.timeout(5_000) });
     if (!res.ok) return null;
     const json = await res.json();
     const c = json?.current;
     if (!c) return null;
+
+    // manhã 9h, tarde 15h, noite 19h — horas de referência de cada período
+    const horas: string[] = json?.hourly?.time ?? [];
+    const noPeriodo = (hora: string) => {
+      const i = horas.findIndex((t: string) => t.endsWith(hora));
+      if (i < 0 || json.hourly.weather_code?.[i] == null) return null;
+      const codigo = Number(json.hourly.weather_code[i]);
+      return {
+        rotulo: rotuloDoClima(codigo),
+        tempC: json.hourly.temperature_2m?.[i] ?? null,
+        chuvaMm: json.hourly.precipitation?.[i] ?? null,
+        praticavel: praticavelPeloCodigo(codigo),
+      };
+    };
+
     return {
       fonte: 'open-meteo.com',
       consultadoEm: new Date().toISOString(),
@@ -88,6 +106,9 @@ async function consultarClima(lat: number, lng: number) {
       umidade: c.relative_humidity_2m ?? null,
       chuvaMm: c.precipitation ?? null,
       ventoKmh: c.wind_speed_10m ?? null,
+      manha: noPeriodo('T09:00'),
+      tarde: noPeriodo('T15:00'),
+      noite: noPeriodo('T19:00'),
     };
   } catch {
     return null;
@@ -284,7 +305,7 @@ export async function removerRegistro(user: SessionUser, diaryId: string, entryI
 
 export async function adicionarEquipe(
   user: SessionUser, diaryId: string,
-  input: { role: string; company?: string | null; quantity: number },
+  input: { role: string; company?: string | null; quantity: number; kind?: string | null },
 ) {
   const r = await diarioEditavel(user, diaryId);
   if ('error' in r) return { error: r.error };
@@ -295,6 +316,8 @@ export async function adicionarEquipe(
     data: {
       diaryId,
       role: input.role.trim(),
+      // própria × terceiros alimenta os totais do relatório
+      kind: input.kind === 'TERCEIRO' ? 'TERCEIRO' : 'PROPRIA',
       company: input.company?.trim() || null,
       quantity: input.quantity,
     },
@@ -370,7 +393,7 @@ export async function repetirDiaAnterior(user: SessionUser, diaryId: string) {
     ...(anterior.workforce.length
       ? [prisma.diaryWorkforce.createMany({
           data: anterior.workforce.map((w) => ({
-            diaryId, role: w.role, company: w.company,
+            diaryId, role: w.role, kind: w.kind, company: w.company,
             quantity: w.quantity, startTime: w.startTime, endTime: w.endTime,
           })),
         })]

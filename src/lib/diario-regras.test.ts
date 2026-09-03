@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
-  classificarLocal, codigoDiario, codigoFoto, diaDaObra,
-  distanciaMetros, pendenciasDoFechamento, rotuloDoClima, textoDoLocal,
+  classificarLocal, codigoDiario, codigoFoto, diaDaObra, distanciaMetros,
+  pendenciasDoFechamento, praticavelPeloCodigo, rotuloDoClima, textoDoLocal,
 } from './diario-regras';
 
 // Praça central de Cuiabá e pontos ao redor, para distâncias conhecidas
@@ -131,5 +131,18 @@ describe('rotuloDoClima', () => {
     expect(rotuloDoClima(3)).toBe('Nublado');
     expect(rotuloDoClima(63)).toBe('Chuva');
     expect(rotuloDoClima(95)).toBe('Tempestade');
+  });
+});
+
+describe('praticavelPeloCodigo', () => {
+  it('céu limpo, garoa e chuva fraca não param a obra', () => {
+    expect(praticavelPeloCodigo(0)).toBe(true);
+    expect(praticavelPeloCodigo(51)).toBe(true);
+    expect(praticavelPeloCodigo(61)).toBe(true);
+  });
+  it('chuva moderada, aguaceiro e tempestade param', () => {
+    expect(praticavelPeloCodigo(63)).toBe(false);
+    expect(praticavelPeloCodigo(81)).toBe(false);
+    expect(praticavelPeloCodigo(95)).toBe(false);
   });
 });

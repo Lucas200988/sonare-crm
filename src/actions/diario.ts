@@ -68,6 +68,11 @@ const registroSchema = z.object({
   gravidade: z.enum(['BAIXA', 'MEDIA', 'ALTA']).optional(),
   local: z.string().trim().max(200).optional(),
   empresa: z.string().trim().max(120).optional(),
+  // andamento da atividade, em % — vira "60% Em andamento" no relatório
+  percentual: z.preprocess(
+    (v) => (typeof v === 'string' && v.trim() !== '' ? Number(v.replace(',', '.')) : undefined),
+    z.number().min(0, 'Percentual entre 0 e 100.').max(100, 'Percentual entre 0 e 100.').optional(),
+  ),
 });
 
 export async function registrarNoDiarioAction(
@@ -85,6 +90,7 @@ export async function registrarNoDiarioAction(
   if (d.gravidade) payload.gravidade = d.gravidade;
   if (d.local) payload.local = d.local;
   if (d.empresa) payload.empresa = d.empresa;
+  if (d.percentual !== undefined) payload.percentual = d.percentual;
 
   const result = await diario.registrarNoDiario(user, diaryId, {
     kind: d.kind,
@@ -111,6 +117,7 @@ export async function removerRegistroAction(
 
 const equipeSchema = z.object({
   role: z.string().trim().min(2, 'Informe a função.').max(80),
+  kind: z.enum(['PROPRIA', 'TERCEIRO']).default('PROPRIA'),
   company: z.string().trim().max(120).optional(),
   quantity: z.coerce.number().int().min(1, 'Quantidade mínima: 1.').max(999),
 });

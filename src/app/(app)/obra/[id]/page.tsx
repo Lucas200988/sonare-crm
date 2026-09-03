@@ -7,6 +7,7 @@ import { prisma } from '@/server/db';
 import { escopoDeProjetos } from '@/server/auth/project-scope';
 import { conferirParaFechar, getDiarioDeHoje } from '@/server/services/diario';
 import { listarFotos } from '@/server/services/diario-fotos';
+import { listarArquivos } from '@/server/services/diario-arquivos';
 import { codigoFoto, textoDoLocal, type ClasseLocal } from '@/lib/diario-regras';
 import { ObraHome, type DiarioDaTela } from './obra-home';
 
@@ -29,7 +30,9 @@ export default async function ObraPage(props: { params: Promise<{ id: string }> 
   if (!projeto) notFound();
 
   const diario = await getDiarioDeHoje(user, id);
-  const fotos = diario ? await listarFotos(user, diario.id) : [];
+  const [fotos, arquivos] = diario
+    ? await Promise.all([listarFotos(user, diario.id), listarArquivos(user, diario.id)])
+    : [[], []];
   const conferencia = diario && diario.status === 'ABERTO'
     ? await conferirParaFechar(user, diario.id)
     : null;
@@ -59,7 +62,7 @@ export default async function ObraPage(props: { params: Promise<{ id: string }> 
       payload: (e.payload as Record<string, string>) ?? null,
     })),
     workforce: diario.workforce.map((w) => ({
-      id: w.id, role: w.role, company: w.company, quantity: w.quantity,
+      id: w.id, role: w.role, kind: w.kind, company: w.company, quantity: w.quantity,
     })),
     equipment: diario.equipment.map((e) => ({
       id: e.id, name: e.name, identification: e.identification, quantity: e.quantity,
@@ -69,6 +72,16 @@ export default async function ObraPage(props: { params: Promise<{ id: string }> 
       ...diario.project.tasks.map((t) => t.title),
       ...diario.project.stages.map((s) => s.name),
     ].filter((v, i, arr) => arr.indexOf(v) === i).slice(0, 30),
+    arquivos: arquivos.map((a) => ({
+      id: a.id,
+      kind: a.kind,
+      seq: a.seq,
+      description: a.description,
+      attachmentId: a.attachmentId,
+      originalFilename: a.originalFilename,
+      mimeType: a.mimeType,
+      sizeBytes: a.sizeBytes,
+    })),
     fotos: fotos.map((f) => ({
       id: f.id,
       seq: f.seq,

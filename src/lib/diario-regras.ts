@@ -147,3 +147,16 @@ export function rotuloDoClima(codigoWmo: number): string {
   if (codigoWmo >= 95) return 'Tempestade';
   return 'Indefinido';
 }
+
+/**
+ * Condição de trabalho sugerida pelo código WMO — a coluna Praticável /
+ * Impraticável do RDO. Garoa e chuva fraca não param obra; chuva de verdade,
+ * temporal e neve (por rigor) param. É sugestão automática: quem fecha o
+ * diário pode marcar o dia como impraticável por cima.
+ */
+export function praticavelPeloCodigo(codigoWmo: number): boolean {
+  if (codigoWmo >= 95) return false;              // tempestade
+  if (codigoWmo >= 71 && codigoWmo <= 86) return false; // neve e aguaceiros
+  if (codigoWmo >= 63 && codigoWmo <= 67) return false; // chuva moderada/forte
+  return true;
+}
