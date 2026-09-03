@@ -421,7 +421,9 @@ export function ProposalPdf({ data }: { data: ProposalPdfData }) {
             ))}
             {Number(data.discount) > 0 ? (
               <View style={styles.adjustRow}>
-                <Text style={{ color: MUTED }}>Desconto: - {formatBRL(data.discount)}</Text>
+                {/* "Desconto" barateia a conversa — na proposta o abatimento
+                    sai como negociação comercial */}
+                <Text style={{ color: MUTED }}>Negociação comercial: - {formatBRL(data.discount)}</Text>
               </View>
             ) : null}
             {Number(data.surcharge) > 0 ? (
