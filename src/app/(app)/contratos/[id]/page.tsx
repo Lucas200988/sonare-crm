@@ -10,6 +10,7 @@ import { formatBRL } from '@/lib/money';
 import { formatDateBR, formatDateTimeBR } from '@/lib/dates';
 import { formatDecimalBR } from '@/lib/parse';
 import { formatCNPJ, formatCPF } from '@/lib/br';
+import { escopoParaContrato } from '@/lib/contract-render';
 import { CONTRACT_STATUS_BADGE } from '../status-badge';
 import { ContractForm, type ContractFormValues } from './contract-form';
 import { ContratanteCard, type ContratanteInfo } from './contratante-card';
@@ -71,7 +72,8 @@ export default async function ContractDetailPage(props: { params: Promise<{ id: 
 
   const initial: ContractFormValues = {
     subject: contract.subject,
-    scope: contract.scope ?? '',
+    // escopo herdado do orçamento pode estar em HTML — o textarea mostra texto
+    scope: escopoParaContrato(contract.scope),
     totalValue: formatDecimalBR(contract.totalValue.toString()),
     contractNumber: contract.contractNumber ?? '',
     templateId: contract.templateId ?? '',

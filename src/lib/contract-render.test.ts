@@ -1,8 +1,25 @@
 import { describe, expect, it } from 'vitest';
 import {
-  applyVariables, findMissingVariables, normalizarPrazo, renderClauses, toRoman,
-  ordinalFeminino, buildContractingPartyText, buildContractedPartyText,
+  applyVariables, escopoParaContrato, findMissingVariables, normalizarPrazo,
+  renderClauses, toRoman, ordinalFeminino,
+  buildContractingPartyText, buildContractedPartyText,
 } from './contract-render';
+
+describe('escopoParaContrato', () => {
+  it('converte o HTML do editor rico em texto corrido', () => {
+    expect(escopoParaContrato('<p>Projeto elétrico</p><ul><li>Unifilar</li><li>Quadros</li></ul>'))
+      .toBe('Projeto elétrico\n- Unifilar\n- Quadros');
+  });
+  it('remove os marcadores de negrito — o PDF do contrato não os interpreta', () => {
+    expect(escopoParaContrato('<p><strong>Entregáveis</strong></p><ul><li>Laudo</li></ul>'))
+      .toBe('Entregáveis\n- Laudo');
+    expect(escopoParaContrato('Texto **antigo** com marcação')).toBe('Texto antigo com marcação');
+  });
+  it('texto simples passa intacto e vazio continua vazio', () => {
+    expect(escopoParaContrato('Escopo em texto puro')).toBe('Escopo em texto puro');
+    expect(escopoParaContrato(null)).toBe('');
+  });
+});
 
 describe('normalizarPrazo', () => {
   it('número solto vira dias por extenso', () => {

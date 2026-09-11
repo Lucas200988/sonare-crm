@@ -2,6 +2,21 @@
 // numeração automática de cláusulas no padrão dos modelos da SONARE.
 
 import { numeroPorExtenso } from '@/lib/money';
+import { htmlToText, isHtml } from '@/lib/html-text';
+
+/**
+ * Escopo herdado do orçamento, pronto para o contrato.
+ *
+ * O orçamento guarda o escopo em HTML (editor rico); a minuta e o campo do
+ * contrato trabalham com texto corrido. Aqui o HTML vira texto legível e os
+ * marcadores de negrito caem — o PDF do contrato não os interpreta, e um
+ * "**Entregáveis**" literal numa cláusula é pior que sem destaque.
+ */
+export function escopoParaContrato(valor: string | null | undefined): string {
+  if (!valor) return '';
+  const texto = isHtml(valor) ? htmlToText(valor) : valor;
+  return texto.replace(/\*\*/g, '').trim();
+}
 
 /**
  * Prazo de execução pronto para a cláusula.

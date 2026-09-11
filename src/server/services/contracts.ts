@@ -3,7 +3,7 @@ import { prisma } from '@/server/db';
 import { auditLog } from '@/server/audit/audit';
 import { nextCode } from '@/server/services/sequence';
 import { formatCNPJ, formatCPF, formatCEP } from '@/lib/br';
-import { normalizarPrazo } from '@/lib/contract-render';
+import { escopoParaContrato, normalizarPrazo } from '@/lib/contract-render';
 import { formatBRL, valorPorExtenso } from '@/lib/money';
 import { formatDateBR } from '@/lib/dates';
 import type { Prisma, ContractStatus, AmendmentType } from '@/generated/prisma/client';
@@ -123,7 +123,8 @@ export async function createContractFromProposal(
         budgetId: budget.id,
         templateId: templateId ?? null,
         subject: cv.serviceType ?? budget.opportunity?.title ?? 'Prestação de serviços de engenharia',
-        scope: cv.scope,
+        // o orçamento guarda HTML do editor rico; o contrato trabalha com texto
+        scope: escopoParaContrato(cv.scope) || null,
         totalValue: cv.total,
         paymentTerms: cv.paymentTerms,
         durationDays: null,
@@ -315,7 +316,8 @@ export async function buildContractValues(user: SessionUser, contractId: string)
       codigo: contract.code,
       numero: contract.contractNumber ?? contract.code,
       objeto: contract.subject,
-      escopo: contract.scope ?? '',
+      // contratos criados antes desta versão podem ter HTML gravado
+      escopo: escopoParaContrato(contract.scope),
       valorTotal: formatBRL(contract.totalValue),
       valorPorExtenso: valorPorExtenso(contract.totalValue.toString()),
       formaPagamento: contract.paymentTerms ?? '',
