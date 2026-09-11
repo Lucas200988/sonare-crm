@@ -1,12 +1,12 @@
 'use client';
 
-import { useActionState, useEffect, useState } from 'react';
+import { useActionState, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { AlertTriangle, CheckCircle2, Clock, HelpCircle, Stamp } from 'lucide-react';
 import { setProjectArtAction } from '@/actions/projects';
-import { emitirTechRespAction } from '@/actions/tech-resp';
-import { inputCls, FormError, SubmitButton } from '@/components/ui';
+import { createTechRespAction, emitirTechRespAction } from '@/actions/tech-resp';
+import { inputCls, Field, FormError, SubmitButton } from '@/components/ui';
 import { situacaoArt, type ArtRegistrada, type ArtStatus } from '@/lib/art-projeto';
 import { formatDateBR } from '@/lib/dates';
 
@@ -48,14 +48,19 @@ export function ArtPanel({
 }) {
   const router = useRouter();
   const [editando, setEditando] = useState(false);
+  const [cadastrando, setCadastrando] = useState(false);
   const action = setProjectArtAction.bind(null, projectId);
-  const [state, formAction, pending] = useActionState(action, {});
+  const [state, formAction, pending] = useActionState<
+    Awaited<ReturnType<typeof action>>, FormData
+  >(
+    async (prev, fd) => {
+      const r = await action(prev, fd);
+      if (!r.error) { setEditando(false); router.refresh(); }
+      return r;
+    },
+    {},
+  );
   const [escolha, setEscolha] = useState<ArtStatus>(status);
-
-  useEffect(() => {
-    if (state.info) { setEditando(false); router.refresh(); }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state]);
 
   const situacao = situacaoArt(status, arts);
   const s = ESTILO[situacao.nivel];
@@ -74,16 +79,31 @@ export function ArtPanel({
           </div>
         </div>
 
-        {canWrite && !editando ? (
-          <button
-            type="button"
-            onClick={() => { setEscolha(status); setEditando(true); }}
-            className="rounded-lg border border-current/30 bg-white/70 px-2.5 py-1 text-xs font-medium hover:bg-white"
-          >
-            {status === 'NAO_INFORMADO' ? 'Informar' : 'Alterar'}
-          </button>
+        {canWrite && !editando && !cadastrando ? (
+          <div className="flex gap-1.5">
+            {situacao.nivel === 'pendente' ? (
+              <button
+                type="button"
+                onClick={() => setCadastrando(true)}
+                className="rounded-lg bg-red-700 px-2.5 py-1 text-xs font-semibold text-white hover:bg-red-800"
+              >
+                Cadastrar ART
+              </button>
+            ) : null}
+            <button
+              type="button"
+              onClick={() => { setEscolha(status); setEditando(true); }}
+              className="rounded-lg border border-current/30 bg-white/70 px-2.5 py-1 text-xs font-medium hover:bg-white"
+            >
+              {status === 'NAO_INFORMADO' ? 'Informar' : 'Alterar'}
+            </button>
+          </div>
         ) : null}
       </div>
+
+      {cadastrando ? (
+        <CadastrarArt projectId={projectId} onFechar={() => setCadastrando(false)} />
+      ) : null}
 
       {arts.length > 0 ? (
         <ul className="mt-2 space-y-1 border-t border-current/20 pt-2">
@@ -158,6 +178,70 @@ export function ArtPanel({
 }
 
 /**
+ * Cadastro da ART sem sair do projeto.
+ *
+ * O caminho antigo — marcar que precisa, abrir o módulo ART/RRT, achar o
+ * projeto de novo — era exatamente o tipo de atrito que deixa ART sem
+ * registro. Aqui o número entra no mesmo lugar onde o alerta cobra; o
+ * módulo ART/RRT continua sendo o acervo completo (baixa, valores, PDF).
+ */
+function CadastrarArt({ projectId, onFechar }: {
+  projectId: string; onFechar: () => void;
+}) {
+  const router = useRouter();
+  const [state, formAction, pending] = useActionState<
+    Awaited<ReturnType<typeof createTechRespAction>>, FormData
+  >(
+    async (prev, fd) => {
+      const r = await createTechRespAction(prev, fd);
+      if (!r.error) { onFechar(); router.refresh(); }
+      return r;
+    },
+    {},
+  );
+
+  return (
+    <form action={formAction} className="mt-3 space-y-2 rounded-lg bg-white/70 p-3">
+      <input type="hidden" name="projectId" value={projectId} />
+      <div className="grid grid-cols-[6rem_1fr] gap-2">
+        <Field label="Tipo" htmlFor="na-tipo">
+          <select id="na-tipo" name="docType" defaultValue="ART" className={inputCls}>
+            <option value="ART">ART</option>
+            <option value="RRT">RRT</option>
+            <option value="TRT">TRT</option>
+          </select>
+        </Field>
+        <Field label="Número" htmlFor="na-numero" required>
+          <input id="na-numero" name="number" required autoFocus placeholder="Ex.: MT20260123456" className={inputCls} />
+        </Field>
+      </div>
+      <div className="grid grid-cols-2 gap-2">
+        <Field label="Data de emissão" htmlFor="na-data" hint="Sem data, entra como pendente de emissão.">
+          <input id="na-data" name="issuedAt" type="date" className={inputCls} />
+        </Field>
+        <Field label="Responsável técnico" htmlFor="na-resp">
+          <input id="na-resp" name="professionalName" placeholder="Nome (opcional)" className={inputCls} />
+        </Field>
+      </div>
+
+      <FormError message={state.error} />
+      <div className="flex flex-wrap items-center gap-2">
+        <SubmitButton pending={pending}>Cadastrar</SubmitButton>
+        <button
+          type="button" onClick={onFechar}
+          className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm text-slate-600 hover:bg-slate-50"
+        >
+          Cancelar
+        </button>
+        <Link href="/art" className="ml-auto text-[11px] underline opacity-75">
+          cadastro completo no módulo ART / RRT
+        </Link>
+      </div>
+    </form>
+  );
+}
+
+/**
  * Passa a ART de "pendente" para "emitida", sem sair do projeto.
  *
  * Faltava esse caminho: o registro nascia pendente e só dava para cancelar,
@@ -168,12 +252,16 @@ function EmitirArt({ artId, projectId }: { artId: string; projectId: string }) {
   const router = useRouter();
   const [aberto, setAberto] = useState(false);
   const acao = emitirTechRespAction.bind(null, artId, projectId);
-  const [state, formAction, pending] = useActionState(acao, {});
-
-  useEffect(() => {
-    if (state.info) { setAberto(false); router.refresh(); }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state]);
+  const [state, formAction, pending] = useActionState<
+    Awaited<ReturnType<typeof acao>>, FormData
+  >(
+    async (prev, fd) => {
+      const r = await acao(prev, fd);
+      if (!r.error) { setAberto(false); router.refresh(); }
+      return r;
+    },
+    {},
+  );
 
   if (!aberto) {
     return (

@@ -41,6 +41,11 @@ export async function createTechRespAction(
   if ('error' in result) return { error: result.error };
 
   revalidatePath('/art');
+  // cadastro feito do atalho no cartão do projeto reflete lá na hora
+  if (parsed.data.projectId) {
+    revalidatePath(`/projetos/${parsed.data.projectId}`);
+    revalidatePath('/projetos');
+  }
   return { info: `${parsed.data.docType} ${parsed.data.number} cadastrada.` };
 }
 

@@ -1,4 +1,5 @@
 import 'server-only';
+import { formatDateBR } from '@/lib/dates';
 import { escopoDeProjetos } from '@/server/auth/project-scope';
 import { getPrazosVencidos } from '@/server/services/aprovacoes';
 import { prisma } from '@/server/db';
@@ -90,14 +91,20 @@ export async function getAlerts(user: SessionUser): Promise<Alerta[]> {
         })
       : [],
     pode('task:read')
-      ? prisma.task.count({
+      ? prisma.task.findMany({
           where: {
             ...base, dueAt: { lt: hoje },
             status: { notIn: ['CONCLUIDA', 'CANCELADA'] },
             assigneeId: user.id,
           },
+          select: {
+            id: true, title: true, dueAt: true,
+            project: { select: { id: true, code: true } },
+          },
+          orderBy: { dueAt: 'asc' },
+          take: 5,
         })
-      : 0,
+      : [],
     pode('finance:read')
       ? prisma.payable.count({ where: { ...base, status: 'A_PAGAR', dueDate: { lt: hoje } } })
       : 0,
@@ -189,13 +196,16 @@ export async function getAlerts(user: SessionUser): Promise<Alerta[]> {
     });
   }
 
-  if (tarefasAtrasadas > 0) {
+  // uma linha por tarefa, abrindo direto a aba de tarefas do projeto dela —
+  // o link genérico para /projetos obrigava a caçar onde estava o atraso
+  for (const t of tarefasAtrasadas) {
+    const venceu = t.dueAt ? ` — venceu em ${formatDateBR(t.dueAt)}` : '';
     alertas.push({
-      id: 'tarefas-atrasadas',
+      id: `tarefa-${t.id}`,
       gravidade: 'media',
-      titulo: `${tarefasAtrasadas} tarefa(s) sua(s) em atraso`,
-      detalhe: 'Prazo passou e ainda não foram concluídas',
-      href: '/projetos',
+      titulo: `Tarefa em atraso: ${t.title}`,
+      detalhe: t.project ? `${t.project.code}${venceu}` : `Sem projeto${venceu}`,
+      href: t.project ? `/projetos/${t.project.id}?aba=tarefas` : '/projetos',
     });
   }
 
