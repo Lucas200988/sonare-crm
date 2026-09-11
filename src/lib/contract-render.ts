@@ -1,6 +1,33 @@
 // Renderização de minutas de contrato: substituição de variáveis e
 // numeração automática de cláusulas no padrão dos modelos da SONARE.
 
+import { numeroPorExtenso } from '@/lib/money';
+
+/**
+ * Prazo de execução pronto para a cláusula.
+ *
+ * O campo é herdado da proposta e vem de todo jeito: "60", "- 20 dias
+ * corridos após a visita", multilinha… No contrato, número sozinho vira
+ * "60 (sessenta) dias" — "executado no prazo de 60" não fecha a frase e
+ * não fecha um contrato. Texto que já diz a unidade passa intacto, só sem
+ * os marcadores de lista da proposta.
+ */
+export function normalizarPrazo(valor: string | null | undefined): string {
+  const texto = (valor ?? '')
+    .split('\n')
+    .map((l) => l.replace(/^[-•]\s*/, '').trim())
+    .filter(Boolean)
+    .join(' ');
+  if (!texto) return '';
+
+  const soNumero = texto.match(/^(\d{1,4})$/);
+  if (soNumero) {
+    const n = Number(soNumero[1]);
+    return `${n} (${numeroPorExtenso(n)}) dia${n === 1 ? '' : 's'}`;
+  }
+  return texto;
+}
+
 export type RenderedClause = {
   /** "CLÁUSULA PRIMEIRA — DO OBJETO" */
   heading: string;

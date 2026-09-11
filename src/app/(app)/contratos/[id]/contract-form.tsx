@@ -99,7 +99,7 @@ export function ContractForm({
           Preenchem as lacunas das cláusulas do modelo escolhido.
         </p>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          <Field label="Prazo de execução" htmlFor="prazoExecucao">
+          <Field label="Prazo de execução" htmlFor="prazoExecucao" hint="Pode digitar só o número — na minuta sai como “60 (sessenta) dias”.">
             <input id="prazoExecucao" name="prazoExecucao" defaultValue={initial.prazoExecucao} placeholder="30 (trinta) dias" disabled={!editable} className={inputCls} />
           </Field>
           <Field label="Formatos de entrega" htmlFor="formatosEntrega">

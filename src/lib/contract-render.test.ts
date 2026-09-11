@@ -1,8 +1,35 @@
 import { describe, expect, it } from 'vitest';
 import {
-  applyVariables, findMissingVariables, renderClauses, toRoman, ordinalFeminino,
-  buildContractingPartyText, buildContractedPartyText,
+  applyVariables, findMissingVariables, normalizarPrazo, renderClauses, toRoman,
+  ordinalFeminino, buildContractingPartyText, buildContractedPartyText,
 } from './contract-render';
+
+describe('normalizarPrazo', () => {
+  it('número solto vira dias por extenso', () => {
+    expect(normalizarPrazo('60')).toBe('60 (sessenta) dias');
+    expect(normalizarPrazo(' 30 ')).toBe('30 (trinta) dias');
+    expect(normalizarPrazo('1')).toBe('1 (um) dia');
+  });
+
+  it('texto com unidade passa intacto', () => {
+    expect(normalizarPrazo('60 dias corridos')).toBe('60 dias corridos');
+    expect(normalizarPrazo('45 dias — contados a partir de: assinatura'))
+      .toBe('45 dias — contados a partir de: assinatura');
+  });
+
+  it('remove os marcadores de lista herdados da proposta', () => {
+    expect(normalizarPrazo('- 20 dias corridos após a visita técnica.'))
+      .toBe('20 dias corridos após a visita técnica.');
+    expect(normalizarPrazo('- 30 dias para o projeto\n- homologação no prazo da concessionária'))
+      .toBe('30 dias para o projeto homologação no prazo da concessionária');
+  });
+
+  it('vazio continua vazio', () => {
+    expect(normalizarPrazo('')).toBe('');
+    expect(normalizarPrazo(null)).toBe('');
+    expect(normalizarPrazo(undefined)).toBe('');
+  });
+});
 
 describe('numeração', () => {
   it('converte para romanos', () => {

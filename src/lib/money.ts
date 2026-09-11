@@ -40,57 +40,58 @@ export function sumMoney(values: Array<DecimalInput | null | undefined>): Decima
   return toMoney(values.reduce<Decimal>((acc, v) => acc.plus(dec(v)), new Decimal(0)));
 }
 
+const UM = ['', 'um', 'dois', 'três', 'quatro', 'cinco', 'seis', 'sete', 'oito', 'nove', 'dez', 'onze', 'doze', 'treze', 'quatorze', 'quinze', 'dezesseis', 'dezessete', 'dezoito', 'dezenove'];
+const DEZENAS = ['', '', 'vinte', 'trinta', 'quarenta', 'cinquenta', 'sessenta', 'setenta', 'oitenta', 'noventa'];
+const CENTENAS = ['', 'cento', 'duzentos', 'trezentos', 'quatrocentos', 'quinhentos', 'seiscentos', 'setecentos', 'oitocentos', 'novecentos'];
+
+function ate999(n: number): string {
+  if (n === 0) return '';
+  if (n === 100) return 'cem';
+  const c = Math.floor(n / 100);
+  const resto = n % 100;
+  const parts: string[] = [];
+  if (c > 0) parts.push(CENTENAS[c]);
+  if (resto > 0) {
+    if (resto < 20) parts.push(UM[resto]);
+    else {
+      const d = Math.floor(resto / 10);
+      const u = resto % 10;
+      parts.push(u > 0 ? `${DEZENAS[d]} e ${UM[u]}` : DEZENAS[d]);
+    }
+  }
+  return parts.join(' e ');
+}
+
+/** Número inteiro por extenso — "60" → "sessenta" (prazos e quantidades de contrato). */
+export function numeroPorExtenso(n: number): string {
+  if (n === 0) return 'zero';
+  const bilhoes = Math.floor(n / 1_000_000_000);
+  const milhoes = Math.floor((n % 1_000_000_000) / 1_000_000);
+  const milhares = Math.floor((n % 1_000_000) / 1000);
+  const resto = n % 1000;
+  const parts: string[] = [];
+  if (bilhoes > 0) parts.push(`${ate999(bilhoes)} ${bilhoes === 1 ? 'bilhão' : 'bilhões'}`);
+  if (milhoes > 0) parts.push(`${ate999(milhoes)} ${milhoes === 1 ? 'milhão' : 'milhões'}`);
+  if (milhares > 0) parts.push(milhares === 1 ? 'mil' : `${ate999(milhares)} mil`);
+  if (resto === 0) return parts.join(', ');
+
+  // Norma culta: usa-se "e" antes do último grupo quando ele é menor que 100
+  // (mil e cinquenta) ou é centena redonda (oito mil e trezentos);
+  // caso contrário, apenas espaço (oito mil trezentos e cinquenta).
+  const usaE = resto < 100 || resto % 100 === 0;
+  const restoTexto = ate999(resto);
+  if (parts.length === 0) return restoTexto;
+  return `${parts.join(', ')}${usaE ? ' e ' : ' '}${restoTexto}`;
+}
+
 /** Valor por extenso em reais (para contratos). */
 export function valorPorExtenso(value: DecimalInput): string {
   const v = toMoney(value);
   const inteiro = v.trunc().toNumber();
   const centavos = v.minus(v.trunc()).mul(100).round().toNumber();
 
-  const um = ['', 'um', 'dois', 'três', 'quatro', 'cinco', 'seis', 'sete', 'oito', 'nove', 'dez', 'onze', 'doze', 'treze', 'quatorze', 'quinze', 'dezesseis', 'dezessete', 'dezoito', 'dezenove'];
-  const dezenas = ['', '', 'vinte', 'trinta', 'quarenta', 'cinquenta', 'sessenta', 'setenta', 'oitenta', 'noventa'];
-  const centenas = ['', 'cento', 'duzentos', 'trezentos', 'quatrocentos', 'quinhentos', 'seiscentos', 'setecentos', 'oitocentos', 'novecentos'];
-
-  function ate999(n: number): string {
-    if (n === 0) return '';
-    if (n === 100) return 'cem';
-    const c = Math.floor(n / 100);
-    const resto = n % 100;
-    const parts: string[] = [];
-    if (c > 0) parts.push(centenas[c]);
-    if (resto > 0) {
-      if (resto < 20) parts.push(um[resto]);
-      else {
-        const d = Math.floor(resto / 10);
-        const u = resto % 10;
-        parts.push(u > 0 ? `${dezenas[d]} e ${um[u]}` : dezenas[d]);
-      }
-    }
-    return parts.join(' e ');
-  }
-
-  function extenso(n: number): string {
-    if (n === 0) return 'zero';
-    const bilhoes = Math.floor(n / 1_000_000_000);
-    const milhoes = Math.floor((n % 1_000_000_000) / 1_000_000);
-    const milhares = Math.floor((n % 1_000_000) / 1000);
-    const resto = n % 1000;
-    const parts: string[] = [];
-    if (bilhoes > 0) parts.push(`${ate999(bilhoes)} ${bilhoes === 1 ? 'bilhão' : 'bilhões'}`);
-    if (milhoes > 0) parts.push(`${ate999(milhoes)} ${milhoes === 1 ? 'milhão' : 'milhões'}`);
-    if (milhares > 0) parts.push(milhares === 1 ? 'mil' : `${ate999(milhares)} mil`);
-    if (resto === 0) return parts.join(', ');
-
-    // Norma culta: usa-se "e" antes do último grupo quando ele é menor que 100
-    // (mil e cinquenta) ou é centena redonda (oito mil e trezentos);
-    // caso contrário, apenas espaço (oito mil trezentos e cinquenta).
-    const usaE = resto < 100 || resto % 100 === 0;
-    const restoTexto = ate999(resto);
-    if (parts.length === 0) return restoTexto;
-    return `${parts.join(', ')}${usaE ? ' e ' : ' '}${restoTexto}`;
-  }
-
-  const reais = inteiro === 0 ? '' : `${extenso(inteiro)} ${inteiro === 1 ? 'real' : 'reais'}`;
-  const cents = centavos === 0 ? '' : `${extenso(centavos)} ${centavos === 1 ? 'centavo' : 'centavos'}`;
+  const reais = inteiro === 0 ? '' : `${numeroPorExtenso(inteiro)} ${inteiro === 1 ? 'real' : 'reais'}`;
+  const cents = centavos === 0 ? '' : `${numeroPorExtenso(centavos)} ${centavos === 1 ? 'centavo' : 'centavos'}`;
   if (reais && cents) return `${reais} e ${cents}`;
   return reais || cents || 'zero real';
 }

@@ -116,6 +116,78 @@ export async function updateContractAction(
   return { info: 'Contrato salvo.' };
 }
 
+// ---------- Dados do contratante ----------
+
+const contratanteSchema = z.object({
+  documento: optional,
+  addressStreet: optional,
+  addressNumber: optional,
+  addressDistrict: optional,
+  city: optional,
+  state: optional,
+  zipCode: optional,
+});
+
+/**
+ * Completa, de dentro do contrato, os dados cadastrais que a minuta usa.
+ *
+ * Só preenche o que veio — nunca apaga o que o cadastro já tem. Exige
+ * client:write porque a alteração é no cadastro do cliente, não no contrato.
+ */
+export async function completarDadosContratanteAction(
+  clientId: string, contractId: string, _prev: ActionState, formData: FormData,
+): Promise<ActionState> {
+  const user = await requirePermission('client:write');
+  const parsed = contratanteSchema.safeParse(Object.fromEntries(formData.entries()));
+  if (!parsed.success) return { error: 'Dados inválidos.' };
+  const d = parsed.data;
+
+  const { prisma } = await import('@/server/db');
+  const { isValidCPF, isValidCNPJ, onlyDigits } = await import('@/lib/br');
+
+  const cliente = await prisma.client.findFirst({
+    where: { id: clientId, companyId: user.companyId, deletedAt: null },
+    select: { id: true, legalName: true, personType: true, cpf: true, cnpj: true },
+  });
+  if (!cliente) return { error: 'Cliente não encontrado.' };
+
+  const dados: Record<string, string> = {};
+  if (d.documento) {
+    const digitos = onlyDigits(d.documento);
+    if (cliente.personType === 'FISICA') {
+      if (!isValidCPF(digitos)) return { error: 'CPF inválido — confira os dígitos.' };
+      dados.cpf = digitos;
+    } else {
+      if (!isValidCNPJ(digitos)) return { error: 'CNPJ inválido — confira os dígitos.' };
+      dados.cnpj = digitos;
+    }
+  }
+  if (d.addressStreet) dados.addressStreet = d.addressStreet.trim();
+  if (d.addressNumber) dados.addressNumber = d.addressNumber.trim();
+  if (d.addressDistrict) dados.addressDistrict = d.addressDistrict.trim();
+  if (d.city) dados.city = d.city.trim();
+  if (d.state) dados.state = d.state.trim().toUpperCase().slice(0, 2);
+  if (d.zipCode) dados.zipCode = onlyDigits(d.zipCode);
+
+  if (Object.keys(dados).length === 0) return { error: 'Preencha ao menos um campo.' };
+
+  await prisma.client.update({
+    where: { id: cliente.id },
+    data: { ...dados, updatedById: user.id },
+  });
+
+  const { auditLog } = await import('@/server/audit/audit');
+  await auditLog({
+    companyId: user.companyId, userId: user.id, action: 'update',
+    entityType: 'client', entityId: cliente.id,
+    after: { ...dados, origem: 'contrato — dados do contratante' },
+  });
+
+  revalidatePath(`/contratos/${contractId}`);
+  revalidatePath(`/clientes/${clientId}`);
+  return { info: 'Cadastro do contratante atualizado. Gere a minuta novamente para refletir.' };
+}
+
 // ---------- Minuta ----------
 
 export async function generateDraftAction(

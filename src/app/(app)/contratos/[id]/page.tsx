@@ -9,8 +9,10 @@ import { PageHeader, Card, Badge } from '@/components/ui';
 import { formatBRL } from '@/lib/money';
 import { formatDateBR, formatDateTimeBR } from '@/lib/dates';
 import { formatDecimalBR } from '@/lib/parse';
+import { formatCNPJ, formatCPF } from '@/lib/br';
 import { CONTRACT_STATUS_BADGE } from '../status-badge';
 import { ContractForm, type ContractFormValues } from './contract-form';
+import { ContratanteCard, type ContratanteInfo } from './contratante-card';
 import {
   StatusSelect, GenerateDraftButton, SignaturesSection, AmendmentsSection, CreateProjectButton,
   type SignatureRow, type AmendmentRow,
@@ -34,6 +36,32 @@ export default async function ContractDetailPage(props: { params: Promise<{ id: 
     }),
   ]);
   if (!contract) notFound();
+
+  // dados cadastrais que a minuta imprime — para avisar do que falta ANTES de gerar
+  const clienteCadastro = await prisma.client.findUniqueOrThrow({
+    where: { id: contract.client.id },
+    select: {
+      id: true, legalName: true, personType: true, cpf: true, cnpj: true,
+      addressStreet: true, addressNumber: true, addressDistrict: true,
+      city: true, state: true,
+      contacts: { where: { deletedAt: null, isContractual: true }, take: 1, select: { id: true } },
+    },
+  });
+  const enderecoCliente = [
+    [clienteCadastro.addressStreet, clienteCadastro.addressNumber].filter(Boolean).join(', '),
+    clienteCadastro.addressDistrict,
+    clienteCadastro.city && `${clienteCadastro.city}/${clienteCadastro.state ?? ''}`,
+  ].filter(Boolean).join(', ');
+  const contratante: ContratanteInfo = {
+    id: clienteCadastro.id,
+    legalName: clienteCadastro.legalName,
+    personType: clienteCadastro.personType,
+    documento: clienteCadastro.personType === 'FISICA'
+      ? (clienteCadastro.cpf ? formatCPF(clienteCadastro.cpf) : null)
+      : (clienteCadastro.cnpj ? formatCNPJ(clienteCadastro.cnpj) : null),
+    endereco: enderecoCliente || null,
+    temRepresentante: clienteCadastro.contacts.length > 0,
+  };
 
   const badge = CONTRACT_STATUS_BADGE[contract.status] ?? CONTRACT_STATUS_BADGE.MINUTA;
   const canWrite = user.permissions.has('contract:write');
@@ -102,6 +130,14 @@ export default async function ContractDetailPage(props: { params: Promise<{ id: 
         </Card>
 
         <div className="space-y-4">
+          <Card className="p-4">
+            <ContratanteCard
+              contractId={contract.id}
+              cliente={contratante}
+              canFixClient={user.permissions.has('client:write')}
+            />
+          </Card>
+
           <Card className="space-y-3 p-4">
             {canWrite ? <StatusSelect contractId={contract.id} current={contract.status} /> : null}
             <dl className="space-y-2 border-t border-slate-100 pt-3 text-xs">

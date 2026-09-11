@@ -3,6 +3,7 @@ import { prisma } from '@/server/db';
 import { auditLog } from '@/server/audit/audit';
 import { nextCode } from '@/server/services/sequence';
 import { formatCNPJ, formatCPF, formatCEP } from '@/lib/br';
+import { normalizarPrazo } from '@/lib/contract-render';
 import { formatBRL, valorPorExtenso } from '@/lib/money';
 import { formatDateBR } from '@/lib/dates';
 import type { Prisma, ContractStatus, AmendmentType } from '@/generated/prisma/client';
@@ -127,6 +128,10 @@ export async function createContractFromProposal(
         paymentTerms: cv.paymentTerms,
         durationDays: null,
         jurisdiction: company.city ? `${company.city}, ${company.state ?? ''}`.trim() : null,
+        // o prazo da proposta já chega pronto no campo do contrato
+        templateVariables: cv.executionDeadline
+          ? { prazoExecucao: normalizarPrazo(cv.executionDeadline) }
+          : undefined,
         status: 'MINUTA',
         createdById: user.id,
       },
@@ -314,7 +319,10 @@ export async function buildContractValues(user: SessionUser, contractId: string)
       valorTotal: formatBRL(contract.totalValue),
       valorPorExtenso: valorPorExtenso(contract.totalValue.toString()),
       formaPagamento: contract.paymentTerms ?? '',
-      prazoExecucao: extra.prazoExecucao ?? (contract.durationDays ? `${contract.durationDays} dias` : ''),
+      // número solto vira "60 (sessenta) dias" — cláusula não fica pela metade
+      prazoExecucao: normalizarPrazo(
+        extra.prazoExecucao ?? (contract.durationDays ? `${contract.durationDays} dias` : ''),
+      ),
       formatosEntrega: extra.formatosEntrega ?? 'PDF e DWG',
       localExecucao: extra.localExecucao ?? unitAddress ?? clientAddress,
       revisoesIncluidas: extra.revisoesIncluidas ?? '02 (duas)',
