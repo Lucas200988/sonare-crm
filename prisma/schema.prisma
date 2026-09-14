@@ -68,6 +68,8 @@ model User {
   hourlyCost          Decimal?  @db.Decimal(14, 2) // custo/hora p/ rentabilidade
   hourlyRate          Decimal?  @db.Decimal(14, 2) // valor/hora faturável
   creaCau             String?   // registro profissional, quando aplicável
+  /// Entra automaticamente na equipe de todo projeto novo (sócios/gestores).
+  autoProjectMember   Boolean   @default(false)
   createdAt           DateTime  @default(now())
   updatedAt           DateTime  @updatedAt
   createdById         String?

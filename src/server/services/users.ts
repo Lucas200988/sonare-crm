@@ -32,6 +32,8 @@ export type UserInput = {
   creaCau?: string | null;
   hourlyCost?: string | null;
   hourlyRate?: string | null;
+  /** Entra automaticamente na equipe de todo projeto novo. */
+  autoProjectMember?: boolean;
 };
 
 /** Cria usuário com senha inicial; ele deve trocá-la no primeiro acesso. */
@@ -66,6 +68,7 @@ export async function createUser(
       creaCau: input.creaCau || null,
       hourlyCost: input.hourlyCost || null,
       hourlyRate: input.hourlyRate || null,
+      autoProjectMember: input.autoProjectMember ?? false,
       createdById: user.id,
       roles: { create: input.roleIds.map((roleId) => ({ roleId })) },
     },
@@ -113,6 +116,7 @@ export async function updateUser(user: SessionUser, userId: string, input: UserI
         creaCau: input.creaCau || null,
         hourlyCost: input.hourlyCost || null,
         hourlyRate: input.hourlyRate || null,
+        autoProjectMember: input.autoProjectMember ?? false,
         updatedById: user.id,
         roles: { create: input.roleIds.map((roleId) => ({ roleId })) },
       },

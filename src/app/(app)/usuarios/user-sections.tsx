@@ -17,6 +17,7 @@ export type UserRow = {
   name: string;
   email: string;
   active: boolean;
+  autoProjectMember: boolean;
   creaCau: string | null;
   hourlyCost: string | null;
   hourlyRate: string | null;
@@ -266,6 +267,23 @@ function UserForm({
           ))}
         </div>
       </fieldset>
+
+      <label className="flex items-start gap-2 rounded-lg border border-slate-200 bg-white p-3 text-sm">
+        <input
+          type="checkbox" name="autoProjectMember"
+          defaultChecked={user?.autoProjectMember ?? false}
+          className="mt-0.5 rounded border-slate-300"
+        />
+        <span>
+          <span className="block font-medium text-slate-800">
+            Entra automaticamente na equipe de todo projeto novo
+          </span>
+          <span className="block text-[11px] text-slate-500">
+            Para sócios e gestores: qualquer cartão criado — manual, por contrato ou por
+            oportunidade ganha — já nasce com esta pessoa na equipe.
+          </span>
+        </span>
+      </label>
 
       <details className="rounded-lg border border-slate-200 bg-white p-3">
         <summary className="cursor-pointer text-xs font-medium text-slate-600">

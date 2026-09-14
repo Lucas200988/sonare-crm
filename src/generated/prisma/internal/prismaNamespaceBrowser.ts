@@ -187,6 +187,7 @@ export const UserScalarFieldEnum = {
   hourlyCost: 'hourlyCost',
   hourlyRate: 'hourlyRate',
   creaCau: 'creaCau',
+  autoProjectMember: 'autoProjectMember',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   createdById: 'createdById',

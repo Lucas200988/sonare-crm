@@ -16,6 +16,7 @@ export default async function UsersPage() {
     name: u.name,
     email: u.email,
     active: u.active,
+    autoProjectMember: u.autoProjectMember,
     creaCau: u.creaCau,
     hourlyCost: u.hourlyCost?.toString() ?? null,
     hourlyRate: u.hourlyRate?.toString() ?? null,

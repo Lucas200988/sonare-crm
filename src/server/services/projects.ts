@@ -178,6 +178,21 @@ export async function listBoardProjects(user: SessionUser, opts?: { apenasMeus?:
 
 const DEFAULT_STAGES = ['Levantamento', 'Desenvolvimento', 'Revisão interna', 'Entrega ao cliente'];
 
+/**
+ * Quem entra automaticamente na equipe de todo projeto novo.
+ *
+ * São os usuários marcados no cadastro (sócios/gestores). Vale para os três
+ * caminhos de criação — manual, por contrato e por oportunidade ganha — para
+ * ninguém da direção descobrir um projeto semanas depois por não estar nele.
+ */
+async function equipeAutomatica(companyId: string): Promise<Array<{ userId: string }>> {
+  const fixos = await prisma.user.findMany({
+    where: { companyId, active: true, deletedAt: null, autoProjectMember: true },
+    select: { id: true },
+  });
+  return fixos.map((u) => ({ userId: u.id }));
+}
+
 /** Cria projeto avulso, sem contrato — para demandas internas ou serviços sem instrumento. */
 export async function createProject(
   user: SessionUser,
@@ -192,6 +207,7 @@ export async function createProject(
   });
   if (!client) return { error: 'Cliente não encontrado.' };
 
+  const equipe = await equipeAutomatica(user.companyId);
   const project = await prisma.$transaction(async (tx) => {
     const code = await nextCode(user.companyId, 'PRJ', tx);
     const count = await tx.project.count({ where: { companyId: user.companyId, deletedAt: null } });
@@ -208,6 +224,7 @@ export async function createProject(
         boardPosition: count,
         createdById: user.id,
         stages: { create: DEFAULT_STAGES.map((name, i) => ({ name, sortOrder: i })) },
+        members: { create: equipe },
       },
     });
   });
@@ -238,6 +255,7 @@ export async function createProjectFromContract(user: SessionUser, contractId: s
   });
   if (jaExiste) return { error: 'Este contrato já possui um projeto vinculado.' };
 
+  const equipe = await equipeAutomatica(user.companyId);
   const project = await prisma.$transaction(async (tx) => {
     const code = await nextCode(user.companyId, 'PRJ', tx);
     return tx.project.create({
@@ -256,6 +274,7 @@ export async function createProjectFromContract(user: SessionUser, contractId: s
         stages: {
           create: DEFAULT_STAGES.map((name, i) => ({ name, sortOrder: i })),
         },
+        members: { create: equipe },
       },
     });
   });
@@ -382,6 +401,7 @@ export async function criarProjetoDaOportunidade(user: SessionUser, opportunityI
   // Sem contrato — acontece quando a empresa dispensa instrumento — o
   // projeto nasce da oportunidade, para o trabalho não ficar sem cartão.
   const orcamento = orcamentos[0];
+  const equipe = await equipeAutomatica(user.companyId);
   const project = await prisma.$transaction(async (tx) => {
     const code = await nextCode(user.companyId, 'PRJ', tx);
     const count = await tx.project.count({ where: { companyId: user.companyId, deletedAt: null } });
@@ -400,6 +420,7 @@ export async function criarProjetoDaOportunidade(user: SessionUser, opportunityI
         boardPosition: count,
         createdById: user.id,
         stages: { create: DEFAULT_STAGES.map((name, i) => ({ name, sortOrder: i })) },
+        members: { create: equipe },
       },
     });
   });
