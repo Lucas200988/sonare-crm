@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { Archive, LayoutGrid, List } from 'lucide-react';
+import { Archive, LayoutGrid, List, UserRound } from 'lucide-react';
 import { requirePermissionPage } from '@/server/auth/guards';
 import { prisma } from '@/server/db';
 import { listBoardProjects, listProjects, type ProjectListFilter } from '@/server/services/projects';
@@ -19,9 +19,29 @@ export default async function ProjectsPage(props: {
   const sp = await props.searchParams;
   const canWrite = user.permissions.has('project:write');
   const isList = sp.visao === 'lista';
+  const apenasMeus = sp.meus === '1';
+
+  // alterna o filtro preservando a visão e a busca atuais
+  const paramsSemMeus = new URLSearchParams(
+    Object.entries(sp).filter(([k, v]) => v && k !== 'meus' && k !== 'pagina') as [string, string][],
+  );
+  const urlComMeus = `/projetos?${new URLSearchParams([...paramsSemMeus, ['meus', '1']]).toString()}`;
+  const urlSemMeus = `/projetos${paramsSemMeus.size > 0 ? `?${paramsSemMeus.toString()}` : ''}`;
 
   const viewToggle = (
     <div className="flex items-center gap-2">
+      <Link
+        href={apenasMeus ? urlSemMeus : urlComMeus}
+        aria-pressed={apenasMeus}
+        title="Somente os cartões em que você está: equipe, responsável técnico, coordenação ou criação"
+        className={`inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-medium ${
+          apenasMeus
+            ? 'border-brand bg-brand text-white hover:bg-brand-dark'
+            : 'border-slate-300 text-slate-600 hover:bg-slate-100'
+        }`}
+      >
+        <UserRound className="h-3.5 w-3.5" aria-hidden /> Meus projetos
+      </Link>
       <Link
         href="/projetos/arquivados"
         className="inline-flex items-center gap-1.5 rounded-lg border border-slate-300 px-3 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-100"
@@ -31,13 +51,13 @@ export default async function ProjectsPage(props: {
       </Link>
       <div className="flex rounded-lg border border-slate-300 p-0.5">
       <Link
-        href="/projetos"
+        href={apenasMeus ? '/projetos?meus=1' : '/projetos'}
         className={`inline-flex items-center gap-1.5 rounded px-3 py-1.5 text-xs font-medium ${!isList ? 'bg-slate-900 text-white' : 'text-slate-600 hover:bg-slate-100'}`}
       >
         <LayoutGrid className="h-3.5 w-3.5" aria-hidden /> Quadro
       </Link>
       <Link
-        href="/projetos?visao=lista"
+        href={apenasMeus ? '/projetos?visao=lista&meus=1' : '/projetos?visao=lista'}
         className={`inline-flex items-center gap-1.5 rounded px-3 py-1.5 text-xs font-medium ${isList ? 'bg-slate-900 text-white' : 'text-slate-600 hover:bg-slate-100'}`}
       >
         <List className="h-3.5 w-3.5" aria-hidden /> Lista
@@ -48,7 +68,7 @@ export default async function ProjectsPage(props: {
 
   if (!isList) {
     const [projects, clients] = await Promise.all([
-      listBoardProjects(user),
+      listBoardProjects(user, { apenasMeus }),
       prisma.client.findMany({
         where: { companyId: user.companyId, deletedAt: null },
         select: { id: true, legalName: true, tradeName: true },
@@ -58,7 +78,11 @@ export default async function ProjectsPage(props: {
 
     return (
       <div>
-        <PageHeader title="Projetos" subtitle={`${projects.length} projeto(s)`} actions={viewToggle} />
+        <PageHeader
+          title="Projetos"
+          subtitle={`${projects.length} projeto(s)${apenasMeus ? ' com você' : ''}`}
+          actions={viewToggle}
+        />
         <ProjectBoard
           projects={projects.map((p) => ({
             id: p.id,
@@ -85,15 +109,21 @@ export default async function ProjectsPage(props: {
     search: sp.q,
     status: (sp.status as ProjectListFilter['status']) ?? 'ATIVOS',
     page: sp.pagina ? Number(sp.pagina) : 1,
+    apenasMeus,
   });
 
   return (
     <div>
-      <PageHeader title="Projetos" subtitle={`${total} projeto(s)`} actions={viewToggle} />
+      <PageHeader
+        title="Projetos"
+        subtitle={`${total} projeto(s)${apenasMeus ? ' com você' : ''}`}
+        actions={viewToggle}
+      />
 
       <Card className="mb-4 p-4">
         <form method="get" className="flex flex-wrap gap-3">
           <input type="hidden" name="visao" value="lista" />
+          {apenasMeus ? <input type="hidden" name="meus" value="1" /> : null}
           <input
             type="search" name="q" defaultValue={sp.q ?? ''}
             placeholder="Código, nome ou cliente…"

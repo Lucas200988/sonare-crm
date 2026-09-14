@@ -34,14 +34,44 @@ export type ProjectListFilter = {
   status?: ProjectStatus | 'ATIVOS' | 'TODOS' | 'ARQUIVADOS';
   clientId?: string;
   page?: number;
+  /** Só os cartões em que o usuário está: equipe, RT, coordenação ou criação. */
+  apenasMeus?: boolean;
 };
+
+/**
+ * Recorte "meus projetos" — o mesmo vínculo do escopo restrito, mas como
+ * FILTRO opcional para quem vê tudo: com o quadro cheio, cada um acha as
+ * próprias responsabilidades sem garimpar cartão por cartão.
+ */
+function vinculoDoUsuario(userId: string): Prisma.ProjectWhereInput {
+  return {
+    OR: [
+      { members: { some: { userId } } },
+      { technicalLeadId: userId },
+      { coordinatorId: userId },
+      { createdById: userId },
+    ],
+  };
+}
+
+/** Junta condições em AND sem disputar com o AND que o escopo já traz. */
+function comVinculo(
+  user: SessionUser, apenasMeus: boolean | undefined,
+): Prisma.ProjectWhereInput {
+  const escopo = escopoDeProjetos(user);
+  const and: Prisma.ProjectWhereInput[] = [
+    ...((escopo.AND as Prisma.ProjectWhereInput[] | undefined) ?? []),
+    ...(apenasMeus ? [vinculoDoUsuario(user.id)] : []),
+  ];
+  return and.length > 0 ? { AND: and } : {};
+}
 
 export async function listProjects(user: SessionUser, filter: ProjectListFilter) {
   const page = Math.max(1, filter.page ?? 1);
   const pageSize = 20;
 
   const where: Prisma.ProjectWhereInput = {
-    companyId: user.companyId, deletedAt: null, ...escopoDeProjetos(user),
+    companyId: user.companyId, deletedAt: null, ...comVinculo(user, filter.apenasMeus),
   };
   // Arquivados só aparecem quando pedidos explicitamente
   where.archivedAt = filter.status === 'ARQUIVADOS' ? { not: null } : null;
@@ -123,11 +153,11 @@ export async function listAssignableUsers(user: SessionUser) {
 }
 
 /** Projetos do quadro — arquivados ficam de fora (sem paginação: o quadro mostra tudo). */
-export async function listBoardProjects(user: SessionUser) {
+export async function listBoardProjects(user: SessionUser, opts?: { apenasMeus?: boolean }) {
   return prisma.project.findMany({
     where: {
       companyId: user.companyId, deletedAt: null, archivedAt: null,
-      ...escopoDeProjetos(user),
+      ...comVinculo(user, opts?.apenasMeus),
     },
     include: {
       client: { select: { id: true, legalName: true, tradeName: true } },
