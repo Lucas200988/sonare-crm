@@ -87,7 +87,8 @@ export const ROLE_DEFAULTS: Record<string, { name: string; permissions: Permissi
     name: 'Engenharia',
     permissions: [
       'client:read',
-      'contract:read',
+      // sem contratos de propósito: valores e condições comerciais não são
+      // assunto do papel — decisão de 14/09/2026, espelhada do ajuste em produção
       'project:read', 'project:write',
       'diary:read', 'diary:write',
       'task:read', 'task:write',
