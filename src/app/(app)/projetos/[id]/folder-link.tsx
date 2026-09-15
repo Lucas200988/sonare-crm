@@ -80,16 +80,30 @@ export function FolderLink({ path }: { path: string }) {
         </button>
       </div>
 
-      {semAtalho ? (
-        <p className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-[11px] text-amber-800">
-          Este computador ainda não abre pastas com um clique — o caminho foi copiado, é só colar no
-          Explorador (Win+E, depois Ctrl+L e Ctrl+V). Para habilitar,{' '}
-          <a href="/ferramentas/sonare-abrir-pasta-v3.zip" download className="font-semibold underline">
-            baixe o atalho
-          </a>{' '}
-          e rode o <span className="font-mono">instalar.cmd</span> uma única vez.
-        </p>
-      ) : null}
+      {semAtalho ? <AvisoSemAtalho /> : null}
     </div>
+  );
+}
+
+/**
+ * O aviso de "este computador ainda não abre pastas" — um só texto para
+ * todos os botões de pasta do sistema, com o instalador junto. Sem ele, o
+ * clique de quem não tem o atalho simplesmente não faz nada visível.
+ */
+export function AvisoSemAtalho({ onFechar }: { onFechar?: () => void }) {
+  return (
+    <p className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-[11px] text-amber-800">
+      Este computador ainda não abre pastas com um clique — o caminho foi copiado, é só colar no
+      Explorador (Win+E, depois Ctrl+L e Ctrl+V). Para habilitar,{' '}
+      <a href="/ferramentas/sonare-abrir-pasta-v3.zip" download className="font-semibold underline">
+        baixe o atalho
+      </a>{' '}
+      e rode o <span className="font-mono">instalar.cmd</span> uma única vez.
+      {onFechar ? (
+        <button type="button" onClick={onFechar} className="ml-1.5 font-semibold underline">
+          ok
+        </button>
+      ) : null}
+    </p>
   );
 }

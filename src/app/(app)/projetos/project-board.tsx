@@ -15,7 +15,7 @@ import {
 } from '@/actions/projects';
 import { inputCls, Field, FormError, SubmitButton } from '@/components/ui';
 import { formatDateBR } from '@/lib/dates';
-import { abrirPastaNoExplorador } from './[id]/folder-link';
+import { AvisoSemAtalho, abrirPastaNoExplorador } from './[id]/folder-link';
 import { ClientSelect } from '@/components/client-select';
 import { BOARD_COLUMNS, columnForStatus } from '@/config/project-board';
 
@@ -55,6 +55,9 @@ function deadlineTone(deadline: string | null, status: string): string {
 function ProjectCard({ project, overlay, onArchive }: {
   project: BoardProject; overlay?: boolean; onArchive?: () => void;
 }) {
+  // computador sem o atalho sonare:// — sem isto o clique parece não fazer nada
+  const [semAtalho, setSemAtalho] = useState(false);
+
   return (
     <div className={`group overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm ${overlay ? 'rotate-2 shadow-lg' : ''}`}>
       <div className={`h-1 w-full ${PRIORITY_BAR[project.priority] ?? PRIORITY_BAR.MEDIA}`} />
@@ -64,7 +67,7 @@ function ProjectCard({ project, overlay, onArchive }: {
             <button
               type="button"
               onPointerDown={(e) => e.stopPropagation()}
-              onClick={() => abrirPastaNoExplorador(project.folderPath!)}
+              onClick={() => abrirPastaNoExplorador(project.folderPath!, () => setSemAtalho(true))}
               title={`Abrir ${project.folderPath}`}
               aria-label={`Abrir a pasta de ${project.name}`}
               className="rounded p-1 text-amber-500 hover:bg-amber-50"
@@ -131,6 +134,12 @@ function ProjectCard({ project, overlay, onArchive }: {
             </span>
           ) : null}
         </div>
+
+        {semAtalho ? (
+          <div className="mt-2" onPointerDown={(e) => e.stopPropagation()}>
+            <AvisoSemAtalho onFechar={() => setSemAtalho(false)} />
+          </div>
+        ) : null}
       </div>
     </div>
   );
