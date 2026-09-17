@@ -121,7 +121,11 @@ export const ModelName = {
   EquipmentMovement: 'EquipmentMovement',
   BankTransaction: 'BankTransaction',
   FollowUpEvent: 'FollowUpEvent',
-  EmailDelivery: 'EmailDelivery'
+  EmailDelivery: 'EmailDelivery',
+  AgentThread: 'AgentThread',
+  AgentMessage: 'AgentMessage',
+  AgentMemory: 'AgentMemory',
+  AiCall: 'AiCall'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -1541,6 +1545,76 @@ export const EmailDeliveryScalarFieldEnum = {
 } as const
 
 export type EmailDeliveryScalarFieldEnum = (typeof EmailDeliveryScalarFieldEnum)[keyof typeof EmailDeliveryScalarFieldEnum]
+
+
+export const AgentThreadScalarFieldEnum = {
+  id: 'id',
+  companyId: 'companyId',
+  userId: 'userId',
+  title: 'title',
+  channel: 'channel',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt'
+} as const
+
+export type AgentThreadScalarFieldEnum = (typeof AgentThreadScalarFieldEnum)[keyof typeof AgentThreadScalarFieldEnum]
+
+
+export const AgentMessageScalarFieldEnum = {
+  id: 'id',
+  threadId: 'threadId',
+  role: 'role',
+  content: 'content',
+  toolName: 'toolName',
+  toolData: 'toolData',
+  createdAt: 'createdAt'
+} as const
+
+export type AgentMessageScalarFieldEnum = (typeof AgentMessageScalarFieldEnum)[keyof typeof AgentMessageScalarFieldEnum]
+
+
+export const AgentMemoryScalarFieldEnum = {
+  id: 'id',
+  companyId: 'companyId',
+  type: 'type',
+  subjectType: 'subjectType',
+  subjectId: 'subjectId',
+  userId: 'userId',
+  threadId: 'threadId',
+  content: 'content',
+  structuredData: 'structuredData',
+  validFrom: 'validFrom',
+  validUntil: 'validUntil',
+  source: 'source',
+  confidence: 'confidence',
+  createdById: 'createdById',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt'
+} as const
+
+export type AgentMemoryScalarFieldEnum = (typeof AgentMemoryScalarFieldEnum)[keyof typeof AgentMemoryScalarFieldEnum]
+
+
+export const AiCallScalarFieldEnum = {
+  id: 'id',
+  companyId: 'companyId',
+  userId: 'userId',
+  useCase: 'useCase',
+  provider: 'provider',
+  model: 'model',
+  tokensInput: 'tokensInput',
+  tokensOutput: 'tokensOutput',
+  tokensTotal: 'tokensTotal',
+  latencyMs: 'latencyMs',
+  status: 'status',
+  error: 'error',
+  estimatedCost: 'estimatedCost',
+  createdAt: 'createdAt'
+} as const
+
+export type AiCallScalarFieldEnum = (typeof AiCallScalarFieldEnum)[keyof typeof AiCallScalarFieldEnum]
 
 
 export const SortOrder = {

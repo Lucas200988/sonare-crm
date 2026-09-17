@@ -2143,3 +2143,96 @@ model EmailDelivery {
   @@index([companyId, entityType, entityId])
   @@index([companyId, status])
 }
+
+// ---------- SONARE AI Manager (Jarvis) ----------
+
+/// Conversa com o agente — presa a empresa, usuário e canal de origem.
+/// O cérebro é agnóstico ao canal: o CRM é só o primeiro deles.
+model AgentThread {
+  id        String    @id @default(uuid(7))
+  companyId String
+  userId    String
+  title     String?
+  /// CRM | WHATSAPP | CRON | EMAIL — por onde a conversa acontece.
+  channel   String    @default("CRM")
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  messages AgentMessage[]
+
+  @@index([companyId, userId, updatedAt])
+}
+
+/// Uma fala da conversa: pessoa, agente ou resultado de ferramenta.
+model AgentMessage {
+  id        String   @id @default(uuid(7))
+  threadId  String
+  /// USER | ASSISTANT | TOOL | SYSTEM
+  role      String
+  content   String
+  /// Quando a fala é uma ferramenta: nome e argumentos/resultado resumidos.
+  toolName  String?
+  toolData  Json?
+  createdAt DateTime @default(now())
+
+  thread AgentThread @relation(fields: [threadId], references: [id], onDelete: Cascade)
+
+  @@index([threadId, createdAt])
+}
+
+/// Conhecimento operacional que sobrevive à conversa: férias, compromissos,
+/// bloqueios, instruções de gestão. Não confundir com AuditLog (o que
+/// aconteceu no sistema) nem com AgentMessage (o que foi dito).
+model AgentMemory {
+  id             String    @id @default(uuid(7))
+  companyId      String
+  /// USER_AVAILABILITY | TASK_BLOCKER | COMMITMENT | PROJECT_CONTEXT |
+  /// USER_CONTEXT | MANAGEMENT_INSTRUCTION
+  type           String
+  /// Sobre o que a memória fala: user | project | task | client…
+  subjectType    String
+  subjectId      String?
+  userId         String?
+  threadId       String?
+  content        String
+  structuredData Json?
+  /// Memória temporária tem validade — férias acabam, compromissos vencem.
+  validFrom      DateTime?
+  validUntil     DateTime?
+  /// CRM_FACT | USER_DECLARATION | AI_INFERENCE | AGENT_DECISION — fato do
+  /// sistema, declaração da pessoa, inferência da IA ou decisão do agente.
+  source         String
+  confidence     Float?
+  createdById    String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  deletedAt      DateTime?
+
+  @@index([companyId, type, subjectType, subjectId])
+  @@index([companyId, validUntil])
+}
+
+/// Toda chamada de IA do sistema: quem, para quê, quanto gastou.
+/// Gravado só pelo AI Core — nenhum caso de uso loga por conta própria.
+model AiCall {
+  id            String   @id @default(uuid(7))
+  companyId     String
+  userId        String?
+  /// escopo | revisao | manager | conexao…
+  useCase       String
+  provider      String
+  model         String
+  tokensInput   Int      @default(0)
+  tokensOutput  Int      @default(0)
+  tokensTotal   Int      @default(0)
+  latencyMs     Int      @default(0)
+  /// ok | error | timeout
+  status        String
+  error         String?
+  estimatedCost Decimal? @db.Decimal(14, 6)
+  createdAt     DateTime @default(now())
+
+  @@index([companyId, createdAt])
+  @@index([companyId, useCase, createdAt])
+}

@@ -426,3 +426,27 @@ export type FollowUpEvent = Prisma.FollowUpEventModel
  *  * o webhook encontra a mensagem depois.
  */
 export type EmailDelivery = Prisma.EmailDeliveryModel
+/**
+ * Model AgentThread
+ * Conversa com o agente — presa a empresa, usuário e canal de origem.
+ * O cérebro é agnóstico ao canal: o CRM é só o primeiro deles.
+ */
+export type AgentThread = Prisma.AgentThreadModel
+/**
+ * Model AgentMessage
+ * Uma fala da conversa: pessoa, agente ou resultado de ferramenta.
+ */
+export type AgentMessage = Prisma.AgentMessageModel
+/**
+ * Model AgentMemory
+ * Conhecimento operacional que sobrevive à conversa: férias, compromissos,
+ * bloqueios, instruções de gestão. Não confundir com AuditLog (o que
+ * aconteceu no sistema) nem com AgentMessage (o que foi dito).
+ */
+export type AgentMemory = Prisma.AgentMemoryModel
+/**
+ * Model AiCall
+ * Toda chamada de IA do sistema: quem, para quê, quanto gastou.
+ * Gravado só pelo AI Core — nenhum caso de uso loga por conta própria.
+ */
+export type AiCall = Prisma.AiCallModel

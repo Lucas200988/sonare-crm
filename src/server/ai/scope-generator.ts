@@ -1,47 +1,16 @@
 import 'server-only';
-import { prisma } from '@/server/db';
-import { decryptSecret } from '@/server/crypto';
 import { splitForReview } from '@/lib/split-review';
+import {
+  completarTexto, ehRaciocinio, getAiConfig, type AiConfig,
+} from './client';
 import { promptDoNivel, type NivelDetalhe } from './scope-prompt';
 import { parseEscopo, paraOrcamento, type GeneratedScope } from './scope-schema';
 
 // Geração assistida de escopo de proposta.
-// Suporta OpenAI (padrão) e Anthropic; a chave fica criptografada em SystemSetting
-// ou, alternativamente, em variável de ambiente.
+// A conversa com o provedor mora no AI Core (./client); aqui fica só o caso
+// de uso: briefing → prompt → JSON → campos do orçamento.
 
-export type AiProvider = 'openai' | 'anthropic';
-
-export type AiConfig = {
-  enabled: boolean;
-  provider: AiProvider;
-  model: string;
-  apiKey: string | null;
-};
-
-const DEFAULT_MODELS: Record<AiProvider, string> = {
-  openai: 'gpt-4o-mini',
-  anthropic: 'claude-sonnet-4-5',
-};
-
-export async function getAiConfig(companyId: string): Promise<AiConfig> {
-  const settings = await prisma.systemSetting.findMany({
-    where: { companyId, key: { in: ['ai.provider', 'ai.model', 'ai.apiKey', 'ai.enabled'] } },
-  });
-  const get = (k: string) => settings.find((s) => s.key === k)?.value;
-
-  const provider = (get('ai.provider') as AiProvider) ?? 'openai';
-  const stored = get('ai.apiKey');
-  const apiKey = typeof stored === 'string' && stored
-    ? decryptSecret(stored)
-    : (process.env.OPENAI_API_KEY ?? process.env.ANTHROPIC_API_KEY ?? null);
-
-  return {
-    enabled: get('ai.enabled') === true && Boolean(apiKey),
-    provider,
-    model: (get('ai.model') as string) || DEFAULT_MODELS[provider],
-    apiKey,
-  };
-}
+export { getAiConfig, type AiConfig, type AiProvider } from './client';
 
 export type ScopeBriefing = {
   serviceType: string; // ex.: "Projeto elétrico"
@@ -126,99 +95,15 @@ INSTRUÇÕES ESPECÍFICAS
  */
 const LIMITE_GERACAO_MS = 50_000;
 
-/**
- * Modelo de raciocínio (série o, família GPT-5)?
- *
- * Eles gastam tokens "pensando" antes de escrever. Para conversa isso é
- * ótimo; aqui é latência pura — o que se pede é obediência a um prompt
- * longo, e a estrutura da resposta já vem definida.
- */
-function ehRaciocinio(model: string): boolean {
-  return /^(o\d|gpt-5)/i.test(model.trim());
-}
-
-/**
- * Ajustes que só valem para modelos de raciocínio.
- *
- * Eles recusam `temperature` diferente de 1, e sem limitar o esforço a
- * geração passa do tempo da função e a tela fica esperando por nada. O
- * reenvio automático continua como rede de segurança se o nome do
- * parâmetro mudar.
- */
-function ajustarParaModelo(model: string, corpo: Record<string, unknown>): Record<string, unknown> {
-  if (!ehRaciocinio(model)) return corpo;
-  const semTemperatura = Object.fromEntries(
-    Object.entries(corpo).filter(([chave]) => chave !== 'temperature'),
-  );
-  return { ...semTemperatura, reasoning_effort: 'low' };
-}
-
-/** O modelo recusou algum parâmetro do corpo? Devolve o nome dele. */
-function parametroRecusado(corpo: string): string | null {
-  try {
-    const j = JSON.parse(corpo) as { error?: { code?: string; param?: string } };
-    if (j.error?.code !== 'unsupported_value' && j.error?.code !== 'unsupported_parameter') {
-      return null;
-    }
-    return j.error?.param ?? null;
-  } catch {
-    return null;
-  }
-}
-
-/**
- * Chamada ao OpenAI que se ajusta ao modelo.
- *
- * Os modelos de raciocínio recusam `temperature` diferente de 1 e devolvem
- * 400. Em vez de manter uma lista de quais aceitam o quê — que envelhece a
- * cada lançamento —, a chamada tira o parâmetro recusado e tenta de novo.
- */
-async function postOpenAI(
-  config: AiConfig,
-  corpo: Record<string, unknown>,
-  timeoutMs: number,
-): Promise<string> {
-  let payload: Record<string, unknown> = {
-    ...ajustarParaModelo(config.model, corpo),
-    model: config.model,
-  };
-
-  for (let tentativa = 0; tentativa < 3; tentativa++) {
-    const res = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${config.apiKey}` },
-      body: JSON.stringify(payload),
-      signal: AbortSignal.timeout(timeoutMs),
-    });
-
-    if (res.ok) {
-      const json = await res.json();
-      return json.choices?.[0]?.message?.content ?? '';
-    }
-
-    const body = await res.text();
-    const recusado = res.status === 400 ? parametroRecusado(body) : null;
-    // sem parâmetro para remover — ou já removido — o erro é real
-    if (!recusado || !(recusado in payload)) {
-      throw new Error(`OpenAI ${res.status}: ${body.slice(0, 300)}`);
-    }
-    payload = Object.fromEntries(
-      Object.entries(payload).filter(([chave]) => chave !== recusado),
-    );
-  }
-
-  throw new Error('OpenAI: o modelo recusou parâmetros demais na requisição.');
-}
-
-async function callOpenAI(config: AiConfig, briefing: ScopeBriefing): Promise<string> {
-  return postOpenAI(config, {
+async function callOpenAI(config: AiConfig, companyId: string, briefing: ScopeBriefing): Promise<string> {
+  return completarTexto(config, {
     temperature: 0.4,
     response_format: { type: 'json_object' },
     messages: [
       { role: 'system', content: promptDoNivel(briefing.nivel) },
       { role: 'user', content: buildUserPrompt(briefing) },
     ],
-  }, LIMITE_GERACAO_MS);
+  }, LIMITE_GERACAO_MS, { companyId, useCase: 'escopo' });
 }
 
 async function callAnthropic(config: AiConfig, briefing: ScopeBriefing): Promise<string> {
@@ -261,7 +146,7 @@ export async function generateScope(
   try {
     const raw = config.provider === 'anthropic'
       ? await callAnthropic(config, briefing)
-      : await callOpenAI(config, briefing);
+      : await callOpenAI(config, companyId, briefing);
     if (!raw.trim()) return { error: 'A IA retornou uma resposta vazia. Tente novamente.' };
     return { scope: paraOrcamento(parseEscopo(raw)) };
   } catch (e) {
@@ -301,7 +186,7 @@ Regras invioláveis:
 
 Responda SOMENTE com o texto corrigido, sem comentários, sem aspas e sem marcações.`;
 
-async function callTextModel(config: AiConfig, systemPrompt: string, userText: string): Promise<string> {
+async function callTextModel(config: AiConfig, companyId: string, systemPrompt: string, userText: string): Promise<string> {
   if (config.provider === 'anthropic') {
     const res = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
@@ -324,13 +209,13 @@ async function callTextModel(config: AiConfig, systemPrompt: string, userText: s
     return json.content?.[0]?.text ?? '';
   }
 
-  return postOpenAI(config, {
+  return completarTexto(config, {
     temperature: 0,
     messages: [
       { role: 'system', content: systemPrompt },
       { role: 'user', content: userText },
     ],
-  }, 60_000);
+  }, 60_000, { companyId, useCase: 'revisao' });
 }
 
 /**
@@ -358,7 +243,7 @@ export async function reviewText(
     const blocos = splitForReview(text);
     const revisados: string[] = [];
     for (const bloco of blocos) {
-      const raw = await callTextModel(config, prompt, bloco);
+      const raw = await callTextModel(config, companyId, prompt, bloco);
       const limpo = raw.trim().replace(/^```[a-z]*\s*/i, '').replace(/```$/, '').trim();
       // Bloco vazio significaria perder conteúdo — preserva o original
       revisados.push(limpo || bloco);

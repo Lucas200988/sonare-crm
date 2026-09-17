@@ -6,6 +6,7 @@ import { NAV_ITEMS } from '@/config/navigation';
 import { SidebarNav, type SidebarItem } from '@/components/sidebar-nav';
 import { GlobalSearch } from '@/components/global-search';
 import { MobileNav } from '@/components/mobile-nav';
+import { JarvisChat } from '@/components/jarvis-chat';
 
 export default async function AppLayout({ children }: { children: ReactNode }) {
   const user = await requireAuth();
@@ -67,6 +68,7 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
         />
         <main className="flex-1 px-4 py-6 sm:px-6 lg:px-8">{children}</main>
       </div>
+      <JarvisChat />
     </div>
   );
 }
