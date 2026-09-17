@@ -125,7 +125,8 @@ export const ModelName = {
   AgentThread: 'AgentThread',
   AgentMessage: 'AgentMessage',
   AgentMemory: 'AgentMemory',
-  AiCall: 'AiCall'
+  AiCall: 'AiCall',
+  AgentAction: 'AgentAction'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -1615,6 +1616,25 @@ export const AiCallScalarFieldEnum = {
 } as const
 
 export type AiCallScalarFieldEnum = (typeof AiCallScalarFieldEnum)[keyof typeof AiCallScalarFieldEnum]
+
+
+export const AgentActionScalarFieldEnum = {
+  id: 'id',
+  companyId: 'companyId',
+  threadId: 'threadId',
+  userId: 'userId',
+  tool: 'tool',
+  args: 'args',
+  resumo: 'resumo',
+  status: 'status',
+  resultado: 'resultado',
+  expiresAt: 'expiresAt',
+  executedAt: 'executedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type AgentActionScalarFieldEnum = (typeof AgentActionScalarFieldEnum)[keyof typeof AgentActionScalarFieldEnum]
 
 
 export const SortOrder = {

@@ -25,6 +25,11 @@ async function carregar() {
   vi.doMock('@/server/services/aprovacoes', () => ({
     getPrazosVencidos: vi.fn().mockResolvedValue([]),
   }));
+  vi.doMock('@/server/services/agente-acoes', () => ({
+    proporCriarTarefa: vi.fn().mockResolvedValue({ ok: true, acaoId: 'a1', resumo: 'x' }),
+    proporObservacao: vi.fn().mockResolvedValue({ ok: true, acaoId: 'a1', resumo: 'x' }),
+    proporFollowUp: vi.fn().mockResolvedValue({ ok: true, acaoId: 'a1', resumo: 'x' }),
+  }));
   return import('./manager-tools');
 }
 
@@ -101,6 +106,9 @@ describe('ferramentas do Jarvis', () => {
       rdosPendentes: vi.fn(),
     }));
     vi.doMock('@/server/services/aprovacoes', () => ({ getPrazosVencidos: vi.fn() }));
+    vi.doMock('@/server/services/agente-acoes', () => ({
+      proporCriarTarefa: vi.fn(), proporObservacao: vi.fn(), proporFollowUp: vi.fn(),
+    }));
     vi.spyOn(console, 'error').mockImplementation(() => {});
     const { ferramentasDoUsuario } = await import('./manager-tools');
 

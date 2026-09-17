@@ -33,3 +33,21 @@ export async function conversaRecenteDoJarvisAction() {
   const user = await requireAuth();
   return conversaRecente(user);
 }
+
+/**
+ * Confirmação de ação proposta — o único caminho de escrita do Jarvis.
+ * Executa deterministicamente o que foi proposto, sem o modelo no meio.
+ */
+export async function confirmarAcaoDoJarvisAction(acaoId: string) {
+  const user = await requireAuth();
+  if (!acaoId || typeof acaoId !== 'string') return { error: 'Ação inválida.' };
+  const { confirmarAcao } = await import('@/server/services/agente-acoes');
+  return confirmarAcao(user, acaoId);
+}
+
+export async function cancelarAcaoDoJarvisAction(acaoId: string) {
+  const user = await requireAuth();
+  if (!acaoId || typeof acaoId !== 'string') return { error: 'Ação inválida.' };
+  const { cancelarAcao } = await import('@/server/services/agente-acoes');
+  return cancelarAcao(user, acaoId);
+}

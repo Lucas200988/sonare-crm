@@ -1,10 +1,14 @@
 'use client';
 
 import { useEffect, useRef, useState, useTransition } from 'react';
-import { Loader2, RotateCcw, Send, Sparkles, X } from 'lucide-react';
-import { conversaRecenteDoJarvisAction, perguntarAoJarvisAction } from '@/actions/agente';
+import { CheckCircle2, Loader2, RotateCcw, Send, ShieldAlert, Sparkles, X } from 'lucide-react';
+import {
+  cancelarAcaoDoJarvisAction, confirmarAcaoDoJarvisAction,
+  conversaRecenteDoJarvisAction, perguntarAoJarvisAction,
+} from '@/actions/agente';
 
 type Fala = { id: string; papel: 'user' | 'jarvis'; texto: string };
+type AcaoPendente = { id: string; resumo: string } | null;
 
 const SUGESTOES = [
   'Como está a empresa hoje?',
@@ -27,7 +31,9 @@ export function JarvisChat() {
   const [falas, setFalas] = useState<Fala[]>([]);
   const [texto, setTexto] = useState('');
   const [erro, setErro] = useState<string | null>(null);
+  const [acaoPendente, setAcaoPendente] = useState<AcaoPendente>(null);
   const [pensando, startTransition] = useTransition();
+  const [decidindo, startDecidir] = useTransition();
   const fimRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
@@ -44,6 +50,7 @@ export function JarvisChat() {
       if (r) {
         setThreadId(r.threadId);
         setFalas(r.mensagens.map((m) => ({ id: m.id, papel: m.papel, texto: m.texto })));
+        setAcaoPendente(r.acaoPendente ? { id: r.acaoPendente.id, resumo: r.acaoPendente.resumo } : null);
       }
     });
   }
@@ -60,6 +67,7 @@ export function JarvisChat() {
       if ('ok' in r && r.ok) {
         setThreadId(r.threadId);
         setFalas((p) => [...p, { id: `j-${Date.now()}`, papel: 'jarvis', texto: r.resposta }]);
+        setAcaoPendente(r.acaoPendente ? { id: r.acaoPendente.id, resumo: r.acaoPendente.resumo } : null);
         return;
       }
       setErro(('error' in r ? r.error : null) ?? 'Não consegui responder agora.');
@@ -90,13 +98,13 @@ export function JarvisChat() {
           </span>
           <div>
             <p className="text-sm font-semibold text-slate-900">Jarvis</p>
-            <p className="text-[10px] text-slate-400">SONARE AI Manager · analisa, não executa</p>
+            <p className="text-[10px] text-slate-400">SONARE AI Manager · propõe; você confirma</p>
           </div>
         </div>
         <div className="flex items-center gap-1">
           <button
             type="button"
-            onClick={() => { setThreadId(null); setFalas([]); setErro(null); }}
+            onClick={() => { setThreadId(null); setFalas([]); setErro(null); setAcaoPendente(null); }}
             title="Nova conversa"
             aria-label="Começar nova conversa"
             className="rounded p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-700"
@@ -147,6 +155,46 @@ export function JarvisChat() {
             </div>
           </div>
         ))}
+
+        {acaoPendente ? (
+          <div className="rounded-xl border border-amber-300 bg-amber-50 p-3">
+            <p className="flex items-start gap-1.5 text-xs font-medium text-amber-900">
+              <ShieldAlert className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden />
+              Ação aguardando sua confirmação
+            </p>
+            <p className="mt-1 text-xs text-amber-900/90">{acaoPendente.resumo}</p>
+            <div className="mt-2 flex gap-2">
+              <button
+                type="button"
+                disabled={decidindo}
+                onClick={() => startDecidir(async () => {
+                  const r = await confirmarAcaoDoJarvisAction(acaoPendente.id);
+                  setAcaoPendente(null);
+                  setFalas((p) => [...p, {
+                    id: `a-${Date.now()}`, papel: 'jarvis',
+                    texto: 'ok' in r && r.ok ? r.mensagem : `A ação não foi executada: ${'error' in r ? r.error : 'falha'}`,
+                  }]);
+                })}
+                className="inline-flex items-center gap-1 rounded-lg bg-green-700 px-3 py-1.5 text-xs font-semibold text-white hover:bg-green-800 disabled:opacity-50"
+              >
+                <CheckCircle2 className="h-3.5 w-3.5" aria-hidden />
+                {decidindo ? 'Executando…' : 'Confirmar'}
+              </button>
+              <button
+                type="button"
+                disabled={decidindo}
+                onClick={() => startDecidir(async () => {
+                  await cancelarAcaoDoJarvisAction(acaoPendente.id);
+                  setAcaoPendente(null);
+                  setFalas((p) => [...p, { id: `a-${Date.now()}`, papel: 'jarvis', texto: 'Ação cancelada — nada foi executado.' }]);
+                })}
+                className="rounded-lg border border-amber-300 bg-white px-3 py-1.5 text-xs font-medium text-amber-900 hover:bg-amber-100 disabled:opacity-50"
+              >
+                Cancelar
+              </button>
+            </div>
+          </div>
+        ) : null}
 
         {pensando ? (
           <div className="flex items-center gap-2 text-xs text-slate-400">

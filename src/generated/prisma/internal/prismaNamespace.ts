@@ -471,7 +471,8 @@ export const ModelName = {
   AgentThread: 'AgentThread',
   AgentMessage: 'AgentMessage',
   AgentMemory: 'AgentMemory',
-  AiCall: 'AiCall'
+  AiCall: 'AiCall',
+  AgentAction: 'AgentAction'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -487,7 +488,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "company" | "user" | "role" | "permission" | "rolePermission" | "userRole" | "userPermission" | "session" | "passwordResetToken" | "auditLog" | "systemSetting" | "documentSequence" | "customField" | "customFieldValue" | "client" | "clientContact" | "clientUnit" | "leadSource" | "opportunityStage" | "opportunity" | "opportunityActivity" | "lossReason" | "serviceCatalog" | "budget" | "budgetVersion" | "budgetItem" | "budgetApproval" | "proposal" | "proposalTemplate" | "contract" | "contractVersion" | "contractAmendment" | "contractSignature" | "contractTemplate" | "project" | "constructionDiary" | "diarySignature" | "diaryFile" | "sitePhoto" | "diaryEntry" | "diaryWorkforce" | "diaryEquipment" | "projectStage" | "projectMember" | "task" | "taskChecklistItem" | "deliverable" | "deliverableRevision" | "timeEntry" | "externalApproval" | "externalApprovalStep" | "technicalResponsibility" | "clientPendency" | "attachment" | "comment" | "receivable" | "receipt" | "financialRetention" | "invoice" | "invoiceReceivable" | "paymentMethod" | "payable" | "collectionEvent" | "notification" | "importJob" | "importError" | "equipment" | "equipmentMovement" | "bankTransaction" | "followUpEvent" | "emailDelivery" | "agentThread" | "agentMessage" | "agentMemory" | "aiCall"
+    modelProps: "company" | "user" | "role" | "permission" | "rolePermission" | "userRole" | "userPermission" | "session" | "passwordResetToken" | "auditLog" | "systemSetting" | "documentSequence" | "customField" | "customFieldValue" | "client" | "clientContact" | "clientUnit" | "leadSource" | "opportunityStage" | "opportunity" | "opportunityActivity" | "lossReason" | "serviceCatalog" | "budget" | "budgetVersion" | "budgetItem" | "budgetApproval" | "proposal" | "proposalTemplate" | "contract" | "contractVersion" | "contractAmendment" | "contractSignature" | "contractTemplate" | "project" | "constructionDiary" | "diarySignature" | "diaryFile" | "sitePhoto" | "diaryEntry" | "diaryWorkforce" | "diaryEquipment" | "projectStage" | "projectMember" | "task" | "taskChecklistItem" | "deliverable" | "deliverableRevision" | "timeEntry" | "externalApproval" | "externalApprovalStep" | "technicalResponsibility" | "clientPendency" | "attachment" | "comment" | "receivable" | "receipt" | "financialRetention" | "invoice" | "invoiceReceivable" | "paymentMethod" | "payable" | "collectionEvent" | "notification" | "importJob" | "importError" | "equipment" | "equipmentMovement" | "bankTransaction" | "followUpEvent" | "emailDelivery" | "agentThread" | "agentMessage" | "agentMemory" | "aiCall" | "agentAction"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -6041,6 +6042,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    AgentAction: {
+      payload: Prisma.$AgentActionPayload<ExtArgs>
+      fields: Prisma.AgentActionFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.AgentActionFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AgentActionPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.AgentActionFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AgentActionPayload>
+        }
+        findFirst: {
+          args: Prisma.AgentActionFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AgentActionPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.AgentActionFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AgentActionPayload>
+        }
+        findMany: {
+          args: Prisma.AgentActionFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AgentActionPayload>[]
+        }
+        create: {
+          args: Prisma.AgentActionCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AgentActionPayload>
+        }
+        createMany: {
+          args: Prisma.AgentActionCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.AgentActionCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AgentActionPayload>[]
+        }
+        delete: {
+          args: Prisma.AgentActionDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AgentActionPayload>
+        }
+        update: {
+          args: Prisma.AgentActionUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AgentActionPayload>
+        }
+        deleteMany: {
+          args: Prisma.AgentActionDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.AgentActionUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.AgentActionUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AgentActionPayload>[]
+        }
+        upsert: {
+          args: Prisma.AgentActionUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AgentActionPayload>
+        }
+        aggregate: {
+          args: Prisma.AgentActionAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateAgentAction>
+        }
+        groupBy: {
+          args: Prisma.AgentActionGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AgentActionGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.AgentActionCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AgentActionCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -7553,6 +7628,25 @@ export const AiCallScalarFieldEnum = {
 export type AiCallScalarFieldEnum = (typeof AiCallScalarFieldEnum)[keyof typeof AiCallScalarFieldEnum]
 
 
+export const AgentActionScalarFieldEnum = {
+  id: 'id',
+  companyId: 'companyId',
+  threadId: 'threadId',
+  userId: 'userId',
+  tool: 'tool',
+  args: 'args',
+  resumo: 'resumo',
+  status: 'status',
+  resultado: 'resultado',
+  expiresAt: 'expiresAt',
+  executedAt: 'executedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type AgentActionScalarFieldEnum = (typeof AgentActionScalarFieldEnum)[keyof typeof AgentActionScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -8455,6 +8549,7 @@ export type GlobalOmitConfig = {
   agentMessage?: Prisma.AgentMessageOmit
   agentMemory?: Prisma.AgentMemoryOmit
   aiCall?: Prisma.AiCallOmit
+  agentAction?: Prisma.AgentActionOmit
 }
 
 /* Types for Logging */

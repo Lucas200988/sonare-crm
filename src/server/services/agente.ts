@@ -4,6 +4,7 @@ import {
   conversarComFerramentas, getAiConfig, type MensagemDaConversa,
 } from '@/server/ai/client';
 import { ferramentasDoUsuario } from '@/server/ai/manager-tools';
+import { acaoPendenteDaThread } from '@/server/services/agente-acoes';
 import { promptDoManager } from '@/server/ai/manager-prompt';
 import type { Prisma } from '@/generated/prisma/client';
 import type { SessionUser } from '@/server/auth/session';
@@ -78,7 +79,7 @@ export async function conversar(
   try {
     const { resposta, passos } = await conversarComFerramentas(config, {
       mensagens,
-      ferramentas: ferramentasDoUsuario(user),
+      ferramentas: ferramentasDoUsuario(user, { threadId: threadAtiva.id }),
       medicao: { companyId: user.companyId, userId: user.id, useCase: 'manager' },
     });
 
@@ -101,6 +102,8 @@ export async function conversar(
       threadId: threadAtiva.id,
       resposta,
       ferramentas: [...new Set(passos.map((p) => p.nome))],
+      // proposta de ação aguardando o clique de confirmação, se houver
+      acaoPendente: await acaoPendenteDaThread(user, threadAtiva.id),
     };
   } catch (e) {
     const msg = e instanceof Error ? e.message : 'erro desconhecido';
@@ -139,5 +142,6 @@ export async function conversaRecente(user: SessionUser) {
       texto: m.content,
       em: m.createdAt.toISOString(),
     })),
+    acaoPendente: await acaoPendenteDaThread(user, thread.id),
   };
 }

@@ -59,7 +59,10 @@ async function main() {
       create: { companyId, code, name: def.name, isSystem: true },
       update: { name: def.name },
     });
-    const permCodes = def.permissions === 'ALL' ? ALL_PERMISSIONS : def.permissions;
+    // 'ai:metrics' é concessão individual (UserPermission), nunca de papel —
+    // sem este filtro, um re-seed a entregaria a todo administrador
+    const permCodes = (def.permissions === 'ALL' ? ALL_PERMISSIONS : def.permissions)
+      .filter((pc) => pc !== 'ai:metrics');
     for (const pc of permCodes) {
       const permissionId = permByCode.get(pc);
       if (!permissionId) continue;

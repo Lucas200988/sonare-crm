@@ -4,28 +4,39 @@ import {
   atividadeDoUsuario, contextoDoProjeto, rdosPendentes,
   tarefasVencidas, visaoGeralDaEmpresa,
 } from '@/server/services/agente-contexto';
+import {
+  proporCriarTarefa, proporFollowUp, proporObservacao,
+} from '@/server/services/agente-acoes';
 import { getPrazosVencidos } from '@/server/services/aprovacoes';
 import type { PermissionCode } from '@/config/permissions';
 import type { SessionUser } from '@/server/auth/session';
 import type { DefinicaoDeFerramenta, ExecutorDeFerramentas } from './client';
 
 /**
- * As ferramentas do SONARE AI Manager — Fase 1, todas de LEITURA.
+ * As ferramentas do SONARE AI Manager.
  *
  * Cada ferramenta é um adaptador fino sobre um serviço existente: a regra de
  * negócio mora no serviço, o RBAC mora no `SessionUser`, e o modelo só
  * escolhe O QUE consultar. Allowlist explícita: nome fora deste catálogo não
  * executa nada; argumento fora do schema é recusado antes de tocar o banco.
+ *
+ * Fase 2: ferramentas de ESCRITA não executam — elas registram uma PROPOSTA
+ * (AgentAction) que só vira ação quando o usuário clica em Confirmar no
+ * chat. O modelo nunca tem o poder de escrever; só o de pedir.
  */
+
+type ContextoDaConversa = { threadId: string };
 
 type Ferramenta = {
   nome: string;
   descricao: string;
   /** Permissão exigida para a ferramenta sequer ser oferecida ao modelo. */
   permissao: PermissionCode | null;
+  /** escrita = vira proposta com confirmação humana; leitura executa direto. */
+  tipo?: 'leitura' | 'escrita';
   schema: z.ZodType<Record<string, unknown>>;
   parametros: Record<string, unknown>; // JSON Schema para o provedor
-  executar(user: SessionUser, args: Record<string, unknown>): Promise<unknown>;
+  executar(user: SessionUser, args: Record<string, unknown>, ctx: ContextoDaConversa): Promise<unknown>;
 };
 
 const semArgumentos = {
@@ -114,6 +125,90 @@ export const FERRAMENTAS: Ferramenta[] = [
         : vencidos;
     },
   },
+
+  // ---------- Escrita (Fase 2) — propõem; só o usuário confirma ----------
+  {
+    nome: 'propor_criar_tarefa',
+    descricao:
+      'Propõe a criação de uma tarefa em um projeto (título, responsável e prazo opcionais). '
+      + 'A tarefa NÃO é criada agora: o usuário verá um cartão de confirmação. Depois de chamar, '
+      + 'resuma a proposta e peça que a pessoa confirme no botão.',
+    permissao: 'task:write',
+    tipo: 'escrita',
+    schema: z.object({
+      projeto: z.string().min(2).max(120),
+      titulo: z.string().min(3).max(200),
+      responsavel: z.string().min(2).max(120).optional(),
+      prazo: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
+      descricao: z.string().max(1000).optional(),
+    }).strict() as z.ZodType<Record<string, unknown>>,
+    parametros: {
+      type: 'object',
+      properties: {
+        projeto: { type: 'string', description: 'Código (PRJ-2026-011) ou parte do nome do projeto' },
+        titulo: { type: 'string', description: 'Título da tarefa' },
+        responsavel: { type: 'string', description: 'Nome do responsável (opcional)' },
+        prazo: { type: 'string', description: 'Prazo YYYY-MM-DD (opcional)' },
+        descricao: { type: 'string', description: 'Detalhes (opcional)' },
+      },
+      required: ['projeto', 'titulo'],
+      additionalProperties: false,
+    },
+    executar: (user, args, ctx) => proporCriarTarefa(user, ctx.threadId, {
+      projetoTermo: String(args.projeto),
+      titulo: String(args.titulo),
+      responsavelNome: args.responsavel ? String(args.responsavel) : undefined,
+      prazo: args.prazo ? String(args.prazo) : undefined,
+      descricao: args.descricao ? String(args.descricao) : undefined,
+    }),
+  },
+  {
+    nome: 'propor_registrar_observacao',
+    descricao:
+      'Propõe registrar um comentário/observação em um projeto (impedimento, contexto, decisão). '
+      + 'Nada é gravado agora: o usuário confirma no cartão. Depois de chamar, resuma e peça a confirmação.',
+    permissao: 'project:read',
+    tipo: 'escrita',
+    schema: z.object({
+      projeto: z.string().min(2).max(120),
+      texto: z.string().min(5).max(2000),
+    }).strict() as z.ZodType<Record<string, unknown>>,
+    parametros: {
+      type: 'object',
+      properties: {
+        projeto: { type: 'string', description: 'Código ou parte do nome do projeto' },
+        texto: { type: 'string', description: 'O comentário a registrar' },
+      },
+      required: ['projeto', 'texto'],
+      additionalProperties: false,
+    },
+    executar: (user, args, ctx) => proporObservacao(user, ctx.threadId, {
+      projetoTermo: String(args.projeto), texto: String(args.texto),
+    }),
+  },
+  {
+    nome: 'propor_enviar_follow_up',
+    descricao:
+      'Propõe enviar o follow-up de uma proposta que está na fila (use fila_de_follow_up ou a visão '
+      + 'geral para saber quais estão). O e-mail NÃO é enviado agora: o usuário confirma no cartão, '
+      + 'vendo destinatário e assunto. Depois de chamar, resuma e peça a confirmação.',
+    permissao: 'proposal:write',
+    tipo: 'escrita',
+    schema: z.object({
+      proposta: z.string().min(2).max(40),
+    }).strict() as z.ZodType<Record<string, unknown>>,
+    parametros: {
+      type: 'object',
+      properties: {
+        proposta: { type: 'string', description: 'Código da proposta (PROP-2026-024) ou do orçamento' },
+      },
+      required: ['proposta'],
+      additionalProperties: false,
+    },
+    executar: (user, args, ctx) => proporFollowUp(user, ctx.threadId, {
+      proposta: String(args.proposta),
+    }),
+  },
 ];
 
 /** Resultado sempre em JSON string — o formato que volta para o modelo. */
@@ -124,10 +219,15 @@ function serializar(valor: unknown): string {
 /**
  * O executor entregue ao AI Core, já recortado pelo RBAC do usuário: o
  * modelo nem fica sabendo das ferramentas que a pessoa não pode usar.
+ * As de escrita só existem dentro de uma conversa (threadId) — é onde a
+ * proposta espera o clique de confirmação.
  */
-export function ferramentasDoUsuario(user: SessionUser): ExecutorDeFerramentas {
+export function ferramentasDoUsuario(
+  user: SessionUser, ctx?: ContextoDaConversa,
+): ExecutorDeFerramentas {
   const permitidas = FERRAMENTAS.filter(
-    (f) => f.permissao === null || user.permissions.has(f.permissao),
+    (f) => (f.permissao === null || user.permissions.has(f.permissao))
+      && (f.tipo !== 'escrita' || Boolean(ctx?.threadId)),
   );
 
   const definicoes: DefinicaoDeFerramenta[] = permitidas.map((f) => ({
@@ -155,7 +255,7 @@ export function ferramentasDoUsuario(user: SessionUser): ExecutorDeFerramentas {
       }
 
       try {
-        return serializar(await ferramenta.executar(user, parsed.data));
+        return serializar(await ferramenta.executar(user, parsed.data, ctx ?? { threadId: '' }));
       } catch (e) {
         // a falha vira dado para o modelo contornar — nunca stack trace
         console.error(`[jarvis] ferramenta ${nome} falhou:`, e instanceof Error ? e.message : e);

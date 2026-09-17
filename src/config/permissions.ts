@@ -62,6 +62,9 @@ export const PERMISSIONS = {
   // Relatórios e dashboards
   'report:read': 'Consultar relatórios',
   'dashboard:read': 'Ver dashboards gerenciais',
+
+  // IA
+  'ai:metrics': 'Ver consumo e custo da IA (concedida por usuário, fora dos papéis)',
 } as const;
 
 export type PermissionCode = keyof typeof PERMISSIONS;

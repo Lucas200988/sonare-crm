@@ -450,3 +450,12 @@ export type AgentMemory = Prisma.AgentMemoryModel
  * Gravado só pelo AI Core — nenhum caso de uso loga por conta própria.
  */
 export type AiCall = Prisma.AiCallModel
+/**
+ * Model AgentAction
+ * Ação proposta pelo agente, aguardando confirmação humana explícita.
+ * 
+ * O modelo NUNCA executa escrita: ele propõe, a proposta fica aqui com os
+ * argumentos já resolvidos e validados, e a execução só acontece quando o
+ * usuário clica em Confirmar — determinística, sem o LLM no caminho.
+ */
+export type AgentAction = Prisma.AgentActionModel

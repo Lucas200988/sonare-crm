@@ -2236,3 +2236,31 @@ model AiCall {
   @@index([companyId, createdAt])
   @@index([companyId, useCase, createdAt])
 }
+
+/// Ação proposta pelo agente, aguardando confirmação humana explícita.
+///
+/// O modelo NUNCA executa escrita: ele propõe, a proposta fica aqui com os
+/// argumentos já resolvidos e validados, e a execução só acontece quando o
+/// usuário clica em Confirmar — determinística, sem o LLM no caminho.
+model AgentAction {
+  id         String    @id @default(uuid(7))
+  companyId  String
+  threadId   String
+  userId     String
+  /// Nome da ferramenta de escrita (criar_tarefa, enviar_follow_up…).
+  tool       String
+  /// Argumentos resolvidos (ids, textos) no momento da proposta.
+  args       Json
+  /// Resumo humano do que será feito — o texto do cartão de confirmação.
+  resumo     String
+  /// PROPOSTA | EXECUTADA | CANCELADA | EXPIRADA | FALHOU
+  status     String    @default("PROPOSTA")
+  resultado  Json?
+  expiresAt  DateTime
+  executedAt DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  @@index([threadId, status])
+  @@index([companyId, createdAt])
+}

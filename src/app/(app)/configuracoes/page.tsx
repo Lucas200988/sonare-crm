@@ -11,6 +11,8 @@ import {
   SimpleCatalogSection, StagesSection, ServicesSection, RetentionsSection,
 } from './sections';
 import { AiSection } from './ai-section';
+import { IaConsumoSection } from './ia-consumo-section';
+import { resumoDeConsumoIa } from '@/server/services/ia-consumo';
 import { ContractTemplatesSection, type ClausulaEditavel } from './contract-templates-section';
 
 export const metadata: Metadata = { title: 'Configurações — SONARE CRM' };
@@ -28,6 +30,9 @@ export default async function SettingsPage() {
         orderBy: { name: 'asc' },
       }),
     ]);
+
+  // painel de consumo de IA: permissão individual, fora dos papéis
+  const consumoIa = user.permissions.has('ai:metrics') ? await resumoDeConsumoIa(user) : null;
 
   const setting = (key: string) => allSettings.find((s) => s.key === key)?.value ?? null;
   const signer = (key: string) => {
@@ -69,6 +74,11 @@ export default async function SettingsPage() {
         <Card className="p-5 lg:col-span-2">
           <AiSection status={aiStatus} />
         </Card>
+        {consumoIa && !('error' in consumoIa) ? (
+          <Card className="p-5 lg:col-span-2">
+            <IaConsumoSection resumo={consumoIa} />
+          </Card>
+        ) : null}
         <Card className="p-5">
           <StagesSection stages={stages.map((s) => ({ id: s.id, name: s.name, kind: s.kind, color: s.color, active: s.active, celebrate: s.celebrate, createsProject: s.createsProject }))} />
         </Card>
