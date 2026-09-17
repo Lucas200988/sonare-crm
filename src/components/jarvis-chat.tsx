@@ -32,6 +32,8 @@ export function JarvisChat() {
   const [texto, setTexto] = useState('');
   const [erro, setErro] = useState<string | null>(null);
   const [acaoPendente, setAcaoPendente] = useState<AcaoPendente>(null);
+  // dupla confirmação: o primeiro clique arma, o segundo executa
+  const [armada, setArmada] = useState(false);
   const [pensando, startTransition] = useTransition();
   const [decidindo, startDecidir] = useTransition();
   const fimRef = useRef<HTMLDivElement>(null);
@@ -51,6 +53,7 @@ export function JarvisChat() {
         setThreadId(r.threadId);
         setFalas(r.mensagens.map((m) => ({ id: m.id, papel: m.papel, texto: m.texto })));
         setAcaoPendente(r.acaoPendente ? { id: r.acaoPendente.id, resumo: r.acaoPendente.resumo } : null);
+        setArmada(false);
       }
     });
   }
@@ -68,6 +71,7 @@ export function JarvisChat() {
         setThreadId(r.threadId);
         setFalas((p) => [...p, { id: `j-${Date.now()}`, papel: 'jarvis', texto: r.resposta }]);
         setAcaoPendente(r.acaoPendente ? { id: r.acaoPendente.id, resumo: r.acaoPendente.resumo } : null);
+        setArmada(false);
         return;
       }
       setErro(('error' in r ? r.error : null) ?? 'Não consegui responder agora.');
@@ -104,7 +108,7 @@ export function JarvisChat() {
         <div className="flex items-center gap-1">
           <button
             type="button"
-            onClick={() => { setThreadId(null); setFalas([]); setErro(null); setAcaoPendente(null); }}
+            onClick={() => { setThreadId(null); setFalas([]); setErro(null); setAcaoPendente(null); setArmada(false); }}
             title="Nova conversa"
             aria-label="Começar nova conversa"
             className="rounded p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-700"
@@ -157,38 +161,65 @@ export function JarvisChat() {
         ))}
 
         {acaoPendente ? (
-          <div className="rounded-xl border border-amber-300 bg-amber-50 p-3">
-            <p className="flex items-start gap-1.5 text-xs font-medium text-amber-900">
+          <div className={`rounded-xl border p-3 ${armada ? 'border-red-300 bg-red-50' : 'border-amber-300 bg-amber-50'}`}>
+            <p className={`flex items-start gap-1.5 text-xs font-medium ${armada ? 'text-red-900' : 'text-amber-900'}`}>
               <ShieldAlert className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden />
-              Ação aguardando sua confirmação
+              {armada ? 'Última confirmação — a ação será executada de verdade' : 'Ação aguardando sua confirmação'}
             </p>
-            <p className="mt-1 text-xs text-amber-900/90">{acaoPendente.resumo}</p>
+            <p className={`mt-1 text-xs ${armada ? 'text-red-900/90' : 'text-amber-900/90'}`}>
+              {acaoPendente.resumo}
+            </p>
             <div className="mt-2 flex gap-2">
-              <button
-                type="button"
-                disabled={decidindo}
-                onClick={() => startDecidir(async () => {
-                  const r = await confirmarAcaoDoJarvisAction(acaoPendente.id);
-                  setAcaoPendente(null);
-                  setFalas((p) => [...p, {
-                    id: `a-${Date.now()}`, papel: 'jarvis',
-                    texto: 'ok' in r && r.ok ? r.mensagem : `A ação não foi executada: ${'error' in r ? r.error : 'falha'}`,
-                  }]);
-                })}
-                className="inline-flex items-center gap-1 rounded-lg bg-green-700 px-3 py-1.5 text-xs font-semibold text-white hover:bg-green-800 disabled:opacity-50"
-              >
-                <CheckCircle2 className="h-3.5 w-3.5" aria-hidden />
-                {decidindo ? 'Executando…' : 'Confirmar'}
-              </button>
+              {!armada ? (
+                <button
+                  type="button"
+                  disabled={decidindo}
+                  onClick={() => setArmada(true)}
+                  className="inline-flex items-center gap-1 rounded-lg bg-green-700 px-3 py-1.5 text-xs font-semibold text-white hover:bg-green-800 disabled:opacity-50"
+                >
+                  <CheckCircle2 className="h-3.5 w-3.5" aria-hidden /> Confirmar
+                </button>
+              ) : (
+                <>
+                  <button
+                    type="button"
+                    disabled={decidindo}
+                    onClick={() => startDecidir(async () => {
+                      const r = await confirmarAcaoDoJarvisAction(acaoPendente.id);
+                      setAcaoPendente(null);
+                      setArmada(false);
+                      setFalas((p) => [...p, {
+                        id: `a-${Date.now()}`, papel: 'jarvis',
+                        texto: 'ok' in r && r.ok ? r.mensagem : `A ação não foi executada: ${'error' in r ? r.error : 'falha'}`,
+                      }]);
+                    })}
+                    className="inline-flex items-center gap-1 rounded-lg bg-red-700 px-3 py-1.5 text-xs font-semibold text-white hover:bg-red-800 disabled:opacity-50"
+                  >
+                    <CheckCircle2 className="h-3.5 w-3.5" aria-hidden />
+                    {decidindo ? 'Executando…' : 'Sim, executar'}
+                  </button>
+                  <button
+                    type="button"
+                    disabled={decidindo}
+                    onClick={() => setArmada(false)}
+                    className="rounded-lg border border-red-300 bg-white px-3 py-1.5 text-xs font-medium text-red-900 hover:bg-red-100 disabled:opacity-50"
+                  >
+                    Voltar
+                  </button>
+                </>
+              )}
               <button
                 type="button"
                 disabled={decidindo}
                 onClick={() => startDecidir(async () => {
                   await cancelarAcaoDoJarvisAction(acaoPendente.id);
                   setAcaoPendente(null);
+                  setArmada(false);
                   setFalas((p) => [...p, { id: `a-${Date.now()}`, papel: 'jarvis', texto: 'Ação cancelada — nada foi executado.' }]);
                 })}
-                className="rounded-lg border border-amber-300 bg-white px-3 py-1.5 text-xs font-medium text-amber-900 hover:bg-amber-100 disabled:opacity-50"
+                className={`ml-auto rounded-lg border bg-white px-3 py-1.5 text-xs font-medium disabled:opacity-50 ${
+                  armada ? 'border-red-300 text-red-900 hover:bg-red-100' : 'border-amber-300 text-amber-900 hover:bg-amber-100'
+                }`}
               >
                 Cancelar
               </button>
