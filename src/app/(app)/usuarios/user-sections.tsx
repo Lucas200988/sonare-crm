@@ -18,6 +18,7 @@ export type UserRow = {
   email: string;
   active: boolean;
   autoProjectMember: boolean;
+  jarvisBriefing: boolean;
   creaCau: string | null;
   hourlyCost: string | null;
   hourlyRate: string | null;
@@ -281,6 +282,23 @@ function UserForm({
           <span className="block text-[11px] text-slate-500">
             Para sócios e gestores: qualquer cartão criado — manual, por contrato ou por
             oportunidade ganha — já nasce com esta pessoa na equipe.
+          </span>
+        </span>
+      </label>
+
+      <label className="flex items-start gap-2 rounded-lg border border-slate-200 bg-white p-3 text-sm">
+        <input
+          type="checkbox" name="jarvisBriefing"
+          defaultChecked={user?.jarvisBriefing ?? false}
+          className="mt-0.5 rounded border-slate-300"
+        />
+        <span>
+          <span className="block font-medium text-slate-800">
+            Recebe os briefings do Jarvis
+          </span>
+          <span className="block text-[11px] text-slate-500">
+            Resumo operacional às 8h e fechamento às 17h30, em dias úteis — no sino e por e-mail,
+            respeitando o que esta pessoa pode ver no sistema.
           </span>
         </span>
       </label>

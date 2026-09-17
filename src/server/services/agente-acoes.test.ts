@@ -46,7 +46,8 @@ async function carregar(acaoNoBanco: Record<string, unknown> | null = null) {
   return { mod, prisma };
 }
 
-describe('ações do Jarvis com confirmação', () => {
+// o primeiro import dinâmico paga o transform do grafo inteiro na suíte cheia
+describe('ações do Jarvis com confirmação', { timeout: 30_000 }, () => {
   beforeEach(() => {
     vi.resetModules();
     criarTarefaMock.mockClear();
@@ -134,5 +135,41 @@ describe('ações do Jarvis com confirmação', () => {
     const { mod } = await carregar();
     const r = await mod.proporFollowUp(USUARIO, 'th1', { proposta: 'PROP-2026-999' });
     expect('error' in r && r.error).toContain('fila');
+  });
+
+  it('memória: registra declaração com fonte e validade', async () => {
+    const criada: Record<string, unknown>[] = [];
+    const { mod, prisma } = await carregar();
+    (prisma as unknown as { agentMemory: unknown }).agentMemory = {
+      create: vi.fn().mockImplementation(async ({ data }: { data: Record<string, unknown> }) => {
+        criada.push(data);
+        return { id: 'm1', ...data };
+      }),
+    };
+
+    const r = await mod.registrarMemoria(USUARIO, 'th1', {
+      tipo: 'USER_AVAILABILITY', sobreTipo: 'user', sobreNome: 'Rodrigo',
+      conteudo: 'De férias.', validaAte: '2026-09-25',
+    });
+    expect('ok' in r && r.ok).toBe(true);
+    expect(criada[0]).toMatchObject({
+      type: 'USER_AVAILABILITY', subjectType: 'user', subjectId: 'u2',
+      source: 'USER_DECLARATION', createdById: 'u1',
+    });
+    expect(criada[0].validUntil).toBeInstanceOf(Date);
+  });
+
+  it('memória: instrução de gestão exige user:manage e tipo inválido é recusado', async () => {
+    const { mod } = await carregar();
+    const semGestao = await mod.registrarMemoria(USUARIO, 'th1', {
+      tipo: 'MANAGEMENT_INSTRUCTION', sobreTipo: 'project', sobreNome: 'Terracap',
+      conteudo: 'Não cobrar até segunda.',
+    });
+    expect('error' in semGestao && semGestao.error).toContain('gestão');
+
+    const tipoErrado = await mod.registrarMemoria(USUARIO, 'th1', {
+      tipo: 'HACK', sobreTipo: 'user', sobreNome: 'Rodrigo', conteudo: 'x'.repeat(10),
+    });
+    expect('error' in tipoErrado && tipoErrado.error).toContain('inválido');
   });
 });

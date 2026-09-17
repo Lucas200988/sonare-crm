@@ -34,6 +34,8 @@ export type UserInput = {
   hourlyRate?: string | null;
   /** Entra automaticamente na equipe de todo projeto novo. */
   autoProjectMember?: boolean;
+  /** Recebe os briefings proativos do Jarvis (manhã e fechamento). */
+  jarvisBriefing?: boolean;
 };
 
 /** Cria usuário com senha inicial; ele deve trocá-la no primeiro acesso. */
@@ -69,6 +71,7 @@ export async function createUser(
       hourlyCost: input.hourlyCost || null,
       hourlyRate: input.hourlyRate || null,
       autoProjectMember: input.autoProjectMember ?? false,
+      jarvisBriefing: input.jarvisBriefing ?? false,
       createdById: user.id,
       roles: { create: input.roleIds.map((roleId) => ({ roleId })) },
     },
@@ -117,6 +120,7 @@ export async function updateUser(user: SessionUser, userId: string, input: UserI
         hourlyCost: input.hourlyCost || null,
         hourlyRate: input.hourlyRate || null,
         autoProjectMember: input.autoProjectMember ?? false,
+        jarvisBriefing: input.jarvisBriefing ?? false,
         updatedById: user.id,
         roles: { create: input.roleIds.map((roleId) => ({ roleId })) },
       },

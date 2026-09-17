@@ -51,6 +51,7 @@ export type UserMinAggregateOutputType = {
   hourlyRate: runtime.Decimal | null
   creaCau: string | null
   autoProjectMember: boolean | null
+  jarvisBriefing: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
   createdById: string | null
@@ -73,6 +74,7 @@ export type UserMaxAggregateOutputType = {
   hourlyRate: runtime.Decimal | null
   creaCau: string | null
   autoProjectMember: boolean | null
+  jarvisBriefing: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
   createdById: string | null
@@ -95,6 +97,7 @@ export type UserCountAggregateOutputType = {
   hourlyRate: number
   creaCau: number
   autoProjectMember: number
+  jarvisBriefing: number
   createdAt: number
   updatedAt: number
   createdById: number
@@ -129,6 +132,7 @@ export type UserMinAggregateInputType = {
   hourlyRate?: true
   creaCau?: true
   autoProjectMember?: true
+  jarvisBriefing?: true
   createdAt?: true
   updatedAt?: true
   createdById?: true
@@ -151,6 +155,7 @@ export type UserMaxAggregateInputType = {
   hourlyRate?: true
   creaCau?: true
   autoProjectMember?: true
+  jarvisBriefing?: true
   createdAt?: true
   updatedAt?: true
   createdById?: true
@@ -173,6 +178,7 @@ export type UserCountAggregateInputType = {
   hourlyRate?: true
   creaCau?: true
   autoProjectMember?: true
+  jarvisBriefing?: true
   createdAt?: true
   updatedAt?: true
   createdById?: true
@@ -282,6 +288,7 @@ export type UserGroupByOutputType = {
   hourlyRate: runtime.Decimal | null
   creaCau: string | null
   autoProjectMember: boolean
+  jarvisBriefing: boolean
   createdAt: Date
   updatedAt: Date
   createdById: string | null
@@ -327,6 +334,7 @@ export type UserWhereInput = {
   hourlyRate?: Prisma.DecimalNullableFilter<"User"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: Prisma.StringNullableFilter<"User"> | string | null
   autoProjectMember?: Prisma.BoolFilter<"User"> | boolean
+  jarvisBriefing?: Prisma.BoolFilter<"User"> | boolean
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   createdById?: Prisma.StringNullableFilter<"User"> | string | null
@@ -371,6 +379,7 @@ export type UserOrderByWithRelationInput = {
   hourlyRate?: Prisma.SortOrderInput | Prisma.SortOrder
   creaCau?: Prisma.SortOrderInput | Prisma.SortOrder
   autoProjectMember?: Prisma.SortOrder
+  jarvisBriefing?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   createdById?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -418,6 +427,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   hourlyRate?: Prisma.DecimalNullableFilter<"User"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: Prisma.StringNullableFilter<"User"> | string | null
   autoProjectMember?: Prisma.BoolFilter<"User"> | boolean
+  jarvisBriefing?: Prisma.BoolFilter<"User"> | boolean
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   createdById?: Prisma.StringNullableFilter<"User"> | string | null
@@ -462,6 +472,7 @@ export type UserOrderByWithAggregationInput = {
   hourlyRate?: Prisma.SortOrderInput | Prisma.SortOrder
   creaCau?: Prisma.SortOrderInput | Prisma.SortOrder
   autoProjectMember?: Prisma.SortOrder
+  jarvisBriefing?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   createdById?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -492,6 +503,7 @@ export type UserScalarWhereWithAggregatesInput = {
   hourlyRate?: Prisma.DecimalNullableWithAggregatesFilter<"User"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   autoProjectMember?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
+  jarvisBriefing?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
   createdById?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
@@ -514,6 +526,7 @@ export type UserCreateInput = {
   hourlyRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: string | null
   autoProjectMember?: boolean
+  jarvisBriefing?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -558,6 +571,7 @@ export type UserUncheckedCreateInput = {
   hourlyRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: string | null
   autoProjectMember?: boolean
+  jarvisBriefing?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -602,6 +616,7 @@ export type UserUpdateInput = {
   hourlyRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -646,6 +661,7 @@ export type UserUncheckedUpdateInput = {
   hourlyRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -690,6 +706,7 @@ export type UserCreateManyInput = {
   hourlyRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: string | null
   autoProjectMember?: boolean
+  jarvisBriefing?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -712,6 +729,7 @@ export type UserUpdateManyMutationInput = {
   hourlyRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -734,6 +752,7 @@ export type UserUncheckedUpdateManyInput = {
   hourlyRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -756,6 +775,7 @@ export type UserCountOrderByAggregateInput = {
   hourlyRate?: Prisma.SortOrder
   creaCau?: Prisma.SortOrder
   autoProjectMember?: Prisma.SortOrder
+  jarvisBriefing?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   createdById?: Prisma.SortOrder
@@ -783,6 +803,7 @@ export type UserMaxOrderByAggregateInput = {
   hourlyRate?: Prisma.SortOrder
   creaCau?: Prisma.SortOrder
   autoProjectMember?: Prisma.SortOrder
+  jarvisBriefing?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   createdById?: Prisma.SortOrder
@@ -805,6 +826,7 @@ export type UserMinOrderByAggregateInput = {
   hourlyRate?: Prisma.SortOrder
   creaCau?: Prisma.SortOrder
   autoProjectMember?: Prisma.SortOrder
+  jarvisBriefing?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   createdById?: Prisma.SortOrder
@@ -1196,6 +1218,7 @@ export type UserCreateWithoutRolesInput = {
   hourlyRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: string | null
   autoProjectMember?: boolean
+  jarvisBriefing?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -1239,6 +1262,7 @@ export type UserUncheckedCreateWithoutRolesInput = {
   hourlyRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: string | null
   autoProjectMember?: boolean
+  jarvisBriefing?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -1298,6 +1322,7 @@ export type UserUpdateWithoutRolesInput = {
   hourlyRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1341,6 +1366,7 @@ export type UserUncheckedUpdateWithoutRolesInput = {
   hourlyRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1384,6 +1410,7 @@ export type UserCreateWithoutExtraPermissionsInput = {
   hourlyRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: string | null
   autoProjectMember?: boolean
+  jarvisBriefing?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -1427,6 +1454,7 @@ export type UserUncheckedCreateWithoutExtraPermissionsInput = {
   hourlyRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: string | null
   autoProjectMember?: boolean
+  jarvisBriefing?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -1486,6 +1514,7 @@ export type UserUpdateWithoutExtraPermissionsInput = {
   hourlyRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1529,6 +1558,7 @@ export type UserUncheckedUpdateWithoutExtraPermissionsInput = {
   hourlyRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1572,6 +1602,7 @@ export type UserCreateWithoutSessionsInput = {
   hourlyRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: string | null
   autoProjectMember?: boolean
+  jarvisBriefing?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -1615,6 +1646,7 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   hourlyRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: string | null
   autoProjectMember?: boolean
+  jarvisBriefing?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -1674,6 +1706,7 @@ export type UserUpdateWithoutSessionsInput = {
   hourlyRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1717,6 +1750,7 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   hourlyRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1760,6 +1794,7 @@ export type UserCreateWithoutPasswordResetTokensInput = {
   hourlyRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: string | null
   autoProjectMember?: boolean
+  jarvisBriefing?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -1803,6 +1838,7 @@ export type UserUncheckedCreateWithoutPasswordResetTokensInput = {
   hourlyRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: string | null
   autoProjectMember?: boolean
+  jarvisBriefing?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -1862,6 +1898,7 @@ export type UserUpdateWithoutPasswordResetTokensInput = {
   hourlyRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1905,6 +1942,7 @@ export type UserUncheckedUpdateWithoutPasswordResetTokensInput = {
   hourlyRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1948,6 +1986,7 @@ export type UserCreateWithoutAuditLogsInput = {
   hourlyRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: string | null
   autoProjectMember?: boolean
+  jarvisBriefing?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -1991,6 +2030,7 @@ export type UserUncheckedCreateWithoutAuditLogsInput = {
   hourlyRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: string | null
   autoProjectMember?: boolean
+  jarvisBriefing?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -2050,6 +2090,7 @@ export type UserUpdateWithoutAuditLogsInput = {
   hourlyRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2093,6 +2134,7 @@ export type UserUncheckedUpdateWithoutAuditLogsInput = {
   hourlyRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2136,6 +2178,7 @@ export type UserCreateWithoutClientsOwnedInput = {
   hourlyRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: string | null
   autoProjectMember?: boolean
+  jarvisBriefing?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -2179,6 +2222,7 @@ export type UserUncheckedCreateWithoutClientsOwnedInput = {
   hourlyRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: string | null
   autoProjectMember?: boolean
+  jarvisBriefing?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -2238,6 +2282,7 @@ export type UserUpdateWithoutClientsOwnedInput = {
   hourlyRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2281,6 +2326,7 @@ export type UserUncheckedUpdateWithoutClientsOwnedInput = {
   hourlyRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2324,6 +2370,7 @@ export type UserCreateWithoutOpportunitiesCommercialInput = {
   hourlyRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: string | null
   autoProjectMember?: boolean
+  jarvisBriefing?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -2367,6 +2414,7 @@ export type UserUncheckedCreateWithoutOpportunitiesCommercialInput = {
   hourlyRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: string | null
   autoProjectMember?: boolean
+  jarvisBriefing?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -2415,6 +2463,7 @@ export type UserCreateWithoutOpportunitiesTechnicalInput = {
   hourlyRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: string | null
   autoProjectMember?: boolean
+  jarvisBriefing?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -2458,6 +2507,7 @@ export type UserUncheckedCreateWithoutOpportunitiesTechnicalInput = {
   hourlyRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: string | null
   autoProjectMember?: boolean
+  jarvisBriefing?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -2517,6 +2567,7 @@ export type UserUpdateWithoutOpportunitiesCommercialInput = {
   hourlyRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2560,6 +2611,7 @@ export type UserUncheckedUpdateWithoutOpportunitiesCommercialInput = {
   hourlyRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2614,6 +2666,7 @@ export type UserUpdateWithoutOpportunitiesTechnicalInput = {
   hourlyRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2657,6 +2710,7 @@ export type UserUncheckedUpdateWithoutOpportunitiesTechnicalInput = {
   hourlyRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2700,6 +2754,7 @@ export type UserCreateWithoutActivitiesInput = {
   hourlyRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: string | null
   autoProjectMember?: boolean
+  jarvisBriefing?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -2743,6 +2798,7 @@ export type UserUncheckedCreateWithoutActivitiesInput = {
   hourlyRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: string | null
   autoProjectMember?: boolean
+  jarvisBriefing?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -2802,6 +2858,7 @@ export type UserUpdateWithoutActivitiesInput = {
   hourlyRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2845,6 +2902,7 @@ export type UserUncheckedUpdateWithoutActivitiesInput = {
   hourlyRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2888,6 +2946,7 @@ export type UserCreateWithoutBudgetsCommercialInput = {
   hourlyRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: string | null
   autoProjectMember?: boolean
+  jarvisBriefing?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -2931,6 +2990,7 @@ export type UserUncheckedCreateWithoutBudgetsCommercialInput = {
   hourlyRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: string | null
   autoProjectMember?: boolean
+  jarvisBriefing?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -2979,6 +3039,7 @@ export type UserCreateWithoutBudgetsTechnicalInput = {
   hourlyRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: string | null
   autoProjectMember?: boolean
+  jarvisBriefing?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -3022,6 +3083,7 @@ export type UserUncheckedCreateWithoutBudgetsTechnicalInput = {
   hourlyRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: string | null
   autoProjectMember?: boolean
+  jarvisBriefing?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -3081,6 +3143,7 @@ export type UserUpdateWithoutBudgetsCommercialInput = {
   hourlyRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3124,6 +3187,7 @@ export type UserUncheckedUpdateWithoutBudgetsCommercialInput = {
   hourlyRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3178,6 +3242,7 @@ export type UserUpdateWithoutBudgetsTechnicalInput = {
   hourlyRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3221,6 +3286,7 @@ export type UserUncheckedUpdateWithoutBudgetsTechnicalInput = {
   hourlyRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3264,6 +3330,7 @@ export type UserCreateWithoutApprovalsRequestedInput = {
   hourlyRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: string | null
   autoProjectMember?: boolean
+  jarvisBriefing?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -3307,6 +3374,7 @@ export type UserUncheckedCreateWithoutApprovalsRequestedInput = {
   hourlyRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: string | null
   autoProjectMember?: boolean
+  jarvisBriefing?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -3355,6 +3423,7 @@ export type UserCreateWithoutApprovalsDecidedInput = {
   hourlyRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: string | null
   autoProjectMember?: boolean
+  jarvisBriefing?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -3398,6 +3467,7 @@ export type UserUncheckedCreateWithoutApprovalsDecidedInput = {
   hourlyRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: string | null
   autoProjectMember?: boolean
+  jarvisBriefing?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -3457,6 +3527,7 @@ export type UserUpdateWithoutApprovalsRequestedInput = {
   hourlyRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3500,6 +3571,7 @@ export type UserUncheckedUpdateWithoutApprovalsRequestedInput = {
   hourlyRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3554,6 +3626,7 @@ export type UserUpdateWithoutApprovalsDecidedInput = {
   hourlyRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3597,6 +3670,7 @@ export type UserUncheckedUpdateWithoutApprovalsDecidedInput = {
   hourlyRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3640,6 +3714,7 @@ export type UserCreateWithoutProjectsLedInput = {
   hourlyRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: string | null
   autoProjectMember?: boolean
+  jarvisBriefing?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -3683,6 +3758,7 @@ export type UserUncheckedCreateWithoutProjectsLedInput = {
   hourlyRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: string | null
   autoProjectMember?: boolean
+  jarvisBriefing?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -3731,6 +3807,7 @@ export type UserCreateWithoutProjectsCoordinatedInput = {
   hourlyRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: string | null
   autoProjectMember?: boolean
+  jarvisBriefing?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -3774,6 +3851,7 @@ export type UserUncheckedCreateWithoutProjectsCoordinatedInput = {
   hourlyRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: string | null
   autoProjectMember?: boolean
+  jarvisBriefing?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -3833,6 +3911,7 @@ export type UserUpdateWithoutProjectsLedInput = {
   hourlyRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3876,6 +3955,7 @@ export type UserUncheckedUpdateWithoutProjectsLedInput = {
   hourlyRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3930,6 +4010,7 @@ export type UserUpdateWithoutProjectsCoordinatedInput = {
   hourlyRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3973,6 +4054,7 @@ export type UserUncheckedUpdateWithoutProjectsCoordinatedInput = {
   hourlyRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4016,6 +4098,7 @@ export type UserCreateWithoutProjectMembershipsInput = {
   hourlyRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: string | null
   autoProjectMember?: boolean
+  jarvisBriefing?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -4059,6 +4142,7 @@ export type UserUncheckedCreateWithoutProjectMembershipsInput = {
   hourlyRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: string | null
   autoProjectMember?: boolean
+  jarvisBriefing?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -4118,6 +4202,7 @@ export type UserUpdateWithoutProjectMembershipsInput = {
   hourlyRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4161,6 +4246,7 @@ export type UserUncheckedUpdateWithoutProjectMembershipsInput = {
   hourlyRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4204,6 +4290,7 @@ export type UserCreateWithoutTasksAssignedInput = {
   hourlyRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: string | null
   autoProjectMember?: boolean
+  jarvisBriefing?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -4247,6 +4334,7 @@ export type UserUncheckedCreateWithoutTasksAssignedInput = {
   hourlyRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: string | null
   autoProjectMember?: boolean
+  jarvisBriefing?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -4306,6 +4394,7 @@ export type UserUpdateWithoutTasksAssignedInput = {
   hourlyRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4349,6 +4438,7 @@ export type UserUncheckedUpdateWithoutTasksAssignedInput = {
   hourlyRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4392,6 +4482,7 @@ export type UserCreateWithoutTimeEntriesInput = {
   hourlyRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: string | null
   autoProjectMember?: boolean
+  jarvisBriefing?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -4435,6 +4526,7 @@ export type UserUncheckedCreateWithoutTimeEntriesInput = {
   hourlyRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: string | null
   autoProjectMember?: boolean
+  jarvisBriefing?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -4494,6 +4586,7 @@ export type UserUpdateWithoutTimeEntriesInput = {
   hourlyRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4537,6 +4630,7 @@ export type UserUncheckedUpdateWithoutTimeEntriesInput = {
   hourlyRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4580,6 +4674,7 @@ export type UserCreateWithoutTechnicalResponsibilitiesInput = {
   hourlyRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: string | null
   autoProjectMember?: boolean
+  jarvisBriefing?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -4623,6 +4718,7 @@ export type UserUncheckedCreateWithoutTechnicalResponsibilitiesInput = {
   hourlyRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: string | null
   autoProjectMember?: boolean
+  jarvisBriefing?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -4682,6 +4778,7 @@ export type UserUpdateWithoutTechnicalResponsibilitiesInput = {
   hourlyRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4725,6 +4822,7 @@ export type UserUncheckedUpdateWithoutTechnicalResponsibilitiesInput = {
   hourlyRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4768,6 +4866,7 @@ export type UserCreateWithoutCommentsInput = {
   hourlyRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: string | null
   autoProjectMember?: boolean
+  jarvisBriefing?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -4811,6 +4910,7 @@ export type UserUncheckedCreateWithoutCommentsInput = {
   hourlyRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: string | null
   autoProjectMember?: boolean
+  jarvisBriefing?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -4870,6 +4970,7 @@ export type UserUpdateWithoutCommentsInput = {
   hourlyRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4913,6 +5014,7 @@ export type UserUncheckedUpdateWithoutCommentsInput = {
   hourlyRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4956,6 +5058,7 @@ export type UserCreateWithoutNotificationsInput = {
   hourlyRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: string | null
   autoProjectMember?: boolean
+  jarvisBriefing?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -4999,6 +5102,7 @@ export type UserUncheckedCreateWithoutNotificationsInput = {
   hourlyRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: string | null
   autoProjectMember?: boolean
+  jarvisBriefing?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -5058,6 +5162,7 @@ export type UserUpdateWithoutNotificationsInput = {
   hourlyRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5101,6 +5206,7 @@ export type UserUncheckedUpdateWithoutNotificationsInput = {
   hourlyRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5144,6 +5250,7 @@ export type UserCreateWithoutEquipmentHeldInput = {
   hourlyRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: string | null
   autoProjectMember?: boolean
+  jarvisBriefing?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -5187,6 +5294,7 @@ export type UserUncheckedCreateWithoutEquipmentHeldInput = {
   hourlyRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: string | null
   autoProjectMember?: boolean
+  jarvisBriefing?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -5246,6 +5354,7 @@ export type UserUpdateWithoutEquipmentHeldInput = {
   hourlyRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5289,6 +5398,7 @@ export type UserUncheckedUpdateWithoutEquipmentHeldInput = {
   hourlyRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5552,6 +5662,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   hourlyRate?: boolean
   creaCau?: boolean
   autoProjectMember?: boolean
+  jarvisBriefing?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   createdById?: boolean
@@ -5597,6 +5708,7 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   hourlyRate?: boolean
   creaCau?: boolean
   autoProjectMember?: boolean
+  jarvisBriefing?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   createdById?: boolean
@@ -5619,6 +5731,7 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   hourlyRate?: boolean
   creaCau?: boolean
   autoProjectMember?: boolean
+  jarvisBriefing?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   createdById?: boolean
@@ -5641,6 +5754,7 @@ export type UserSelectScalar = {
   hourlyRate?: boolean
   creaCau?: boolean
   autoProjectMember?: boolean
+  jarvisBriefing?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   createdById?: boolean
@@ -5648,7 +5762,7 @@ export type UserSelectScalar = {
   deletedAt?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "companyId" | "name" | "email" | "passwordHash" | "active" | "mfaEnabled" | "mfaSecret" | "passwordChangedAt" | "lastLoginAt" | "hourlyCost" | "hourlyRate" | "creaCau" | "autoProjectMember" | "createdAt" | "updatedAt" | "createdById" | "updatedById" | "deletedAt", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "companyId" | "name" | "email" | "passwordHash" | "active" | "mfaEnabled" | "mfaSecret" | "passwordChangedAt" | "lastLoginAt" | "hourlyCost" | "hourlyRate" | "creaCau" | "autoProjectMember" | "jarvisBriefing" | "createdAt" | "updatedAt" | "createdById" | "updatedById" | "deletedAt", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   sessions?: boolean | Prisma.User$sessionsArgs<ExtArgs>
   passwordResetTokens?: boolean | Prisma.User$passwordResetTokensArgs<ExtArgs>
@@ -5721,6 +5835,10 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
      * Entra automaticamente na equipe de todo projeto novo (sócios/gestores).
      */
     autoProjectMember: boolean
+    /**
+     * Recebe os briefings proativos do Jarvis (manhã e fechamento, dias úteis).
+     */
+    jarvisBriefing: boolean
     createdAt: Date
     updatedAt: Date
     createdById: string | null
@@ -6185,6 +6303,7 @@ export interface UserFieldRefs {
   readonly hourlyRate: Prisma.FieldRef<"User", 'Decimal'>
   readonly creaCau: Prisma.FieldRef<"User", 'String'>
   readonly autoProjectMember: Prisma.FieldRef<"User", 'Boolean'>
+  readonly jarvisBriefing: Prisma.FieldRef<"User", 'Boolean'>
   readonly createdAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly createdById: Prisma.FieldRef<"User", 'String'>

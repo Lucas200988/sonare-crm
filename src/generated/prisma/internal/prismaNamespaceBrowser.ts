@@ -193,6 +193,7 @@ export const UserScalarFieldEnum = {
   hourlyRate: 'hourlyRate',
   creaCau: 'creaCau',
   autoProjectMember: 'autoProjectMember',
+  jarvisBriefing: 'jarvisBriefing',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   createdById: 'createdById',

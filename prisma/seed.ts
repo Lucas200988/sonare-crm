@@ -1,5 +1,6 @@
 // Seed de demonstração — NUNCA usar dados ou credenciais reais.
 import 'dotenv/config';
+import { randomUUID } from 'node:crypto';
 import { PrismaClient } from '../src/generated/prisma/client';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { hash } from '@node-rs/argon2';
@@ -75,6 +76,21 @@ async function main() {
   }
   const roles = await prisma.role.findMany({ where: { companyId } });
   const roleByCode = new Map(roles.map((r) => [r.code, r.id]));
+
+  // 3.1 Usuário-sistema do SONARE AI Manager (Jarvis): identidade própria
+  // para os ciclos autônomos assinarem AuditLog e notificações. Inativo de
+  // propósito — ninguém loga como o agente.
+  await prisma.user.upsert({
+    where: { email: 'jarvis@sonareengenharia.com.br' },
+    create: {
+      companyId,
+      name: 'SONARE AI Manager',
+      email: 'jarvis@sonareengenharia.com.br',
+      passwordHash: await hash(randomUUID(), ARGON_OPTS),
+      active: false,
+    },
+    update: {},
+  });
 
   // 4. Usuários de demonstração (senha: Sonare@2026 — trocar em produção)
   const demoUsers: Array<{ name: string; email: string; role: string }> = [

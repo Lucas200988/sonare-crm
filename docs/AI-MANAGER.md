@@ -59,15 +59,37 @@ Em `manager-tools.ts`: nome, descrição (é o que o modelo lê para decidir),
 Contexto agregado (poucas consultas largas — o banco tem ~145 ms de
 latência) mora em `src/server/services/agente-contexto.ts`.
 
-## Fases seguintes (arquitetura já preparada)
+## Fase 2 — Executor (entregue)
 
-2. **Assistente executor** — tools de escrita com confirmação explícita em
-   duas voltas no chat.
-3. **Gerente autônomo** — identidade própria + ciclos proativos
-   (morning/continuous/closing) sobre o Vercel Cron; compromissos em
-   `AgentMemory` verificados no dia seguinte.
-4. **WhatsApp** — `conversar()` já recebe `canal` (CRM | WHATSAPP | CRON |
-   EMAIL); um adapter de canal chama a mesma função.
+Ferramentas de escrita (criar tarefa, registrar observação, enviar
+follow-up da fila) NUNCA executam: registram uma proposta em `AgentAction`
+(validade 30 min) e o chat mostra o cartão com **dupla confirmação**
+(Confirmar arma → "Sim, executar" executa). A execução é determinística
+(`agente-acoes.ts`), sem o LLM no caminho, auditada como "confirmada pelo
+usuário". Exceção deliberada: `registrar_informacao_operacional` grava
+direto em `AgentMemory` (é o caderno do agente sobre o que a pessoa
+DECLAROU — fonte USER_DECLARATION, autor registrado, validade).
+
+## Fase 3 — Gerente autônomo (morning/closing entregues)
+
+- Identidade própria: usuário-sistema **SONARE AI Manager**
+  (`jarvis@sonareengenharia.com.br`, inativo para login). Ciclos autônomos
+  assinam `AuditLog` e notificações como o agente — nunca como uma pessoa.
+- **Morning (08h) e Closing (17h30), dias úteis** — cron
+  `/api/cron/jarvis?periodo=` (CRON_SECRET). Os DADOS de cada briefing são
+  coletados com o `SessionUser` do DESTINATÁRIO (RBAC vale em mensagem
+  proativa); a redação usa a IA com **fallback determinístico** — o
+  briefing sai mesmo com o provedor fora. Opt-in por usuário na tela de
+  Usuários (`User.jarvisBriefing`).
+- Compromissos/disponibilidades vigentes em `AgentMemory` entram no
+  briefing. **Pendente da Fase 3**: Continuous Manager (cobranças
+  individuais ao longo do dia — o de maior risco de spam, de propósito por
+  último).
+
+## Fase 4 — WhatsApp (pendente)
+
+`conversar()` já recebe `canal` (CRM | WHATSAPP | CRON | EMAIL); um adapter
+de canal chama a mesma função.
 
 ## Testes
 

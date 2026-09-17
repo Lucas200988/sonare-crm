@@ -4,6 +4,14 @@
     {
       "path": "/api/cron/followup",
       "schedule": "0 12 * * *"
+    },
+    {
+      "path": "/api/cron/jarvis?periodo=manha",
+      "schedule": "0 12 * * 1-5"
+    },
+    {
+      "path": "/api/cron/jarvis?periodo=fechamento",
+      "schedule": "30 21 * * 1-5"
     }
   ],
   "redirects": [

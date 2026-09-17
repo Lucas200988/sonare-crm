@@ -24,8 +24,9 @@ const baseSchema = {
   creaCau: optional,
   hourlyCost: decimalOpt,
   hourlyRate: decimalOpt,
-  // checkbox: presente = "on"; ausente do form = false
+  // checkboxes: presente = "on"; ausente do form = false
   autoProjectMember: z.preprocess((v) => v === 'on' || v === 'true' || v === true, z.boolean()),
+  jarvisBriefing: z.preprocess((v) => v === 'on' || v === 'true' || v === true, z.boolean()),
 };
 
 /** Os papéis chegam como múltiplos campos "roleIds" do formulário. */

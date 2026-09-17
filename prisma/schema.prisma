@@ -70,6 +70,8 @@ model User {
   creaCau             String?   // registro profissional, quando aplicável
   /// Entra automaticamente na equipe de todo projeto novo (sócios/gestores).
   autoProjectMember   Boolean   @default(false)
+  /// Recebe os briefings proativos do Jarvis (manhã e fechamento, dias úteis).
+  jarvisBriefing      Boolean   @default(false)
   createdAt           DateTime  @default(now())
   updatedAt           DateTime  @updatedAt
   createdById         String?

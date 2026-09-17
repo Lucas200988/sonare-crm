@@ -238,6 +238,99 @@ export async function cancelarAcao(user: SessionUser, acaoId: string) {
   return { ok: true as const };
 }
 
+// ---------- Memória operacional (Fase 3) ----------
+
+const TIPOS_DE_MEMORIA = [
+  'USER_AVAILABILITY', 'COMMITMENT', 'TASK_BLOCKER',
+  'PROJECT_CONTEXT', 'USER_CONTEXT', 'MANAGEMENT_INSTRUCTION',
+] as const;
+export type TipoDeMemoria = (typeof TIPOS_DE_MEMORIA)[number];
+
+/**
+ * Anota no caderno do agente o que foi DECLARADO em conversa — férias,
+ * compromissos, bloqueios, instruções. Fonte sempre USER_DECLARATION com o
+ * autor registrado: memória nunca vira "fato do sistema" disfarçado.
+ * Instrução de gestão só de quem gerencia.
+ */
+export async function registrarMemoria(
+  user: SessionUser, threadId: string,
+  input: {
+    tipo: string;
+    sobreTipo: 'user' | 'project';
+    sobreNome: string;
+    conteudo: string;
+    validaAte?: string;
+  },
+) {
+  if (!TIPOS_DE_MEMORIA.includes(input.tipo as TipoDeMemoria)) {
+    return { error: `Tipo de memória inválido. Use: ${TIPOS_DE_MEMORIA.join(', ')}.` };
+  }
+  if (input.tipo === 'MANAGEMENT_INSTRUCTION' && !user.permissions.has('user:manage')) {
+    return { error: 'Instruções de gestão só podem ser registradas por quem gerencia usuários.' };
+  }
+
+  let subjectId: string | null = null;
+  let sobre = input.sobreNome.trim();
+  if (input.sobreTipo === 'user') {
+    const alvo = await prisma.user.findFirst({
+      where: {
+        companyId: user.companyId, deletedAt: null,
+        name: { contains: sobre, mode: 'insensitive' },
+      },
+      select: { id: true, name: true },
+    });
+    if (!alvo) return { error: `Usuário "${sobre}" não encontrado.` };
+    subjectId = alvo.id;
+    sobre = alvo.name;
+  } else {
+    const projeto = await prisma.project.findFirst({
+      where: {
+        companyId: user.companyId, deletedAt: null,
+        ...escopoDeProjetos(user),
+        OR: [
+          { code: { equals: sobre, mode: 'insensitive' } },
+          { name: { contains: sobre, mode: 'insensitive' } },
+        ],
+      },
+      select: { id: true, code: true },
+    });
+    if (!projeto) return { error: `Projeto "${sobre}" não encontrado no seu recorte.` };
+    subjectId = projeto.id;
+    sobre = projeto.code;
+  }
+
+  const validaAte = input.validaAte && /^\d{4}-\d{2}-\d{2}$/.test(input.validaAte)
+    ? new Date(`${input.validaAte}T23:59:59-04:00`)
+    : null;
+
+  const memoria = await prisma.agentMemory.create({
+    data: {
+      companyId: user.companyId,
+      type: input.tipo,
+      subjectType: input.sobreTipo,
+      subjectId,
+      userId: input.sobreTipo === 'user' ? subjectId : null,
+      threadId,
+      content: input.conteudo.trim(),
+      validFrom: new Date(),
+      validUntil: validaAte,
+      source: 'USER_DECLARATION',
+      createdById: user.id,
+    },
+  });
+
+  await auditLog({
+    companyId: user.companyId, userId: user.id, action: 'create',
+    entityType: 'agent_memory', entityId: memoria.id,
+    after: { tipo: input.tipo, sobre, validaAte: input.validaAte ?? null },
+  });
+
+  return {
+    ok: true as const,
+    anotado: `${input.tipo} sobre ${sobre}` + (validaAte ? ` até ${input.validaAte}` : ''),
+  };
+}
+
 /** Proposta pendente de uma thread — para o painel mostrar o cartão. */
 export async function acaoPendenteDaThread(user: SessionUser, threadId: string) {
   const acao = await prisma.agentAction.findFirst({

@@ -5,7 +5,7 @@ import {
   tarefasVencidas, visaoGeralDaEmpresa,
 } from '@/server/services/agente-contexto';
 import {
-  proporCriarTarefa, proporFollowUp, proporObservacao,
+  proporCriarTarefa, proporFollowUp, proporObservacao, registrarMemoria,
 } from '@/server/services/agente-acoes';
 import { getPrazosVencidos } from '@/server/services/aprovacoes';
 import type { PermissionCode } from '@/config/permissions';
@@ -207,6 +207,44 @@ export const FERRAMENTAS: Ferramenta[] = [
     },
     executar: (user, args, ctx) => proporFollowUp(user, ctx.threadId, {
       proposta: String(args.proposta),
+    }),
+  },
+  {
+    nome: 'registrar_informacao_operacional',
+    descricao:
+      'Anota uma informação operacional DECLARADA na conversa, que deve sobreviver a ela: férias/'
+      + 'ausência (USER_AVAILABILITY, com validade), compromisso assumido (COMMITMENT, com data), '
+      + 'bloqueio de tarefa/projeto (TASK_BLOCKER), contexto de projeto (PROJECT_CONTEXT), contexto '
+      + 'de pessoa (USER_CONTEXT) ou instrução de gestão (MANAGEMENT_INSTRUCTION, ex.: não cobrar X '
+      + 'até segunda). Grava na hora, como declaração do usuário — confirme verbalmente o que anotou. '
+      + 'Use só para o que a pessoa disse, nunca para inferências suas.',
+    permissao: null, // a regra fina (gestão exige user:manage) mora no serviço
+    tipo: 'escrita',
+    schema: z.object({
+      tipo: z.enum(['USER_AVAILABILITY', 'COMMITMENT', 'TASK_BLOCKER', 'PROJECT_CONTEXT', 'USER_CONTEXT', 'MANAGEMENT_INSTRUCTION']),
+      sobreTipo: z.enum(['user', 'project']),
+      sobreNome: z.string().min(2).max(120),
+      conteudo: z.string().min(5).max(600),
+      validaAte: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
+    }).strict() as z.ZodType<Record<string, unknown>>,
+    parametros: {
+      type: 'object',
+      properties: {
+        tipo: { type: 'string', enum: ['USER_AVAILABILITY', 'COMMITMENT', 'TASK_BLOCKER', 'PROJECT_CONTEXT', 'USER_CONTEXT', 'MANAGEMENT_INSTRUCTION'] },
+        sobreTipo: { type: 'string', enum: ['user', 'project'], description: 'A memória fala de uma pessoa ou de um projeto?' },
+        sobreNome: { type: 'string', description: 'Nome da pessoa ou código/nome do projeto' },
+        conteudo: { type: 'string', description: 'O que foi declarado, em uma frase objetiva' },
+        validaAte: { type: 'string', description: 'Validade YYYY-MM-DD (obrigatória para ausências; data do compromisso para COMMITMENT)' },
+      },
+      required: ['tipo', 'sobreTipo', 'sobreNome', 'conteudo'],
+      additionalProperties: false,
+    },
+    executar: (user, args, ctx) => registrarMemoria(user, ctx.threadId, {
+      tipo: String(args.tipo),
+      sobreTipo: args.sobreTipo === 'project' ? 'project' : 'user',
+      sobreNome: String(args.sobreNome),
+      conteudo: String(args.conteudo),
+      validaAte: args.validaAte ? String(args.validaAte) : undefined,
     }),
   },
 ];

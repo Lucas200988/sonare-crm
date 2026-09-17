@@ -17,6 +17,7 @@ export default async function UsersPage() {
     email: u.email,
     active: u.active,
     autoProjectMember: u.autoProjectMember,
+    jarvisBriefing: u.jarvisBriefing,
     creaCau: u.creaCau,
     hourlyCost: u.hourlyCost?.toString() ?? null,
     hourlyRate: u.hourlyRate?.toString() ?? null,
