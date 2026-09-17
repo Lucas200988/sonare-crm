@@ -30,6 +30,8 @@ export type UserInput = {
   email: string;
   roleIds: string[];
   creaCau?: string | null;
+  /** WhatsApp pessoal — identifica a pessoa no canal do Jarvis (só dígitos). */
+  whatsapp?: string | null;
   hourlyCost?: string | null;
   hourlyRate?: string | null;
   /** Entra automaticamente na equipe de todo projeto novo. */
@@ -68,6 +70,7 @@ export async function createUser(
       email,
       passwordHash: await hashPassword(input.password),
       creaCau: input.creaCau || null,
+      whatsapp: input.whatsapp?.replace(/\D+/g, '') || null,
       hourlyCost: input.hourlyCost || null,
       hourlyRate: input.hourlyRate || null,
       autoProjectMember: input.autoProjectMember ?? false,
@@ -117,6 +120,7 @@ export async function updateUser(user: SessionUser, userId: string, input: UserI
         name: input.name.trim(),
         email,
         creaCau: input.creaCau || null,
+        whatsapp: input.whatsapp?.replace(/\D+/g, '') || null,
         hourlyCost: input.hourlyCost || null,
         hourlyRate: input.hourlyRate || null,
         autoProjectMember: input.autoProjectMember ?? false,

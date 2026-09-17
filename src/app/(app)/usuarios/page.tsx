@@ -19,6 +19,7 @@ export default async function UsersPage() {
     autoProjectMember: u.autoProjectMember,
     jarvisBriefing: u.jarvisBriefing,
     creaCau: u.creaCau,
+    whatsapp: u.whatsapp,
     hourlyCost: u.hourlyCost?.toString() ?? null,
     hourlyRate: u.hourlyRate?.toString() ?? null,
     lastLoginAt: u.lastLoginAt?.toISOString() ?? null,

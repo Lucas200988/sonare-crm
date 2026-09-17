@@ -194,6 +194,7 @@ export const UserScalarFieldEnum = {
   creaCau: 'creaCau',
   autoProjectMember: 'autoProjectMember',
   jarvisBriefing: 'jarvisBriefing',
+  whatsapp: 'whatsapp',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   createdById: 'createdById',

@@ -141,18 +141,31 @@ export async function proporFollowUp(
 
 // ---------- Confirmação e execução (sem LLM no caminho) ----------
 
-/** Ação do usuário, na thread dele, ainda pendente. */
+/** Ação do usuário, na thread dele, ainda pendente (proposta ou armada). */
 async function acaoConfirmavel(user: SessionUser, acaoId: string) {
   const acao = await prisma.agentAction.findFirst({
     where: { id: acaoId, companyId: user.companyId, userId: user.id },
   });
   if (!acao) return { error: 'Ação não encontrada.' as const };
-  if (acao.status !== 'PROPOSTA') return { error: 'Esta ação já foi tratada.' as const };
+  if (acao.status !== 'PROPOSTA' && acao.status !== 'ARMADA') {
+    return { error: 'Esta ação já foi tratada.' as const };
+  }
   if (acao.expiresAt < new Date()) {
     await prisma.agentAction.update({ where: { id: acao.id }, data: { status: 'EXPIRADA' } });
     return { error: 'A proposta expirou (30 min). Peça de novo ao Jarvis.' as const };
   }
   return { acao };
+}
+
+/**
+ * Primeiro passo da dupla confirmação por texto (WhatsApp): CONFIRMAR arma;
+ * só o SIM em uma ação ARMADA executa. No CRM o cartão arma na própria tela.
+ */
+export async function armarAcao(user: SessionUser, acaoId: string) {
+  const r = await acaoConfirmavel(user, acaoId);
+  if ('error' in r) return { error: r.error };
+  await prisma.agentAction.update({ where: { id: r.acao.id }, data: { status: 'ARMADA' } });
+  return { ok: true as const, resumo: r.acao.resumo };
 }
 
 export async function confirmarAcao(user: SessionUser, acaoId: string) {
@@ -331,15 +344,15 @@ export async function registrarMemoria(
   };
 }
 
-/** Proposta pendente de uma thread — para o painel mostrar o cartão. */
+/** Proposta pendente (ou armada) de uma thread — cartão do CRM e fluxo do WhatsApp. */
 export async function acaoPendenteDaThread(user: SessionUser, threadId: string) {
   const acao = await prisma.agentAction.findFirst({
     where: {
       companyId: user.companyId, userId: user.id, threadId,
-      status: 'PROPOSTA', expiresAt: { gte: new Date() },
+      status: { in: ['PROPOSTA', 'ARMADA'] }, expiresAt: { gte: new Date() },
     },
     orderBy: { createdAt: 'desc' },
-    select: { id: true, resumo: true, tool: true },
+    select: { id: true, resumo: true, tool: true, status: true },
   });
   return acao ?? null;
 }

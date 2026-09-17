@@ -86,10 +86,28 @@ DECLAROU — fonte USER_DECLARATION, autor registrado, validade).
   individuais ao longo do dia — o de maior risco de spam, de propósito por
   último).
 
-## Fase 4 — WhatsApp (pendente)
+## Fase 4 — WhatsApp (entregue)
 
-`conversar()` já recebe `canal` (CRM | WHATSAPP | CRON | EMAIL); um adapter
-de canal chama a mesma função.
+Canal sobre a **Meta WhatsApp Cloud API**, sem nenhuma lógica de IA própria:
+
+```
+WhatsApp → /api/webhooks/whatsapp (assinatura X-Hub-Signature-256)
+         → agente-whatsapp.ts (adapter: identifica a pessoa pelo número)
+         → conversar() — o MESMO do chat do CRM (ferramentas, RBAC, memória)
+```
+
+- Identificação pelo campo **WhatsApp pessoal** do usuário (Usuários →
+  Dados profissionais); número desconhecido é ignorado em silêncio.
+- Dupla confirmação por **palavra-chave decidida em código, nunca pelo
+  modelo**: a proposta pede CONFIRMAR (arma, status ARMADA) → SIM executa →
+  CANCELAR desiste. Mesma AgentAction, mesma validade de 30 min.
+- Thread contínua por pessoa (channel WHATSAPP); o webhook responde 200 na
+  hora e processa via `after()` — a Meta não reentrega.
+- Env: `WHATSAPP_TOKEN`, `WHATSAPP_PHONE_ID`, `WHATSAPP_VERIFY_TOKEN`,
+  `WHATSAPP_APP_SECRET`. Limitação conhecida: mensagens INICIADAS pelo
+  agente fora da janela de 24 h exigem template aprovado pela Meta — por
+  isso os briefings proativos seguem por sino + e-mail; o WhatsApp é
+  conversacional (responder dentro da janela é livre).
 
 ## Testes
 

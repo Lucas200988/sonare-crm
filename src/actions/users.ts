@@ -22,6 +22,7 @@ const baseSchema = {
   name: z.string().trim().min(3, 'Informe o nome completo.'),
   email: z.string().trim().toLowerCase().email('E-mail inválido.'),
   creaCau: optional,
+  whatsapp: optional,
   hourlyCost: decimalOpt,
   hourlyRate: decimalOpt,
   // checkboxes: presente = "on"; ausente do form = false

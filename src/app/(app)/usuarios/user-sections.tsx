@@ -20,6 +20,7 @@ export type UserRow = {
   autoProjectMember: boolean;
   jarvisBriefing: boolean;
   creaCau: string | null;
+  whatsapp: string | null;
   hourlyCost: string | null;
   hourlyRate: string | null;
   lastLoginAt: string | null;
@@ -310,6 +311,9 @@ function UserForm({
         <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-3">
           <Field label="CREA / CAU" htmlFor={`c-${user?.id ?? 'novo'}`}>
             <input id={`c-${user?.id ?? 'novo'}`} name="creaCau" defaultValue={user?.creaCau ?? ''} className={inputCls} />
+          </Field>
+          <Field label="WhatsApp pessoal" htmlFor={`w-${user?.id ?? 'novo'}`} hint="Identifica a pessoa ao falar com o Jarvis pelo WhatsApp.">
+            <input id={`w-${user?.id ?? 'novo'}`} name="whatsapp" defaultValue={user?.whatsapp ?? ''} placeholder="65 99999-9999" inputMode="tel" className={inputCls} />
           </Field>
           <Field label="Custo/hora (R$)" htmlFor={`hc-${user?.id ?? 'novo'}`}>
             <input id={`hc-${user?.id ?? 'novo'}`} name="hourlyCost" defaultValue={user?.hourlyCost ?? ''} inputMode="decimal" className={inputCls} />

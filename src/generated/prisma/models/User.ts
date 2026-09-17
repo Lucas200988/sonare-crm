@@ -52,6 +52,7 @@ export type UserMinAggregateOutputType = {
   creaCau: string | null
   autoProjectMember: boolean | null
   jarvisBriefing: boolean | null
+  whatsapp: string | null
   createdAt: Date | null
   updatedAt: Date | null
   createdById: string | null
@@ -75,6 +76,7 @@ export type UserMaxAggregateOutputType = {
   creaCau: string | null
   autoProjectMember: boolean | null
   jarvisBriefing: boolean | null
+  whatsapp: string | null
   createdAt: Date | null
   updatedAt: Date | null
   createdById: string | null
@@ -98,6 +100,7 @@ export type UserCountAggregateOutputType = {
   creaCau: number
   autoProjectMember: number
   jarvisBriefing: number
+  whatsapp: number
   createdAt: number
   updatedAt: number
   createdById: number
@@ -133,6 +136,7 @@ export type UserMinAggregateInputType = {
   creaCau?: true
   autoProjectMember?: true
   jarvisBriefing?: true
+  whatsapp?: true
   createdAt?: true
   updatedAt?: true
   createdById?: true
@@ -156,6 +160,7 @@ export type UserMaxAggregateInputType = {
   creaCau?: true
   autoProjectMember?: true
   jarvisBriefing?: true
+  whatsapp?: true
   createdAt?: true
   updatedAt?: true
   createdById?: true
@@ -179,6 +184,7 @@ export type UserCountAggregateInputType = {
   creaCau?: true
   autoProjectMember?: true
   jarvisBriefing?: true
+  whatsapp?: true
   createdAt?: true
   updatedAt?: true
   createdById?: true
@@ -289,6 +295,7 @@ export type UserGroupByOutputType = {
   creaCau: string | null
   autoProjectMember: boolean
   jarvisBriefing: boolean
+  whatsapp: string | null
   createdAt: Date
   updatedAt: Date
   createdById: string | null
@@ -335,6 +342,7 @@ export type UserWhereInput = {
   creaCau?: Prisma.StringNullableFilter<"User"> | string | null
   autoProjectMember?: Prisma.BoolFilter<"User"> | boolean
   jarvisBriefing?: Prisma.BoolFilter<"User"> | boolean
+  whatsapp?: Prisma.StringNullableFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   createdById?: Prisma.StringNullableFilter<"User"> | string | null
@@ -380,6 +388,7 @@ export type UserOrderByWithRelationInput = {
   creaCau?: Prisma.SortOrderInput | Prisma.SortOrder
   autoProjectMember?: Prisma.SortOrder
   jarvisBriefing?: Prisma.SortOrder
+  whatsapp?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   createdById?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -428,6 +437,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   creaCau?: Prisma.StringNullableFilter<"User"> | string | null
   autoProjectMember?: Prisma.BoolFilter<"User"> | boolean
   jarvisBriefing?: Prisma.BoolFilter<"User"> | boolean
+  whatsapp?: Prisma.StringNullableFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   createdById?: Prisma.StringNullableFilter<"User"> | string | null
@@ -473,6 +483,7 @@ export type UserOrderByWithAggregationInput = {
   creaCau?: Prisma.SortOrderInput | Prisma.SortOrder
   autoProjectMember?: Prisma.SortOrder
   jarvisBriefing?: Prisma.SortOrder
+  whatsapp?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   createdById?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -504,6 +515,7 @@ export type UserScalarWhereWithAggregatesInput = {
   creaCau?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   autoProjectMember?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
   jarvisBriefing?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
+  whatsapp?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
   createdById?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
@@ -527,6 +539,7 @@ export type UserCreateInput = {
   creaCau?: string | null
   autoProjectMember?: boolean
   jarvisBriefing?: boolean
+  whatsapp?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -572,6 +585,7 @@ export type UserUncheckedCreateInput = {
   creaCau?: string | null
   autoProjectMember?: boolean
   jarvisBriefing?: boolean
+  whatsapp?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -617,6 +631,7 @@ export type UserUpdateInput = {
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
   jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -662,6 +677,7 @@ export type UserUncheckedUpdateInput = {
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
   jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -707,6 +723,7 @@ export type UserCreateManyInput = {
   creaCau?: string | null
   autoProjectMember?: boolean
   jarvisBriefing?: boolean
+  whatsapp?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -730,6 +747,7 @@ export type UserUpdateManyMutationInput = {
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
   jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -753,6 +771,7 @@ export type UserUncheckedUpdateManyInput = {
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
   jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -776,6 +795,7 @@ export type UserCountOrderByAggregateInput = {
   creaCau?: Prisma.SortOrder
   autoProjectMember?: Prisma.SortOrder
   jarvisBriefing?: Prisma.SortOrder
+  whatsapp?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   createdById?: Prisma.SortOrder
@@ -804,6 +824,7 @@ export type UserMaxOrderByAggregateInput = {
   creaCau?: Prisma.SortOrder
   autoProjectMember?: Prisma.SortOrder
   jarvisBriefing?: Prisma.SortOrder
+  whatsapp?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   createdById?: Prisma.SortOrder
@@ -827,6 +848,7 @@ export type UserMinOrderByAggregateInput = {
   creaCau?: Prisma.SortOrder
   autoProjectMember?: Prisma.SortOrder
   jarvisBriefing?: Prisma.SortOrder
+  whatsapp?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   createdById?: Prisma.SortOrder
@@ -1219,6 +1241,7 @@ export type UserCreateWithoutRolesInput = {
   creaCau?: string | null
   autoProjectMember?: boolean
   jarvisBriefing?: boolean
+  whatsapp?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -1263,6 +1286,7 @@ export type UserUncheckedCreateWithoutRolesInput = {
   creaCau?: string | null
   autoProjectMember?: boolean
   jarvisBriefing?: boolean
+  whatsapp?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -1323,6 +1347,7 @@ export type UserUpdateWithoutRolesInput = {
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
   jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1367,6 +1392,7 @@ export type UserUncheckedUpdateWithoutRolesInput = {
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
   jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1411,6 +1437,7 @@ export type UserCreateWithoutExtraPermissionsInput = {
   creaCau?: string | null
   autoProjectMember?: boolean
   jarvisBriefing?: boolean
+  whatsapp?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -1455,6 +1482,7 @@ export type UserUncheckedCreateWithoutExtraPermissionsInput = {
   creaCau?: string | null
   autoProjectMember?: boolean
   jarvisBriefing?: boolean
+  whatsapp?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -1515,6 +1543,7 @@ export type UserUpdateWithoutExtraPermissionsInput = {
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
   jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1559,6 +1588,7 @@ export type UserUncheckedUpdateWithoutExtraPermissionsInput = {
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
   jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1603,6 +1633,7 @@ export type UserCreateWithoutSessionsInput = {
   creaCau?: string | null
   autoProjectMember?: boolean
   jarvisBriefing?: boolean
+  whatsapp?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -1647,6 +1678,7 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   creaCau?: string | null
   autoProjectMember?: boolean
   jarvisBriefing?: boolean
+  whatsapp?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -1707,6 +1739,7 @@ export type UserUpdateWithoutSessionsInput = {
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
   jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1751,6 +1784,7 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
   jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1795,6 +1829,7 @@ export type UserCreateWithoutPasswordResetTokensInput = {
   creaCau?: string | null
   autoProjectMember?: boolean
   jarvisBriefing?: boolean
+  whatsapp?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -1839,6 +1874,7 @@ export type UserUncheckedCreateWithoutPasswordResetTokensInput = {
   creaCau?: string | null
   autoProjectMember?: boolean
   jarvisBriefing?: boolean
+  whatsapp?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -1899,6 +1935,7 @@ export type UserUpdateWithoutPasswordResetTokensInput = {
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
   jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1943,6 +1980,7 @@ export type UserUncheckedUpdateWithoutPasswordResetTokensInput = {
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
   jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1987,6 +2025,7 @@ export type UserCreateWithoutAuditLogsInput = {
   creaCau?: string | null
   autoProjectMember?: boolean
   jarvisBriefing?: boolean
+  whatsapp?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -2031,6 +2070,7 @@ export type UserUncheckedCreateWithoutAuditLogsInput = {
   creaCau?: string | null
   autoProjectMember?: boolean
   jarvisBriefing?: boolean
+  whatsapp?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -2091,6 +2131,7 @@ export type UserUpdateWithoutAuditLogsInput = {
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
   jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2135,6 +2176,7 @@ export type UserUncheckedUpdateWithoutAuditLogsInput = {
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
   jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2179,6 +2221,7 @@ export type UserCreateWithoutClientsOwnedInput = {
   creaCau?: string | null
   autoProjectMember?: boolean
   jarvisBriefing?: boolean
+  whatsapp?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -2223,6 +2266,7 @@ export type UserUncheckedCreateWithoutClientsOwnedInput = {
   creaCau?: string | null
   autoProjectMember?: boolean
   jarvisBriefing?: boolean
+  whatsapp?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -2283,6 +2327,7 @@ export type UserUpdateWithoutClientsOwnedInput = {
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
   jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2327,6 +2372,7 @@ export type UserUncheckedUpdateWithoutClientsOwnedInput = {
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
   jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2371,6 +2417,7 @@ export type UserCreateWithoutOpportunitiesCommercialInput = {
   creaCau?: string | null
   autoProjectMember?: boolean
   jarvisBriefing?: boolean
+  whatsapp?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -2415,6 +2462,7 @@ export type UserUncheckedCreateWithoutOpportunitiesCommercialInput = {
   creaCau?: string | null
   autoProjectMember?: boolean
   jarvisBriefing?: boolean
+  whatsapp?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -2464,6 +2512,7 @@ export type UserCreateWithoutOpportunitiesTechnicalInput = {
   creaCau?: string | null
   autoProjectMember?: boolean
   jarvisBriefing?: boolean
+  whatsapp?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -2508,6 +2557,7 @@ export type UserUncheckedCreateWithoutOpportunitiesTechnicalInput = {
   creaCau?: string | null
   autoProjectMember?: boolean
   jarvisBriefing?: boolean
+  whatsapp?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -2568,6 +2618,7 @@ export type UserUpdateWithoutOpportunitiesCommercialInput = {
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
   jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2612,6 +2663,7 @@ export type UserUncheckedUpdateWithoutOpportunitiesCommercialInput = {
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
   jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2667,6 +2719,7 @@ export type UserUpdateWithoutOpportunitiesTechnicalInput = {
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
   jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2711,6 +2764,7 @@ export type UserUncheckedUpdateWithoutOpportunitiesTechnicalInput = {
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
   jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2755,6 +2809,7 @@ export type UserCreateWithoutActivitiesInput = {
   creaCau?: string | null
   autoProjectMember?: boolean
   jarvisBriefing?: boolean
+  whatsapp?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -2799,6 +2854,7 @@ export type UserUncheckedCreateWithoutActivitiesInput = {
   creaCau?: string | null
   autoProjectMember?: boolean
   jarvisBriefing?: boolean
+  whatsapp?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -2859,6 +2915,7 @@ export type UserUpdateWithoutActivitiesInput = {
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
   jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2903,6 +2960,7 @@ export type UserUncheckedUpdateWithoutActivitiesInput = {
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
   jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2947,6 +3005,7 @@ export type UserCreateWithoutBudgetsCommercialInput = {
   creaCau?: string | null
   autoProjectMember?: boolean
   jarvisBriefing?: boolean
+  whatsapp?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -2991,6 +3050,7 @@ export type UserUncheckedCreateWithoutBudgetsCommercialInput = {
   creaCau?: string | null
   autoProjectMember?: boolean
   jarvisBriefing?: boolean
+  whatsapp?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -3040,6 +3100,7 @@ export type UserCreateWithoutBudgetsTechnicalInput = {
   creaCau?: string | null
   autoProjectMember?: boolean
   jarvisBriefing?: boolean
+  whatsapp?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -3084,6 +3145,7 @@ export type UserUncheckedCreateWithoutBudgetsTechnicalInput = {
   creaCau?: string | null
   autoProjectMember?: boolean
   jarvisBriefing?: boolean
+  whatsapp?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -3144,6 +3206,7 @@ export type UserUpdateWithoutBudgetsCommercialInput = {
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
   jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3188,6 +3251,7 @@ export type UserUncheckedUpdateWithoutBudgetsCommercialInput = {
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
   jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3243,6 +3307,7 @@ export type UserUpdateWithoutBudgetsTechnicalInput = {
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
   jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3287,6 +3352,7 @@ export type UserUncheckedUpdateWithoutBudgetsTechnicalInput = {
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
   jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3331,6 +3397,7 @@ export type UserCreateWithoutApprovalsRequestedInput = {
   creaCau?: string | null
   autoProjectMember?: boolean
   jarvisBriefing?: boolean
+  whatsapp?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -3375,6 +3442,7 @@ export type UserUncheckedCreateWithoutApprovalsRequestedInput = {
   creaCau?: string | null
   autoProjectMember?: boolean
   jarvisBriefing?: boolean
+  whatsapp?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -3424,6 +3492,7 @@ export type UserCreateWithoutApprovalsDecidedInput = {
   creaCau?: string | null
   autoProjectMember?: boolean
   jarvisBriefing?: boolean
+  whatsapp?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -3468,6 +3537,7 @@ export type UserUncheckedCreateWithoutApprovalsDecidedInput = {
   creaCau?: string | null
   autoProjectMember?: boolean
   jarvisBriefing?: boolean
+  whatsapp?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -3528,6 +3598,7 @@ export type UserUpdateWithoutApprovalsRequestedInput = {
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
   jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3572,6 +3643,7 @@ export type UserUncheckedUpdateWithoutApprovalsRequestedInput = {
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
   jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3627,6 +3699,7 @@ export type UserUpdateWithoutApprovalsDecidedInput = {
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
   jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3671,6 +3744,7 @@ export type UserUncheckedUpdateWithoutApprovalsDecidedInput = {
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
   jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3715,6 +3789,7 @@ export type UserCreateWithoutProjectsLedInput = {
   creaCau?: string | null
   autoProjectMember?: boolean
   jarvisBriefing?: boolean
+  whatsapp?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -3759,6 +3834,7 @@ export type UserUncheckedCreateWithoutProjectsLedInput = {
   creaCau?: string | null
   autoProjectMember?: boolean
   jarvisBriefing?: boolean
+  whatsapp?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -3808,6 +3884,7 @@ export type UserCreateWithoutProjectsCoordinatedInput = {
   creaCau?: string | null
   autoProjectMember?: boolean
   jarvisBriefing?: boolean
+  whatsapp?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -3852,6 +3929,7 @@ export type UserUncheckedCreateWithoutProjectsCoordinatedInput = {
   creaCau?: string | null
   autoProjectMember?: boolean
   jarvisBriefing?: boolean
+  whatsapp?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -3912,6 +3990,7 @@ export type UserUpdateWithoutProjectsLedInput = {
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
   jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3956,6 +4035,7 @@ export type UserUncheckedUpdateWithoutProjectsLedInput = {
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
   jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4011,6 +4091,7 @@ export type UserUpdateWithoutProjectsCoordinatedInput = {
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
   jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4055,6 +4136,7 @@ export type UserUncheckedUpdateWithoutProjectsCoordinatedInput = {
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
   jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4099,6 +4181,7 @@ export type UserCreateWithoutProjectMembershipsInput = {
   creaCau?: string | null
   autoProjectMember?: boolean
   jarvisBriefing?: boolean
+  whatsapp?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -4143,6 +4226,7 @@ export type UserUncheckedCreateWithoutProjectMembershipsInput = {
   creaCau?: string | null
   autoProjectMember?: boolean
   jarvisBriefing?: boolean
+  whatsapp?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -4203,6 +4287,7 @@ export type UserUpdateWithoutProjectMembershipsInput = {
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
   jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4247,6 +4332,7 @@ export type UserUncheckedUpdateWithoutProjectMembershipsInput = {
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
   jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4291,6 +4377,7 @@ export type UserCreateWithoutTasksAssignedInput = {
   creaCau?: string | null
   autoProjectMember?: boolean
   jarvisBriefing?: boolean
+  whatsapp?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -4335,6 +4422,7 @@ export type UserUncheckedCreateWithoutTasksAssignedInput = {
   creaCau?: string | null
   autoProjectMember?: boolean
   jarvisBriefing?: boolean
+  whatsapp?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -4395,6 +4483,7 @@ export type UserUpdateWithoutTasksAssignedInput = {
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
   jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4439,6 +4528,7 @@ export type UserUncheckedUpdateWithoutTasksAssignedInput = {
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
   jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4483,6 +4573,7 @@ export type UserCreateWithoutTimeEntriesInput = {
   creaCau?: string | null
   autoProjectMember?: boolean
   jarvisBriefing?: boolean
+  whatsapp?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -4527,6 +4618,7 @@ export type UserUncheckedCreateWithoutTimeEntriesInput = {
   creaCau?: string | null
   autoProjectMember?: boolean
   jarvisBriefing?: boolean
+  whatsapp?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -4587,6 +4679,7 @@ export type UserUpdateWithoutTimeEntriesInput = {
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
   jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4631,6 +4724,7 @@ export type UserUncheckedUpdateWithoutTimeEntriesInput = {
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
   jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4675,6 +4769,7 @@ export type UserCreateWithoutTechnicalResponsibilitiesInput = {
   creaCau?: string | null
   autoProjectMember?: boolean
   jarvisBriefing?: boolean
+  whatsapp?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -4719,6 +4814,7 @@ export type UserUncheckedCreateWithoutTechnicalResponsibilitiesInput = {
   creaCau?: string | null
   autoProjectMember?: boolean
   jarvisBriefing?: boolean
+  whatsapp?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -4779,6 +4875,7 @@ export type UserUpdateWithoutTechnicalResponsibilitiesInput = {
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
   jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4823,6 +4920,7 @@ export type UserUncheckedUpdateWithoutTechnicalResponsibilitiesInput = {
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
   jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4867,6 +4965,7 @@ export type UserCreateWithoutCommentsInput = {
   creaCau?: string | null
   autoProjectMember?: boolean
   jarvisBriefing?: boolean
+  whatsapp?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -4911,6 +5010,7 @@ export type UserUncheckedCreateWithoutCommentsInput = {
   creaCau?: string | null
   autoProjectMember?: boolean
   jarvisBriefing?: boolean
+  whatsapp?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -4971,6 +5071,7 @@ export type UserUpdateWithoutCommentsInput = {
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
   jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5015,6 +5116,7 @@ export type UserUncheckedUpdateWithoutCommentsInput = {
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
   jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5059,6 +5161,7 @@ export type UserCreateWithoutNotificationsInput = {
   creaCau?: string | null
   autoProjectMember?: boolean
   jarvisBriefing?: boolean
+  whatsapp?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -5103,6 +5206,7 @@ export type UserUncheckedCreateWithoutNotificationsInput = {
   creaCau?: string | null
   autoProjectMember?: boolean
   jarvisBriefing?: boolean
+  whatsapp?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -5163,6 +5267,7 @@ export type UserUpdateWithoutNotificationsInput = {
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
   jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5207,6 +5312,7 @@ export type UserUncheckedUpdateWithoutNotificationsInput = {
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
   jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5251,6 +5357,7 @@ export type UserCreateWithoutEquipmentHeldInput = {
   creaCau?: string | null
   autoProjectMember?: boolean
   jarvisBriefing?: boolean
+  whatsapp?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -5295,6 +5402,7 @@ export type UserUncheckedCreateWithoutEquipmentHeldInput = {
   creaCau?: string | null
   autoProjectMember?: boolean
   jarvisBriefing?: boolean
+  whatsapp?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -5355,6 +5463,7 @@ export type UserUpdateWithoutEquipmentHeldInput = {
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
   jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5399,6 +5508,7 @@ export type UserUncheckedUpdateWithoutEquipmentHeldInput = {
   creaCau?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoProjectMember?: Prisma.BoolFieldUpdateOperationsInput | boolean
   jarvisBriefing?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5663,6 +5773,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   creaCau?: boolean
   autoProjectMember?: boolean
   jarvisBriefing?: boolean
+  whatsapp?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   createdById?: boolean
@@ -5709,6 +5820,7 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   creaCau?: boolean
   autoProjectMember?: boolean
   jarvisBriefing?: boolean
+  whatsapp?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   createdById?: boolean
@@ -5732,6 +5844,7 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   creaCau?: boolean
   autoProjectMember?: boolean
   jarvisBriefing?: boolean
+  whatsapp?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   createdById?: boolean
@@ -5755,6 +5868,7 @@ export type UserSelectScalar = {
   creaCau?: boolean
   autoProjectMember?: boolean
   jarvisBriefing?: boolean
+  whatsapp?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   createdById?: boolean
@@ -5762,7 +5876,7 @@ export type UserSelectScalar = {
   deletedAt?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "companyId" | "name" | "email" | "passwordHash" | "active" | "mfaEnabled" | "mfaSecret" | "passwordChangedAt" | "lastLoginAt" | "hourlyCost" | "hourlyRate" | "creaCau" | "autoProjectMember" | "jarvisBriefing" | "createdAt" | "updatedAt" | "createdById" | "updatedById" | "deletedAt", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "companyId" | "name" | "email" | "passwordHash" | "active" | "mfaEnabled" | "mfaSecret" | "passwordChangedAt" | "lastLoginAt" | "hourlyCost" | "hourlyRate" | "creaCau" | "autoProjectMember" | "jarvisBriefing" | "whatsapp" | "createdAt" | "updatedAt" | "createdById" | "updatedById" | "deletedAt", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   sessions?: boolean | Prisma.User$sessionsArgs<ExtArgs>
   passwordResetTokens?: boolean | Prisma.User$passwordResetTokensArgs<ExtArgs>
@@ -5839,6 +5953,11 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
      * Recebe os briefings proativos do Jarvis (manhã e fechamento, dias úteis).
      */
     jarvisBriefing: boolean
+    /**
+     * WhatsApp pessoal (só dígitos) — identifica a pessoa quando ela fala com
+     * o Jarvis pelo WhatsApp. Número desconhecido não conversa.
+     */
+    whatsapp: string | null
     createdAt: Date
     updatedAt: Date
     createdById: string | null
@@ -6304,6 +6423,7 @@ export interface UserFieldRefs {
   readonly creaCau: Prisma.FieldRef<"User", 'String'>
   readonly autoProjectMember: Prisma.FieldRef<"User", 'Boolean'>
   readonly jarvisBriefing: Prisma.FieldRef<"User", 'Boolean'>
+  readonly whatsapp: Prisma.FieldRef<"User", 'String'>
   readonly createdAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly createdById: Prisma.FieldRef<"User", 'String'>

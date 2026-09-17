@@ -34,8 +34,9 @@ export async function agenteDoSistema(companyId: string): Promise<SessionUser | 
   return { ...u, roles: ['AGENTE_IA'], permissions: new Set() };
 }
 
-/** SessionUser real de um destinatário (papéis + permissões extras). */
-async function sessaoDoDestinatario(userId: string): Promise<SessionUser | null> {
+/** SessionUser real de um usuário (papéis + permissões extras) — usado
+ * pelos ciclos autônomos e pelo adapter de WhatsApp. */
+export async function sessaoRealDoUsuario(userId: string): Promise<SessionUser | null> {
   const u = await prisma.user.findFirst({
     where: { id: userId, deletedAt: null, active: true },
     include: {
@@ -137,7 +138,7 @@ export async function enviarBriefings(companyId: string, periodo: PeriodoBriefin
 
   let enviados = 0;
   for (const destinatario of destinatarios) {
-    const sessao = await sessaoDoDestinatario(destinatario.id);
+    const sessao = await sessaoRealDoUsuario(destinatario.id);
     if (!sessao) continue;
 
     // os dados respeitam o que ESTE destinatário pode ver
