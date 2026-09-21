@@ -272,6 +272,8 @@ export async function registrarMemoria(
     sobreTipo: 'user' | 'project';
     sobreNome: string;
     conteudo: string;
+    /** Início da validade — "amanhã de manhã" começa amanhã, não agora. */
+    validaDe?: string;
     validaAte?: string;
   },
 ) {
@@ -315,6 +317,9 @@ export async function registrarMemoria(
   const validaAte = input.validaAte && /^\d{4}-\d{2}-\d{2}$/.test(input.validaAte)
     ? new Date(`${input.validaAte}T23:59:59-04:00`)
     : null;
+  const validaDe = input.validaDe && /^\d{4}-\d{2}-\d{2}$/.test(input.validaDe)
+    ? new Date(`${input.validaDe}T00:00:00-04:00`)
+    : new Date();
 
   const memoria = await prisma.agentMemory.create({
     data: {
@@ -325,7 +330,7 @@ export async function registrarMemoria(
       userId: input.sobreTipo === 'user' ? subjectId : null,
       threadId,
       content: input.conteudo.trim(),
-      validFrom: new Date(),
+      validFrom: validaDe,
       validUntil: validaAte,
       source: 'USER_DECLARATION',
       createdById: user.id,

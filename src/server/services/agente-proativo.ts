@@ -2,8 +2,13 @@ import 'server-only';
 import { prisma } from '@/server/db';
 import { auditLog } from '@/server/audit/audit';
 import { notificar } from '@/server/services/notify';
-import { visaoGeralDaEmpresa } from '@/server/services/agente-contexto';
+import { conquistasDoPeriodo, visaoGeralDaEmpresa } from '@/server/services/agente-contexto';
 import { completarTexto, getAiConfig } from '@/server/ai/client';
+import { TOM_DE_GESTOR } from '@/server/ai/manager-prompt';
+import {
+  contextoDeCalendario, diaPorExtenso, diaUtilAnterior, hojeEmCuiaba,
+  inicioDoDia, proximoDiaUtil,
+} from '@/lib/dias-uteis';
 import type { SessionUser } from '@/server/auth/session';
 
 /**
@@ -51,17 +56,28 @@ export async function sessaoRealDoUsuario(userId: string): Promise<SessionUser |
   return { id: u.id, companyId: u.companyId, name: u.name, email: u.email, roles: u.roles.map((r) => r.role.code), permissions };
 }
 
-/** Compromissos e disponibilidades valendo hoje — a memória cobra junto. */
-async function memoriasDeHoje(companyId: string) {
-  const agora = new Date();
+/**
+ * Compromissos e disponibilidades que importam para ESTE briefing.
+ *
+ * Manhã: o que vale hoje. Fechamento: o que vale no PRÓXIMO dia útil — a
+ * memória que termina hoje já é passado às 17h30. Sem esse corte, o
+ * fechamento de sexta anunciou como "amanhã" um campo que era da própria
+ * sexta.
+ */
+async function memoriasDoPeriodo(companyId: string, periodo: PeriodoBriefing, hoje: string) {
+  const alvo = periodo === 'manha' ? hoje : proximoDiaUtil(hoje);
+  const inicio = new Date(`${alvo}T00:00:00-04:00`);
+  const fim = new Date(`${alvo}T23:59:59.999-04:00`);
+
   const memorias = await prisma.agentMemory.findMany({
     where: {
       companyId, deletedAt: null,
       type: { in: ['COMMITMENT', 'USER_AVAILABILITY', 'MANAGEMENT_INSTRUCTION'] },
-      OR: [{ validFrom: null }, { validFrom: { lte: agora } }],
-      AND: [{ OR: [{ validUntil: null }, { validUntil: { gte: agora } }] }],
+      // vale em algum momento do dia-alvo
+      OR: [{ validFrom: null }, { validFrom: { lte: fim } }],
+      AND: [{ OR: [{ validUntil: null }, { validUntil: { gte: inicio } }] }],
     },
-    select: { type: true, content: true, subjectType: true, subjectId: true, validUntil: true },
+    select: { type: true, content: true, subjectType: true, subjectId: true, validFrom: true, validUntil: true },
     take: 20,
   });
   if (memorias.length === 0) return [];
@@ -72,13 +88,16 @@ async function memoriasDeHoje(companyId: string) {
   const nomes = idsDeUsuario.length > 0
     ? await prisma.user.findMany({ where: { id: { in: idsDeUsuario } }, select: { id: true, name: true } })
     : [];
+  // datas por extenso: o modelo compara com "hoje" em vez de adivinhar
+  const dia = (d: Date | null) => (d ? diaPorExtenso(hojeEmCuiaba(d)) : null);
   return memorias.map((m) => ({
     tipo: m.type,
     sobre: m.subjectType === 'user'
       ? nomes.find((n) => n.id === m.subjectId)?.name ?? 'usuário'
       : m.subjectType,
     informacao: m.content,
-    valeAte: m.validUntil,
+    valeDe: dia(m.validFrom),
+    valeAte: dia(m.validUntil),
   }));
 }
 
@@ -95,9 +114,16 @@ export function briefingDeterministico(
   periodo: PeriodoBriefing,
   dados: Awaited<ReturnType<typeof visaoGeralDaEmpresa>>,
   compromissos: Array<{ tipo: string; sobre: string; informacao: string }>,
+  conquistas?: Awaited<ReturnType<typeof conquistasDoPeriodo>>,
 ): string {
   const linhas: string[] = [];
   linhas.push(periodo === 'manha' ? 'Resumo do dia:' : 'Resumo do fechamento:');
+  if (conquistas) {
+    for (const n of conquistas.negociosGanhos) linhas.push(`- Negócio ganho: ${n.codigo} ${n.titulo}${n.valorEstimado ? ` (${n.valorEstimado})` : ''}.`);
+    for (const c of conquistas.contratosAssinados) linhas.push(`- Contrato assinado: ${c.codigo} ${c.objeto} (${c.valor}).`);
+    for (const p of conquistas.projetosAbertos) linhas.push(`- Projeto aberto: ${p.codigo} ${p.nome}.`);
+    for (const r of conquistas.pagamentosRecebidos) linhas.push(`- Pagamento recebido: ${r.valor}${r.projeto ? ` — ${r.projeto}` : ''}.`);
+  }
   linhas.push(`- ${dados.projetosAtivos} projeto(s) ativo(s); ${dados.projetosAtrasados.length} atrasado(s); ${dados.projetosSemMovimentacaoHa3Dias.length} sem movimentação há 3+ dias.`);
   linhas.push(`- ${dados.tarefasVencidas.total} tarefa(s) vencida(s).`);
   for (const a of dados.alertasDoPainel.slice(0, 5)) linhas.push(`- ${a.titulo} (${a.detalhe})`);
@@ -106,19 +132,30 @@ export function briefingDeterministico(
   return linhas.join('\n');
 }
 
-function promptDoBriefing(periodo: PeriodoBriefing, nomeDestinatario: string): string {
+function promptDoBriefing(periodo: PeriodoBriefing, nomeDestinatario: string, hoje: string): string {
+  const proximo = diaPorExtenso(proximoDiaUtil(hoje));
   const foco = periodo === 'manha'
     ? 'Abra com "Bom dia". Foque no que precisa de atenção HOJE: prazos, tarefas vencidas, compromissos do dia e o principal risco. Feche com a prioridade sugerida do dia.'
-    : 'É o fechamento do dia (17h30). Resuma o que se moveu hoje, o que segue pendente e o que fica para amanhã. Sem abrir com saudação de manhã.';
+    : `É o fechamento do dia (17h30). Resuma o que se moveu hoje, o que segue pendente e o que fica para o próximo dia útil (${proximo}) — chame-o pelo nome do dia, não de "amanhã" se não for o dia seguinte. Sem abrir com saudação de manhã.`;
   return `Você é o SONARE AI Manager (Jarvis), gerente operacional da SONARE Engenharia. Redija o briefing ${periodo === 'manha' ? 'da manhã' : 'de fechamento'} para ${nomeDestinatario}, em português do Brasil.
+
+${contextoDeCalendario(hoje)}
 
 ${foco}
 
+${TOM_DE_GESTOR}
+
+Estrutura:
+1. Conquistas do período (se houver, em conquistas): comece por elas — uma frase por conquista, com código, valor e o impacto concreto para a operação.
+2. Leitura cruzada: relacione comercial, operação e financeiro quando os dados sustentarem (ex.: projeto novo aberto enquanto a equipe já tem tarefas vencidas = atenção à capacidade; pagamento recebido de projeto que estava atrasado).
+3. Pontos de atenção, do mais grave ao menor.
+
 Regras:
+- "Sem movimentação" só se aplica a projetos listados em projetosSemMovimentacaoHa3Dias; cite o tipo da última movimentação quando útil.
 - Use SOMENTE os dados do JSON fornecido; nunca invente. Sem dado relevante, diga que o dia está sem pendências críticas.
 - Ausência de registro não significa ausência de trabalho.
 - Cite códigos (PRJ-…, PROP-…) quando existirem.
-- Texto puro, sem markdown, no máximo ~150 palavras, tom gerencial e direto.`;
+- Texto puro, sem markdown, no máximo ~180 palavras.`;
 }
 
 /** Gera e envia os briefings de uma empresa para os usuários que optaram. */
@@ -132,9 +169,13 @@ export async function enviarBriefings(companyId: string, periodo: PeriodoBriefin
   });
   if (destinatarios.length === 0) return { pulou: 'ninguém optou por receber' };
 
+  const hoje = hojeEmCuiaba();
   const [config, compromissos] = await Promise.all([
-    getAiConfig(companyId), memoriasDeHoje(companyId),
+    getAiConfig(companyId), memoriasDoPeriodo(companyId, periodo, hoje),
   ]);
+
+  // manhã olha o dia útil anterior (segunda vê a sexta); fechamento, o dia
+  const desde = inicioDoDia(periodo === 'manha' ? diaUtilAnterior(hoje) : hoje);
 
   let enviados = 0;
   for (const destinatario of destinatarios) {
@@ -142,16 +183,19 @@ export async function enviarBriefings(companyId: string, periodo: PeriodoBriefin
     if (!sessao) continue;
 
     // os dados respeitam o que ESTE destinatário pode ver
-    const dados = await visaoGeralDaEmpresa(sessao);
+    const [dados, conquistas] = await Promise.all([
+      visaoGeralDaEmpresa(sessao),
+      conquistasDoPeriodo(sessao, desde),
+    ]);
 
-    let texto = briefingDeterministico(periodo, dados, compromissos);
+    let texto = briefingDeterministico(periodo, dados, compromissos, conquistas);
     if (config.enabled && config.apiKey && config.provider === 'openai') {
       try {
         const redigido = await completarTexto(config, {
           temperature: 0.3,
           messages: [
-            { role: 'system', content: promptDoBriefing(periodo, destinatario.name) },
-            { role: 'user', content: JSON.stringify({ dados, compromissos }).slice(0, 24_000) },
+            { role: 'system', content: promptDoBriefing(periodo, destinatario.name, hoje) },
+            { role: 'user', content: JSON.stringify({ conquistas, dados, compromissos }).slice(0, 24_000) },
           ],
         }, 40_000, { companyId, userId: destinatario.id, useCase: 'manager-briefing' });
         if (redigido.trim()) texto = redigido.trim();

@@ -19,6 +19,7 @@ async function carregar() {
     visaoGeralDaEmpresa: vi.fn().mockResolvedValue({ projetosAtivos: 7 }),
     contextoDoProjeto: vi.fn().mockResolvedValue({ projeto: { codigo: 'PRJ-1' } }),
     atividadeDoUsuario: vi.fn().mockResolvedValue({ totalDeRegistros: 3 }),
+    conquistasDoPeriodo: vi.fn().mockResolvedValue({ negociosGanhos: [] }),
     tarefasVencidas: vi.fn().mockResolvedValue({ total: 0 }),
     rdosPendentes: vi.fn().mockResolvedValue({ diarios: [] }),
   }));
@@ -102,6 +103,7 @@ describe('ferramentas do Jarvis', () => {
       visaoGeralDaEmpresa: vi.fn().mockRejectedValue(new Error('ECONNREFUSED 10.0.0.1:5432')),
       contextoDoProjeto: vi.fn(),
       atividadeDoUsuario: vi.fn(),
+      conquistasDoPeriodo: vi.fn(),
       tarefasVencidas: vi.fn(),
       rdosPendentes: vi.fn(),
     }));

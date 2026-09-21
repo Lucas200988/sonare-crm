@@ -1,9 +1,10 @@
 import 'server-only';
 import { z } from 'zod';
 import {
-  atividadeDoUsuario, contextoDoProjeto, rdosPendentes,
+  atividadeDoUsuario, conquistasDoPeriodo, contextoDoProjeto, rdosPendentes,
   tarefasVencidas, visaoGeralDaEmpresa,
 } from '@/server/services/agente-contexto';
+import { inicioDoDia } from '@/lib/dias-uteis';
 import {
   proporCriarTarefa, proporFollowUp, proporObservacao, registrarMemoria,
 } from '@/server/services/agente-acoes';
@@ -54,6 +55,29 @@ export const FERRAMENTAS: Ferramenta[] = [
     permissao: null,
     ...semArgumentos,
     executar: (user) => visaoGeralDaEmpresa(user),
+  },
+  {
+    nome: 'conquistas_do_periodo',
+    descricao:
+      'O que deu CERTO a partir de uma data: negócios ganhos, propostas aceitas, contratos '
+      + 'assinados, projetos abertos, pagamentos recebidos, entregáveis aprovados e tarefas '
+      + 'concluídas — com códigos e valores. Use em perguntas amplas e para reconhecer resultados '
+      + 'com base em fato. Padrão: hoje.',
+    permissao: null, // cada bloco respeita a permissão do usuário dentro do serviço
+    schema: z.object({
+      desde: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
+    }).strict() as z.ZodType<Record<string, unknown>>,
+    parametros: {
+      type: 'object',
+      properties: {
+        desde: { type: 'string', description: 'Data inicial YYYY-MM-DD (opcional; padrão hoje)' },
+      },
+      additionalProperties: false,
+    },
+    executar: (user, args) => {
+      const hoje = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Cuiaba' }).format(new Date());
+      return conquistasDoPeriodo(user, inicioDoDia(args.desde ? String(args.desde) : hoje));
+    },
   },
   {
     nome: 'contexto_do_projeto',
@@ -225,6 +249,7 @@ export const FERRAMENTAS: Ferramenta[] = [
       sobreTipo: z.enum(['user', 'project']),
       sobreNome: z.string().min(2).max(120),
       conteudo: z.string().min(5).max(600),
+      validaDe: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
       validaAte: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
     }).strict() as z.ZodType<Record<string, unknown>>,
     parametros: {
@@ -234,6 +259,7 @@ export const FERRAMENTAS: Ferramenta[] = [
         sobreTipo: { type: 'string', enum: ['user', 'project'], description: 'A memória fala de uma pessoa ou de um projeto?' },
         sobreNome: { type: 'string', description: 'Nome da pessoa ou código/nome do projeto' },
         conteudo: { type: 'string', description: 'O que foi declarado, em uma frase objetiva' },
+        validaDe: { type: 'string', description: 'Início YYYY-MM-DD quando a informação vale a partir de um dia futuro (ex.: "amanhã em campo" → data de amanhã). Use as datas do calendário do prompt.' },
         validaAte: { type: 'string', description: 'Validade YYYY-MM-DD (obrigatória para ausências; data do compromisso para COMMITMENT)' },
       },
       required: ['tipo', 'sobreTipo', 'sobreNome', 'conteudo'],
@@ -244,6 +270,7 @@ export const FERRAMENTAS: Ferramenta[] = [
       sobreTipo: args.sobreTipo === 'project' ? 'project' : 'user',
       sobreNome: String(args.sobreNome),
       conteudo: String(args.conteudo),
+      validaDe: args.validaDe ? String(args.validaDe) : undefined,
       validaAte: args.validaAte ? String(args.validaAte) : undefined,
     }),
   },

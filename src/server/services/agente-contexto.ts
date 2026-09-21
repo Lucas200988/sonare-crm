@@ -43,6 +43,181 @@ function recorteDeProjeto(user: SessionUser): Prisma.ProjectWhereInput {
   };
 }
 
+// ---------- Movimentação de projeto ----------
+
+export type Movimentacao = { em: Date; tipo: string };
+
+/**
+ * Última movimentação de cada projeto, olhando TUDO que acontece em volta
+ * do cartão — não só o cartão.
+ *
+ * Antes eram três fontes (cartão, tarefas, RDO) e o Jarvis chamou de "sem
+ * movimentação" um projeto que tinha acabado de receber R$ 10 mil. Agora
+ * entram financeiro (parcelas, pagamentos recebidos, despesas), horas,
+ * entregáveis, comentários e arquivos. Uma consulta agrupada por fonte, em
+ * paralelo: o banco fica longe, e isto roda em todo briefing.
+ */
+export async function ultimaMovimentacaoDosProjetos(
+  companyId: string,
+  projetos: Array<{ id: string; updatedAt: Date }>,
+): Promise<Map<string, Movimentacao>> {
+  const ids = projetos.map((p) => p.id);
+  const resultado = new Map<string, Movimentacao>();
+  if (ids.length === 0) return resultado;
+
+  const considerar = (projectId: string | null, em: Date | null | undefined, tipo: string) => {
+    if (!projectId || !em) return;
+    const atual = resultado.get(projectId);
+    if (!atual || em > atual.em) resultado.set(projectId, { em, tipo });
+  };
+
+  for (const p of projetos) considerar(p.id, p.updatedAt, 'alteração no cartão do projeto');
+
+  const noProjeto = { projectId: { in: ids } };
+  const recente = new Date(Date.now() - 90 * 86_400_000);
+
+  const [tarefas, diarios, parcelas, pagamentos, despesas, horas, entregaveis, comentarios, arquivos] =
+    await Promise.all([
+      prisma.task.groupBy({
+        by: ['projectId'], where: { companyId, ...noProjeto }, _max: { updatedAt: true },
+      }),
+      prisma.constructionDiary.groupBy({
+        by: ['projectId'], where: { companyId, ...noProjeto }, _max: { updatedAt: true },
+      }),
+      prisma.receivable.groupBy({
+        by: ['projectId'], where: { companyId, ...noProjeto }, _max: { updatedAt: true },
+      }),
+      // pagamento não tem projectId próprio: vem pela parcela
+      prisma.receipt.findMany({
+        where: { companyId, createdAt: { gte: recente }, receivable: noProjeto },
+        select: { createdAt: true, receivable: { select: { projectId: true } } },
+      }),
+      prisma.payable.groupBy({
+        by: ['projectId'], where: { companyId, ...noProjeto }, _max: { updatedAt: true },
+      }),
+      prisma.timeEntry.groupBy({
+        by: ['projectId'], where: { companyId, ...noProjeto }, _max: { createdAt: true },
+      }),
+      prisma.deliverable.groupBy({
+        by: ['projectId'], where: noProjeto, _max: { updatedAt: true },
+      }),
+      prisma.comment.groupBy({
+        by: ['entityId'],
+        where: { companyId, entityType: 'project', entityId: { in: ids } },
+        _max: { createdAt: true },
+      }),
+      prisma.attachment.groupBy({
+        by: ['entityId'],
+        where: { companyId, entityType: 'project', entityId: { in: ids } },
+        _max: { createdAt: true },
+      }),
+    ]);
+
+  for (const x of tarefas) considerar(x.projectId, x._max.updatedAt, 'tarefa');
+  for (const x of diarios) considerar(x.projectId, x._max.updatedAt, 'diário de obra (RDO)');
+  for (const x of parcelas) considerar(x.projectId, x._max.updatedAt, 'financeiro — parcela a receber');
+  for (const x of pagamentos) considerar(x.receivable.projectId, x.createdAt, 'financeiro — pagamento recebido');
+  for (const x of despesas) considerar(x.projectId, x._max.updatedAt, 'financeiro — despesa');
+  for (const x of horas) considerar(x.projectId, x._max.createdAt, 'horas apontadas');
+  for (const x of entregaveis) considerar(x.projectId, x._max.updatedAt, 'entregável');
+  for (const x of comentarios) considerar(x.entityId, x._max.createdAt, 'comentário');
+  for (const x of arquivos) considerar(x.entityId, x._max.createdAt, 'arquivo anexado');
+
+  return resultado;
+}
+
+// ---------- Conquistas ----------
+
+/**
+ * O que deu CERTO no período — negócio ganho, proposta aceita, contrato
+ * assinado, projeto aberto, pagamento recebido, entregável aprovado,
+ * tarefa concluída.
+ *
+ * Sem isto o Jarvis só enxergava pendência e o briefing virava lista de
+ * cobrança. Reconhecimento bom é específico e verificável: cada item vem
+ * com código, cliente e valor, respeitando o que o usuário pode ver.
+ */
+export async function conquistasDoPeriodo(user: SessionUser, desde: Date) {
+  const periodo = { gte: desde };
+  const base = { companyId: user.companyId, deletedAt: null };
+
+  const [negocios, propostas, contratos, projetos, pagamentos, entregaveis, tarefas] = await Promise.all([
+    pode(user, 'opportunity:read')
+      ? prisma.opportunity.findMany({
+          where: { ...base, closedAt: periodo, stage: { kind: 'GANHA' } },
+          select: {
+            code: true, title: true, estimatedValue: true,
+            client: { select: { legalName: true, tradeName: true } },
+            commercialOwner: { select: { name: true } },
+          },
+        })
+      : [],
+    pode(user, 'proposal:read')
+      ? prisma.proposal.findMany({
+          where: { ...base, status: 'ACEITA', acceptedAt: periodo },
+          select: { code: true, budgetVersion: { select: { total: true, budget: { select: { client: { select: { legalName: true, tradeName: true } } } } } } },
+        })
+      : [],
+    pode(user, 'contract:read')
+      ? prisma.contract.findMany({
+          where: { ...base, signedAt: periodo },
+          select: { code: true, subject: true, totalValue: true, client: { select: { legalName: true, tradeName: true } } },
+        })
+      : [],
+    prisma.project.findMany({
+      where: { ...recorteDeProjeto(user), createdAt: periodo },
+      select: { code: true, name: true, client: { select: { legalName: true, tradeName: true } } },
+    }),
+    pode(user, 'finance:read')
+      ? prisma.receipt.findMany({
+          where: { companyId: user.companyId, createdAt: periodo, reversedAt: null },
+          select: {
+            amount: true,
+            receivable: { select: { code: true, project: { select: { code: true, name: true } } } },
+          },
+        })
+      : [],
+    prisma.deliverable.findMany({
+      where: { deletedAt: null, approvedAt: periodo, project: recorteDeProjeto(user) },
+      select: { name: true, project: { select: { code: true } } },
+    }),
+    pode(user, 'task:read')
+      ? prisma.task.count({
+          where: {
+            ...base, completedAt: periodo,
+            OR: [{ projectId: null }, { project: recorteDeProjeto(user) }],
+          },
+        })
+      : 0,
+  ]);
+
+  const cliente = (c: { legalName: string; tradeName: string | null } | null | undefined) =>
+    c ? (c.tradeName ?? c.legalName) : null;
+
+  return {
+    negociosGanhos: negocios.map((n) => ({
+      codigo: n.code, titulo: n.title, cliente: cliente(n.client),
+      valorEstimado: n.estimatedValue ? formatBRL(n.estimatedValue) : null,
+      responsavelComercial: n.commercialOwner?.name ?? null,
+    })),
+    propostasAceitas: propostas.map((p) => ({
+      codigo: p.code, cliente: cliente(p.budgetVersion?.budget?.client),
+      valor: p.budgetVersion?.total ? formatBRL(p.budgetVersion.total) : null,
+    })),
+    contratosAssinados: contratos.map((c) => ({
+      codigo: c.code, objeto: c.subject, cliente: cliente(c.client), valor: formatBRL(c.totalValue),
+    })),
+    projetosAbertos: projetos.map((p) => ({ codigo: p.code, nome: p.name, cliente: cliente(p.client) })),
+    pagamentosRecebidos: pagamentos.map((r) => ({
+      valor: formatBRL(r.amount),
+      parcela: r.receivable.code,
+      projeto: r.receivable.project ? `${r.receivable.project.code} — ${r.receivable.project.name}` : null,
+    })),
+    entregaveisAprovados: entregaveis.map((e) => ({ nome: e.name, projeto: e.project.code })),
+    tarefasConcluidas: tarefas,
+  };
+}
+
 // ---------- Visão geral ----------
 
 /** A fotografia do dia: a primeira ferramenta que o Jarvis consulta. */
@@ -51,7 +226,7 @@ export async function visaoGeralDaEmpresa(user: SessionUser) {
   const agora = new Date();
   const tresDiasAtras = new Date(agora.getTime() - 3 * 86_400_000);
 
-  const [projetos, tarefasVencidas, alertas, ultimaTarefaPorProjeto, ultimoDiarioPorProjeto, rdosPendentesAssinatura] =
+  const [projetos, tarefasVencidas, alertas, rdosPendentesAssinatura] =
     await Promise.all([
       prisma.project.findMany({
         where: { ...recorteDeProjeto(user), status: { notIn: STATUS_PROJETO_FECHADO } },
@@ -79,16 +254,6 @@ export async function visaoGeralDaEmpresa(user: SessionUser) {
           })
         : [],
       getAlerts(user).catch(() => []),
-      prisma.task.groupBy({
-        by: ['projectId'],
-        where: { companyId: user.companyId, deletedAt: null, projectId: { not: null } },
-        _max: { updatedAt: true },
-      }),
-      prisma.constructionDiary.groupBy({
-        by: ['projectId'],
-        where: { companyId: user.companyId, deletedAt: null },
-        _max: { createdAt: true },
-      }),
       pode(user, 'diary:read')
         ? prisma.constructionDiary.count({
             where: {
@@ -99,15 +264,20 @@ export async function visaoGeralDaEmpresa(user: SessionUser) {
         : 0,
     ]);
 
-  const ultimaAtividadeDoProjeto = (id: string, updatedAt: Date): Date => {
-    const t = ultimaTarefaPorProjeto.find((x) => x.projectId === id)?._max.updatedAt;
-    const d = ultimoDiarioPorProjeto.find((x) => x.projectId === id)?._max.createdAt;
-    return new Date(Math.max(updatedAt.getTime(), t?.getTime() ?? 0, d?.getTime() ?? 0));
-  };
+  const movimentacao = await ultimaMovimentacaoDosProjetos(user.companyId, projetos);
 
   const projetosSemMovimentacao = projetos
-    .filter((p) => ultimaAtividadeDoProjeto(p.id, p.updatedAt) < tresDiasAtras)
-    .map((p) => ({ codigo: p.code, nome: p.name, ultimaMovimentacao: ultimaAtividadeDoProjeto(p.id, p.updatedAt) }));
+    .filter((p) => (movimentacao.get(p.id)?.em ?? p.updatedAt) < tresDiasAtras)
+    .map((p) => {
+      const m = movimentacao.get(p.id);
+      return {
+        codigo: p.code,
+        nome: p.name,
+        ultimaMovimentacao: m?.em ?? p.updatedAt,
+        // explicabilidade: o que foi a última coisa que aconteceu
+        tipoDaUltimaMovimentacao: m?.tipo ?? 'alteração no cartão do projeto',
+      };
+    });
 
   const projetosAtrasados = projetos
     .filter((p) => p.contractualDeadline && p.contractualDeadline < agora)
@@ -277,9 +447,8 @@ export async function contextoDoProjeto(user: SessionUser, termo: string) {
   if (!projeto) return { error: `Nenhum projeto visível encontrado para "${termo}".` };
 
   const agora = new Date();
-  const seteDias = new Date(agora.getTime() - 7 * 86_400_000);
 
-  const [tarefas, entregaveis, diarios, horas, eventosRecentes, memorias] = await Promise.all([
+  const [tarefas, entregaveis, diarios, horas, movimentacao, memorias] = await Promise.all([
     prisma.task.findMany({
       where: { projectId: projeto.id, deletedAt: null },
       select: {
@@ -302,15 +471,9 @@ export async function contextoDoProjeto(user: SessionUser, termo: string) {
       where: { projectId: projeto.id },
       _sum: { hours: true },
     }),
-    prisma.auditLog.count({
-      where: {
-        companyId: user.companyId, createdAt: { gte: seteDias },
-        OR: [
-          { entityType: 'project', entityId: projeto.id },
-          { entityType: 'construction_diary' },
-        ],
-      },
-    }),
+    // a mesma régua da visão geral — antes contava RDO de todas as obras
+    ultimaMovimentacaoDosProjetos(user.companyId, [{ id: projeto.id, updatedAt: projeto.updatedAt }])
+      .then((m) => m.get(projeto.id) ?? null),
     prisma.agentMemory.findMany({
       where: {
         companyId: user.companyId, deletedAt: null,
@@ -366,7 +529,9 @@ export async function contextoDoProjeto(user: SessionUser, termo: string) {
       ? { ultimos: diarios.map((d) => ({ numero: d.number, data: d.diaryDate, status: d.status })) }
       : 'este projeto não usa diário de obras',
     horasApontadasTotal: horas._sum.hours?.toString() ?? '0',
-    movimentacoesNosUltimos7Dias: eventosRecentes,
+    ultimaMovimentacao: movimentacao
+      ? { em: movimentacao.em, oQue: movimentacao.tipo }
+      : null,
     memoriasOperacionais: memorias,
     financeiro,
   };
