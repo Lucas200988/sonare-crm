@@ -181,6 +181,28 @@ pedido → buscar_cliente → catalogo_de_servicos (preço ATUAL + histórico pr
 - **Explicabilidade**: `ver_rascunho_de_orcamento` devolve as referências
   (códigos, valores, datas, preço de tabela) — a resposta a "por que esse
   preço?".
-- **Preparado, não implementado**: ingestão de documentos (TR/edital) —
-  o extrator de texto do assistente de escopo já existe
-  (`ai/extrair-documento.ts`) e pode alimentar `criar_rascunho`.
+
+## Arquivos na conversa
+
+A pessoa anexa (clipe ou colando um print) **PDF, Word, texto, CSV e
+imagens** — até 4 MB, 3 por mensagem.
+
+```
+chat → POST /api/jarvis/anexo → agente-documentos.anexarDocumento
+     → PDF/DOCX/TXT/CSV: extrairTexto (o mesmo do assistente de escopo)
+     → imagem: sharp (reduz) + visão (transcreve uma vez) → texto
+     → AgentMessage TOOL "documento_anexado" (só o TEXTO; o arquivo é descartado)
+mensagem com documentoIds → conversar() embute o texto na fala atual
+mensagens seguintes → ferramenta ler_documento_da_conversa (trechos de 20 mil)
+```
+
+- O arquivo **não é armazenado**; o texto fica preso à conversa da própria
+  pessoa (dono da thread conferido em toda leitura) e fora do histórico
+  reenviado ao modelo. Auditoria registra nome/tamanho, nunca o conteúdo.
+- **Conteúdo de arquivo é dado, nunca instrução** — delimitado no prompt e
+  reforçado na ferramenta. Arquivo também não é fato do CRM: o que for lido
+  só entra no sistema por ação proposta e confirmada.
+- Tetos: 60 mil caracteres por leitura e por mensagem (repartidos entre os
+  anexos); o excedente fica acessível pela ferramenta de releitura.
+- Limites conhecidos: PDF digitalizado sem camada de texto não é lido
+  (enviar como imagem, página a página); planilha só em CSV; DWG não.

@@ -2,15 +2,19 @@
 
 import { useEffect, useRef, useState, useTransition } from 'react';
 import {
-  CheckCircle2, Download, FileSpreadsheet, Loader2, RotateCcw, Send, ShieldAlert, Sparkles, X,
+  CheckCircle2, Download, FileSpreadsheet, FileText, Loader2, Paperclip, RotateCcw, Send, ShieldAlert, Sparkles, X,
 } from 'lucide-react';
 import {
   cancelarAcaoDoJarvisAction, cancelarRascunhoDoJarvisAction, confirmarAcaoDoJarvisAction,
   conversaRecenteDoJarvisAction, perguntarAoJarvisAction,
 } from '@/actions/agente';
+import {
+  ACEITOS_NO_SELETOR, ANEXOS_POR_MENSAGEM, anexoAceito, TAMANHO_MAXIMO_ANEXO,
+} from '@/lib/agente-anexos';
 
 type Arquivo = { url: string; nome: string | null; orcamentoId: string } | null;
-type Fala = { id: string; papel: 'user' | 'jarvis'; texto: string; arquivo?: Arquivo };
+type Anexo = { id: string; nome: string };
+type Fala = { id: string; papel: 'user' | 'jarvis'; texto: string; arquivo?: Arquivo; anexos?: Anexo[] };
 type AcaoPendente = { id: string; resumo: string } | null;
 type Rascunho = {
   rascunhoId: string;
@@ -49,6 +53,10 @@ export function JarvisChat() {
   const [rascunho, setRascunho] = useState<Rascunho>(null);
   // dupla confirmação: o primeiro clique arma, o segundo executa
   const [armada, setArmada] = useState(false);
+  // arquivos já lidos pelo servidor, esperando a próxima mensagem
+  const [anexos, setAnexos] = useState<Anexo[]>([]);
+  const [lendo, setLendo] = useState<string | null>(null);
+  const arquivoRef = useRef<HTMLInputElement>(null);
   const [pensando, startTransition] = useTransition();
   const [decidindo, startDecidir] = useTransition();
   const fimRef = useRef<HTMLDivElement>(null);
@@ -66,7 +74,7 @@ export function JarvisChat() {
       const r = await conversaRecenteDoJarvisAction();
       if (r) {
         setThreadId(r.threadId);
-        setFalas(r.mensagens.map((m) => ({ id: m.id, papel: m.papel, texto: m.texto, arquivo: m.arquivo ?? null })));
+        setFalas(r.mensagens.map((m) => ({ id: m.id, papel: m.papel, texto: m.texto, arquivo: m.arquivo ?? null, anexos: m.anexos ?? [] })));
         setAcaoPendente(r.acaoPendente ? { id: r.acaoPendente.id, resumo: r.acaoPendente.resumo } : null);
         setRascunho((r.rascunho as Rascunho) ?? null);
         setArmada(false);
@@ -74,15 +82,48 @@ export function JarvisChat() {
     });
   }
 
+  /** Sobe o arquivo: o servidor lê, guarda só o texto e devolve a referência. */
+  async function anexar(arquivo: File) {
+    setErro(null);
+    if (anexos.length >= ANEXOS_POR_MENSAGEM) { setErro(`No máximo ${ANEXOS_POR_MENSAGEM} arquivos por mensagem.`); return; }
+    if (!anexoAceito(arquivo.type, arquivo.name)) { setErro('Formato não suportado. Envie PDF, Word (.docx), texto, CSV ou imagem (JPG/PNG).'); return; }
+    if (arquivo.size > TAMANHO_MAXIMO_ANEXO) { setErro('Arquivo acima de 4 MB. Envie só a parte que interessa.'); return; }
+
+    setLendo(arquivo.name);
+    try {
+      const dados = new FormData();
+      dados.set('arquivo', arquivo);
+      if (threadId) dados.set('threadId', threadId);
+      const res = await fetch('/api/jarvis/anexo', { method: 'POST', body: dados });
+      const r = await res.json().catch(() => null) as
+        | { error?: string; threadId?: string; documento?: { id: string; nome: string; cortado: boolean } } | null;
+      if (!res.ok || !r?.documento || !r.threadId) {
+        setErro(r?.error ?? 'Não consegui ler o arquivo. Tente novamente.');
+        return;
+      }
+      setThreadId(r.threadId);
+      setAnexos((p) => [...p, { id: r.documento!.id, nome: r.documento!.nome }]);
+      if (r.documento.cortado) setErro('Arquivo longo: li só o começo (cerca de 60 mil caracteres).');
+      inputRef.current?.focus();
+    } catch {
+      setErro('Falha no envio do arquivo. Confira a conexão e tente de novo.');
+    } finally {
+      setLendo(null);
+    }
+  }
+
   function enviar(mensagem: string) {
-    const limpa = mensagem.trim();
-    if (!limpa || pensando) return;
+    // só o arquivo, sem texto: o pedido padrão é ler e resumir
+    const limpa = mensagem.trim() || (anexos.length > 0 ? 'Leia o arquivo e me diga o que é importante.' : '');
+    if (!limpa || pensando || lendo) return;
+    const enviados = anexos;
     setErro(null);
     setTexto('');
-    setFalas((p) => [...p, { id: `u-${Date.now()}`, papel: 'user', texto: limpa }]);
+    setAnexos([]);
+    setFalas((p) => [...p, { id: `u-${Date.now()}`, papel: 'user', texto: limpa, anexos: enviados }]);
 
     startTransition(async () => {
-      const r = await perguntarAoJarvisAction({ threadId, mensagem: limpa });
+      const r = await perguntarAoJarvisAction({ threadId, mensagem: limpa, documentoIds: enviados.map((a) => a.id) });
       if ('ok' in r && r.ok) {
         setThreadId(r.threadId);
         setFalas((p) => [...p, { id: `j-${Date.now()}`, papel: 'jarvis', texto: r.resposta }]);
@@ -125,7 +166,7 @@ export function JarvisChat() {
         <div className="flex items-center gap-1">
           <button
             type="button"
-            onClick={() => { setThreadId(null); setFalas([]); setErro(null); setAcaoPendente(null); setRascunho(null); setArmada(false); }}
+            onClick={() => { setThreadId(null); setFalas([]); setAnexos([]); setErro(null); setAcaoPendente(null); setRascunho(null); setArmada(false); }}
             title="Nova conversa"
             aria-label="Começar nova conversa"
             className="rounded p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-700"
@@ -172,6 +213,16 @@ export function JarvisChat() {
                   : 'rounded-bl-sm bg-slate-100 text-slate-800'
               }`}
             >
+              {f.anexos?.length ? (
+                <span className="mb-1 flex flex-wrap gap-1">
+                  {f.anexos.map((a) => (
+                    <span key={a.id} className="inline-flex max-w-full items-center gap-1 rounded-md bg-white/15 px-1.5 py-0.5 text-[11px]">
+                      <FileText className="h-3 w-3 shrink-0" aria-hidden />
+                      <span className="truncate">{a.nome}</span>
+                    </span>
+                  ))}
+                </span>
+              ) : null}
               {f.texto}
               {f.arquivo ? (
                 <a
@@ -336,10 +387,55 @@ export function JarvisChat() {
         <div ref={fimRef} />
       </div>
 
+      {anexos.length > 0 || lendo ? (
+        <div className="flex flex-wrap gap-1.5 border-t border-slate-200 px-3 pt-2">
+          {anexos.map((a) => (
+            <span key={a.id} className="inline-flex max-w-full items-center gap-1 rounded-lg border border-slate-200 bg-slate-50 px-2 py-1 text-[11px] text-slate-700">
+              <FileText className="h-3 w-3 shrink-0 text-slate-400" aria-hidden />
+              <span className="max-w-[12rem] truncate">{a.nome}</span>
+              <button
+                type="button"
+                onClick={() => setAnexos((p) => p.filter((x) => x.id !== a.id))}
+                aria-label={`Remover ${a.nome}`}
+                className="rounded text-slate-400 hover:text-slate-700"
+              >
+                <X className="h-3 w-3" aria-hidden />
+              </button>
+            </span>
+          ))}
+          {lendo ? (
+            <span className="inline-flex items-center gap-1 px-1 py-1 text-[11px] text-slate-500">
+              <Loader2 className="h-3 w-3 animate-spin" aria-hidden /> Lendo {lendo}…
+            </span>
+          ) : null}
+        </div>
+      ) : null}
+
       <form
-        className="flex items-end gap-2 border-t border-slate-200 p-3"
+        className={`flex items-end gap-2 p-3 ${anexos.length > 0 || lendo ? '' : 'border-t border-slate-200'}`}
         onSubmit={(e) => { e.preventDefault(); enviar(texto); }}
       >
+        <input
+          ref={arquivoRef}
+          type="file"
+          accept={ACEITOS_NO_SELETOR}
+          className="hidden"
+          onChange={(e) => {
+            const arquivo = e.target.files?.[0];
+            e.target.value = ''; // permite reenviar o mesmo arquivo
+            if (arquivo) void anexar(arquivo);
+          }}
+        />
+        <button
+          type="button"
+          onClick={() => arquivoRef.current?.click()}
+          disabled={pensando || Boolean(lendo)}
+          title="Anexar arquivo (PDF, Word, texto, CSV ou imagem — até 4 MB)"
+          aria-label="Anexar arquivo"
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-slate-300 text-slate-500 hover:border-brand/50 hover:text-brand disabled:opacity-40"
+        >
+          <Paperclip className="h-4 w-4" aria-hidden />
+        </button>
         <textarea
           ref={inputRef}
           value={texto}
@@ -347,14 +443,19 @@ export function JarvisChat() {
           onKeyDown={(e) => {
             if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); enviar(texto); }
           }}
+          onPaste={(e) => {
+            // print colado direto na conversa vira anexo
+            const colado = e.clipboardData.files?.[0];
+            if (colado) { e.preventDefault(); void anexar(colado); }
+          }}
           rows={1}
-          placeholder="Pergunte ao Jarvis…"
+          placeholder="Pergunte ao Jarvis ou anexe um arquivo…"
           aria-label="Mensagem para o Jarvis"
           className="max-h-28 min-h-[2.5rem] flex-1 resize-none rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-brand focus:outline-none"
         />
         <button
           type="submit"
-          disabled={pensando || !texto.trim()}
+          disabled={pensando || Boolean(lendo) || (!texto.trim() && anexos.length === 0)}
           aria-label="Enviar"
           className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand text-white hover:bg-brand-dark disabled:opacity-40"
         >

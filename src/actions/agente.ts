@@ -12,11 +12,13 @@ import { conversar, conversaRecente } from '@/server/services/agente';
 const perguntaSchema = z.object({
   threadId: z.string().nullable().optional(),
   mensagem: z.string().trim().min(1, 'Escreva uma mensagem.').max(4_000),
+  documentoIds: z.array(z.string().min(1).max(60)).max(3).optional(),
 });
 
 export async function perguntarAoJarvisAction(input: {
   threadId?: string | null;
   mensagem: string;
+  documentoIds?: string[];
 }) {
   const user = await requireAuth();
   const parsed = perguntaSchema.safeParse(input);
@@ -25,6 +27,7 @@ export async function perguntarAoJarvisAction(input: {
   return conversar(user, {
     threadId: parsed.data.threadId ?? null,
     mensagem: parsed.data.mensagem,
+    documentoIds: parsed.data.documentoIds,
     canal: 'CRM',
   });
 }

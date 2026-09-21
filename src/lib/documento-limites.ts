@@ -12,6 +12,7 @@ export const TIPOS_ACEITOS: Record<string, string> = {
   'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'Word (.docx)',
   'text/plain': 'texto',
   'text/markdown': 'texto',
+  'text/csv': 'planilha CSV',
 };
 
 /** Arquivo maior que isto não é termo de referência, é projeto inteiro. */
@@ -29,7 +30,7 @@ export const CARACTERES_MAXIMOS = 60_000;
 export function tipoAceito(mime: string, nome: string): boolean {
   if (TIPOS_ACEITOS[mime]) return true;
   // alguns navegadores mandam mime vazio ou genérico; o nome desempata
-  return /\.(pdf|docx|txt|md)$/i.test(nome);
+  return /\.(pdf|docx|txt|md|csv)$/i.test(nome);
 }
 
 /**

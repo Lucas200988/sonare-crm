@@ -7,6 +7,8 @@ import { ferramentasDoUsuario } from '@/server/ai/manager-tools';
 import { acaoPendenteDaThread } from '@/server/services/agente-acoes';
 import { rascunhoAtivo } from '@/server/services/orcamento-ia';
 import { promptDoManager } from '@/server/ai/manager-prompt';
+import { documentosDaConversa } from '@/server/services/agente-documentos';
+import { ANEXOS_POR_MENSAGEM, blocoDeAnexos } from '@/lib/agente-anexos';
 import type { Prisma } from '@/generated/prisma/client';
 import type { SessionUser } from '@/server/auth/session';
 
@@ -27,7 +29,11 @@ const LIMITE_FALA = 4_000;
 
 export async function conversar(
   user: SessionUser,
-  input: { threadId?: string | null; mensagem: string; canal?: CanalDoAgente },
+  input: {
+    threadId?: string | null; mensagem: string; canal?: CanalDoAgente;
+    /** Arquivos já lidos (anexarDocumento) que acompanham ESTA mensagem. */
+    documentoIds?: string[];
+  },
 ) {
   const mensagem = input.mensagem.trim();
   if (!mensagem) return { error: 'Escreva uma mensagem.' };
@@ -56,8 +62,18 @@ export async function conversar(
     },
   });
 
+  // arquivos desta mensagem — só valem os da própria conversa da pessoa
+  const todosOsDocumentos = await documentosDaConversa(user, threadAtiva.id);
+  const pedidos = new Set((input.documentoIds ?? []).slice(0, ANEXOS_POR_MENSAGEM));
+  const anexos = todosOsDocumentos.filter((d) => pedidos.has(d.id));
+
   await prisma.agentMessage.create({
-    data: { threadId: threadAtiva.id, role: 'USER', content: mensagem },
+    data: {
+      threadId: threadAtiva.id, role: 'USER', content: mensagem,
+      toolData: anexos.length > 0
+        ? { anexos: anexos.map((d) => ({ id: d.id, nome: d.nome, tipo: d.tipo })) }
+        : undefined,
+    },
   });
 
   // histórico para o modelo: só as falas de pessoa e agente — resultados de
@@ -70,12 +86,21 @@ export async function conversar(
 
   const hoje = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Cuiaba' }).format(new Date());
   const mensagens: MensagemDaConversa[] = [
-    { role: 'system', content: promptDoManager({ nomeDoUsuario: user.name, dataHoje: hoje }) },
+    {
+      role: 'system',
+      content: promptDoManager({
+        nomeDoUsuario: user.name, dataHoje: hoje,
+        documentos: todosOsDocumentos.map((d) => d.nome),
+      }),
+    },
     ...anteriores.reverse().map((m) => ({
       role: m.role === 'USER' ? ('user' as const) : ('assistant' as const),
       content: m.content.slice(0, LIMITE_FALA),
     })),
   ];
+  // o texto dos anexos entra só na fala atual; nas seguintes, o modelo relê pela ferramenta
+  const falaAtual = mensagens[mensagens.length - 1];
+  if (anexos.length > 0 && falaAtual?.role === 'user') falaAtual.content += blocoDeAnexos(anexos);
 
   try {
     const { resposta, passos } = await conversarComFerramentas(config, {
@@ -144,6 +169,7 @@ export async function conversaRecente(user: SessionUser) {
       papel: m.role === 'USER' ? ('user' as const) : ('jarvis' as const),
       texto: m.content,
       em: m.createdAt.toISOString(),
+      anexos: ((m.toolData as { anexos?: Array<{ id: string; nome: string }> } | null)?.anexos) ?? [],
       // proposta gerada nesta fala: o botão de download volta ao reabrir
       arquivo: ((m.toolData as { arquivo?: { url: string; nome: string | null; orcamentoId: string } } | null)?.arquivo) ?? null,
     })),

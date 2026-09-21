@@ -39,6 +39,9 @@ async function carregar() {
     propostasSemelhantes: vi.fn(), parametrosComerciais: vi.fn(), rascunhoAtivo: vi.fn().mockResolvedValue(null),
     criarRascunho: vi.fn(), atualizarRascunho: vi.fn(), cancelarRascunho: vi.fn(),
   }));
+  vi.doMock('@/server/services/agente-documentos', () => ({
+    lerDocumentoDaConversa: vi.fn().mockResolvedValue({ arquivo: 'tr.pdf', texto: 'objeto' }),
+  }));
   return import('./manager-tools');
 }
 
@@ -106,6 +109,20 @@ describe('ferramentas do Jarvis', () => {
     expect(contexto.contextoDoProjeto).toHaveBeenCalledWith(quem, 'Terracap');
   });
 
+  it('releitura de arquivo só existe dentro de uma conversa e recebe a thread dela', async () => {
+    const { ferramentasDoUsuario } = await carregar();
+    const docs = await import('@/server/services/agente-documentos');
+    const quem = usuario([]);
+    expect(ferramentasDoUsuario(quem).definicoes.map((d) => d.function.name)).not.toContain('ler_documento_da_conversa');
+
+    const executor = ferramentasDoUsuario(quem, { threadId: 't9' });
+    const r = JSON.parse(await executor.executar('ler_documento_da_conversa', '{"nome":"tr","inicio":20000}'));
+    expect(r.arquivo).toBe('tr.pdf');
+    expect(docs.lerDocumentoDaConversa).toHaveBeenCalledWith(quem, 't9', { nome: 'tr', inicio: 20000 });
+    const negativo = JSON.parse(await executor.executar('ler_documento_da_conversa', '{"inicio":-5}'));
+    expect(negativo.error).toContain('rejeitados');
+  });
+
   it('cadastro de cliente: só com client:write, só em conversa, e apenas propõe', async () => {
     const { ferramentasDoUsuario } = await carregar();
     const acoes = await import('@/server/services/agente-acoes');
@@ -146,6 +163,7 @@ describe('ferramentas do Jarvis', () => {
       buscarCliente: vi.fn(), catalogoDeServicos: vi.fn(), historicoDoCliente: vi.fn(), propostasSemelhantes: vi.fn(),
       parametrosComerciais: vi.fn(), rascunhoAtivo: vi.fn(), criarRascunho: vi.fn(), atualizarRascunho: vi.fn(), cancelarRascunho: vi.fn(),
     }));
+    vi.doMock('@/server/services/agente-documentos', () => ({ lerDocumentoDaConversa: vi.fn() }));
     vi.spyOn(console, 'error').mockImplementation(() => {});
     const { ferramentasDoUsuario } = await import('./manager-tools');
 
