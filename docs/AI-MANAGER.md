@@ -62,7 +62,9 @@ latência) mora em `src/server/services/agente-contexto.ts`.
 ## Fase 2 — Executor (entregue)
 
 Ferramentas de escrita (criar tarefa, registrar observação, enviar
-follow-up da fila) NUNCA executam: registram uma proposta em `AgentAction`
+follow-up da fila, **cadastrar cliente** — `propor_criar_cliente`, exige
+`client:write`, valida CNPJ/CPF e duplicidade já na proposta, cria o
+contato principal junto e nunca inventa documento) NUNCA executam: registram uma proposta em `AgentAction`
 (validade 30 min) e o chat mostra o cartão com **dupla confirmação**
 (Confirmar arma → "Sim, executar" executa). A execução é determinística
 (`agente-acoes.ts`), sem o LLM no caminho, auditada como "confirmada pelo

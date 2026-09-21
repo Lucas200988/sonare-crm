@@ -31,6 +31,7 @@ async function carregar() {
     proporObservacao: vi.fn().mockResolvedValue({ ok: true, acaoId: 'a1', resumo: 'x' }),
     proporFollowUp: vi.fn().mockResolvedValue({ ok: true, acaoId: 'a1', resumo: 'x' }),
     proporGerarProposta: vi.fn().mockResolvedValue({ ok: true, acaoId: 'a1', resumo: 'x' }),
+    proporCriarCliente: vi.fn().mockResolvedValue({ ok: true, acaoId: 'a2', resumo: 'cliente' }),
     registrarMemoria: vi.fn(),
   }));
   vi.doMock('@/server/services/orcamento-ia', () => ({
@@ -105,6 +106,29 @@ describe('ferramentas do Jarvis', () => {
     expect(contexto.contextoDoProjeto).toHaveBeenCalledWith(quem, 'Terracap');
   });
 
+  it('cadastro de cliente: só com client:write, só em conversa, e apenas propõe', async () => {
+    const { ferramentasDoUsuario } = await carregar();
+    const acoes = await import('@/server/services/agente-acoes');
+    const ctx = { threadId: 't1' };
+
+    const semPermissao = ferramentasDoUsuario(usuario(['client:read']), ctx);
+    expect(semPermissao.definicoes.map((d) => d.function.name)).not.toContain('propor_criar_cliente');
+    const foraDeConversa = ferramentasDoUsuario(usuario(['client:write']));
+    expect(foraDeConversa.definicoes.map((d) => d.function.name)).not.toContain('propor_criar_cliente');
+
+    const quem = usuario(['client:write']);
+    const executor = ferramentasDoUsuario(quem, ctx);
+    const invalido = JSON.parse(await executor.executar('propor_criar_cliente', '{"tipoPessoa":"ONG","nome":"SESI"}'));
+    expect(invalido.error).toContain('rejeitados');
+    expect(acoes.proporCriarCliente).not.toHaveBeenCalled();
+
+    const r = JSON.parse(await executor.executar(
+      'propor_criar_cliente', '{"tipoPessoa":"JURIDICA","nome":"SESI Mato Grosso","contatoNome":"Rhuan","contatoCargo":"Engenheiro"}',
+    ));
+    expect(r.acaoId).toBe('a2');
+    expect(acoes.proporCriarCliente).toHaveBeenCalledWith(quem, 't1', expect.objectContaining({ nome: 'SESI Mato Grosso', contatoNome: 'Rhuan' }));
+  });
+
   it('falha do serviço vira erro amigável para o modelo, sem stack trace', async () => {
     vi.doMock('@/server/services/agente-contexto', () => ({
       visaoGeralDaEmpresa: vi.fn().mockRejectedValue(new Error('ECONNREFUSED 10.0.0.1:5432')),
@@ -116,7 +140,7 @@ describe('ferramentas do Jarvis', () => {
     }));
     vi.doMock('@/server/services/aprovacoes', () => ({ getPrazosVencidos: vi.fn() }));
     vi.doMock('@/server/services/agente-acoes', () => ({
-      proporCriarTarefa: vi.fn(), proporObservacao: vi.fn(), proporFollowUp: vi.fn(), proporGerarProposta: vi.fn(), registrarMemoria: vi.fn(),
+      proporCriarTarefa: vi.fn(), proporObservacao: vi.fn(), proporFollowUp: vi.fn(), proporGerarProposta: vi.fn(), proporCriarCliente: vi.fn(), registrarMemoria: vi.fn(),
     }));
     vi.doMock('@/server/services/orcamento-ia', () => ({
       buscarCliente: vi.fn(), catalogoDeServicos: vi.fn(), historicoDoCliente: vi.fn(), propostasSemelhantes: vi.fn(),

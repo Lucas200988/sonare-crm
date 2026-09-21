@@ -4,7 +4,7 @@ import {
   atualizarRascunho, buscarCliente, cancelarRascunho, catalogoDeServicos, criarRascunho,
   historicoDoCliente, parametrosComerciais, propostasSemelhantes, rascunhoAtivo,
 } from '@/server/services/orcamento-ia';
-import { proporGerarProposta } from '@/server/services/agente-acoes';
+import { proporCriarCliente, proporGerarProposta, type NovoClienteInput } from '@/server/services/agente-acoes';
 import { ItemDoRascunhoSchema, OperacaoSchema, ReferenciaSchema } from '@/lib/orcamento-rascunho';
 import type { Ferramenta } from './manager-tools';
 
@@ -48,6 +48,43 @@ export const FERRAMENTAS_COMERCIAIS: Ferramenta[] = [
     schema: z.object({ termo: z.string().min(2).max(120) }).strict() as z.ZodType<Record<string, unknown>>,
     parametros: objeto({ termo: { type: 'string' } }, ['termo']),
     executar: (user, args) => buscarCliente(user, String(args.termo)),
+  },
+  {
+    nome: 'propor_criar_cliente',
+    descricao: 'Propõe CADASTRAR um cliente novo (e o contato responsável, se houver). NADA é criado agora: a pessoa confirma (dupla confirmação). Antes, use buscar_cliente para garantir que não existe. Só o nome é obrigatório; NUNCA invente CNPJ/CPF, e-mail ou telefone — deixe vazio o que a pessoa não disse. Órgão, empresa ou entidade é JURIDICA. Depois de chamar, diga que aguarda a confirmação.',
+    permissao: 'client:write',
+    tipo: 'escrita',
+    schema: z.object({
+      tipoPessoa: z.enum(['JURIDICA', 'FISICA']),
+      nome: z.string().min(2).max(200),
+      nomeFantasia: z.string().max(200).optional(),
+      documento: z.string().max(20).optional(),
+      email: z.string().email().max(200).optional(),
+      telefone: z.string().max(30).optional(),
+      cidade: z.string().max(80).optional(),
+      estado: z.string().length(2).optional(),
+      segmento: z.string().max(80).optional(),
+      contatoNome: z.string().min(2).max(120).optional(),
+      contatoCargo: z.string().max(120).optional(),
+      contatoEmail: z.string().email().max(200).optional(),
+      contatoTelefone: z.string().max(30).optional(),
+    }).strict() as z.ZodType<Record<string, unknown>>,
+    parametros: objeto({
+      tipoPessoa: { type: 'string', enum: ['JURIDICA', 'FISICA'] },
+      nome: { type: 'string', description: 'Razão social ou nome completo' },
+      nomeFantasia: { type: 'string' },
+      documento: { type: 'string', description: 'CNPJ ou CPF, só se a pessoa informou' },
+      email: { type: 'string' },
+      telefone: { type: 'string' },
+      cidade: { type: 'string' },
+      estado: { type: 'string', description: 'UF, 2 letras' },
+      segmento: { type: 'string' },
+      contatoNome: { type: 'string', description: 'Pessoa responsável no cliente' },
+      contatoCargo: { type: 'string' },
+      contatoEmail: { type: 'string' },
+      contatoTelefone: { type: 'string' },
+    }, ['tipoPessoa', 'nome']),
+    executar: (user, args, ctx) => proporCriarCliente(user, ctx.threadId, args as NovoClienteInput),
   },
   {
     nome: 'catalogo_de_servicos',

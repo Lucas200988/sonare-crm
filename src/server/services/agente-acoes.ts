@@ -5,6 +5,8 @@ import { escopoDeProjetos } from '@/server/auth/project-scope';
 import { addProjectComment, createTask } from '@/server/services/projects';
 import { enviarToque, getFila } from '@/server/services/followup';
 import { gerarPropostaDoRascunho } from '@/server/services/orcamento-ia';
+import { createClient, upsertContact } from '@/server/services/clients';
+import { isValidCNPJ, isValidCPF, onlyDigits } from '@/lib/br';
 import { formatDateBR } from '@/lib/dates';
 import { formatBRL } from '@/lib/money';
 import type { Prisma } from '@/generated/prisma/client';
@@ -141,6 +143,76 @@ export async function proporFollowUp(
   }, resumo);
 }
 
+export type NovoClienteInput = {
+  tipoPessoa: 'JURIDICA' | 'FISICA';
+  nome: string;
+  nomeFantasia?: string;
+  documento?: string;
+  email?: string;
+  telefone?: string;
+  cidade?: string;
+  estado?: string;
+  segmento?: string;
+  contatoNome?: string;
+  contatoCargo?: string;
+  contatoEmail?: string;
+  contatoTelefone?: string;
+};
+
+/**
+ * Propõe cadastrar um cliente (e o contato responsável, se informado).
+ * Documento é validado e a duplicidade por nome/documento é checada JÁ na
+ * proposta — melhor recusar aqui do que descobrir depois do "sim".
+ */
+export async function proporCriarCliente(
+  user: SessionUser, threadId: string, input: NovoClienteInput,
+): Promise<Proposta> {
+  if (!user.permissions.has('client:write')) return { error: 'Sem permissão para cadastrar clientes.' };
+
+  const nome = input.nome.trim();
+  const doc = input.documento ? onlyDigits(input.documento) : '';
+  if (doc) {
+    const valido = input.tipoPessoa === 'FISICA' ? isValidCPF(doc) : isValidCNPJ(doc);
+    if (!valido) return { error: `${input.tipoPessoa === 'FISICA' ? 'CPF' : 'CNPJ'} inválido — confira os dígitos com a pessoa.` };
+  }
+
+  const existente = await prisma.client.findFirst({
+    where: {
+      companyId: user.companyId, deletedAt: null,
+      OR: [
+        { legalName: { equals: nome, mode: 'insensitive' } },
+        { tradeName: { equals: nome, mode: 'insensitive' } },
+        ...(doc ? [{ cnpj: doc }, { cpf: doc }] : []),
+      ],
+    },
+    select: { legalName: true },
+  });
+  if (existente) return { error: `Já existe o cliente "${existente.legalName}" com esse nome ou documento — use buscar_cliente.` };
+
+  const local = [input.cidade?.trim(), input.estado?.trim().toUpperCase()].filter(Boolean).join('/');
+  const resumo = `Cadastrar cliente ${input.tipoPessoa === 'FISICA' ? 'pessoa física' : 'pessoa jurídica'} "${nome}"`
+    + (doc ? `, documento ${doc}` : ', sem CNPJ/CPF por enquanto')
+    + (local ? `, ${local}` : '')
+    + (input.contatoNome ? `, com o contato ${input.contatoNome.trim()}${input.contatoCargo ? ` (${input.contatoCargo.trim()})` : ''}` : '')
+    + '.';
+
+  return registrarProposta(user, threadId, 'criar_cliente', {
+    tipoPessoa: input.tipoPessoa,
+    nome,
+    nomeFantasia: input.nomeFantasia?.trim() || null,
+    documento: doc || null,
+    email: input.email?.trim() || null,
+    telefone: input.telefone?.trim() || null,
+    cidade: input.cidade?.trim() || null,
+    estado: input.estado?.trim().toUpperCase() || null,
+    segmento: input.segmento?.trim() || null,
+    contatoNome: input.contatoNome?.trim() || null,
+    contatoCargo: input.contatoCargo?.trim() || null,
+    contatoEmail: input.contatoEmail?.trim() || null,
+    contatoTelefone: input.contatoTelefone?.trim() || null,
+  }, resumo);
+}
+
 // ---------- Confirmação e execução (sem LLM no caminho) ----------
 
 /** Ação do usuário, na thread dele, ainda pendente (proposta ou armada). */
@@ -199,6 +271,43 @@ export async function confirmarAcao(user: SessionUser, acaoId: string) {
           mensagem: `Orçamento ${feito.orcamento.code} criado e enviado para APROVAÇÃO INTERNA (${feito.gatilhos.join(', ')}). A proposta sai quando a diretoria aprovar em Orçamentos.`,
           arquivo: { attachmentId: null, nome: null, url: `/orcamentos/${feito.orcamento.id}`, orcamentoId: feito.orcamento.id },
         };
+      }
+    } else if (acao.tool === 'criar_cliente') {
+      // a permissão é reconferida na execução — pode ter mudado desde a proposta
+      if (!user.permissions.has('client:write')) {
+        resultado = { error: 'Sem permissão para cadastrar clientes.' };
+      } else {
+        const fisica = args.tipoPessoa === 'FISICA';
+        const feito = await createClient(user, {
+          personType: fisica ? 'FISICA' : 'JURIDICA',
+          legalName: String(args.nome),
+          tradeName: args.nomeFantasia,
+          cpf: fisica ? args.documento : null,
+          cnpj: fisica ? null : args.documento,
+          email: args.email,
+          phone: args.telefone,
+          city: args.cidade,
+          state: args.estado,
+          segment: args.segmento,
+        });
+        if ('error' in feito) {
+          resultado = { error: feito.error ?? 'Falha na execução.' };
+        } else {
+          let contato = '';
+          if (args.contatoNome) {
+            const c = await upsertContact(user, feito.client.id, {
+              name: String(args.contatoNome),
+              position: args.contatoCargo,
+              email: args.contatoEmail,
+              phone: args.contatoTelefone,
+              isPrimary: true,
+            });
+            contato = 'error' in c
+              ? ` O contato ${args.contatoNome} NÃO foi salvo: ${c.error}.`
+              : ` Contato principal: ${args.contatoNome}.`;
+          }
+          resultado = { ok: true, mensagem: `Cliente "${feito.client.legalName}" cadastrado.${contato}` };
+        }
       }
     } else if (acao.tool === 'criar_tarefa') {
       const feito = await createTask(user, String(args.projectId), {
