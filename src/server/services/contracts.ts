@@ -1,6 +1,7 @@
 import 'server-only';
 import { prisma } from '@/server/db';
 import { auditLog } from '@/server/audit/audit';
+import { indexarEmSegundoPlano } from '@/server/services/conhecimento-comercial';
 import { nextCode } from '@/server/services/sequence';
 import { formatCNPJ, formatCPF, formatCEP } from '@/lib/br';
 import { escopoParaContrato, normalizarPrazo } from '@/lib/contract-render';
@@ -144,6 +145,7 @@ export async function createContractFromProposal(
     action: 'create', entityType: 'contract', entityId: contract.id,
     after: { code: contract.code, fromProposal: proposal.code },
   });
+  if (budget.id) indexarEmSegundoPlano(user.companyId, budget.id);
   return { contract };
 }
 

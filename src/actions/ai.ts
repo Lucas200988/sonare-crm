@@ -243,3 +243,51 @@ export async function saveScopeTemplateAction(
   revalidatePath('/configuracoes');
   return { ok: true, serviceId: created.id, name };
 }
+
+// ---------- Jarvis comercial: IA → Orçamentos ----------
+
+const quoteSettingsSchema = z.object({
+  usarHistorico: z.preprocess((v) => v === 'on' || v === 'true', z.boolean()),
+  maxSimilares: z.preprocess((v) => Number(v), z.number().int().min(1).max(15)),
+  somenteAprovadas: z.preprocess((v) => v === 'on' || v === 'true', z.boolean()),
+  considerarRecusadas: z.preprocess((v) => v === 'on' || v === 'true', z.boolean()),
+  permitirSugestaoPreco: z.preprocess((v) => v === 'on' || v === 'true', z.boolean()),
+  permitirRascunho: z.preprocess((v) => v === 'on' || v === 'true', z.boolean()),
+});
+
+/**
+ * Como o Jarvis usa a base comercial. A confirmação antes de gerar proposta
+ * não é opção: é sempre exigida. Enviar proposta ao cliente pela IA não
+ * existe — e não existirá sem uma permissão própria, separada.
+ */
+export async function saveAiQuoteSettingsAction(_prev: AiActionState, formData: FormData): Promise<AiActionState> {
+  const user = await requirePermission('settings:manage');
+  const parsed = quoteSettingsSchema.safeParse(Object.fromEntries(formData.entries()));
+  if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? 'Dados inválidos.' };
+
+  for (const [k, v] of Object.entries(parsed.data)) {
+    await prisma.systemSetting.upsert({
+      where: { companyId_key: { companyId: user.companyId, key: `ai.quote.${k}` } },
+      create: { companyId: user.companyId, key: `ai.quote.${k}`, value: v as never, updatedById: user.id },
+      update: { value: v as never, updatedById: user.id },
+    });
+  }
+  await auditLog({
+    companyId: user.companyId, userId: user.id,
+    action: 'update', entityType: 'ai_quote_config', after: parsed.data,
+  });
+  revalidatePath('/configuracoes');
+  return { info: 'Configuração do Jarvis comercial salva.' };
+}
+
+/** Reindexa todos os orçamentos na base de conhecimento (embeddings inclusos). */
+export async function reindexarConhecimentoAction(): Promise<AiActionState & { indexados?: number; comEmbedding?: number }> {
+  const user = await requirePermission('settings:manage');
+  const { reindexarTudo } = await import('@/server/services/conhecimento-comercial');
+  const r = await reindexarTudo(user);
+  revalidatePath('/configuracoes');
+  return {
+    info: `${r.indexados} orçamento(s) indexado(s), ${r.comEmbedding} com busca semântica.`,
+    indexados: r.indexados, comEmbedding: r.comEmbedding,
+  };
+}

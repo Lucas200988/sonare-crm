@@ -5,6 +5,7 @@ import {
 } from '@/server/ai/client';
 import { ferramentasDoUsuario } from '@/server/ai/manager-tools';
 import { acaoPendenteDaThread } from '@/server/services/agente-acoes';
+import { rascunhoAtivo } from '@/server/services/orcamento-ia';
 import { promptDoManager } from '@/server/ai/manager-prompt';
 import type { Prisma } from '@/generated/prisma/client';
 import type { SessionUser } from '@/server/auth/session';
@@ -104,6 +105,8 @@ export async function conversar(
       ferramentas: [...new Set(passos.map((p) => p.nome))],
       // proposta de ação aguardando o clique de confirmação, se houver
       acaoPendente: await acaoPendenteDaThread(user, threadAtiva.id),
+      // orçamento em elaboração nesta conversa, para o cartão do chat
+      rascunho: await rascunhoAtivo(user, threadAtiva.id).catch(() => null),
     };
   } catch (e) {
     const msg = e instanceof Error ? e.message : 'erro desconhecido';
@@ -141,7 +144,10 @@ export async function conversaRecente(user: SessionUser) {
       papel: m.role === 'USER' ? ('user' as const) : ('jarvis' as const),
       texto: m.content,
       em: m.createdAt.toISOString(),
+      // proposta gerada nesta fala: o botão de download volta ao reabrir
+      arquivo: ((m.toolData as { arquivo?: { url: string; nome: string | null; orcamentoId: string } } | null)?.arquivo) ?? null,
     })),
     acaoPendente: await acaoPendenteDaThread(user, thread.id),
+    rascunho: await rascunhoAtivo(user, thread.id).catch(() => null),
   };
 }

@@ -472,7 +472,9 @@ export const ModelName = {
   AgentMessage: 'AgentMessage',
   AgentMemory: 'AgentMemory',
   AiCall: 'AiCall',
-  AgentAction: 'AgentAction'
+  AgentAction: 'AgentAction',
+  AgentQuoteDraft: 'AgentQuoteDraft',
+  QuoteKnowledge: 'QuoteKnowledge'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -488,7 +490,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "company" | "user" | "role" | "permission" | "rolePermission" | "userRole" | "userPermission" | "session" | "passwordResetToken" | "auditLog" | "systemSetting" | "documentSequence" | "customField" | "customFieldValue" | "client" | "clientContact" | "clientUnit" | "leadSource" | "opportunityStage" | "opportunity" | "opportunityActivity" | "lossReason" | "serviceCatalog" | "budget" | "budgetVersion" | "budgetItem" | "budgetApproval" | "proposal" | "proposalTemplate" | "contract" | "contractVersion" | "contractAmendment" | "contractSignature" | "contractTemplate" | "project" | "constructionDiary" | "diarySignature" | "diaryFile" | "sitePhoto" | "diaryEntry" | "diaryWorkforce" | "diaryEquipment" | "projectStage" | "projectMember" | "task" | "taskChecklistItem" | "deliverable" | "deliverableRevision" | "timeEntry" | "externalApproval" | "externalApprovalStep" | "technicalResponsibility" | "clientPendency" | "attachment" | "comment" | "receivable" | "receipt" | "financialRetention" | "invoice" | "invoiceReceivable" | "paymentMethod" | "payable" | "collectionEvent" | "notification" | "importJob" | "importError" | "equipment" | "equipmentMovement" | "bankTransaction" | "followUpEvent" | "emailDelivery" | "agentThread" | "agentMessage" | "agentMemory" | "aiCall" | "agentAction"
+    modelProps: "company" | "user" | "role" | "permission" | "rolePermission" | "userRole" | "userPermission" | "session" | "passwordResetToken" | "auditLog" | "systemSetting" | "documentSequence" | "customField" | "customFieldValue" | "client" | "clientContact" | "clientUnit" | "leadSource" | "opportunityStage" | "opportunity" | "opportunityActivity" | "lossReason" | "serviceCatalog" | "budget" | "budgetVersion" | "budgetItem" | "budgetApproval" | "proposal" | "proposalTemplate" | "contract" | "contractVersion" | "contractAmendment" | "contractSignature" | "contractTemplate" | "project" | "constructionDiary" | "diarySignature" | "diaryFile" | "sitePhoto" | "diaryEntry" | "diaryWorkforce" | "diaryEquipment" | "projectStage" | "projectMember" | "task" | "taskChecklistItem" | "deliverable" | "deliverableRevision" | "timeEntry" | "externalApproval" | "externalApprovalStep" | "technicalResponsibility" | "clientPendency" | "attachment" | "comment" | "receivable" | "receipt" | "financialRetention" | "invoice" | "invoiceReceivable" | "paymentMethod" | "payable" | "collectionEvent" | "notification" | "importJob" | "importError" | "equipment" | "equipmentMovement" | "bankTransaction" | "followUpEvent" | "emailDelivery" | "agentThread" | "agentMessage" | "agentMemory" | "aiCall" | "agentAction" | "agentQuoteDraft" | "quoteKnowledge"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -6116,6 +6118,154 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    AgentQuoteDraft: {
+      payload: Prisma.$AgentQuoteDraftPayload<ExtArgs>
+      fields: Prisma.AgentQuoteDraftFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.AgentQuoteDraftFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AgentQuoteDraftPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.AgentQuoteDraftFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AgentQuoteDraftPayload>
+        }
+        findFirst: {
+          args: Prisma.AgentQuoteDraftFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AgentQuoteDraftPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.AgentQuoteDraftFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AgentQuoteDraftPayload>
+        }
+        findMany: {
+          args: Prisma.AgentQuoteDraftFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AgentQuoteDraftPayload>[]
+        }
+        create: {
+          args: Prisma.AgentQuoteDraftCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AgentQuoteDraftPayload>
+        }
+        createMany: {
+          args: Prisma.AgentQuoteDraftCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.AgentQuoteDraftCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AgentQuoteDraftPayload>[]
+        }
+        delete: {
+          args: Prisma.AgentQuoteDraftDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AgentQuoteDraftPayload>
+        }
+        update: {
+          args: Prisma.AgentQuoteDraftUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AgentQuoteDraftPayload>
+        }
+        deleteMany: {
+          args: Prisma.AgentQuoteDraftDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.AgentQuoteDraftUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.AgentQuoteDraftUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AgentQuoteDraftPayload>[]
+        }
+        upsert: {
+          args: Prisma.AgentQuoteDraftUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AgentQuoteDraftPayload>
+        }
+        aggregate: {
+          args: Prisma.AgentQuoteDraftAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateAgentQuoteDraft>
+        }
+        groupBy: {
+          args: Prisma.AgentQuoteDraftGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AgentQuoteDraftGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.AgentQuoteDraftCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AgentQuoteDraftCountAggregateOutputType> | number
+        }
+      }
+    }
+    QuoteKnowledge: {
+      payload: Prisma.$QuoteKnowledgePayload<ExtArgs>
+      fields: Prisma.QuoteKnowledgeFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.QuoteKnowledgeFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$QuoteKnowledgePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.QuoteKnowledgeFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$QuoteKnowledgePayload>
+        }
+        findFirst: {
+          args: Prisma.QuoteKnowledgeFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$QuoteKnowledgePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.QuoteKnowledgeFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$QuoteKnowledgePayload>
+        }
+        findMany: {
+          args: Prisma.QuoteKnowledgeFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$QuoteKnowledgePayload>[]
+        }
+        create: {
+          args: Prisma.QuoteKnowledgeCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$QuoteKnowledgePayload>
+        }
+        createMany: {
+          args: Prisma.QuoteKnowledgeCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.QuoteKnowledgeCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$QuoteKnowledgePayload>[]
+        }
+        delete: {
+          args: Prisma.QuoteKnowledgeDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$QuoteKnowledgePayload>
+        }
+        update: {
+          args: Prisma.QuoteKnowledgeUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$QuoteKnowledgePayload>
+        }
+        deleteMany: {
+          args: Prisma.QuoteKnowledgeDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.QuoteKnowledgeUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.QuoteKnowledgeUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$QuoteKnowledgePayload>[]
+        }
+        upsert: {
+          args: Prisma.QuoteKnowledgeUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$QuoteKnowledgePayload>
+        }
+        aggregate: {
+          args: Prisma.QuoteKnowledgeAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateQuoteKnowledge>
+        }
+        groupBy: {
+          args: Prisma.QuoteKnowledgeGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.QuoteKnowledgeGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.QuoteKnowledgeCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.QuoteKnowledgeCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -6576,6 +6726,7 @@ export const BudgetScalarFieldEnum = {
   technicalOwnerId: 'technicalOwnerId',
   status: 'status',
   currentVersionId: 'currentVersionId',
+  aiDraftId: 'aiDraftId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   createdById: 'createdById',
@@ -7649,6 +7800,60 @@ export const AgentActionScalarFieldEnum = {
 export type AgentActionScalarFieldEnum = (typeof AgentActionScalarFieldEnum)[keyof typeof AgentActionScalarFieldEnum]
 
 
+export const AgentQuoteDraftScalarFieldEnum = {
+  id: 'id',
+  companyId: 'companyId',
+  threadId: 'threadId',
+  userId: 'userId',
+  status: 'status',
+  dados: 'dados',
+  versao: 'versao',
+  modelo: 'modelo',
+  fontes: 'fontes',
+  alteracoes: 'alteracoes',
+  budgetId: 'budgetId',
+  proposalId: 'proposalId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type AgentQuoteDraftScalarFieldEnum = (typeof AgentQuoteDraftScalarFieldEnum)[keyof typeof AgentQuoteDraftScalarFieldEnum]
+
+
+export const QuoteKnowledgeScalarFieldEnum = {
+  id: 'id',
+  companyId: 'companyId',
+  budgetId: 'budgetId',
+  budgetVersionId: 'budgetVersionId',
+  proposalId: 'proposalId',
+  budgetCode: 'budgetCode',
+  proposalCode: 'proposalCode',
+  clientId: 'clientId',
+  clientName: 'clientName',
+  segment: 'segment',
+  city: 'city',
+  state: 'state',
+  serviceType: 'serviceType',
+  disciplines: 'disciplines',
+  area: 'area',
+  itemsSummary: 'itemsSummary',
+  texto: 'texto',
+  total: 'total',
+  budgetStatus: 'budgetStatus',
+  proposalStatus: 'proposalStatus',
+  aprovada: 'aprovada',
+  recusada: 'recusada',
+  convertida: 'convertida',
+  issuedAt: 'issuedAt',
+  contentHash: 'contentHash',
+  embeddedAt: 'embeddedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type QuoteKnowledgeScalarFieldEnum = (typeof QuoteKnowledgeScalarFieldEnum)[keyof typeof QuoteKnowledgeScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -8552,6 +8757,8 @@ export type GlobalOmitConfig = {
   agentMemory?: Prisma.AgentMemoryOmit
   aiCall?: Prisma.AiCallOmit
   agentAction?: Prisma.AgentActionOmit
+  agentQuoteDraft?: Prisma.AgentQuoteDraftOmit
+  quoteKnowledge?: Prisma.QuoteKnowledgeOmit
 }
 
 /* Types for Logging */

@@ -126,7 +126,9 @@ export const ModelName = {
   AgentMessage: 'AgentMessage',
   AgentMemory: 'AgentMemory',
   AiCall: 'AiCall',
-  AgentAction: 'AgentAction'
+  AgentAction: 'AgentAction',
+  AgentQuoteDraft: 'AgentQuoteDraft',
+  QuoteKnowledge: 'QuoteKnowledge'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -566,6 +568,7 @@ export const BudgetScalarFieldEnum = {
   technicalOwnerId: 'technicalOwnerId',
   status: 'status',
   currentVersionId: 'currentVersionId',
+  aiDraftId: 'aiDraftId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   createdById: 'createdById',
@@ -1637,6 +1640,60 @@ export const AgentActionScalarFieldEnum = {
 } as const
 
 export type AgentActionScalarFieldEnum = (typeof AgentActionScalarFieldEnum)[keyof typeof AgentActionScalarFieldEnum]
+
+
+export const AgentQuoteDraftScalarFieldEnum = {
+  id: 'id',
+  companyId: 'companyId',
+  threadId: 'threadId',
+  userId: 'userId',
+  status: 'status',
+  dados: 'dados',
+  versao: 'versao',
+  modelo: 'modelo',
+  fontes: 'fontes',
+  alteracoes: 'alteracoes',
+  budgetId: 'budgetId',
+  proposalId: 'proposalId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type AgentQuoteDraftScalarFieldEnum = (typeof AgentQuoteDraftScalarFieldEnum)[keyof typeof AgentQuoteDraftScalarFieldEnum]
+
+
+export const QuoteKnowledgeScalarFieldEnum = {
+  id: 'id',
+  companyId: 'companyId',
+  budgetId: 'budgetId',
+  budgetVersionId: 'budgetVersionId',
+  proposalId: 'proposalId',
+  budgetCode: 'budgetCode',
+  proposalCode: 'proposalCode',
+  clientId: 'clientId',
+  clientName: 'clientName',
+  segment: 'segment',
+  city: 'city',
+  state: 'state',
+  serviceType: 'serviceType',
+  disciplines: 'disciplines',
+  area: 'area',
+  itemsSummary: 'itemsSummary',
+  texto: 'texto',
+  total: 'total',
+  budgetStatus: 'budgetStatus',
+  proposalStatus: 'proposalStatus',
+  aprovada: 'aprovada',
+  recusada: 'recusada',
+  convertida: 'convertida',
+  issuedAt: 'issuedAt',
+  contentHash: 'contentHash',
+  embeddedAt: 'embeddedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type QuoteKnowledgeScalarFieldEnum = (typeof QuoteKnowledgeScalarFieldEnum)[keyof typeof QuoteKnowledgeScalarFieldEnum]
 
 
 export const SortOrder = {

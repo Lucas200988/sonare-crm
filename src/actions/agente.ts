@@ -51,3 +51,11 @@ export async function cancelarAcaoDoJarvisAction(acaoId: string) {
   const { cancelarAcao } = await import('@/server/services/agente-acoes');
   return cancelarAcao(user, acaoId);
 }
+
+/** Descarta o rascunho de orçamento em elaboração nesta conversa. */
+export async function cancelarRascunhoDoJarvisAction(threadId: string) {
+  const user = await requireAuth();
+  if (!threadId || typeof threadId !== 'string') return { error: 'Conversa inválida.' };
+  const { cancelarRascunho } = await import('@/server/services/orcamento-ia');
+  return cancelarRascunho(user, threadId);
+}

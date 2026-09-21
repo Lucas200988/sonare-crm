@@ -12,6 +12,9 @@ import {
 } from './sections';
 import { AiSection } from './ai-section';
 import { IaConsumoSection } from './ia-consumo-section';
+import { IaOrcamentosSection } from './ia-orcamentos-section';
+import { configIaOrcamentos } from '@/server/services/orcamento-ia';
+import { situacaoDaBase } from '@/server/services/conhecimento-comercial';
 import { resumoDeConsumoIa } from '@/server/services/ia-consumo';
 import { ContractTemplatesSection, type ClausulaEditavel } from './contract-templates-section';
 
@@ -33,6 +36,7 @@ export default async function SettingsPage() {
 
   // painel de consumo de IA: permissão individual, fora dos papéis
   const consumoIa = user.permissions.has('ai:metrics') ? await resumoDeConsumoIa(user) : null;
+  const [iaOrcamentos, baseComercial] = await Promise.all([configIaOrcamentos(user.companyId), situacaoDaBase(user.companyId)]);
 
   const setting = (key: string) => allSettings.find((s) => s.key === key)?.value ?? null;
   const signer = (key: string) => {
@@ -68,11 +72,16 @@ export default async function SettingsPage() {
               defaultValidityDays: String(setting('proposal.defaultValidityDays') ?? 60),
               infoGerais: String(setting('proposal.infoGerais') ?? ''),
               diferenciais: String(setting('proposal.diferenciais') ?? ''),
+              paymentTermsDefault: String(setting('quote.paymentTermsDefault') ?? ''),
+              executionDeadlineDefault: String(setting('quote.executionDeadlineDefault') ?? ''),
             }}
           />
         </Card>
         <Card className="p-5 lg:col-span-2">
           <AiSection status={aiStatus} />
+        </Card>
+        <Card className="p-5 lg:col-span-2">
+          <IaOrcamentosSection settings={iaOrcamentos} base={baseComercial} />
         </Card>
         {consumoIa && !('error' in consumoIa) ? (
           <Card className="p-5 lg:col-span-2">

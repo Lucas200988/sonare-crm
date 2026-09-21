@@ -330,3 +330,41 @@ export async function conversarComFerramentas(
     throw e;
   }
 }
+
+// ---------- Embeddings (base de conhecimento comercial) ----------
+
+export const MODELO_DE_EMBEDDING = 'text-embedding-3-small'; // 1536 dimensões
+
+/**
+ * Vetor de um texto, para busca semântica. Só OpenAI nesta versão; com
+ * outro provedor devolve null e a busca cai para termos + estrutura.
+ * Métrica registrada como qualquer chamada.
+ */
+export async function gerarEmbedding(
+  config: AiConfig, texto: string, medicao: MedicaoIa,
+): Promise<number[] | null> {
+  if (config.provider !== 'openai' || !config.apiKey) return null;
+  const inicio = Date.now();
+  try {
+    const res = await fetch('https://api.openai.com/v1/embeddings', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${config.apiKey}` },
+      body: JSON.stringify({ model: MODELO_DE_EMBEDDING, input: texto.slice(0, 20_000) }),
+      signal: AbortSignal.timeout(20_000),
+    });
+    if (!res.ok) throw new Error(`OpenAI ${res.status}: ${(await res.text()).slice(0, 200)}`);
+    const json = await res.json();
+    const vetor: number[] | undefined = json.data?.[0]?.embedding;
+    await registrarChamada(medicao, { ...config, model: MODELO_DE_EMBEDDING }, {
+      status: 'ok', latencyMs: Date.now() - inicio,
+      uso: { tokensInput: json.usage?.prompt_tokens ?? 0, tokensOutput: 0 },
+    });
+    return Array.isArray(vetor) ? vetor : null;
+  } catch (e) {
+    await registrarChamada(medicao, { ...config, model: MODELO_DE_EMBEDDING }, {
+      status: 'error', error: e instanceof Error ? e.message : String(e),
+      latencyMs: Date.now() - inicio, uso: { tokensInput: 0, tokensOutput: 0 },
+    });
+    return null;
+  }
+}

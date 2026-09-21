@@ -1,14 +1,27 @@
 'use client';
 
 import { useEffect, useRef, useState, useTransition } from 'react';
-import { CheckCircle2, Loader2, RotateCcw, Send, ShieldAlert, Sparkles, X } from 'lucide-react';
 import {
-  cancelarAcaoDoJarvisAction, confirmarAcaoDoJarvisAction,
+  CheckCircle2, Download, FileSpreadsheet, Loader2, RotateCcw, Send, ShieldAlert, Sparkles, X,
+} from 'lucide-react';
+import {
+  cancelarAcaoDoJarvisAction, cancelarRascunhoDoJarvisAction, confirmarAcaoDoJarvisAction,
   conversaRecenteDoJarvisAction, perguntarAoJarvisAction,
 } from '@/actions/agente';
 
-type Fala = { id: string; papel: 'user' | 'jarvis'; texto: string };
+type Arquivo = { url: string; nome: string | null; orcamentoId: string } | null;
+type Fala = { id: string; papel: 'user' | 'jarvis'; texto: string; arquivo?: Arquivo };
 type AcaoPendente = { id: string; resumo: string } | null;
+type Rascunho = {
+  rascunhoId: string;
+  resumo: string;
+  totais: { subtotal: number; desconto: number; total: number };
+  avisosComerciais: string[];
+  faltantes: { obrigatorios: string[]; recomendaveis: string[] };
+  rascunho: { clienteNome: string; itens: Array<{ descricao: string; quantidade: number; precoUnitario: number }>; prazoExecucao: string; formaPagamento: string; validadeDias: number };
+} | null;
+
+const brl = (n: number) => n.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
 const SUGESTOES = [
   'Como está a empresa hoje?',
@@ -32,6 +45,8 @@ export function JarvisChat() {
   const [texto, setTexto] = useState('');
   const [erro, setErro] = useState<string | null>(null);
   const [acaoPendente, setAcaoPendente] = useState<AcaoPendente>(null);
+  // orçamento em elaboração — conversa e cartão manipulam o mesmo objeto
+  const [rascunho, setRascunho] = useState<Rascunho>(null);
   // dupla confirmação: o primeiro clique arma, o segundo executa
   const [armada, setArmada] = useState(false);
   const [pensando, startTransition] = useTransition();
@@ -51,8 +66,9 @@ export function JarvisChat() {
       const r = await conversaRecenteDoJarvisAction();
       if (r) {
         setThreadId(r.threadId);
-        setFalas(r.mensagens.map((m) => ({ id: m.id, papel: m.papel, texto: m.texto })));
+        setFalas(r.mensagens.map((m) => ({ id: m.id, papel: m.papel, texto: m.texto, arquivo: m.arquivo ?? null })));
         setAcaoPendente(r.acaoPendente ? { id: r.acaoPendente.id, resumo: r.acaoPendente.resumo } : null);
+        setRascunho((r.rascunho as Rascunho) ?? null);
         setArmada(false);
       }
     });
@@ -71,6 +87,7 @@ export function JarvisChat() {
         setThreadId(r.threadId);
         setFalas((p) => [...p, { id: `j-${Date.now()}`, papel: 'jarvis', texto: r.resposta }]);
         setAcaoPendente(r.acaoPendente ? { id: r.acaoPendente.id, resumo: r.acaoPendente.resumo } : null);
+        setRascunho((r.rascunho as Rascunho) ?? null);
         setArmada(false);
         return;
       }
@@ -108,7 +125,7 @@ export function JarvisChat() {
         <div className="flex items-center gap-1">
           <button
             type="button"
-            onClick={() => { setThreadId(null); setFalas([]); setErro(null); setAcaoPendente(null); setArmada(false); }}
+            onClick={() => { setThreadId(null); setFalas([]); setErro(null); setAcaoPendente(null); setRascunho(null); setArmada(false); }}
             title="Nova conversa"
             aria-label="Começar nova conversa"
             className="rounded p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-700"
@@ -156,9 +173,84 @@ export function JarvisChat() {
               }`}
             >
               {f.texto}
+              {f.arquivo ? (
+                <a
+                  href={f.arquivo.url}
+                  target="_blank" rel="noopener noreferrer"
+                  className="mt-2 inline-flex items-center gap-1.5 rounded-lg bg-brand px-3 py-1.5 text-xs font-semibold text-white hover:bg-brand-dark"
+                >
+                  <Download className="h-3.5 w-3.5" aria-hidden />
+                  {f.arquivo.nome ? 'Baixar PDF da proposta' : 'Abrir orçamento'}
+                </a>
+              ) : null}
             </div>
           </div>
         ))}
+
+        {rascunho ? (
+          <div className="rounded-xl border border-sky-200 bg-sky-50 p-3">
+            <p className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wide text-sky-900">
+              <FileSpreadsheet className="h-3.5 w-3.5" aria-hidden /> Orçamento em elaboração
+            </p>
+            <p className="mt-1 text-xs font-medium text-slate-900">{rascunho.rascunho.clienteNome}</p>
+            <ul className="mt-1 space-y-0.5 text-[11px] text-slate-700">
+              {rascunho.rascunho.itens.map((i, idx) => (
+                <li key={idx} className="flex justify-between gap-2">
+                  <span className="min-w-0 truncate">{i.descricao}{i.quantidade !== 1 ? ` (${i.quantidade}×)` : ''}</span>
+                  <span className="shrink-0 tabular-nums">{brl(i.quantidade * i.precoUnitario)}</span>
+                </li>
+              ))}
+            </ul>
+            <div className="mt-1.5 border-t border-sky-200 pt-1.5 text-[11px] text-slate-700">
+              {rascunho.totais.desconto > 0 ? (
+                <p className="flex justify-between"><span>Desconto</span><span className="tabular-nums">- {brl(rascunho.totais.desconto)}</span></p>
+              ) : null}
+              <p className="flex justify-between font-semibold text-slate-900"><span>Total</span><span className="tabular-nums">{brl(rascunho.totais.total)}</span></p>
+              {rascunho.rascunho.prazoExecucao ? <p>Prazo: {rascunho.rascunho.prazoExecucao}</p> : null}
+              {rascunho.rascunho.formaPagamento ? <p>Pagamento: {rascunho.rascunho.formaPagamento}</p> : null}
+              <p>Validade: {rascunho.rascunho.validadeDias} dias</p>
+            </div>
+            {rascunho.avisosComerciais.length > 0 ? (
+              <p className="mt-1.5 rounded bg-amber-100 px-2 py-1 text-[11px] text-amber-900">
+                Exigirá aprovação interna: {rascunho.avisosComerciais.join('; ')}.
+              </p>
+            ) : null}
+            {rascunho.faltantes.obrigatorios.length > 0 ? (
+              <p className="mt-1.5 text-[11px] text-red-700">Falta: {rascunho.faltantes.obrigatorios.join(', ')}.</p>
+            ) : null}
+            <div className="mt-2 flex flex-wrap gap-1.5">
+              <button
+                type="button"
+                disabled={pensando || rascunho.faltantes.obrigatorios.length > 0}
+                onClick={() => enviar('Gere a proposta.')}
+                className="rounded-lg bg-slate-900 px-2.5 py-1 text-[11px] font-semibold text-white hover:bg-brand disabled:opacity-40"
+              >
+                Gerar proposta
+              </button>
+              <button
+                type="button"
+                disabled={pensando}
+                onClick={() => enviar('Mostre o rascunho completo, com escopo, premissas, exclusões e as referências de preço.')}
+                className="rounded-lg border border-sky-300 bg-white px-2.5 py-1 text-[11px] font-medium text-sky-900 hover:bg-sky-100 disabled:opacity-40"
+              >
+                Visualizar
+              </button>
+              <button
+                type="button"
+                disabled={decidindo}
+                onClick={() => startDecidir(async () => {
+                  if (!threadId) return;
+                  await cancelarRascunhoDoJarvisAction(threadId);
+                  setRascunho(null);
+                  setFalas((p) => [...p, { id: `a-${Date.now()}`, papel: 'jarvis', texto: 'Rascunho de orçamento descartado.' }]);
+                })}
+                className="ml-auto rounded-lg border border-slate-300 bg-white px-2.5 py-1 text-[11px] font-medium text-slate-600 hover:bg-slate-100 disabled:opacity-40"
+              >
+                Cancelar
+              </button>
+            </div>
+          </div>
+        ) : null}
 
         {acaoPendente ? (
           <div className={`rounded-xl border p-3 ${armada ? 'border-red-300 bg-red-50' : 'border-amber-300 bg-amber-50'}`}>
@@ -188,9 +280,12 @@ export function JarvisChat() {
                       const r = await confirmarAcaoDoJarvisAction(acaoPendente.id);
                       setAcaoPendente(null);
                       setArmada(false);
+                      const arquivo = 'ok' in r && r.ok ? (r.arquivo as Arquivo) ?? null : null;
+                      if (arquivo) setRascunho(null); // o rascunho virou orçamento
                       setFalas((p) => [...p, {
                         id: `a-${Date.now()}`, papel: 'jarvis',
                         texto: 'ok' in r && r.ok ? r.mensagem : `A ação não foi executada: ${'error' in r ? r.error : 'falha'}`,
+                        arquivo,
                       }]);
                     })}
                     className="inline-flex items-center gap-1 rounded-lg bg-red-700 px-3 py-1.5 text-xs font-semibold text-white hover:bg-red-800 disabled:opacity-50"

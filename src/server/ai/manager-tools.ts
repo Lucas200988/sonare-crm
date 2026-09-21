@@ -9,6 +9,7 @@ import {
   proporCriarTarefa, proporFollowUp, proporObservacao, registrarMemoria,
 } from '@/server/services/agente-acoes';
 import { getPrazosVencidos } from '@/server/services/aprovacoes';
+import { FERRAMENTAS_COMERCIAIS } from './comercial-tools';
 import type { PermissionCode } from '@/config/permissions';
 import type { SessionUser } from '@/server/auth/session';
 import type { DefinicaoDeFerramenta, ExecutorDeFerramentas } from './client';
@@ -26,9 +27,9 @@ import type { DefinicaoDeFerramenta, ExecutorDeFerramentas } from './client';
  * chat. O modelo nunca tem o poder de escrever; só o de pedir.
  */
 
-type ContextoDaConversa = { threadId: string };
+export type ContextoDaConversa = { threadId: string };
 
-type Ferramenta = {
+export type Ferramenta = {
   nome: string;
   descricao: string;
   /** Permissão exigida para a ferramenta sequer ser oferecida ao modelo. */
@@ -274,6 +275,7 @@ export const FERRAMENTAS: Ferramenta[] = [
       validaAte: args.validaAte ? String(args.validaAte) : undefined,
     }),
   },
+  ...FERRAMENTAS_COMERCIAIS,
 ];
 
 /** Resultado sempre em JSON string — o formato que volta para o modelo. */

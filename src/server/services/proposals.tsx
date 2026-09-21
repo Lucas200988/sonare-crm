@@ -6,6 +6,7 @@ import path from 'node:path';
 import { renderToBuffer } from '@react-pdf/renderer';
 import { prisma } from '@/server/db';
 import { auditLog } from '@/server/audit/audit';
+import { indexarEmSegundoPlano } from '@/server/services/conhecimento-comercial';
 import { nextCode } from '@/server/services/sequence';
 import QRCode from 'qrcode';
 import { saveFile, readAttachment } from '@/server/storage';
@@ -270,6 +271,7 @@ export async function generateProposal(user: SessionUser, budgetId: string) {
     after: { code: rotulo, revisao: proposal.revision, budgetCode: budget.code, version: cv.versionNumber, emissao: proposal.emissionCount },
   });
 
+  indexarEmSegundoPlano(user.companyId, budget.id);
   return {
     proposalId: proposal.id, code: rotulo, attachmentId: saved.attachmentId,
     fileName: nomeDoArquivo,
@@ -804,5 +806,6 @@ export async function registerProposalEvent(
     action: `proposal_${event.toLowerCase()}`, entityType: 'proposal', entityId: proposalId,
     after: details,
   });
+  indexarEmSegundoPlano(user.companyId, proposal.budgetVersion.budgetId);
   return { ok: true as const };
 }

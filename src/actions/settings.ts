@@ -25,6 +25,9 @@ const schema = z.object({
   ),
   infoGerais: z.string().trim(),
   diferenciais: z.string().trim(),
+  // padrões que o Jarvis usa em vez de perguntar; vazio = não há padrão
+  paymentTermsDefault: z.string().trim().max(500).optional(),
+  executionDeadlineDefault: z.string().trim().max(300).optional(),
 });
 
 /**
@@ -49,6 +52,8 @@ export async function saveCommercialSettingsAction(
     ['proposal.defaultValidityDays', d.defaultValidityDays],
     ['proposal.infoGerais', d.infoGerais],
     ['proposal.diferenciais', d.diferenciais],
+    ['quote.paymentTermsDefault', d.paymentTermsDefault ?? ''],
+    ['quote.executionDeadlineDefault', d.executionDeadlineDefault ?? ''],
   ];
 
   for (const [key, value] of valores) {

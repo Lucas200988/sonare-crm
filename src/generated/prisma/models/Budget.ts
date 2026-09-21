@@ -36,6 +36,7 @@ export type BudgetMinAggregateOutputType = {
   technicalOwnerId: string | null
   status: $Enums.BudgetStatus | null
   currentVersionId: string | null
+  aiDraftId: string | null
   createdAt: Date | null
   updatedAt: Date | null
   createdById: string | null
@@ -55,6 +56,7 @@ export type BudgetMaxAggregateOutputType = {
   technicalOwnerId: string | null
   status: $Enums.BudgetStatus | null
   currentVersionId: string | null
+  aiDraftId: string | null
   createdAt: Date | null
   updatedAt: Date | null
   createdById: string | null
@@ -74,6 +76,7 @@ export type BudgetCountAggregateOutputType = {
   technicalOwnerId: number
   status: number
   currentVersionId: number
+  aiDraftId: number
   createdAt: number
   updatedAt: number
   createdById: number
@@ -95,6 +98,7 @@ export type BudgetMinAggregateInputType = {
   technicalOwnerId?: true
   status?: true
   currentVersionId?: true
+  aiDraftId?: true
   createdAt?: true
   updatedAt?: true
   createdById?: true
@@ -114,6 +118,7 @@ export type BudgetMaxAggregateInputType = {
   technicalOwnerId?: true
   status?: true
   currentVersionId?: true
+  aiDraftId?: true
   createdAt?: true
   updatedAt?: true
   createdById?: true
@@ -133,6 +138,7 @@ export type BudgetCountAggregateInputType = {
   technicalOwnerId?: true
   status?: true
   currentVersionId?: true
+  aiDraftId?: true
   createdAt?: true
   updatedAt?: true
   createdById?: true
@@ -225,6 +231,7 @@ export type BudgetGroupByOutputType = {
   technicalOwnerId: string | null
   status: $Enums.BudgetStatus
   currentVersionId: string | null
+  aiDraftId: string | null
   createdAt: Date
   updatedAt: Date
   createdById: string | null
@@ -265,6 +272,7 @@ export type BudgetWhereInput = {
   technicalOwnerId?: Prisma.StringNullableFilter<"Budget"> | string | null
   status?: Prisma.EnumBudgetStatusFilter<"Budget"> | $Enums.BudgetStatus
   currentVersionId?: Prisma.StringNullableFilter<"Budget"> | string | null
+  aiDraftId?: Prisma.StringNullableFilter<"Budget"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Budget"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Budget"> | Date | string
   createdById?: Prisma.StringNullableFilter<"Budget"> | string | null
@@ -295,6 +303,7 @@ export type BudgetOrderByWithRelationInput = {
   technicalOwnerId?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
   currentVersionId?: Prisma.SortOrderInput | Prisma.SortOrder
+  aiDraftId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   createdById?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -329,6 +338,7 @@ export type BudgetWhereUniqueInput = Prisma.AtLeast<{
   commercialOwnerId?: Prisma.StringNullableFilter<"Budget"> | string | null
   technicalOwnerId?: Prisma.StringNullableFilter<"Budget"> | string | null
   status?: Prisma.EnumBudgetStatusFilter<"Budget"> | $Enums.BudgetStatus
+  aiDraftId?: Prisma.StringNullableFilter<"Budget"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Budget"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Budget"> | Date | string
   createdById?: Prisma.StringNullableFilter<"Budget"> | string | null
@@ -359,6 +369,7 @@ export type BudgetOrderByWithAggregationInput = {
   technicalOwnerId?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
   currentVersionId?: Prisma.SortOrderInput | Prisma.SortOrder
+  aiDraftId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   createdById?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -384,6 +395,7 @@ export type BudgetScalarWhereWithAggregatesInput = {
   technicalOwnerId?: Prisma.StringNullableWithAggregatesFilter<"Budget"> | string | null
   status?: Prisma.EnumBudgetStatusWithAggregatesFilter<"Budget"> | $Enums.BudgetStatus
   currentVersionId?: Prisma.StringNullableWithAggregatesFilter<"Budget"> | string | null
+  aiDraftId?: Prisma.StringNullableWithAggregatesFilter<"Budget"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Budget"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Budget"> | Date | string
   createdById?: Prisma.StringNullableWithAggregatesFilter<"Budget"> | string | null
@@ -396,6 +408,7 @@ export type BudgetCreateInput = {
   companyId: string
   code: string
   status?: $Enums.BudgetStatus
+  aiDraftId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -426,6 +439,7 @@ export type BudgetUncheckedCreateInput = {
   technicalOwnerId?: string | null
   status?: $Enums.BudgetStatus
   currentVersionId?: string | null
+  aiDraftId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -442,6 +456,7 @@ export type BudgetUpdateInput = {
   companyId?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumBudgetStatusFieldUpdateOperationsInput | $Enums.BudgetStatus
+  aiDraftId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -472,6 +487,7 @@ export type BudgetUncheckedUpdateInput = {
   technicalOwnerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumBudgetStatusFieldUpdateOperationsInput | $Enums.BudgetStatus
   currentVersionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aiDraftId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -495,6 +511,7 @@ export type BudgetCreateManyInput = {
   technicalOwnerId?: string | null
   status?: $Enums.BudgetStatus
   currentVersionId?: string | null
+  aiDraftId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -507,6 +524,7 @@ export type BudgetUpdateManyMutationInput = {
   companyId?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumBudgetStatusFieldUpdateOperationsInput | $Enums.BudgetStatus
+  aiDraftId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -526,6 +544,7 @@ export type BudgetUncheckedUpdateManyInput = {
   technicalOwnerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumBudgetStatusFieldUpdateOperationsInput | $Enums.BudgetStatus
   currentVersionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aiDraftId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -560,6 +579,7 @@ export type BudgetCountOrderByAggregateInput = {
   technicalOwnerId?: Prisma.SortOrder
   status?: Prisma.SortOrder
   currentVersionId?: Prisma.SortOrder
+  aiDraftId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   createdById?: Prisma.SortOrder
@@ -579,6 +599,7 @@ export type BudgetMaxOrderByAggregateInput = {
   technicalOwnerId?: Prisma.SortOrder
   status?: Prisma.SortOrder
   currentVersionId?: Prisma.SortOrder
+  aiDraftId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   createdById?: Prisma.SortOrder
@@ -598,6 +619,7 @@ export type BudgetMinOrderByAggregateInput = {
   technicalOwnerId?: Prisma.SortOrder
   status?: Prisma.SortOrder
   currentVersionId?: Prisma.SortOrder
+  aiDraftId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   createdById?: Prisma.SortOrder
@@ -968,6 +990,7 @@ export type BudgetCreateWithoutCommercialOwnerInput = {
   companyId: string
   code: string
   status?: $Enums.BudgetStatus
+  aiDraftId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -996,6 +1019,7 @@ export type BudgetUncheckedCreateWithoutCommercialOwnerInput = {
   technicalOwnerId?: string | null
   status?: $Enums.BudgetStatus
   currentVersionId?: string | null
+  aiDraftId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -1022,6 +1046,7 @@ export type BudgetCreateWithoutTechnicalOwnerInput = {
   companyId: string
   code: string
   status?: $Enums.BudgetStatus
+  aiDraftId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -1050,6 +1075,7 @@ export type BudgetUncheckedCreateWithoutTechnicalOwnerInput = {
   commercialOwnerId?: string | null
   status?: $Enums.BudgetStatus
   currentVersionId?: string | null
+  aiDraftId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -1102,6 +1128,7 @@ export type BudgetScalarWhereInput = {
   technicalOwnerId?: Prisma.StringNullableFilter<"Budget"> | string | null
   status?: Prisma.EnumBudgetStatusFilter<"Budget"> | $Enums.BudgetStatus
   currentVersionId?: Prisma.StringNullableFilter<"Budget"> | string | null
+  aiDraftId?: Prisma.StringNullableFilter<"Budget"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Budget"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Budget"> | Date | string
   createdById?: Prisma.StringNullableFilter<"Budget"> | string | null
@@ -1130,6 +1157,7 @@ export type BudgetCreateWithoutClientInput = {
   companyId: string
   code: string
   status?: $Enums.BudgetStatus
+  aiDraftId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -1158,6 +1186,7 @@ export type BudgetUncheckedCreateWithoutClientInput = {
   technicalOwnerId?: string | null
   status?: $Enums.BudgetStatus
   currentVersionId?: string | null
+  aiDraftId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -1200,6 +1229,7 @@ export type BudgetCreateWithoutContactInput = {
   companyId: string
   code: string
   status?: $Enums.BudgetStatus
+  aiDraftId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -1228,6 +1258,7 @@ export type BudgetUncheckedCreateWithoutContactInput = {
   technicalOwnerId?: string | null
   status?: $Enums.BudgetStatus
   currentVersionId?: string | null
+  aiDraftId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -1270,6 +1301,7 @@ export type BudgetCreateWithoutClientUnitInput = {
   companyId: string
   code: string
   status?: $Enums.BudgetStatus
+  aiDraftId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -1298,6 +1330,7 @@ export type BudgetUncheckedCreateWithoutClientUnitInput = {
   technicalOwnerId?: string | null
   status?: $Enums.BudgetStatus
   currentVersionId?: string | null
+  aiDraftId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -1340,6 +1373,7 @@ export type BudgetCreateWithoutOpportunityInput = {
   companyId: string
   code: string
   status?: $Enums.BudgetStatus
+  aiDraftId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -1368,6 +1402,7 @@ export type BudgetUncheckedCreateWithoutOpportunityInput = {
   technicalOwnerId?: string | null
   status?: $Enums.BudgetStatus
   currentVersionId?: string | null
+  aiDraftId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -1410,6 +1445,7 @@ export type BudgetCreateWithoutVersionsInput = {
   companyId: string
   code: string
   status?: $Enums.BudgetStatus
+  aiDraftId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -1439,6 +1475,7 @@ export type BudgetUncheckedCreateWithoutVersionsInput = {
   technicalOwnerId?: string | null
   status?: $Enums.BudgetStatus
   currentVersionId?: string | null
+  aiDraftId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -1459,6 +1496,7 @@ export type BudgetCreateWithoutCurrentVersionInput = {
   companyId: string
   code: string
   status?: $Enums.BudgetStatus
+  aiDraftId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -1487,6 +1525,7 @@ export type BudgetUncheckedCreateWithoutCurrentVersionInput = {
   commercialOwnerId?: string | null
   technicalOwnerId?: string | null
   status?: $Enums.BudgetStatus
+  aiDraftId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -1519,6 +1558,7 @@ export type BudgetUpdateWithoutVersionsInput = {
   companyId?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumBudgetStatusFieldUpdateOperationsInput | $Enums.BudgetStatus
+  aiDraftId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1548,6 +1588,7 @@ export type BudgetUncheckedUpdateWithoutVersionsInput = {
   technicalOwnerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumBudgetStatusFieldUpdateOperationsInput | $Enums.BudgetStatus
   currentVersionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aiDraftId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1574,6 +1615,7 @@ export type BudgetUpdateWithoutCurrentVersionInput = {
   companyId?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumBudgetStatusFieldUpdateOperationsInput | $Enums.BudgetStatus
+  aiDraftId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1602,6 +1644,7 @@ export type BudgetUncheckedUpdateWithoutCurrentVersionInput = {
   commercialOwnerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   technicalOwnerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumBudgetStatusFieldUpdateOperationsInput | $Enums.BudgetStatus
+  aiDraftId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1618,6 +1661,7 @@ export type BudgetCreateWithoutApprovalsInput = {
   companyId: string
   code: string
   status?: $Enums.BudgetStatus
+  aiDraftId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -1647,6 +1691,7 @@ export type BudgetUncheckedCreateWithoutApprovalsInput = {
   technicalOwnerId?: string | null
   status?: $Enums.BudgetStatus
   currentVersionId?: string | null
+  aiDraftId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -1678,6 +1723,7 @@ export type BudgetUpdateWithoutApprovalsInput = {
   companyId?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumBudgetStatusFieldUpdateOperationsInput | $Enums.BudgetStatus
+  aiDraftId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1707,6 +1753,7 @@ export type BudgetUncheckedUpdateWithoutApprovalsInput = {
   technicalOwnerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumBudgetStatusFieldUpdateOperationsInput | $Enums.BudgetStatus
   currentVersionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aiDraftId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1722,6 +1769,7 @@ export type BudgetCreateWithoutContractsInput = {
   companyId: string
   code: string
   status?: $Enums.BudgetStatus
+  aiDraftId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -1751,6 +1799,7 @@ export type BudgetUncheckedCreateWithoutContractsInput = {
   technicalOwnerId?: string | null
   status?: $Enums.BudgetStatus
   currentVersionId?: string | null
+  aiDraftId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -1782,6 +1831,7 @@ export type BudgetUpdateWithoutContractsInput = {
   companyId?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumBudgetStatusFieldUpdateOperationsInput | $Enums.BudgetStatus
+  aiDraftId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1811,6 +1861,7 @@ export type BudgetUncheckedUpdateWithoutContractsInput = {
   technicalOwnerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumBudgetStatusFieldUpdateOperationsInput | $Enums.BudgetStatus
   currentVersionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aiDraftId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1826,6 +1877,7 @@ export type BudgetCreateWithoutProjectsInput = {
   companyId: string
   code: string
   status?: $Enums.BudgetStatus
+  aiDraftId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -1855,6 +1907,7 @@ export type BudgetUncheckedCreateWithoutProjectsInput = {
   technicalOwnerId?: string | null
   status?: $Enums.BudgetStatus
   currentVersionId?: string | null
+  aiDraftId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -1886,6 +1939,7 @@ export type BudgetUpdateWithoutProjectsInput = {
   companyId?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumBudgetStatusFieldUpdateOperationsInput | $Enums.BudgetStatus
+  aiDraftId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1915,6 +1969,7 @@ export type BudgetUncheckedUpdateWithoutProjectsInput = {
   technicalOwnerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumBudgetStatusFieldUpdateOperationsInput | $Enums.BudgetStatus
   currentVersionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aiDraftId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1936,6 +1991,7 @@ export type BudgetCreateManyCommercialOwnerInput = {
   technicalOwnerId?: string | null
   status?: $Enums.BudgetStatus
   currentVersionId?: string | null
+  aiDraftId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -1954,6 +2010,7 @@ export type BudgetCreateManyTechnicalOwnerInput = {
   commercialOwnerId?: string | null
   status?: $Enums.BudgetStatus
   currentVersionId?: string | null
+  aiDraftId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -1966,6 +2023,7 @@ export type BudgetUpdateWithoutCommercialOwnerInput = {
   companyId?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumBudgetStatusFieldUpdateOperationsInput | $Enums.BudgetStatus
+  aiDraftId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1994,6 +2052,7 @@ export type BudgetUncheckedUpdateWithoutCommercialOwnerInput = {
   technicalOwnerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumBudgetStatusFieldUpdateOperationsInput | $Enums.BudgetStatus
   currentVersionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aiDraftId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2016,6 +2075,7 @@ export type BudgetUncheckedUpdateManyWithoutCommercialOwnerInput = {
   technicalOwnerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumBudgetStatusFieldUpdateOperationsInput | $Enums.BudgetStatus
   currentVersionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aiDraftId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2028,6 +2088,7 @@ export type BudgetUpdateWithoutTechnicalOwnerInput = {
   companyId?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumBudgetStatusFieldUpdateOperationsInput | $Enums.BudgetStatus
+  aiDraftId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2056,6 +2117,7 @@ export type BudgetUncheckedUpdateWithoutTechnicalOwnerInput = {
   commercialOwnerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumBudgetStatusFieldUpdateOperationsInput | $Enums.BudgetStatus
   currentVersionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aiDraftId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2078,6 +2140,7 @@ export type BudgetUncheckedUpdateManyWithoutTechnicalOwnerInput = {
   commercialOwnerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumBudgetStatusFieldUpdateOperationsInput | $Enums.BudgetStatus
   currentVersionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aiDraftId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2096,6 +2159,7 @@ export type BudgetCreateManyClientInput = {
   technicalOwnerId?: string | null
   status?: $Enums.BudgetStatus
   currentVersionId?: string | null
+  aiDraftId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -2108,6 +2172,7 @@ export type BudgetUpdateWithoutClientInput = {
   companyId?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumBudgetStatusFieldUpdateOperationsInput | $Enums.BudgetStatus
+  aiDraftId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2136,6 +2201,7 @@ export type BudgetUncheckedUpdateWithoutClientInput = {
   technicalOwnerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumBudgetStatusFieldUpdateOperationsInput | $Enums.BudgetStatus
   currentVersionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aiDraftId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2158,6 +2224,7 @@ export type BudgetUncheckedUpdateManyWithoutClientInput = {
   technicalOwnerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumBudgetStatusFieldUpdateOperationsInput | $Enums.BudgetStatus
   currentVersionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aiDraftId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2176,6 +2243,7 @@ export type BudgetCreateManyContactInput = {
   technicalOwnerId?: string | null
   status?: $Enums.BudgetStatus
   currentVersionId?: string | null
+  aiDraftId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -2188,6 +2256,7 @@ export type BudgetUpdateWithoutContactInput = {
   companyId?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumBudgetStatusFieldUpdateOperationsInput | $Enums.BudgetStatus
+  aiDraftId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2216,6 +2285,7 @@ export type BudgetUncheckedUpdateWithoutContactInput = {
   technicalOwnerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumBudgetStatusFieldUpdateOperationsInput | $Enums.BudgetStatus
   currentVersionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aiDraftId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2238,6 +2308,7 @@ export type BudgetUncheckedUpdateManyWithoutContactInput = {
   technicalOwnerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumBudgetStatusFieldUpdateOperationsInput | $Enums.BudgetStatus
   currentVersionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aiDraftId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2256,6 +2327,7 @@ export type BudgetCreateManyClientUnitInput = {
   technicalOwnerId?: string | null
   status?: $Enums.BudgetStatus
   currentVersionId?: string | null
+  aiDraftId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -2268,6 +2340,7 @@ export type BudgetUpdateWithoutClientUnitInput = {
   companyId?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumBudgetStatusFieldUpdateOperationsInput | $Enums.BudgetStatus
+  aiDraftId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2296,6 +2369,7 @@ export type BudgetUncheckedUpdateWithoutClientUnitInput = {
   technicalOwnerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumBudgetStatusFieldUpdateOperationsInput | $Enums.BudgetStatus
   currentVersionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aiDraftId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2318,6 +2392,7 @@ export type BudgetUncheckedUpdateManyWithoutClientUnitInput = {
   technicalOwnerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumBudgetStatusFieldUpdateOperationsInput | $Enums.BudgetStatus
   currentVersionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aiDraftId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2336,6 +2411,7 @@ export type BudgetCreateManyOpportunityInput = {
   technicalOwnerId?: string | null
   status?: $Enums.BudgetStatus
   currentVersionId?: string | null
+  aiDraftId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   createdById?: string | null
@@ -2348,6 +2424,7 @@ export type BudgetUpdateWithoutOpportunityInput = {
   companyId?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumBudgetStatusFieldUpdateOperationsInput | $Enums.BudgetStatus
+  aiDraftId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2376,6 +2453,7 @@ export type BudgetUncheckedUpdateWithoutOpportunityInput = {
   technicalOwnerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumBudgetStatusFieldUpdateOperationsInput | $Enums.BudgetStatus
   currentVersionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aiDraftId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2398,6 +2476,7 @@ export type BudgetUncheckedUpdateManyWithoutOpportunityInput = {
   technicalOwnerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumBudgetStatusFieldUpdateOperationsInput | $Enums.BudgetStatus
   currentVersionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aiDraftId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2475,6 +2554,7 @@ export type BudgetSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   technicalOwnerId?: boolean
   status?: boolean
   currentVersionId?: boolean
+  aiDraftId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   createdById?: boolean
@@ -2506,6 +2586,7 @@ export type BudgetSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
   technicalOwnerId?: boolean
   status?: boolean
   currentVersionId?: boolean
+  aiDraftId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   createdById?: boolean
@@ -2532,6 +2613,7 @@ export type BudgetSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
   technicalOwnerId?: boolean
   status?: boolean
   currentVersionId?: boolean
+  aiDraftId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   createdById?: boolean
@@ -2558,6 +2640,7 @@ export type BudgetSelectScalar = {
   technicalOwnerId?: boolean
   status?: boolean
   currentVersionId?: boolean
+  aiDraftId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   createdById?: boolean
@@ -2565,7 +2648,7 @@ export type BudgetSelectScalar = {
   deletedAt?: boolean
 }
 
-export type BudgetOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "companyId" | "code" | "opportunityId" | "clientId" | "clientUnitId" | "contactId" | "commercialOwnerId" | "technicalOwnerId" | "status" | "currentVersionId" | "createdAt" | "updatedAt" | "createdById" | "updatedById" | "deletedAt", ExtArgs["result"]["budget"]>
+export type BudgetOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "companyId" | "code" | "opportunityId" | "clientId" | "clientUnitId" | "contactId" | "commercialOwnerId" | "technicalOwnerId" | "status" | "currentVersionId" | "aiDraftId" | "createdAt" | "updatedAt" | "createdById" | "updatedById" | "deletedAt", ExtArgs["result"]["budget"]>
 export type BudgetInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   opportunity?: boolean | Prisma.Budget$opportunityArgs<ExtArgs>
   client?: boolean | Prisma.ClientDefaultArgs<ExtArgs>
@@ -2630,6 +2713,12 @@ export type $BudgetPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     technicalOwnerId: string | null
     status: $Enums.BudgetStatus
     currentVersionId: string | null
+    /**
+     * Rastreabilidade: id do rascunho do Jarvis que originou este orçamento
+     * (generatedByAI = aiDraftId != null). O rascunho guarda modelo, fontes,
+     * referências históricas e alterações.
+     */
+    aiDraftId: string | null
     createdAt: Date
     updatedAt: Date
     createdById: string | null
@@ -3080,6 +3169,7 @@ export interface BudgetFieldRefs {
   readonly technicalOwnerId: Prisma.FieldRef<"Budget", 'String'>
   readonly status: Prisma.FieldRef<"Budget", 'BudgetStatus'>
   readonly currentVersionId: Prisma.FieldRef<"Budget", 'String'>
+  readonly aiDraftId: Prisma.FieldRef<"Budget", 'String'>
   readonly createdAt: Prisma.FieldRef<"Budget", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Budget", 'DateTime'>
   readonly createdById: Prisma.FieldRef<"Budget", 'String'>

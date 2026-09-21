@@ -115,3 +115,58 @@ WhatsApp → /api/webhooks/whatsapp (assinatura X-Hub-Signature-256)
 resposta direta, métricas, erro) e `manager-tools.test.ts` (allowlist,
 RBAC de oferta e de execução, Zod, falha sem vazamento). A suíte nunca
 chama a OpenAI real.
+
+## Agente comercial — orçamentos e propostas por conversa
+
+O Jarvis elabora orçamentos e propostas em linguagem natural usando o
+módulo de orçamento como fonte de verdade. **O LLM nunca é a fonte dos
+preços**: IA interpreta, pesquisa, compara e redige; o CRM decide
+(catálogo, histórico, regras, cálculo, PDF).
+
+```
+pedido → buscar_cliente → catalogo_de_servicos (preço ATUAL + histórico praticado)
+       → historico_do_cliente → propostas_semelhantes (base de conhecimento)
+       → parametros_comerciais → criar_rascunho_de_orcamento (AgentQuoteDraft)
+       → alterar_rascunho_de_orcamento (operações determinísticas)
+       → propor_gerar_proposta → [dupla confirmação]
+       → createBudget → saveCurrentVersion → submitBudget → generateProposal
+       → PDF oficial na conversa (/api/arquivos/<id>)
+```
+
+- **Rascunho** (`src/lib/orcamento-rascunho.ts`): schema Zod (a "intenção
+  de orçamento"), operações de edição por conversa (`definir_preco`,
+  `remover_item`, `aumentar_percentual`, `definir_total`,
+  `desconto_percentual`…), totais pelo `budget-calc`, guardrails pelas
+  mesmas regras do módulo (`approvalTriggers`) e classificação de
+  faltantes (obrigatório / recomendável / opcional). Um rascunho ativo por
+  conversa; conversa e cartão manipulam o mesmo objeto.
+- **Geração** (`orcamento-ia.ts` → `gerarPropostaDoRascunho`): só pela
+  confirmação (AgentAction `gerar_proposta`). Passa por `submitBudget` — se
+  as regras mandarem para aprovação interna, o orçamento fica criado
+  aguardando e a proposta sai depois da aprovação, pelo módulo.
+  `Budget.aiDraftId` marca o orçamento gerado por IA; o rascunho guarda
+  modelo, fontes, referências e alterações (nunca chain-of-thought).
+- **Base de conhecimento comercial** (`conhecimento-comercial.ts`,
+  `QuoteKnowledge` + pgvector): uma linha por orçamento, campos
+  estruturados + texto + embedding (`text-embedding-3-small`). Indexação
+  automática ao salvar, submeter, aprovar, gerar proposta, registrar
+  desfecho e converter em contrato (hash evita reprocessar). Botão
+  "Reindexar" em Configurações → IA → Orçamentos.
+- **Ranking híbrido** (`src/lib/ranking-comercial.ts`):
+  `0,40 semântica + 0,30 estrutural (serviço, disciplina, segmento, região,
+  porte, mesmo cliente) + 0,15 recência (decai em 3 anos) + 0,15 desfecho
+  (convertida > aceita > sem desfecho > recusada)`. Sem embedding, a
+  semântica vira similaridade de termos e o peso migra para o estrutural.
+  Todo resultado sai com data e desfecho: **referência histórica, não
+  preço atual**.
+- **Parâmetros**: desconto máximo, margem mínima, valor limite e validade
+  (já existiam) + prazo e forma de pagamento padrão (Configurações →
+  Comercial). Configuração do agente em Configurações → IA → Orçamentos
+  (`ai.quote.*`). Confirmação antes de gerar é sempre exigida; envio ao
+  cliente pela IA não existe.
+- **Explicabilidade**: `ver_rascunho_de_orcamento` devolve as referências
+  (códigos, valores, datas, preço de tabela) — a resposta a "por que esse
+  preço?".
+- **Preparado, não implementado**: ingestão de documentos (TR/edital) —
+  o extrator de texto do assistente de escopo já existe
+  (`ai/extrair-documento.ts`) e pode alimentar `criar_rascunho`.

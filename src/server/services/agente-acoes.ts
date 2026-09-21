@@ -4,7 +4,9 @@ import { auditLog } from '@/server/audit/audit';
 import { escopoDeProjetos } from '@/server/auth/project-scope';
 import { addProjectComment, createTask } from '@/server/services/projects';
 import { enviarToque, getFila } from '@/server/services/followup';
+import { gerarPropostaDoRascunho } from '@/server/services/orcamento-ia';
 import { formatDateBR } from '@/lib/dates';
+import { formatBRL } from '@/lib/money';
 import type { Prisma } from '@/generated/prisma/client';
 import type { SessionUser } from '@/server/auth/session';
 
@@ -174,9 +176,31 @@ export async function confirmarAcao(user: SessionUser, acaoId: string) {
   const { acao } = r;
   const args = acao.args as Record<string, string | null>;
 
-  let resultado: { ok: true; mensagem: string } | { error: string };
+  let resultado: { ok: true; mensagem: string; arquivo?: ArquivoGerado } | { error: string };
   try {
-    if (acao.tool === 'criar_tarefa') {
+    if (acao.tool === 'gerar_proposta') {
+      const feito = await gerarPropostaDoRascunho(user, String(args.draftId));
+      if ('error' in feito) {
+        resultado = { error: feito.error ?? 'Falha ao gerar.' };
+      } else if (feito.proposta) {
+        resultado = {
+          ok: true,
+          mensagem: `Proposta ${feito.proposta.code} gerada a partir do orçamento ${feito.orcamento.code}.`,
+          arquivo: {
+            attachmentId: feito.proposta.attachmentId,
+            nome: feito.proposta.fileName,
+            url: `/api/arquivos/${feito.proposta.attachmentId}`,
+            orcamentoId: feito.orcamento.id,
+          },
+        };
+      } else {
+        resultado = {
+          ok: true,
+          mensagem: `Orçamento ${feito.orcamento.code} criado e enviado para APROVAÇÃO INTERNA (${feito.gatilhos.join(', ')}). A proposta sai quando a diretoria aprovar em Orçamentos.`,
+          arquivo: { attachmentId: null, nome: null, url: `/orcamentos/${feito.orcamento.id}`, orcamentoId: feito.orcamento.id },
+        };
+      }
+    } else if (acao.tool === 'criar_tarefa') {
       const feito = await createTask(user, String(args.projectId), {
         title: String(args.titulo),
         description: args.descricao,
@@ -221,11 +245,15 @@ export async function confirmarAcao(user: SessionUser, acaoId: string) {
   });
 
   // a conversa registra o desfecho — o Jarvis "sabe" o que aconteceu
+  const arquivo = !falhou ? (resultado as { arquivo?: ArquivoGerado }).arquivo ?? null : null;
   const fala = falhou
     ? `A ação não foi executada: ${(resultado as { error: string }).error}`
     : `✔ ${(resultado as { mensagem: string }).mensagem} (confirmada por você)`;
   await prisma.agentMessage.create({
-    data: { threadId: acao.threadId, role: 'ASSISTANT', content: fala },
+    data: {
+      threadId: acao.threadId, role: 'ASSISTANT', content: fala,
+      toolData: arquivo ? ({ arquivo } as unknown as Prisma.InputJsonValue) : undefined,
+    },
   }).catch(() => null);
 
   await auditLog({
@@ -235,7 +263,7 @@ export async function confirmarAcao(user: SessionUser, acaoId: string) {
     after: { tool: acao.tool, resumo: acao.resumo, origem: 'jarvis — confirmado pelo usuário' },
   });
 
-  return falhou ? { error: (resultado as { error: string }).error } : { ok: true as const, mensagem: fala };
+  return falhou ? { error: (resultado as { error: string }).error } : { ok: true as const, mensagem: fala, arquivo };
 }
 
 export async function cancelarAcao(user: SessionUser, acaoId: string) {
@@ -360,4 +388,39 @@ export async function acaoPendenteDaThread(user: SessionUser, threadId: string) 
     select: { id: true, resumo: true, tool: true, status: true },
   });
   return acao ?? null;
+}
+
+// ---------- Geração de proposta (Jarvis comercial) ----------
+
+/** Link do que a ação produziu — a proposta em PDF ou o orçamento aguardando aprovação. */
+export type ArquivoGerado = {
+  attachmentId: string | null;
+  nome: string | null;
+  url: string;
+  orcamentoId: string;
+};
+
+/**
+ * Propõe gerar a proposta do rascunho da conversa. Como toda escrita do
+ * Jarvis: registra a proposta e espera o clique — o modelo nunca gera.
+ */
+export async function proporGerarProposta(user: SessionUser, threadId: string): Promise<Proposta> {
+  if (!user.permissions.has('proposal:write')) return { error: 'Sem permissão para gerar propostas.' };
+  const draft = await prisma.agentQuoteDraft.findFirst({
+    where: { companyId: user.companyId, threadId, userId: user.id, status: 'EM_ELABORACAO' },
+    orderBy: { updatedAt: 'desc' },
+  });
+  if (!draft) return { error: 'Não há rascunho em elaboração nesta conversa.' };
+
+  const { RascunhoSchema, faltantesDoRascunho, totaisDoRascunho } = await import('@/lib/orcamento-rascunho');
+  const r = RascunhoSchema.parse(draft.dados);
+  const faltantes = faltantesDoRascunho(r);
+  if (faltantes.obrigatorios.length > 0) {
+    return { error: `Antes de gerar, falta: ${faltantes.obrigatorios.join(', ')}.` };
+  }
+  const t = totaisDoRascunho(r);
+  const resumo = `Gerar orçamento e proposta em PDF para ${r.clienteNome}: ${r.itens.length} item(ns), total ${formatBRL(t.total.toFixed(2))}`
+    + (t.desconto > 0 ? ` (com desconto de ${formatBRL(t.desconto.toFixed(2))})` : '')
+    + `, validade ${r.validadeDias} dias.`;
+  return registrarProposta(user, threadId, 'gerar_proposta', { draftId: draft.id, clienteNome: r.clienteNome }, resumo);
 }

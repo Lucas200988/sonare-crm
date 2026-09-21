@@ -605,6 +605,10 @@ model Budget {
   technicalOwnerId  String?
   status            BudgetStatus @default(RASCUNHO)
   currentVersionId  String?      @unique
+  /// Rastreabilidade: id do rascunho do Jarvis que originou este orçamento
+  /// (generatedByAI = aiDraftId != null). O rascunho guarda modelo, fontes,
+  /// referências históricas e alterações.
+  aiDraftId         String?
   createdAt         DateTime     @default(now())
   updatedAt         DateTime     @updatedAt
   createdById       String?
@@ -2268,4 +2272,73 @@ model AgentAction {
 
   @@index([threadId, status])
   @@index([companyId, createdAt])
+}
+
+// ---------- Jarvis comercial: rascunhos e base de conhecimento ----------
+
+/// Orçamento em elaboração por conversa. Vira Budget de verdade só na
+/// confirmação; até lá é rascunho, com tudo que o agente consultou e mudou.
+model AgentQuoteDraft {
+  id         String   @id @default(uuid(7))
+  companyId  String
+  threadId   String
+  userId     String
+  /// EM_ELABORACAO | GERADO | CANCELADO
+  status     String   @default("EM_ELABORACAO")
+  /// O rascunho tipado (schema em src/lib/orcamento-rascunho.ts).
+  dados      Json
+  versao     Int      @default(1)
+  /// Modelo de IA que conduziu a conversa; fontes consultadas; histórico de
+  /// alterações resumido. Nunca chain-of-thought.
+  modelo     String?
+  fontes     Json?
+  alteracoes Json?
+  budgetId   String?
+  proposalId String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([companyId, threadId, status])
+  @@index([companyId, userId, updatedAt])
+}
+
+/// Base de conhecimento comercial: uma linha por orçamento, com os campos
+/// estruturados para filtro/ranking, o texto que representa a proposta e o
+/// embedding para busca semântica (pgvector). Sempre aponta ao orçamento
+/// original — nunca texto solto.
+model QuoteKnowledge {
+  id              String    @id @default(uuid(7))
+  companyId       String
+  budgetId        String    @unique
+  budgetVersionId String
+  proposalId      String?
+  budgetCode      String
+  proposalCode    String?
+  clientId        String
+  clientName      String
+  segment         String?
+  city            String?
+  state           String?
+  serviceType     String?
+  disciplines     String[]  @default([])
+  area            Float?
+  itemsSummary    String
+  texto           String
+  total           Decimal   @db.Decimal(14, 2)
+  budgetStatus    String
+  proposalStatus  String?
+  aprovada        Boolean   @default(false)
+  recusada        Boolean   @default(false)
+  convertida      Boolean   @default(false)
+  issuedAt        DateTime?
+  /// Hash do conteúdo indexado — evita reprocessar (e re-embeddar) igual.
+  contentHash     String
+  embedding       Unsupported("vector(1536)")?
+  embeddedAt      DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@index([companyId, serviceType])
+  @@index([companyId, clientId])
+  @@index([companyId, issuedAt])
 }

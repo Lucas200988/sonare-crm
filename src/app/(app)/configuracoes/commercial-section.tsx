@@ -12,6 +12,8 @@ export type CommercialSettings = {
   defaultValidityDays: string;
   infoGerais: string;
   diferenciais: string;
+  paymentTermsDefault: string;
+  executionDeadlineDefault: string;
 };
 
 /**
@@ -58,6 +60,20 @@ export function CommercialSection({ settings }: { settings: CommercialSettings }
         <Field label="Validade padrão da proposta (dias)" htmlFor="s-validade" className="max-w-xs">
           <input id="s-validade" name="defaultValidityDays" defaultValue={settings.defaultValidityDays} inputMode="numeric" className={inputCls} />
         </Field>
+
+        <fieldset className="rounded-lg border border-slate-200 p-3">
+          <legend className="px-1 text-xs font-semibold uppercase tracking-wide text-slate-500">
+            Padrões comerciais (usados pelo Jarvis quando a pessoa não informa)
+          </legend>
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <Field label="Forma de pagamento padrão" htmlFor="s-pag" hint="Ex.: 50% na assinatura e 50% na entrega.">
+              <input id="s-pag" name="paymentTermsDefault" defaultValue={settings.paymentTermsDefault} className={inputCls} />
+            </Field>
+            <Field label="Prazo de execução padrão" htmlFor="s-prazo" hint="Ex.: 30 dias corridos após o aceite.">
+              <input id="s-prazo" name="executionDeadlineDefault" defaultValue={settings.executionDeadlineDefault} className={inputCls} />
+            </Field>
+          </div>
+        </fieldset>
 
         <Field label="Seção 6 da proposta — Informações gerais" htmlFor="s-info">
           <textarea

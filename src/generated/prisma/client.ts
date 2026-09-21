@@ -459,3 +459,17 @@ export type AiCall = Prisma.AiCallModel
  * usuário clica em Confirmar — determinística, sem o LLM no caminho.
  */
 export type AgentAction = Prisma.AgentActionModel
+/**
+ * Model AgentQuoteDraft
+ * Orçamento em elaboração por conversa. Vira Budget de verdade só na
+ * confirmação; até lá é rascunho, com tudo que o agente consultou e mudou.
+ */
+export type AgentQuoteDraft = Prisma.AgentQuoteDraftModel
+/**
+ * Model QuoteKnowledge
+ * Base de conhecimento comercial: uma linha por orçamento, com os campos
+ * estruturados para filtro/ranking, o texto que representa a proposta e o
+ * embedding para busca semântica (pgvector). Sempre aponta ao orçamento
+ * original — nunca texto solto.
+ */
+export type QuoteKnowledge = Prisma.QuoteKnowledgeModel

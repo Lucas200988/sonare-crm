@@ -2,6 +2,7 @@ import 'server-only';
 import { isEmptyRich } from '@/lib/html-text';
 import { prisma } from '@/server/db';
 import { auditLog } from '@/server/audit/audit';
+import { indexarEmSegundoPlano } from '@/server/services/conhecimento-comercial';
 import { nextCode } from '@/server/services/sequence';
 import { computeBudgetTotals, approvalTriggers, type ApprovalRules } from '@/lib/budget-calc';
 import type { Prisma, BudgetStatus } from '@/generated/prisma/client';
@@ -13,7 +14,7 @@ export const TRIGGER_LABELS: Record<string, string> = {
   valor_acima_limite: 'Valor acima do limite sem aprovação',
 };
 
-async function getApprovalRules(companyId: string): Promise<ApprovalRules> {
+export async function getApprovalRules(companyId: string): Promise<ApprovalRules> {
   const settings = await prisma.systemSetting.findMany({
     where: {
       companyId,
@@ -466,6 +467,7 @@ export async function saveCurrentVersion(user: SessionUser, budgetId: string, pa
     action: 'update', entityType: 'budget', entityId: budgetId,
     after: { versionNumber: budget.currentVersion.versionNumber, total: totals.total.toString() },
   });
+  indexarEmSegundoPlano(user.companyId, budgetId);
   return { ok: true as const, totals };
 }
 
@@ -601,6 +603,7 @@ export async function submitBudget(user: SessionUser, budgetId: string) {
       companyId: user.companyId, userId: user.id,
       action: 'approve_auto', entityType: 'budget', entityId: budgetId,
     });
+    indexarEmSegundoPlano(user.companyId, budgetId);
     return { ok: true as const, status: 'APROVADO' as const, triggers: [] };
   }
 
@@ -619,6 +622,7 @@ export async function submitBudget(user: SessionUser, budgetId: string) {
     companyId: user.companyId, userId: user.id,
     action: 'submit_approval', entityType: 'budget', entityId: budgetId, after: { triggers },
   });
+  indexarEmSegundoPlano(user.companyId, budgetId);
   return { ok: true as const, status: 'APROVACAO_INTERNA' as const, triggers };
 }
 
