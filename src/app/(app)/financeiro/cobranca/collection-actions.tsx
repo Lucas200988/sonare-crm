@@ -7,16 +7,7 @@ import {
   addCollectionEventAction, sendCollectionEmailAction, type ActionState,
 } from '@/actions/finance';
 import { inputCls, Field, FormError, SubmitButton } from '@/components/ui';
-
-export const TIPOS_COBRANCA: Array<[string, string]> = [
-  ['LEMBRETE_PRE_VENCIMENTO', 'Lembrete antes do vencimento'],
-  ['AVISO_VENCIMENTO', 'Aviso de vencimento'],
-  ['PRIMEIRO_AVISO_ATRASO', '1º aviso de atraso'],
-  ['SEGUNDO_AVISO_ATRASO', '2º aviso de atraso'],
-  ['COBRANCA_FORMAL', 'Cobrança formal'],
-  ['RENEGOCIACAO', 'Renegociação'],
-  ['ENCAMINHAMENTO_JURIDICO', 'Encaminhado ao jurídico'],
-];
+import { TIPOS_COBRANCA } from '@/lib/tipos-cobranca';
 
 /** Registra o contato feito, já sugerindo o passo adequado ao tempo de atraso. */
 export function RegisterContactButton({

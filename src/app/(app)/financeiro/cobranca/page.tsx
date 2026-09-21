@@ -6,8 +6,9 @@ import { PageHeader, Card, EmptyState, Badge } from '@/components/ui';
 import { formatBRL } from '@/lib/money';
 import { formatDateBR, formatDateTimeBR } from '@/lib/dates';
 import {
-  RegisterContactButton, SendCollectionEmailButton, WhatsAppButton, TIPOS_COBRANCA,
+  RegisterContactButton, SendCollectionEmailButton, WhatsAppButton,
 } from './collection-actions';
+import { TIPOS_COBRANCA } from '@/lib/tipos-cobranca';
 
 export const metadata: Metadata = { title: 'Cobrança — SONARE CRM' };
 
