@@ -179,3 +179,45 @@ describe('conversarComFerramentas', () => {
     expect(criar.mock.calls[0][0].data.status).toBe('error');
   });
 });
+
+describe('limite de ritmo da OpenAI (429)', () => {
+  beforeEach(() => {
+    process.env.APP_SECRET = 'segredo-de-teste';
+    vi.resetModules();
+  });
+  afterEach(() => { vi.useRealTimers(); vi.unstubAllGlobals(); vi.restoreAllMocks(); });
+
+  const limite = (quando: string) => ({
+    ok: false, status: 429,
+    text: async () => JSON.stringify({ error: { message: `Rate limit reached for gpt-4o on tokens per min (TPM): Limit 30000. Please try again in ${quando}.`, type: 'tokens', code: 'rate_limit_exceeded' } }),
+  });
+
+  it('lê a espera pedida, com folga e teto; cota esgotada não espera', async () => {
+    const { esperaDoLimite } = await carregarNucleo();
+    expect(esperaDoLimite(429, 'Please try again in 1.574s.')).toBe(2_074);
+    expect(esperaDoLimite(429, 'Please try again in 350ms.')).toBe(850);
+    expect(esperaDoLimite(429, 'Please try again in 58s.')).toBe(15_000);
+    expect(esperaDoLimite(429, 'sem dica')).toBe(2_500);
+    expect(esperaDoLimite(429, '{"error":{"code":"insufficient_quota"}}')).toBeNull();
+    expect(esperaDoLimite(500, 'try again in 1s')).toBeNull();
+  });
+
+  it('espera e tenta de novo em vez de desistir; insiste no máximo 3 vezes', async () => {
+    vi.useFakeTimers();
+    const { completarTexto } = await carregarNucleo();
+
+    const fetchOk = vi.fn().mockResolvedValueOnce(limite('1.2s')).mockResolvedValueOnce(respostaFinal);
+    vi.stubGlobal('fetch', fetchOk);
+    const ok = completarTexto(CONFIG, { messages: [] }, 10_000);
+    await vi.advanceTimersByTimeAsync(2_000);
+    expect(await ok).toBe('Tudo em ordem na operação.');
+    expect(fetchOk).toHaveBeenCalledTimes(2);
+
+    const fetchSempre = vi.fn().mockResolvedValue(limite('100ms'));
+    vi.stubGlobal('fetch', fetchSempre);
+    const falha = completarTexto(CONFIG, { messages: [] }, 10_000).catch((e: Error) => e.message);
+    await vi.advanceTimersByTimeAsync(5_000);
+    expect(await falha).toContain('429');
+    expect(fetchSempre).toHaveBeenCalledTimes(4); // 1 + 3 esperas
+  });
+});

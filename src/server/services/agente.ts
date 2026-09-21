@@ -137,8 +137,10 @@ export async function conversar(
     const msg = e instanceof Error ? e.message : 'erro desconhecido';
     const amigavel = msg.includes('401')
       ? 'Chave de API inválida ou expirada.'
-      : msg.includes('429')
-        ? 'Limite de uso da API atingido. Tente novamente em instantes.'
+      : msg.includes('insufficient_quota')
+        ? 'Os créditos da conta OpenAI acabaram. Recarregue em platform.openai.com → Billing.'
+        : msg.includes('429')
+          ? 'A conta OpenAI bateu no limite de tokens por minuto mesmo após eu aguardar. Espere 1 minuto e repita o pedido — o limite sobe sozinho com o uso da conta (platform.openai.com → Limits).'
         : msg.toLowerCase().includes('timeout') || msg.toLowerCase().includes('abort')
           ? 'A análise passou do tempo. Tente uma pergunta mais específica.'
           : 'Não consegui concluir a análise agora. Tente novamente.';

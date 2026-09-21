@@ -77,6 +77,23 @@ function parametroRecusado(corpo: string): string | null {
   }
 }
 
+/**
+ * 429 de RITMO (tokens/requisições por minuto) — a OpenAI diz quanto esperar
+ * ("try again in 1.574s" / "350ms"). Cota esgotada (insufficient_quota)
+ * também é 429, mas esperar não resolve: devolve null.
+ */
+export function esperaDoLimite(status: number, corpo: string): number | null {
+  if (status !== 429 || corpo.includes('insufficient_quota')) return null;
+  const m = corpo.match(/try again in ([0-9]+(?:[.][0-9]+)?) *(ms|s)(?![a-z])/i);
+  const ms = m ? Number(m[1]) * (m[2].toLowerCase() === 's' ? 1_000 : 1) : 2_000;
+  // folga de meio segundo: a janela é deslizante e o número vem justo
+  return Math.min(Math.ceil(ms) + 500, ESPERA_MAXIMA_MS);
+}
+
+/** Acima disto não vale segurar a pessoa olhando para o chat. */
+const ESPERA_MAXIMA_MS = 15_000;
+const ESPERAS_POR_CHAMADA = 3;
+
 // ---------- Métrica de uso ----------
 
 /** Quem está gastando e para quê — vai para a tabela AiCall. */
@@ -155,7 +172,8 @@ async function chamadaOpenAI(
     model: config.model,
   };
 
-  for (let tentativa = 0; tentativa < 3; tentativa++) {
+  let esperas = 0;
+  for (let tentativa = 0; tentativa < 3 + ESPERAS_POR_CHAMADA; tentativa++) {
     const res = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${config.apiKey}` },
@@ -177,6 +195,15 @@ async function chamadaOpenAI(
     }
 
     const body = await res.text();
+
+    // limite de ritmo da conta: espera o que a OpenAI pediu e tenta de novo
+    const espera = esperaDoLimite(res.status, body);
+    if (espera !== null && esperas < ESPERAS_POR_CHAMADA) {
+      esperas++;
+      await new Promise((ok) => setTimeout(ok, espera));
+      continue;
+    }
+
     const recusado = res.status === 400 ? parametroRecusado(body) : null;
     // sem parâmetro para remover — ou já removido — o erro é real
     if (!recusado || !(recusado in payload)) {
