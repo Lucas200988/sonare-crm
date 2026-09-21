@@ -108,6 +108,18 @@ WhatsApp → /api/webhooks/whatsapp (assinatura X-Hub-Signature-256)
   agente fora da janela de 24 h exigem template aprovado pela Meta — por
   isso os briefings proativos seguem por sino + e-mail; o WhatsApp é
   conversacional (responder dentro da janela é livre).
+- **Twilio (plano B, mesmo adapter)**: webhook `/api/webhooks/twilio-whatsapp`
+  (form-urlencoded, `X-Twilio-Signature` HMAC-SHA1 sobre a URL pública +
+  parâmetros; `src/lib/twilio.ts`). Env: `TWILIO_ACCOUNT_SID`,
+  `TWILIO_AUTH_TOKEN`, `TWILIO_WHATSAPP_FROM` (ex.: `whatsapp:+14155238886`
+  no sandbox). Com credenciais Twilio presentes, ela tem prioridade sobre a
+  Meta. Sandbox: cada celular precisa mandar `join <código>` ao número da
+  Twilio antes de conversar.
+- **Orçamento pelo WhatsApp**: o mesmo fluxo do chat. O rascunho vem em
+  texto com o rodapé "diga: gera a proposta"; a confirmação é por
+  palavra-chave (CONFIRMAR → SIM); ao executar, o **PDF vai como documento**
+  pelo link público da proposta (`/verificar/<código>/pdf`, o mesmo do
+  e-mail ao cliente — sem login, código aleatório).
 
 ## Testes
 

@@ -1,6 +1,6 @@
 import { NextResponse, after } from 'next/server';
 import { assinaturaMetaValida, extrairMensagens } from '@/lib/whatsapp';
-import { enviarTextoWhatsApp, processarMensagemWhatsApp } from '@/server/services/agente-whatsapp';
+import { enviarWhatsApp, processarMensagemWhatsApp } from '@/server/services/agente-whatsapp';
 
 /**
  * Webhook do WhatsApp (Meta Cloud API) — a porta de entrada do canal.
@@ -52,7 +52,7 @@ export async function POST(request: Request) {
     for (const m of mensagens) {
       try {
         const resposta = await processarMensagemWhatsApp(m.de, m.texto);
-        if (resposta) await enviarTextoWhatsApp(m.de, resposta);
+        if (resposta) await enviarWhatsApp(m.de, resposta.texto, resposta.documento);
       } catch (e) {
         console.error('[whatsapp] processamento falhou:', e instanceof Error ? e.message : e);
       }
