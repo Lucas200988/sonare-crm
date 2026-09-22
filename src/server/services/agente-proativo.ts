@@ -155,7 +155,8 @@ Regras:
 - Use SOMENTE os dados do JSON fornecido; nunca invente. Sem dado relevante, diga que o dia está sem pendências críticas.
 - Ausência de registro não significa ausência de trabalho.
 - Cite códigos (PRJ-…, PROP-…) quando existirem.
-- Texto puro, sem markdown, no máximo ~180 palavras.`;
+- Formato (obrigatório — o e-mail renderiza assim): abertura de UMA frase; depois seções curtas com título terminado em dois-pontos ("Conquistas:", "Atenção:", "Prioridade do dia:"), cada item numa linha própria começando com "- ". Máximo 6 itens no total; cada item com código e uma consequência. Sem asteriscos, sem numeração "1.", sem parágrafo longo. Até ~180 palavras.
+- O toque de humor, se houver, vai na abertura ou no fechamento — nunca dentro de um item de risco.`;
 }
 
 /** Gera e envia os briefings de uma empresa para os usuários que optaram. */

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { isEmptyRich, isHtml } from './html-text';
+import { isEmptyRich, isHtml, textToHtml } from './html-text';
 
 /**
  * O que conta como "campo vazio" decide se um título de seção aparece na
@@ -38,5 +38,18 @@ describe('isHtml', () => {
 
   it('texto puro dos orçamentos antigos segue pelo outro caminho', () => {
     expect(isHtml('- Execução de obras\n- Fornecimento de materiais')).toBe(false);
+  });
+});
+
+describe('textToHtml no e-mail do briefing', () => {
+  it('seções, itens e negrito viram HTML de verdade — nada de asterisco cru', () => {
+    const briefing = 'Bom dia, Lucas.\nAtenção:\n- PRJ-2026-008 sem ART há 30 dias.\n- **Financeiro**: 1 parcela vencida.\nPrioridade do dia: ART.';
+    const html = textToHtml(briefing);
+    expect(html).toBe(
+      '<p>Bom dia, Lucas.</p><p>Atenção:</p>'
+      + '<ul><li>PRJ-2026-008 sem ART há 30 dias.</li><li><strong>Financeiro</strong>: 1 parcela vencida.</li></ul>'
+      + '<p>Prioridade do dia: ART.</p>',
+    );
+    expect(html).not.toContain('**');
   });
 });

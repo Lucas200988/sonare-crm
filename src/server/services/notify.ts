@@ -2,6 +2,7 @@ import 'server-only';
 import { prisma } from '@/server/db';
 import { enviarEmail, layoutEmail } from '@/server/mail';
 import { appUrl } from '@/server/signature';
+import { textToHtml } from '@/lib/html-text';
 import type { SessionUser } from '@/server/auth/session';
 
 /**
@@ -51,12 +52,12 @@ export async function notificar(quemFez: SessionUser, aviso: Aviso): Promise<voi
       responderPara: quemFez.email,
       assunto: `${aviso.titulo} — SONARE CRM`,
       texto:
-        `${aviso.titulo}\n\n${aviso.corpo ?? ''}\n\n`
+        `${aviso.titulo}\n\n${(aviso.corpo ?? '').replace(/\*\*/g, '')}\n\n`
         + `Abrir no sistema: ${url}\n\n`
         + `Aviso automático do CRM; para falar com ${quemFez.name}, basta responder.`,
       html: layoutEmail(
         aviso.titulo,
-        `${aviso.corpo ? `<p>${aviso.corpo}</p>` : ''}
+        `${aviso.corpo ? textToHtml(aviso.corpo) : ''}
          <p style="margin-top:16px">
            <a href="${url}"
               style="display:inline-block;background:#e22020;color:#ffffff;text-decoration:none;font-size:13px;font-weight:bold;padding:10px 24px;border-radius:8px">
