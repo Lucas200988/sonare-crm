@@ -51,3 +51,29 @@ describe('briefing determinístico', () => {
     expect(briefingDeterministico('fechamento', DADOS, [])).toContain('Resumo do fechamento:');
   });
 });
+
+describe('frases já usadas nos briefings', () => {
+  beforeEach(() => vi.resetModules());
+  afterEach(() => vi.restoreAllMocks());
+
+  it('extrai abertura e fechamento dos briefings recentes, ignorando itens, títulos e frases curtas', async () => {
+    const findMany = vi.fn().mockResolvedValue([
+      { body: 'Bom dia, Lucas. A carteira acordou no mesmo humor que vocês.\n\nAtenção:\n- PRJ-2026-008 sem ART.\n\nA ART do PRJ-2026-008 já pode ser considerada figura lendária.' },
+      { body: 'Bom dia.\nAtenção:\n- item\nPrioridade do dia:\n- ART.' },
+      { body: null },
+    ]);
+    vi.doMock('@/server/db', () => ({ prisma: { notification: { findMany } } }));
+    vi.doMock('@/server/audit/audit', () => ({ auditLog: vi.fn() }));
+    vi.doMock('@/server/services/notify', () => ({ notificar: vi.fn() }));
+    vi.doMock('@/server/services/agente-contexto', () => ({ visaoGeralDaEmpresa: vi.fn() }));
+    vi.doMock('@/server/ai/client', () => ({ completarTexto: vi.fn(), getAiConfig: vi.fn() }));
+    const { frasesRecentesDosBriefings } = await import('./agente-proativo');
+
+    const frases = await frasesRecentesDosBriefings('c1');
+    expect(frases).toEqual([
+      'Bom dia, Lucas. A carteira acordou no mesmo humor que vocês.',
+      'A ART do PRJ-2026-008 já pode ser considerada figura lendária.',
+    ]);
+    expect(findMany).toHaveBeenCalledWith(expect.objectContaining({ where: expect.objectContaining({ companyId: 'c1' }) }));
+  });
+});

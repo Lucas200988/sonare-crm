@@ -132,7 +132,27 @@ export function briefingDeterministico(
   return linhas.join('\n');
 }
 
-function promptDoBriefing(periodo: PeriodoBriefing, nomeDestinatario: string, hoje: string): string {
+/**
+ * Aberturas e fechamentos dos últimos briefings da empresa — o modelo não
+ * enxerga o que escreveu ontem e, sem isto, repete a mesma ironia dia após
+ * dia (e para cada destinatário).
+ */
+export async function frasesRecentesDosBriefings(companyId: string, take = 6): Promise<string[]> {
+  const recentes = await prisma.notification.findMany({
+    where: { companyId, kind: { startsWith: 'jarvis_briefing' }, body: { not: null } },
+    orderBy: { createdAt: 'desc' },
+    take,
+    select: { body: true },
+  });
+  const frases = new Set<string>();
+  for (const n of recentes) {
+    const linhas = (n.body ?? '').split('\n').map((l) => l.trim()).filter((l) => l && !l.startsWith('-') && !l.endsWith(':'));
+    for (const l of [linhas[0], linhas.at(-1)]) if (l && l.length > 25) frases.add(l.slice(0, 160));
+  }
+  return [...frases].slice(0, 8);
+}
+
+function promptDoBriefing(periodo: PeriodoBriefing, nomeDestinatario: string, hoje: string, jaUsadas: string[] = []): string {
   const proximo = diaPorExtenso(proximoDiaUtil(hoje));
   const foco = periodo === 'manha'
     ? 'Abra com "Bom dia". Foque no que precisa de atenção HOJE: prazos, tarefas vencidas, compromissos do dia e o principal risco. Feche com a prioridade sugerida do dia.'
@@ -146,7 +166,7 @@ ${foco}
 ${TOM_DE_GESTOR}
 
 Estrutura:
-1. Conquistas do período (se houver, em conquistas): comece por elas — uma frase por conquista, com código, valor e o impacto concreto para a operação.
+1. Conquistas do período (se houver, em conquistas): comece por elas — uma frase por conquista, com código, valor e o impacto concreto para a operação. Sem conquista, a seção NÃO existe (nada de "Conquistas: nenhuma").
 2. Leitura cruzada: relacione comercial, operação e financeiro quando os dados sustentarem (ex.: projeto novo aberto enquanto a equipe já tem tarefas vencidas = atenção à capacidade; pagamento recebido de projeto que estava atrasado).
 3. Pontos de atenção, do mais grave ao menor.
 
@@ -156,7 +176,7 @@ Regras:
 - Ausência de registro não significa ausência de trabalho.
 - Cite códigos (PRJ-…, PROP-…) quando existirem.
 - Formato (obrigatório — o e-mail renderiza assim): abertura de UMA frase; depois seções curtas com título terminado em dois-pontos ("Conquistas:", "Atenção:", "Prioridade do dia:"), cada item numa linha própria começando com "- ". Máximo 6 itens no total; cada item com código e uma consequência. Sem asteriscos, sem numeração "1.", sem parágrafo longo. Até ~180 palavras.
-- O toque de humor, se houver, vai na abertura ou no fechamento — nunca dentro de um item de risco.`;
+- O toque de humor, se houver, vai na abertura ou no fechamento — nunca dentro de um item de risco.${jaUsadas.length > 0 ? `\n- Frases já usadas em briefings recentes — NÃO repita nem parafraseie: ${jaUsadas.map((f) => `"${f}"`).join('; ')}.` : ''}`;
 }
 
 /** Gera e envia os briefings de uma empresa para os usuários que optaram. */
@@ -171,8 +191,9 @@ export async function enviarBriefings(companyId: string, periodo: PeriodoBriefin
   if (destinatarios.length === 0) return { pulou: 'ninguém optou por receber' };
 
   const hoje = hojeEmCuiaba();
-  const [config, compromissos] = await Promise.all([
+  const [config, compromissos, jaUsadas] = await Promise.all([
     getAiConfig(companyId), memoriasDoPeriodo(companyId, periodo, hoje),
+    frasesRecentesDosBriefings(companyId).catch(() => [] as string[]),
   ]);
 
   // manhã olha o dia útil anterior (segunda vê a sexta); fechamento, o dia
@@ -193,9 +214,9 @@ export async function enviarBriefings(companyId: string, periodo: PeriodoBriefin
     if (config.enabled && config.apiKey && config.provider === 'openai') {
       try {
         const redigido = await completarTexto(config, {
-          temperature: 0.3,
+          temperature: 0.6, // a redação pode variar; os dados vêm fixos no JSON
           messages: [
-            { role: 'system', content: promptDoBriefing(periodo, destinatario.name, hoje) },
+            { role: 'system', content: promptDoBriefing(periodo, destinatario.name, hoje, jaUsadas) },
             { role: 'user', content: JSON.stringify({ conquistas, dados, compromissos }).slice(0, 24_000) },
           ],
         }, 40_000, { companyId, userId: destinatario.id, useCase: 'manager-briefing' });
