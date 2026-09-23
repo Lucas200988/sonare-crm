@@ -44,7 +44,7 @@ export const BOARD_COLUMNS: BoardColumn[] = [
     id: 'finalizado',
     label: 'Finalizado',
     status: 'CONCLUIDO',
-    absorbs: ['CONCLUIDO', 'ENCERRADO'],
+    absorbs: ['AGUARDANDO_RECEBIMENTO', 'CONCLUIDO', 'ENCERRADO'],
   },
 ];
 

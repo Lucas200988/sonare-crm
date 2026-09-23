@@ -10,6 +10,7 @@ import { prisma } from '@/server/db';
 import { getAlerts } from '@/server/services/alerts';
 import { getUnreadNotifications } from '@/server/services/notify';
 import { NotificationsPanel } from './notifications-panel';
+import { STATUS_TRABALHO_ENCERRADO } from '@/config/project-status';
 
 export const metadata: Metadata = { title: 'Dashboard — SONARE CRM' };
 
@@ -19,7 +20,7 @@ const ANALYSIS_STATUSES = [
   'EM_APROVACAO_EXTERNA', 'AGUARDANDO_CONCESSIONARIA', 'AGUARDANDO_ORGAO_PUBLICO',
 ] as const;
 
-const CLOSED_STATUSES = ['CONCLUIDO', 'ENCERRADO', 'CANCELADO', 'SUSPENSO'] as const;
+const CLOSED_STATUSES = [...STATUS_TRABALHO_ENCERRADO, 'SUSPENSO'] as const;
 
 async function loadIndicators(companyId: string) {
   try {
@@ -58,7 +59,7 @@ async function loadIndicators(companyId: string) {
         // Projetos concluídos aguardando pagamento
         prisma.project.count({
           where: {
-            companyId, deletedAt: null, status: 'CONCLUIDO',
+            companyId, deletedAt: null, status: { in: ['CONCLUIDO', 'AGUARDANDO_RECEBIMENTO'] },
             OR: [
               { receivables: { some: { deletedAt: null, status: { notIn: ['RECEBIDO', 'CANCELADO'] } } } },
               { receivables: { none: { deletedAt: null } } },
@@ -174,7 +175,7 @@ export default async function DashboardPage() {
             href="/projetos"
           />
           <Card
-            label="Concluídos aguardando pagamento"
+            label="Entregues aguardando pagamento"
             hint="Entregues, com recebimento pendente"
             value={data.projectsAwaitingPayment}
             icon={HandCoins}

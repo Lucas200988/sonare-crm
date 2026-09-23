@@ -973,6 +973,8 @@ enum ProjectStatus {
   AGUARDANDO_CONCESSIONARIA
   AGUARDANDO_ORGAO_PUBLICO
   SUSPENSO
+  /// Trabalho entregue; falta o cliente pagar. Sem alertas de prazo/ART.
+  AGUARDANDO_RECEBIMENTO
   CONCLUIDO
   ENCERRADO
   CANCELADO

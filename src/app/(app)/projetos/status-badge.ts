@@ -12,6 +12,7 @@ export const PROJECT_STATUS_BADGE: Record<string, { label: string; color: string
   AGUARDANDO_CONCESSIONARIA: { label: 'Aguardando concessionária', color: 'amber' },
   AGUARDANDO_ORGAO_PUBLICO: { label: 'Aguardando órgão público', color: 'amber' },
   SUSPENSO: { label: 'Suspenso', color: 'red' },
+  AGUARDANDO_RECEBIMENTO: { label: 'Pendente de recebimento', color: 'amber' },
   CONCLUIDO: { label: 'Concluído', color: 'green' },
   ENCERRADO: { label: 'Encerrado', color: 'green' },
   CANCELADO: { label: 'Cancelado', color: 'red' },

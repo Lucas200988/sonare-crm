@@ -1,4 +1,5 @@
 import 'server-only';
+import { STATUS_TRABALHO_ENCERRADO } from '@/config/project-status';
 import { escopoDeProjetos } from '@/server/auth/project-scope';
 import { prisma } from '@/server/db';
 import type { SessionUser } from '@/server/auth/session';
@@ -129,7 +130,7 @@ export async function getProjectsOverview(user: SessionUser) {
 
   const inicioDia = new Date();
   inicioDia.setHours(0, 0, 0, 0);
-  const encerrados = ['CONCLUIDO', 'ENCERRADO', 'CANCELADO'];
+  const encerrados: readonly string[] = STATUS_TRABALHO_ENCERRADO;
 
   const atrasados = projetos.filter(
     (p) => p.contractualDeadline && p.contractualDeadline < inicioDia && !encerrados.includes(p.status),

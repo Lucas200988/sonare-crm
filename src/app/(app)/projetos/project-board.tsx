@@ -18,6 +18,7 @@ import { formatDateBR } from '@/lib/dates';
 import { AvisoSemAtalho, abrirPastaNoExplorador } from './[id]/folder-link';
 import { ClientSelect } from '@/components/client-select';
 import { BOARD_COLUMNS, columnForStatus } from '@/config/project-board';
+import { encerraTrabalho } from '@/config/project-status';
 
 export type BoardProject = {
   id: string;
@@ -45,7 +46,7 @@ const PRIORITY_BAR: Record<string, string> = {
 };
 
 function deadlineTone(deadline: string | null, status: string): string {
-  if (!deadline || status === 'CONCLUIDO' || status === 'ENCERRADO') return 'text-slate-400';
+  if (!deadline || encerraTrabalho(status)) return 'text-slate-400';
   const dias = Math.ceil((new Date(deadline).getTime() - Date.now()) / 86_400_000);
   if (dias < 0) return 'text-red-600 font-semibold';
   if (dias <= 7) return 'text-amber-600 font-medium';
@@ -93,6 +94,11 @@ function ProjectCard({ project, overlay, onArchive }: {
           {project.name}
         </Link>
         <p className="mt-1 truncate text-xs text-slate-500">{project.client.tradeName ?? project.client.legalName}</p>
+        {project.status === 'AGUARDANDO_RECEBIMENTO' ? (
+          <span className="mt-1 inline-block rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-semibold text-amber-800">
+            Pendente de recebimento
+          </span>
+        ) : null}
 
         <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px]">
           {project.contractualDeadline ? (

@@ -1,4 +1,5 @@
 import 'server-only';
+import { STATUS_TRABALHO_ENCERRADO } from '@/config/project-status';
 import { formatDateBR } from '@/lib/dates';
 import { escopoDeProjetos } from '@/server/auth/project-scope';
 import { getPrazosVencidos } from '@/server/services/aprovacoes';
@@ -51,7 +52,7 @@ export async function getAlerts(user: SessionUser): Promise<Alerta[]> {
             ...base, archivedAt: null,
             ...escopoDeProjetos(user),
             contractualDeadline: { lt: hoje },
-            status: { notIn: ['CONCLUIDO', 'ENCERRADO', 'CANCELADO'] },
+            status: { notIn: [...STATUS_TRABALHO_ENCERRADO] },
           },
           select: { id: true, code: true, name: true },
           take: 5,
@@ -67,7 +68,7 @@ export async function getAlerts(user: SessionUser): Promise<Alerta[]> {
           where: {
             ...base, archivedAt: null,
             ...escopoDeProjetos(user),
-            status: { notIn: ['CONCLUIDO', 'ENCERRADO', 'CANCELADO'] },
+            status: { notIn: [...STATUS_TRABALHO_ENCERRADO] },
             artStatus: { not: 'DISPENSADA' },
             technicalResponsibilities: { none: { deletedAt: null, status: { not: 'CANCELADA' } } },
           },

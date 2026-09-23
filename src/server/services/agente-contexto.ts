@@ -1,4 +1,5 @@
 import 'server-only';
+import { STATUS_TRABALHO_ENCERRADO } from '@/config/project-status';
 import { prisma } from '@/server/db';
 import { escopoDeProjetos } from '@/server/auth/project-scope';
 import { getAlerts } from '@/server/services/alerts';
@@ -33,7 +34,7 @@ function intervaloDoDia(diaISO: string): { inicio: Date; fim: Date } {
   };
 }
 
-const STATUS_PROJETO_FECHADO: ProjectStatus[] = ['CONCLUIDO', 'ENCERRADO', 'CANCELADO'];
+const STATUS_PROJETO_FECHADO: ProjectStatus[] = [...STATUS_TRABALHO_ENCERRADO];
 const STATUS_TAREFA_ABERTA = { notIn: ['CONCLUIDA', 'CANCELADA'] as TaskStatus[] };
 
 function recorteDeProjeto(user: SessionUser): Prisma.ProjectWhereInput {

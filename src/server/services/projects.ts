@@ -1,4 +1,5 @@
 import 'server-only';
+import { STATUS_TRABALHO_ENCERRADO, encerraTrabalho } from '@/config/project-status';
 import { prisma } from '@/server/db';
 import { auditLog } from '@/server/audit/audit';
 import { nextCode } from '@/server/services/sequence';
@@ -78,7 +79,7 @@ export async function listProjects(user: SessionUser, filter: ProjectListFilter)
   if (filter.clientId) where.clientId = filter.clientId;
   if (filter.status && !['TODOS', 'ARQUIVADOS'].includes(filter.status)) {
     where.status = filter.status === 'ATIVOS'
-      ? { notIn: ['CONCLUIDO', 'ENCERRADO', 'CANCELADO'] }
+      ? { notIn: [...STATUS_TRABALHO_ENCERRADO] }
       : (filter.status as ProjectStatus);
   }
   if (filter.search) {
@@ -632,7 +633,7 @@ export async function moveProjectOnBoard(
       data: { boardPosition: { increment: 1 } },
     });
     const data: Prisma.ProjectUpdateInput = { status, boardPosition: position, updatedById: user.id };
-    if (status === 'CONCLUIDO' || status === 'ENCERRADO') data.actualEndDate = new Date();
+    if (encerraTrabalho(status) && status !== 'CANCELADO') data.actualEndDate = new Date();
     await tx.project.update({ where: { id }, data });
   });
 
@@ -790,7 +791,7 @@ export async function setProjectStatus(user: SessionUser, id: string, status: Pr
   if (!project) return { error: 'Projeto não encontrado.' };
 
   const data: Prisma.ProjectUpdateInput = { status, updatedById: user.id };
-  if (status === 'CONCLUIDO' || status === 'ENCERRADO') data.actualEndDate = new Date();
+  if (encerraTrabalho(status) && status !== 'CANCELADO') data.actualEndDate = new Date();
 
   await prisma.project.update({ where: { id }, data });
   await auditLog({

@@ -12,6 +12,7 @@ import { BOARD_COLUMNS, columnForStatus } from '@/config/project-board';
 import { ProjectForm, type ProjectFormValues } from './project-actions';
 import { FolderLink } from './folder-link';
 import { MembersPanel } from './members-panel';
+import { PROJECT_STATUS_BADGE } from '../status-badge';
 
 const PRIORITY_LABEL: Record<string, { label: string; color: string }> = {
   BAIXA: { label: 'Baixa', color: 'slate' },
@@ -56,11 +57,14 @@ export function CardHeader({
   const [editing, setEditing] = useState(false);
 
   const colunaAtual = columnForStatus(status);
+  // status que a pessoa escolhe fora das colunas do quadro: o seletor mostra o próprio
+  const foraDoQuadro = status === 'AGUARDANDO_RECEBIMENTO' || status === 'CANCELADO';
+  const rotulo = foraDoQuadro ? PROJECT_STATUS_BADGE[status]?.label ?? status : colunaAtual?.label ?? status;
   const prioridade = PRIORITY_LABEL[priority] ?? PRIORITY_LABEL.MEDIA;
 
   const atrasado = contractualDeadline
     && new Date(contractualDeadline) < new Date()
-    && colunaAtual?.id !== 'finalizado';
+    && colunaAtual?.id !== 'finalizado' && status !== 'CANCELADO';
 
   function mudarColuna(novoStatus: string) {
     startTransition(async () => {
@@ -142,17 +146,19 @@ export function CardHeader({
       <div className="mt-4 flex flex-wrap items-center gap-2">
         {canWrite ? (
           <select
-            value={colunaAtual?.status ?? status}
+            value={foraDoQuadro ? status : colunaAtual?.status ?? status}
             disabled={pending}
             onChange={(e) => mudarColuna(e.target.value)}
             className="rounded-lg border border-slate-300 px-2.5 py-1 text-xs font-medium"
             aria-label="Situação do projeto"
           >
-            {BOARD_COLUMNS.map((c) => <option key={c.id} value={c.status}>{c.label}</option>)}
+            {BOARD_COLUMNS.filter((c) => c.id !== 'finalizado').map((c) => <option key={c.id} value={c.status}>{c.label}</option>)}
+            <option value="AGUARDANDO_RECEBIMENTO">Pendente de recebimento</option>
+            <option value="CONCLUIDO">Finalizado</option>
             <option value="CANCELADO">Cancelado</option>
           </select>
         ) : (
-          <Badge color="blue">{colunaAtual?.label ?? status}</Badge>
+          <Badge color={status === 'AGUARDANDO_RECEBIMENTO' ? 'amber' : 'blue'}>{rotulo}</Badge>
         )}
 
         <Badge color={prioridade.color}>{prioridade.label}</Badge>
