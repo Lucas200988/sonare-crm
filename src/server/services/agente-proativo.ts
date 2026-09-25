@@ -3,6 +3,8 @@ import { prisma } from '@/server/db';
 import { auditLog } from '@/server/audit/audit';
 import { notificar } from '@/server/services/notify';
 import { conquistasDoPeriodo, visaoGeralDaEmpresa } from '@/server/services/agente-contexto';
+import { panoramaDaEquipe, panoramaPessoal } from '@/server/services/agente-panorama';
+import { perfilDoBriefing, type PerfilDoBriefing } from '@/lib/perfil-briefing';
 import { completarTexto, getAiConfig } from '@/server/ai/client';
 import { TOM_DE_GESTOR } from '@/server/ai/manager-prompt';
 import {
@@ -115,9 +117,17 @@ export function briefingDeterministico(
   dados: Awaited<ReturnType<typeof visaoGeralDaEmpresa>>,
   compromissos: Array<{ tipo: string; sobre: string; informacao: string }>,
   conquistas?: Awaited<ReturnType<typeof conquistasDoPeriodo>>,
+  pessoal?: Awaited<ReturnType<typeof panoramaPessoal>> | null,
 ): string {
   const linhas: string[] = [];
   linhas.push(periodo === 'manha' ? 'Resumo do dia:' : 'Resumo do fechamento:');
+  if (pessoal) {
+    for (const n of pessoal.conquistasPessoais.negociosGanhos) linhas.push(`- Seu negócio ganho: ${n.codigo} ${n.titulo}${n.valorEstimado ? ` (${n.valorEstimado})` : ''}.`);
+    if (pessoal.tarefas.vencidas.length > 0) linhas.push(`- Suas tarefas vencidas: ${pessoal.tarefas.vencidas.map((t) => `${t.titulo}${t.projeto ? ` (${t.projeto})` : ''}`).join('; ')}.`);
+    if (pessoal.tarefas.vencemEm3Dias.length > 0) linhas.push(`- Vencem em até 3 dias: ${pessoal.tarefas.vencemEm3Dias.map((t) => t.titulo).join('; ')}.`);
+    const prazos = pessoal.projetosSobMinhaResponsabilidade.filter((p) => p.situacaoDoPrazo !== 'no prazo' && p.situacaoDoPrazo !== 'sem prazo');
+    for (const p of prazos.slice(0, 3)) linhas.push(`- Seu projeto ${p.codigo}: prazo ${p.situacaoDoPrazo.toLowerCase()}.`);
+  }
   if (conquistas) {
     for (const n of conquistas.negociosGanhos) linhas.push(`- Negócio ganho: ${n.codigo} ${n.titulo}${n.valorEstimado ? ` (${n.valorEstimado})` : ''}.`);
     for (const c of conquistas.contratosAssinados) linhas.push(`- Contrato assinado: ${c.codigo} ${c.objeto} (${c.valor}).`);
@@ -152,7 +162,28 @@ export async function frasesRecentesDosBriefings(companyId: string, take = 6): P
   return [...frases].slice(0, 8);
 }
 
-function promptDoBriefing(periodo: PeriodoBriefing, nomeDestinatario: string, hoje: string, jaUsadas: string[] = []): string {
+/**
+ * O que muda entre o briefing de quem dirige e o de quem opera. Os dados
+ * (RBAC) já vêm recortados; aqui é o ÂNGULO: gestão olha empresa e equipe
+ * nominalmente; operação recebe o próprio dia, em segunda pessoa.
+ */
+function anguloDoPerfil(perfil: PerfilDoBriefing): string {
+  if (perfil === 'gestao') {
+    return `Perfil do destinatário: SÓCIO/GESTOR. Ângulo de gestão:
+- Problemas grandes primeiro: caixa, prazo contratual, ART, capacidade da equipe, propostas a vencer. Tarefa miúda não entra.
+- EQUIPE, nominalmente, a partir de "equipe" (fatos: acesso, registros, tarefas vencidas, horas, vendas): reconheça quem entregou (venda com código e valor, tarefas concluídas, horas) e aponte o que precisa de cobrança — quem não registrou acesso no período, quem acumula tarefas vencidas. Sempre como fato ("Rodrigo não registrou acesso ao sistema ontem"), nunca como julgamento ("não trabalhou"); antes de cobrar, considere a disponibilidade conhecida (férias, campo). Pule quem está em dia sem nada a destacar.
+- Sugira a delegação concreta: "peça ao X que…", "vale uma conversa com Y sobre…". O gestor lê para decidir, não para executar.
+- Itens sobre a própria pessoa (souEu) só se forem relevantes; o gestor não precisa da própria lista de tarefas.`;
+  }
+  return `Perfil do destinatário: OPERAÇÃO. Ângulo pessoal, em segunda pessoa ("você"):
+- Comece pelo que é dele em "pessoal": tarefas vencidas e as que vencem, projetos sob sua responsabilidade com prazo vencido ou próximo, horas e registros no período.
+- Conquista dele (negócio ganho, tarefas concluídas): reconheça com o fato e já emende o próximo passo ("boa a venda X — agora precisa de Y: contrato, ART, abertura do projeto").
+- Sem acesso ou sem registro no período: diga direto e sem rodeio ("você não registrou acesso ao sistema ontem"), como fato, sem julgar; se houver disponibilidade conhecida, respeite-a.
+- Dos problemas da empresa, cite só o que toca os projetos dele. NÃO liste financeiro, carteira nem equipe.
+- Feche com a prioridade DELE para o dia, uma frase.`;
+}
+
+function promptDoBriefing(periodo: PeriodoBriefing, nomeDestinatario: string, hoje: string, jaUsadas: string[] = [], perfil: PerfilDoBriefing = 'gestao'): string {
   const proximo = diaPorExtenso(proximoDiaUtil(hoje));
   const foco = periodo === 'manha'
     ? 'Abra com "Bom dia". Foque no que precisa de atenção HOJE: prazos, tarefas vencidas, compromissos do dia e o principal risco. Feche com a prioridade sugerida do dia.'
@@ -163,7 +194,10 @@ ${contextoDeCalendario(hoje)}
 
 ${foco}
 
+${anguloDoPerfil(perfil)}
+
 ${TOM_DE_GESTOR}
+Ajuste ao briefing: com o próprio destinatário, sobre a situação DELE, a ironia leve é permitida (é conversa direta). Sobre terceiros nomeados, continua proibida.
 
 Estrutura:
 1. Conquistas do período (se houver, em conquistas): comece por elas — uma frase por conquista, com código, valor e o impacto concreto para a operação. Sem conquista, a seção NÃO existe (nada de "Conquistas: nenhuma").
@@ -204,20 +238,23 @@ export async function enviarBriefings(companyId: string, periodo: PeriodoBriefin
     const sessao = await sessaoRealDoUsuario(destinatario.id);
     if (!sessao) continue;
 
-    // os dados respeitam o que ESTE destinatário pode ver
-    const [dados, conquistas] = await Promise.all([
+    // os dados respeitam o que ESTE destinatário pode ver; o ângulo, o perfil dele
+    const perfil = perfilDoBriefing(sessao.roles);
+    const [dados, conquistas, pessoal, equipe] = await Promise.all([
       visaoGeralDaEmpresa(sessao),
       conquistasDoPeriodo(sessao, desde),
+      panoramaPessoal(sessao, desde).catch(() => null),
+      perfil === 'gestao' ? panoramaDaEquipe(sessao, desde).catch(() => null) : null,
     ]);
 
-    let texto = briefingDeterministico(periodo, dados, compromissos, conquistas);
+    let texto = briefingDeterministico(periodo, dados, compromissos, conquistas, pessoal);
     if (config.enabled && config.apiKey && config.provider === 'openai') {
       try {
         const redigido = await completarTexto(config, {
           temperature: 0.6, // a redação pode variar; os dados vêm fixos no JSON
           messages: [
-            { role: 'system', content: promptDoBriefing(periodo, destinatario.name, hoje, jaUsadas) },
-            { role: 'user', content: JSON.stringify({ conquistas, dados, compromissos }).slice(0, 24_000) },
+            { role: 'system', content: promptDoBriefing(periodo, destinatario.name, hoje, jaUsadas, perfil) },
+            { role: 'user', content: JSON.stringify({ pessoal, equipe, conquistas, dados, compromissos }).slice(0, 28_000) },
           ],
         }, 40_000, { companyId, userId: destinatario.id, useCase: 'manager-briefing' });
         if (redigido.trim()) texto = redigido.trim();

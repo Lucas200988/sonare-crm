@@ -83,6 +83,13 @@ DECLAROU — fonte USER_DECLARATION, autor registrado, validade).
   proativa); a redação usa a IA com **fallback determinístico** — o
   briefing sai mesmo com o provedor fora. Opt-in por usuário na tela de
   Usuários (`User.jarvisBriefing`).
+- **Dois perfis de briefing** (`src/lib/perfil-briefing.ts`): ADMIN/DIRETORIA
+  recebem o ângulo de GESTÃO (empresa, problemas grandes e a equipe
+  nominalmente — acesso, registros, tarefas vencidas, horas, vendas de cada
+  pessoa, via `panoramaDaEquipe`, só com `user:manage`); os demais recebem
+  o briefing PESSOAL em segunda pessoa (`panoramaPessoal`: suas tarefas,
+  prazos, projetos, conquistas, acesso). Acesso ao sistema é fato e pode
+  ser cobrado; "não trabalhou" continua proibido.
 - Compromissos/disponibilidades vigentes em `AgentMemory` entram no
   briefing. **Pendente da Fase 3**: Continuous Manager (cobranças
   individuais ao longo do dia — o de maior risco de spam, de propósito por

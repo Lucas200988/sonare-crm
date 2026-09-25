@@ -25,6 +25,7 @@ async function carregar() {
   vi.doMock('@/server/audit/audit', () => ({ auditLog: vi.fn() }));
   vi.doMock('@/server/services/notify', () => ({ notificar: vi.fn() }));
   vi.doMock('@/server/services/agente-contexto', () => ({ visaoGeralDaEmpresa: vi.fn() }));
+  vi.doMock('@/server/services/agente-panorama', () => ({ panoramaPessoal: vi.fn(), panoramaDaEquipe: vi.fn() }));
   vi.doMock('@/server/ai/client', () => ({ completarTexto: vi.fn(), getAiConfig: vi.fn() }));
   return import('./agente-proativo');
 }
@@ -66,6 +67,8 @@ describe('frases já usadas nos briefings', () => {
     vi.doMock('@/server/audit/audit', () => ({ auditLog: vi.fn() }));
     vi.doMock('@/server/services/notify', () => ({ notificar: vi.fn() }));
     vi.doMock('@/server/services/agente-contexto', () => ({ visaoGeralDaEmpresa: vi.fn() }));
+    vi.doMock('@/server/services/agente-panorama', () => ({ panoramaPessoal: vi.fn(), panoramaDaEquipe: vi.fn() }));
+  vi.doMock('@/server/services/agente-panorama', () => ({ panoramaPessoal: vi.fn(), panoramaDaEquipe: vi.fn() }));
     vi.doMock('@/server/ai/client', () => ({ completarTexto: vi.fn(), getAiConfig: vi.fn() }));
     const { frasesRecentesDosBriefings } = await import('./agente-proativo');
 
@@ -75,5 +78,33 @@ describe('frases já usadas nos briefings', () => {
       'A ART do PRJ-2026-008 já pode ser considerada figura lendária.',
     ]);
     expect(findMany).toHaveBeenCalledWith(expect.objectContaining({ where: expect.objectContaining({ companyId: 'c1' }) }));
+  });
+});
+
+describe('briefing determinístico com panorama pessoal', () => {
+  beforeEach(() => vi.resetModules());
+  afterEach(() => vi.restoreAllMocks());
+
+  it('traz a conquista, as tarefas e os prazos DE QUEM LÊ', async () => {
+    const { briefingDeterministico } = await carregar();
+    const pessoal = {
+      observacao: '', acesso: { ultimoEm: null, acessouNoPeriodo: false }, registrosNoPeriodo: 0, horasLancadasNoPeriodo: '0',
+      tarefas: {
+        abertas: 3, concluidasNoPeriodo: 1,
+        vencidas: [{ titulo: 'Emitir ART', projeto: 'PRJ-2026-008', venceuEm: new Date() }],
+        vencemEm3Dias: [{ titulo: 'Entregar memorial', projeto: null, venceEm: new Date() }],
+      },
+      projetosSobMinhaResponsabilidade: [
+        { codigo: 'PRJ-2026-015', nome: 'SPDA', status: 'EM_DESENVOLVIMENTO', papel: 'responsável técnico', prazoContratual: new Date(), situacaoDoPrazo: 'VENCIDO' },
+        { codigo: 'PRJ-2026-016', nome: 'X', status: 'EM_DESENVOLVIMENTO', papel: 'equipe', prazoContratual: null, situacaoDoPrazo: 'sem prazo' },
+      ],
+      conquistasPessoais: { negociosGanhos: [{ codigo: 'OPP-2026-009', titulo: 'SESI', cliente: 'SESI', valorEstimado: 'R$ 12.000,00' }] },
+    } as never;
+    const texto = briefingDeterministico('manha', DADOS, [], undefined, pessoal);
+    expect(texto).toContain('Seu negócio ganho: OPP-2026-009 SESI (R$ 12.000,00)');
+    expect(texto).toContain('Suas tarefas vencidas: Emitir ART (PRJ-2026-008)');
+    expect(texto).toContain('Vencem em até 3 dias: Entregar memorial');
+    expect(texto).toContain('Seu projeto PRJ-2026-015: prazo vencido');
+    expect(texto).not.toContain('PRJ-2026-016');
   });
 });
